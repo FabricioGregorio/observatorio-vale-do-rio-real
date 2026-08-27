@@ -1,0 +1,35 @@
+{
+  "name": "observatorio-vale-do-rio-real",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "verificar": "pnpm tipos && pnpm lint && pnpm teste && pnpm a11y && pnpm pendencias",
+    "tipos": "tsc --noEmit",
+    "lint": "biome check .",
+    "teste": "vitest run",
+    "a11y": "playwright test testes/a11y",
+    "pendencias": "node -e \"console.log('Sem verificação de pendências: banco ainda fora do escopo do bootstrap.')\"",
+    "migrar": "node -e \"console.log('Sem migrações: banco ainda fora do escopo do bootstrap.')\"",
+    "seed": "node -e \"console.log('Sem seed: banco ainda fora do escopo do bootstrap.')\""
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "latest",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "tailwindcss": "latest"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "latest",
+    "@playwright/test": "latest",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "tsx": "latest",
+    "typescript": "latest",
+    "vitest": "latest"
+  }
+}

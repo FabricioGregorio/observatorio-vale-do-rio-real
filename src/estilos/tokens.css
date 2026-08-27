@@ -93,7 +93,10 @@
        requisito de acessibilidade do projeto. */
   }
 
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     font-family: var(--font-display);
     letter-spacing: var(--tracking-display);
     text-wrap: balance;
@@ -103,7 +106,15 @@
   /* Foco visível e nítido em todo elemento interativo. Remover o outline
      sem substituto equivalente é violação de acessibilidade e é rejeitado
      no review. */
-  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  :where(
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    summary,
+    [tabindex]
+  ):focus-visible {
     outline: 3px solid var(--color-foco);
     outline-offset: 2px;
     border-radius: var(--radius-ficha);
