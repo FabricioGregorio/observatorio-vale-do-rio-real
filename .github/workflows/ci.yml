@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: observatorio_teste
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports: ["5432:5432"]
+
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/observatorio_teste
+      DATABASE_URL_MIGRACAO: postgres://postgres:postgres@localhost:5432/observatorio_teste
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Aplicar migrações
+        run: pnpm migrar
+
+      - name: Popular dados de referência
+        run: pnpm seed
+
+      - name: Tipos
+        run: pnpm tipos
+
+      - name: Lint e formatação
+        run: pnpm lint
+
+      - name: Testes de unidade
+        run: pnpm teste
+
+      - name: Build
+        run: pnpm build
+
+      # Gate de integridade: anexo obrigatório sem espelho local ou áudio
+      # público sem consentimento válido quebram o build. Traduz em pipeline
+      # os dois riscos de maior impacto do projeto.
+      - name: Pendências de publicação
+        run: pnpm pendencias
+
+      - name: Instalar navegadores
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Acessibilidade (axe-core)
+        run: pnpm a11y
+
+      - name: Lighthouse CI
+        run: pnpm exec lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Anexar relatórios
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorios
+          path: |
+            playwright-report/
+            .lighthouseci/
+          retention-days: 7

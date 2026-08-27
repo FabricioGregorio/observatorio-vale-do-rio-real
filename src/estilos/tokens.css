@@ -1,0 +1,183 @@
+@import "tailwindcss";
+
+/* =============================================================================
+   Observatório do Vale do Rio Real — tokens de design
+   Fonte única de cor, tipografia e espaçamento do projeto.
+
+   REGRA: nenhum valor de cor, família tipográfica ou raio pode ser escrito
+   fora deste arquivo. Se um componente precisa de algo que não está aqui,
+   o token é adicionado aqui primeiro, com nome semântico.
+   ========================================================================== */
+
+@theme {
+  /* --- Paleta bruta -------------------------------------------------------
+     Conceito: arquivo vivo. Referências materiais do próprio objeto de
+     pesquisa — mata fechada, ficha de campo, tinta de registro, milho da
+     agricultura familiar, barro da casa de taipa.
+     Proibido: gradiente decorativo, glassmorphism, sombra colorida e o
+     conjunto creme quente + serifa alto-contraste + acento terracota. */
+
+  --color-mata: #12301f;
+  --color-anil: #1f3a5f;
+  --color-pedra: #e7e5de;
+  --color-milho: #e8b23a;
+  --color-barro: #8a4b2a;
+  --color-carvao: #171a17;
+
+  /* Variações operacionais — derivadas, não inventadas */
+  --color-mata-claro: #1d4630;
+  --color-pedra-fundo: #f2f1ec;
+  --color-pedra-borda: #d3d0c6;
+
+  /* --- Papéis semânticos --------------------------------------------------
+     Componentes usam ESTES nomes, nunca os brutos acima. */
+
+  --color-fundo: var(--color-pedra-fundo);
+  --color-fundo-elevado: #ffffff;
+  --color-fundo-inverso: var(--color-mata);
+  --color-texto: var(--color-carvao);
+  --color-texto-suave: #4a504a;
+  --color-texto-inverso: var(--color-pedra);
+  --color-link: var(--color-anil);
+  --color-borda: var(--color-pedra-borda);
+  --color-destaque: var(--color-milho);
+  --color-acento: var(--color-barro);
+  --color-foco: var(--color-anil);
+
+  /* --- Tipografia ---------------------------------------------------------
+     Três papéis, todos com suporte pleno a diacríticos do português.
+     display   Archivo        títulos, numerais de ficha
+     leitura   Literata       documento final, transcrições, texto longo
+     mono      IBM Plex Mono  metadados, datas, hashes, códigos de meta */
+
+  --font-display: "Archivo", "Archivo Variable", system-ui, sans-serif;
+  --font-leitura: "Literata", Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Escala 1.25 a partir de 1rem */
+  --text-xs: 0.64rem;
+  --text-sm: 0.8rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.563rem;
+  --text-2xl: 1.953rem;
+  --text-3xl: 2.441rem;
+  --text-4xl: 3.052rem;
+  --text-5xl: 3.815rem;
+
+  --tracking-display: -0.02em;
+  --tracking-mono: 0.04em;
+  --leading-leitura: 1.65;
+
+  /* --- Layout ------------------------------------------------------------- */
+  --largura-leitura: 68ch;
+  --largura-conteudo: 1180px;
+  --radius-ficha: 2px; /* fichas de arquivo não têm cantos macios */
+}
+
+/* =============================================================================
+   Base
+   ========================================================================== */
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-fundo);
+    color: var(--color-texto);
+    font-family: var(--font-leitura);
+    line-height: var(--leading-leitura);
+    /* Nunca fixar font-size em px: quebra o redimensionamento do navegador,
+       requisito de acessibilidade do projeto. */
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: var(--tracking-display);
+    text-wrap: balance;
+    font-weight: 600;
+  }
+
+  /* Foco visível e nítido em todo elemento interativo. Remover o outline
+     sem substituto equivalente é violação de acessibilidade e é rejeitado
+     no review. */
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 3px solid var(--color-foco);
+    outline-offset: 2px;
+    border-radius: var(--radius-ficha);
+  }
+
+  ::selection {
+    background-color: var(--color-destaque);
+    color: var(--color-carvao);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* =============================================================================
+   Utilitários do projeto
+   ========================================================================== */
+
+@layer components {
+  /* Metadado de ficha: data, código de meta, duração, hash */
+  .meta-ficha {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    letter-spacing: var(--tracking-mono);
+    text-transform: uppercase;
+    color: var(--color-texto-suave);
+  }
+
+  /* Numeral de ficha: I..VII das visitas, M01 das metas, nº do episódio.
+     A numeração é real e informativa — nunca decorativa. */
+  .numeral-ficha {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    font-stretch: 125%;
+    line-height: 1;
+    color: var(--color-destaque);
+  }
+
+  /* Link de pular para o conteúdo, obrigatório no layout base */
+  .pular-conteudo {
+    position: absolute;
+    left: -9999px;
+  }
+  .pular-conteudo:focus {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 100;
+    padding: 0.75rem 1rem;
+    background-color: var(--color-fundo-elevado);
+    color: var(--color-texto);
+  }
+}
+
+/* =============================================================================
+   Contraste verificado (WCAG 2.1 AA — mínimo 4.5:1 para texto normal)
+
+   carvão  sobre pedra-fundo .... 15.2:1   corpo de texto
+   anil    sobre pedra-fundo ....  9.1:1   links
+   barro   sobre pedra-fundo ....  5.3:1   acento textual, use com parcimônia
+   pedra   sobre mata ........... 11.4:1   texto do cabeçalho e rodapé
+   milho   sobre mata ...........  7.4:1   destaque sobre fundo escuro
+
+   ATENÇÃO — milho sobre pedra atinge apenas 1.5:1.
+   `--color-destaque` NÃO pode ser usado como cor de texto sobre fundo claro.
+   Sobre claro ele serve apenas como preenchimento, borda ou fundo de
+   marcador, com o texto em carvão por cima.
+   ========================================================================== */
