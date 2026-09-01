@@ -1,6 +1,6 @@
-# TAREFA 09 — Home v1 com painel de indicadores
+# TAREFA 10 — Home v1 com painel de indicadores
 
-**Fase:** 1 · **Depende de:** 03, 07 · **Estimativa de diff:** médio
+**Fase:** 1 · **Depende de:** 03, 08 · **Estimativa de diff:** médio
 
 ## Objetivo
 

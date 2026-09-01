@@ -1,0 +1,133 @@
+{
+  "id": "91c21786-f1f9-4d6e-8ada-1ef56ca8f7ce",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {},
+  "enums": {
+    "public.situacao_equipamento": {
+      "name": "situacao_equipamento",
+      "schema": "public",
+      "values": [
+        "ativo",
+        "intermitente",
+        "desativado",
+        "potencial"
+      ]
+    },
+    "public.status_meta": {
+      "name": "status_meta",
+      "schema": "public",
+      "values": [
+        "alcancada",
+        "superada",
+        "em_desenvolvimento",
+        "nao_iniciada",
+        "substituida"
+      ]
+    },
+    "public.status_moderacao": {
+      "name": "status_moderacao",
+      "schema": "public",
+      "values": [
+        "pendente",
+        "aprovado",
+        "rejeitado",
+        "spam"
+      ]
+    },
+    "public.status_publicacao": {
+      "name": "status_publicacao",
+      "schema": "public",
+      "values": [
+        "rascunho",
+        "em_revisao",
+        "publicado",
+        "arquivado"
+      ]
+    },
+    "public.tipo_consentimento": {
+      "name": "tipo_consentimento",
+      "schema": "public",
+      "values": [
+        "uso_imagem",
+        "uso_audio",
+        "dados_pessoais",
+        "publicacao_entrevista"
+      ]
+    },
+    "public.tipo_documento": {
+      "name": "tipo_documento",
+      "schema": "public",
+      "values": [
+        "relatorio_tecnico",
+        "diagnostico_interno",
+        "relato_campo",
+        "formulario_modelo",
+        "relatorio_parcial",
+        "documento_final",
+        "modelagem_estatistica",
+        "entrevista_transcricao",
+        "plano_aula",
+        "identidade_visual",
+        "painel_dados",
+        "outro"
+      ]
+    },
+    "public.tipo_equipamento": {
+      "name": "tipo_equipamento",
+      "schema": "public",
+      "values": [
+        "ecoparque",
+        "museu",
+        "centro_cultural",
+        "comunidade",
+        "rota_turistica",
+        "orgao_publico"
+      ]
+    },
+    "public.tipo_formulario": {
+      "name": "tipo_formulario",
+      "schema": "public",
+      "values": [
+        "rotina_funcionamento",
+        "publico_consumidor"
+      ]
+    },
+    "public.tipo_midia": {
+      "name": "tipo_midia",
+      "schema": "public",
+      "values": [
+        "pdf",
+        "audio",
+        "imagem",
+        "video",
+        "planilha",
+        "apresentacao",
+        "dataset",
+        "outro"
+      ]
+    },
+    "public.tipo_pessoa": {
+      "name": "tipo_pessoa",
+      "schema": "public",
+      "values": [
+        "pesquisador",
+        "ator_chave",
+        "agente_publico",
+        "lideranca_comunitaria",
+        "colaborador"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

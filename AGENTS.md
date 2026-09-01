@@ -27,8 +27,17 @@ schema ou de rota, escreva a proposta em `docs/decisoes/` e devolva a decisão a
 ## Nunca
 
 - Alterar migração já aplicada. Correção é sempre uma nova migração.
+- Usar `drizzle-kit push` ou `drizzle-kit introspect` para alterar ou sincronizar
+  qualquer ambiente. Migração versionada é o único mecanismo de mudança de schema.
+  Os comandos permitidos são `pnpm gerar-migracao` e `pnpm migrar`.
+- Criar ou alterar view, trigger, função ou extensão fora de uma migração versionada.
+  Esses objetos não aparecem no snapshot do Drizzle: nenhuma ferramenta os recria, e
+  nenhuma acusa quando eles somem. Ver doc 03 §6.
 - Usar `any`, `@ts-ignore` ou desabilitar regra de lint para fazer o check passar.
-- Acessar o banco fora de `src/dados/consultas/`.
+- Acessar o banco a partir de código de aplicação fora de `src/dados/consultas/`:
+  `src/app/`, componentes e qualquer código no caminho de renderização não fazem query.
+  Scripts de manutenção em `scripts/` e `db/` podem usar `src/dados/cliente.ts` com
+  `DATABASE_URL`, sem DDL, desde que não sejam chamados na renderização. Ver doc 03 §2.
 - Inventar nome ou versão de pacote. Instalar por `pnpm add <pacote>@latest`.
 - Commitar segredo, `.env` ou chave de serviço.
 - Criar dado fictício: "Lorem ipsum", equipamento inventado, entrevista falsa, número
@@ -46,6 +55,8 @@ schema ou de rota, escreva a proposta em `docs/decisoes/` e devolva a decisão a
 - Buscar dados em build time. Nunca consultar o banco em tempo de requisição.
 - Escrever o teste junto com a funcionalidade, não depois.
 - Rodar `pnpm verificar` antes de abrir PR. Se falhar, não abre.
+- Ler à mão toda migração gerada antes de aceitá-la. Se ela contiver `DROP`, `ALTER`,
+  mudança de tipo ou remoção de coluna, responder a checklist do doc 03 §6 no PR.
 - Escrever em pt-BR: identificadores de domínio, comentários e textos de interface.
 - Diff pequeno. Uma tarefa, um PR. Acima de ~400 linhas, fatiar.
 
@@ -58,6 +69,14 @@ exige justificativa no PR. Essa restrição é o principal controle contra mudan
 
 Escreva a dúvida no PR e entregue a parte que está certa. Uma pergunta custa minutos;
 uma suposição errada em prestação de contas custa o edital.
+
+## Conteúdo editorial
+
+Antes de criar textos institucionais:
+
+- verificar content/
+- nunca armazenar texto editorial em tabelas PostgreSQL
+- nunca criar CMS próprio sem ADR aprovado
 
 <!-- BEGIN:nextjs-agent-rules -->
 

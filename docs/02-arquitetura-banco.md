@@ -161,7 +161,7 @@ Separar **`documento`** (a obra intelectual) de **`arquivo`** (o binário) é o 
 ```sql
 CREATE TABLE arquivo (
   id             uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  chave_storage  text NOT NULL UNIQUE,      -- ex: arquivos/relatorios/recanto-da-serra-v2.pdf
+  chave_storage  text NOT NULL UNIQUE,      -- ex: arquivos/analise-de-dados/relatorio-tecnico-recanto-da-serra-v1.pdf
   url_publica    text NOT NULL UNIQUE,      -- URL estável do domínio próprio
   nome_original  text,
   tipo_midia     tipo_midia NOT NULL,
@@ -172,7 +172,7 @@ CREATE TABLE arquivo (
   largura_px     integer,
   altura_px      integer,
   origem_url     text,                      -- Drive/Figma de onde veio (redundância)
-  origem_sistema text,                      -- 'google_drive' | 'figma' | 'upload'
+  origem_sistema text,                      -- google_drive | google_docs | google_forms | figma | instagram | upload
   espelhado_em   timestamptz,               -- quando saiu do Drive para storage próprio
   criado_em      timestamptz NOT NULL DEFAULT now(),
   atualizado_em  timestamptz NOT NULL DEFAULT now()
@@ -843,16 +843,36 @@ Repetir `leitura_publica` para `equipamento`, `entrevista`, `episodio`, `midia`,
 
 ## 16. Ordem de implementação
 
-1. Extensões, enums, funções e triggers (§3–4)
-2. `arquivo`, `documento`, `documento_arquivo` → **já habilita a Sala do Avaliador**, que é a Fase 1 do roadmap
-3. `municipio`, `pessoa`, `equipamento`, `consentimento`
-4. `visita`, `midia`, `entrevista`, `entrevista_trecho`
-5. `meta`, `meta_evidencia`, `cronograma_atividade`, `indicador`
-6. `formulario` e derivadas + importação dos CSVs
-7. `temporada`, `episodio` e derivadas
-8. `tema`, `termo`, `material_didatico`, `acao_extensao`
-9. `contribuicao_escuta`, `download_diario`, `log_auditoria`, `redirecionamento`
-10. Views, RLS e a trava `vw_pendencia_publicacao` no CI
+A ordem abaixo é **topológica**: cada item depende apenas do que vem antes dele.
+
+> **Correção de 2026-08-30.** A redação anterior separava `arquivo`, `documento` e
+> `documento_arquivo` (item 2) de `municipio`, `pessoa`, `equipamento` e
+> `consentimento` (item 3). Essa separação é impossível de executar: `documento`
+> referencia `equipamento` e `municipio`, `equipamento` referencia `municipio` e
+> `pessoa`, e `pessoa` referencia `arquivo`. Os dois grupos foram unidos em um único
+> item, na ordem de dependência real. **Nenhuma definição de coluna, tipo, constraint,
+> índice, relacionamento ou regra de negócio foi alterada — apenas a ordem.**
+
+1. Extensões, enums, funções e triggers (§3–4) — migração `0001_fundacao`
+2. Núcleo da prestação de contas — migração `0002`, nesta ordem de dependência:
+   1. `arquivo` (§5) — sem dependência de saída
+   2. `municipio` (§6.1) — sem dependência de saída
+   3. `pessoa` (§6.3) — referencia `arquivo`
+   4. `equipamento` (§6.2) — referencia `municipio` e `pessoa`
+   5. `consentimento` (§6.3) — referencia `pessoa` e `arquivo`
+   6. `documento` (§5) — referencia `equipamento` e `municipio`
+   7. `documento_arquivo` (§5) — referencia `documento` e `arquivo`
+   8. `vw_anexo_publico` (§13) e os triggers `trg_atualizado_em` (§4)
+
+   → **já habilita a Sala do Avaliador**, que é a Fase 1 do roadmap
+3. `visita`, `midia`, `entrevista`, `entrevista_trecho`
+4. `meta`, `meta_evidencia`, `cronograma_atividade`, `indicador`
+5. `formulario` e derivadas + importação dos CSVs
+6. `temporada`, `episodio` e derivadas
+7. `tema`, `termo`, `material_didatico`, `acao_extensao`
+8. `contribuicao_escuta`, `download_diario`, `log_auditoria`, `redirecionamento`
+9. `mv_busca`, RLS e a trava `vw_pendencia_publicacao` no CI — dependem de `entrevista`
+   e `consentimento`, por isso vêm depois do item 3
 
 ---
 

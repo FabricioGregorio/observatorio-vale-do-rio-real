@@ -6,7 +6,8 @@
       "!**/.next",
       "!**/node_modules",
       "!**/playwright-report",
-      "!**/test-results"
+      "!**/test-results",
+      "!**/db/migrations"
     ]
   },
   "formatter": {

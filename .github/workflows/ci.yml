@@ -58,14 +58,22 @@ jobs:
       - name: Testes de unidade
         run: pnpm teste
 
-      - name: Build
-        run: pnpm build
-
-      # Gate de integridade: anexo obrigatório sem espelho local ou áudio
-      # público sem consentimento válido quebram o build. Traduz em pipeline
-      # os dois riscos de maior impacto do projeto.
+      # Gate de integridade: anexo obrigatório sem espelho local quebra o
+      # build. Traduz em pipeline o risco de maior impacto do projeto.
+      #
+      # Roda ANTES do build de propósito: é o build que produz o artefato
+      # publicável — inclusive o pacote .zip enviado ao R2 pelo
+      # scripts/gerar-zip-anexos.ts. Denunciar depois disso seria denunciar
+      # tarde.
+      #
+      # O ramo do áudio público sem consentimento válido ainda não está na
+      # view: depende da tabela `entrevista`, que é de Fase 3. Ver
+      # docs/tarefas/09-gate-de-pendencias.md.
       - name: Pendências de publicação
         run: pnpm pendencias
+
+      - name: Build
+        run: pnpm build
 
       - name: Instalar navegadores
         run: pnpm exec playwright install --with-deps chromium

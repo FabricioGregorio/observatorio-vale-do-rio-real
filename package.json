@@ -5,19 +5,25 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "pnpm tsx scripts/gerar-zip-anexos.ts && next build",
     "verificar": "pnpm tipos && pnpm lint && pnpm teste && pnpm a11y && pnpm pendencias",
     "tipos": "tsc --noEmit",
     "lint": "biome check .",
     "teste": "vitest run",
     "a11y": "playwright test testes/a11y",
-    "pendencias": "node -e \"console.log('Sem verificação de pendências: banco ainda fora do escopo do bootstrap.')\"",
-    "migrar": "node -e \"console.log('Sem migrações: banco ainda fora do escopo do bootstrap.')\"",
-    "seed": "node -e \"console.log('Sem seed: banco ainda fora do escopo do bootstrap.')\""
+    "pendencias": "tsx scripts/verificar-pendencias.ts",
+    "migrar": "drizzle-kit migrate",
+    "gerar-migracao": "drizzle-kit generate",
+    "seed": "node -e \"console.log('Sem seed: banco ainda fora do escopo do bootstrap.')\"",
+    "zip-anexos": "tsx scripts/gerar-zip-anexos.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1121.0",
     "@tailwindcss/postcss": "latest",
+    "drizzle-orm": "^0.45.2",
+    "fflate": "^0.8.3",
     "next": "latest",
+    "pg": "^8.23.0",
     "react": "latest",
     "react-dom": "latest",
     "tailwindcss": "latest"
@@ -26,8 +32,10 @@
     "@biomejs/biome": "latest",
     "@playwright/test": "latest",
     "@types/node": "latest",
+    "@types/pg": "^8.23.1",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "drizzle-kit": "^0.31.10",
     "tsx": "latest",
     "typescript": "latest",
     "vitest": "latest"
