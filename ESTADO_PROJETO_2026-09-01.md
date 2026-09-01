@@ -647,6 +647,42 @@ STORAGE_ACCESS_KEY
 
 Nenhuma operação remota deve ser assumida.
 
+16.1 Lighthouse CI — gate obrigatório, não executado
+
+Status:
+
+EXIGIDO pela documentação. NÃO executado pelo CI.
+
+O que aconteceu:
+
+O passo pnpm exec lhci autorun falhava sempre, com "Command lhci not found".
+O pacote @lhci/cli nunca foi instalado — não está no package.json nem no
+pnpm-lock.yaml. O passo foi removido do workflow em 2026-09-01.
+
+O que NÃO mudou:
+
+O gate continua obrigatório. Nenhum critério de aceite, meta de desempenho ou
+item de definição de pronto foi removido. O lighthouserc.json permanece
+versionado na raiz, intocado.
+
+Onde a implementação pertence:
+
+Item 26 do backlog do doc 03 §10 — Fase 4.
+
+O que falta, além de instalar a dependência:
+
+lighthouserc.json sem startServerCommand, e o workflow não sobe servidor;
+sem throttling de 3G, que o doc 01 §7 e a Tarefa 10 exigem.
+
+Registro formal:
+
+docs/divida-documental.md §4.
+
+Cobertura que permanece:
+
+Acessibilidade continua verificada pelo axe-core em pnpm a11y, a cada PR.
+Desempenho, SEO e boas práticas não são medidos por enquanto.
+
 17. Próximo passo autorizado
 
 Executar somente:

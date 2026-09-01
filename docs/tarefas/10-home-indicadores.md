@@ -35,8 +35,15 @@ src/dados/consultas/indicadores.ts  content/paginas/home.mdx
 ## Como verificar
 
 ```bash
-pnpm build && pnpm exec lhci autorun && pnpm a11y
+pnpm build && pnpm a11y
 ```
+
+> **Lighthouse CI: requisito mantido, temporariamente indisponível.** O critério de aceite
+> acima continua valendo — o gate não foi cancelado nem rebaixado. Mas **não execute
+> `pnpm exec lhci autorun`** até a implementação do item 26 do backlog (doc 03 §10,
+> Fase 4): o pacote `@lhci/cli` não está instalado e o comando falha com
+> `Command "lhci" not found`. Até lá, verifique com `pnpm build && pnpm a11y`. Contexto
+> completo e o que falta além da dependência: `docs/divida-documental.md` §4.
 
 ## Fora de escopo
 

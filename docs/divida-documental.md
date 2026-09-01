@@ -64,3 +64,53 @@ ocorrência remanescente**. A renumeração de 2026-08-30 (07→08, 08→09, 09�
 referência do doc 03 §11.
 
 Item mantido aqui apenas para registrar que foi conferido e está resolvido.
+
+---
+
+## 4. Lighthouse CI exigido pela documentação, não executado pelo CI
+
+**Onde:**
+
+- `docs/03-guia-implementacao.md` §7 — lista "Lighthouse CI ≥ 90" entre os **gates
+  bloqueantes** do CI
+- `docs/03-guia-implementacao.md` §14 — checklist de entrega
+- `docs/01-arquitetura-informacao.md` §7 e §11 — "Lighthouse ≥ 90 em todas as
+  categorias" como requisito não funcional e item da definição de pronto
+- `docs/tarefas/10-home-indicadores.md` — "Como verificar" roda `pnpm exec lhci autorun`
+- `lighthouserc.json` — versionado na raiz desde o commit `e509462`
+- `.github/workflows/ci.yml` — o passo foi **removido em 2026-09-01**
+
+**O que está lá:** quatro documentos tratam o Lighthouse como gate bloqueante, e a
+configuração existe. O pipeline não o executa.
+
+**Por que é dívida:** o passo `pnpm exec lhci autorun` falhava em toda execução com
+`[ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL] Command "lhci" not found`. O pacote `@lhci/cli`
+nunca foi instalado: não está no `package.json` nem no `pnpm-lock.yaml`. O passo foi
+removido para destravar o CI.
+
+**O gate continua obrigatório.** Não foi cancelado nem rebaixado: está temporariamente
+não executado. Nenhum critério de aceite, meta de desempenho ou item de definição de
+pronto foi removido de documento nenhum.
+
+**Onde ele pertence:** o backlog do doc 03 §10 já agenda a implementação no **item 26,
+Fase 4** — *"Auditoria WCAG final, Lighthouse CI, depósito no Zenodo, arquivamento no
+Internet Archive"*. A anomalia não é o adiamento; é o `lighthouserc.json` ter chegado na
+Fase 1, junto com o bootstrap, três fases antes da tarefa que o implementa.
+
+**Impacto:** nenhum sobre o código. O gate de acessibilidade continua ativo por outro
+caminho — o axe-core do `pnpm a11y` roda a cada PR, e é ele que cobre o requisito de
+WCAG. O que não é medido hoje é desempenho, SEO e boas práticas.
+
+**O que falta, além da dependência.** Instalar `@lhci/cli` sozinho não faz o gate
+funcionar. O `lighthouserc.json` atual declara só `collect.url` apontando para
+`http://127.0.0.1:3000` e **não tem `startServerCommand`**; o workflow também não sobe
+servidor nenhum — quem sobe é o `webServer` do `playwright.config.ts`, e só durante o
+`pnpm a11y`. Restaurar o passo hoje trocaria "comando não encontrado" por "conexão
+recusada". Falta ainda a simulação de 3G que o doc 01 §7 e a Tarefa 10 exigem: a
+configuração não declara `throttling`, e o padrão do Lighthouse é 4G lento.
+
+**Correção:** na tarefa do item 26, instalar `@lhci/cli`, completar o `lighthouserc.json`
+com `startServerCommand` e `throttling` de 3G, e restaurar o passo no
+`.github/workflows/ci.yml` com o env `LHCI_GITHUB_APP_TOKEN` e o `.lighthouseci/` na
+lista de artefatos. Medir antes da Tarefa 10 tem pouco valor: a home ainda é a página
+provisória do bootstrap, e onze rotas são stubs.

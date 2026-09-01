@@ -81,10 +81,26 @@ jobs:
       - name: Acessibilidade (axe-core)
         run: pnpm a11y
 
-      - name: Lighthouse CI
-        run: pnpm exec lhci autorun
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+      # Lighthouse CI — passo REMOVIDO em 2026-09-01 porque falhava sempre:
+      # "Command 'lhci' not found". O `lighthouserc.json` existe na raiz e está
+      # versionado desde o commit e509462, com as quatro asserções de ≥ 0.9;
+      # o que nunca foi instalado é o pacote `@lhci/cli`, ausente do
+      # package.json e do pnpm-lock.yaml.
+      #
+      # Isto NÃO é limpeza de passo órfão: o gate continua exigido pelo
+      # doc 03 §7 e §14 e pelo doc 01, e a Tarefa 10 manda rodar
+      # `pnpm exec lhci autorun` para verificar a home. Ele está adiado, não
+      # cancelado.
+      #
+      # A implementação pertence ao item 26 do backlog (doc 03 §10, Fase 4):
+      # "Auditoria WCAG final, Lighthouse CI, depósito no Zenodo, arquivamento
+      # no Internet Archive". Registro formal da divergência, com o que falta
+      # além da dependência: docs/divida-documental.md §4.
+      #
+      # Atenção a quem for restaurar: instalar `@lhci/cli` não basta. O
+      # `lighthouserc.json` não tem `startServerCommand` e este workflow não
+      # sobe servidor — o passo trocaria "command not found" por "connection
+      # refused". Falta também o `throttling` de 3G que o doc 01 §7 exige.
 
       - name: Anexar relatórios
         if: always()
@@ -93,5 +109,4 @@ jobs:
           name: relatorios
           path: |
             playwright-report/
-            .lighthouseci/
           retention-days: 7

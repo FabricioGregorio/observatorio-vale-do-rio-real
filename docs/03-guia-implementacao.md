@@ -231,6 +231,11 @@ Anexo obrigatório sem espelho local, ou áudio público sem consentimento váli
 
 **Gates do CI (bloqueantes):** typecheck sem erro · Biome limpo · Vitest verde · axe-core sem violação séria ou crítica · `vw_pendencia_publicacao` vazia · Lighthouse CI ≥ 90 em Performance, Acessibilidade, Boas Práticas e SEO · build concluído.
 
+> **Lighthouse CI: exigido, temporariamente não executado.** O gate continua valendo e
+> nenhum critério foi rebaixado, mas o passo saiu do workflow em 2026-09-01 porque
+> `@lhci/cli` nunca foi instalado. A implementação pertence ao item 26 do backlog (§10,
+> Fase 4). Detalhes e o que falta além da dependência: `docs/divida-documental.md` §4.
+
 **Definição de pronto por tarefa:**
 - [ ] Critérios de aceite do arquivo da tarefa atendidos
 - [ ] `pnpm verificar` passa localmente
