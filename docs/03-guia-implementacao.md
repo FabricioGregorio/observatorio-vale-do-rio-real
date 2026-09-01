@@ -98,7 +98,9 @@ observatorio-vale-do-rio-real/
     └── gerar-hashes.ts
 ```
 
-**Regra de ouro da estrutura:** apenas `src/dados/consultas/*` importa o cliente do banco. Componente que faz query é rejeitado no review. Isso mantém possível o objetivo de gerar tudo em build time.
+**Regra de ouro da estrutura:** no **código de aplicação**, apenas `src/dados/consultas/*` importa o cliente do banco. Componente, página ou rota que faz query é rejeitado no review. Isso mantém possível o objetivo de gerar tudo em build time, e é por isso que a regra existe.
+
+A regra governa o **caminho de renderização**, não o repositório inteiro. **Scripts de manutenção** — espelhamento, catalogação, importação, seed, em `scripts/` e `db/` — podem importar `src/dados/cliente.ts`, desde que: usem `DATABASE_URL`; não executem DDL; e não sejam chamados por nenhum código que renderize página. O site público continua sem consultar o PostgreSQL em tempo de requisição (ADR-001).
 
 ---
 
@@ -139,45 +141,19 @@ Escala 1.25, pesos intencionais, `text-wrap: balance` em títulos.
 
 ## 4. `AGENTS.md` — contrato do agente
 
-Criar na raiz, com este conteúdo. `CLAUDE.md`, `GEMINI.md` e `.github/copilot-instructions.md` contêm apenas uma linha apontando para ele, para que a regra viva em um único arquivo.
+O contrato vive em **`AGENTS.md`, na raiz do repositório**, e é a **fonte normativa
+única**. `CLAUDE.md`, `GEMINI.md` e `.github/copilot-instructions.md` contêm apenas uma
+linha apontando para ele, para que a regra viva em um único arquivo.
 
-```markdown
-# Contrato de trabalho — Observatório do Vale do Rio Real
+Este guia **não reproduz** o conteúdo do `AGENTS.md`. Até 2026-08-31 esta seção trazia
+uma cópia integral, e a cópia divergiu do original — mantinha a redação antiga da regra
+de acesso ao banco e não tinha as regras posteriores sobre `drizzle-kit push`, revisão
+de migração destrutiva e conteúdo editorial. Duas versões da mesma lista divergem de
+novo, e num projeto operado por agentes a versão errada é obedecida sem ninguém
+perceber. Por isso a cópia foi substituída por esta referência.
 
-Projeto financiado por edital público (PNAB nº 02/2025), com prestação de contas
-à FUNCAP/SE. O site é prova documental de execução. Erro aqui tem consequência
-jurídica e financeira, não só técnica.
-
-## Antes de qualquer tarefa
-1. Ler `docs/01-arquitetura-informacao.md` e `docs/02-arquitetura-banco.md`.
-2. Ler o arquivo da tarefa em `docs/tarefas/`.
-3. Se a tarefa contradisser a documentação, PARAR e perguntar. Não improvisar.
-
-## Nunca
-- Alterar migração já aplicada. Correção é sempre nova migração.
-- Usar `any`, `@ts-ignore` ou desabilitar regra de lint para fazer passar.
-- Acessar o banco fora de `src/dados/consultas/`.
-- Inventar nome ou versão de pacote. Instalar por `pnpm add <pacote>@latest`.
-- Commitar segredo, `.env` ou chave de serviço.
-- Criar dado fictício ("Lorem ipsum", equipamento inventado, entrevista falsa).
-  Conteúdo ausente é `null` com estado vazio explícito, jamais placeholder plausível.
-- Renderizar imagem sem `alt`, ou áudio sem transcrição vinculada.
-- Introduzir cor ou fonte fora de `src/estilos/tokens.css`.
-- Adicionar script de terceiro que faça rastreio ou grave cookie.
-
-## Sempre
-- TypeScript estrito; validar toda entrada externa com Zod.
-- Server Components por padrão; `"use client"` só com justificativa no PR.
-- Buscar dados em build time; nunca consultar banco em tempo de requisição.
-- Escrever teste junto com a funcionalidade, não depois.
-- Rodar `pnpm verificar` antes de abrir PR. Falhou, não abre.
-- Escrever em pt-BR: identificadores de domínio, comentários, textos de UI.
-- Diff pequeno. Uma tarefa, um PR.
-
-## Se ficar em dúvida
-Escreva a dúvida no PR e entregue a parte que está certa.
-Uma pergunta custa minutos; uma suposição errada em prestação de contas custa o edital.
-```
+Em caso de dúvida sobre uma regra de trabalho, a resposta está em `AGENTS.md` — nunca
+aqui.
 
 ---
 
@@ -213,6 +189,19 @@ export async function listarAnexosPublicados(): Promise<AnexoPublico[]> {
 3. Migrações geradas por `drizzle-kit generate`, revisadas à mão, aplicadas no CI. Migração aplicada é imutável.
 4. `db/seed.ts` popula municípios, equipamentos, pessoas, temas, metas, cronograma e as sete visitas com os dados reais do Relatório Parcial. Idempotente, com `ON CONFLICT DO NOTHING`.
 5. Views (`vw_anexo_publico`, `vw_pendencia_publicacao`, `mv_busca`) são criadas por migração e consumidas via Drizzle como tabelas somente leitura.
+6. **Migração versionada é o único mecanismo de alteração de schema.** Os comandos permitidos são `pnpm gerar-migracao` (`drizzle-kit generate`) e `pnpm migrar` (`drizzle-kit migrate`). **`drizzle-kit push` e `drizzle-kit introspect` são proibidos em qualquer ambiente** — o `push` reconcilia o banco real contra `db/schema.ts` e apaga o que não estiver lá; o `introspect` não serve como sincronização automática. Migração gerada é sempre revisada à mão antes de ser aceita, e migração já aplicada é imutável: correção é uma migração nova.
+7. **O snapshot do Drizzle não descreve o banco inteiro.** Extensões, funções, triggers e views ficam fora de `db/migrations/meta/*_snapshot.json`. Hoje estão nessa condição: `pgcrypto`, `citext`, `unaccent`, `sem_acento()`, `set_atualizado_em()`, os cinco `trg_atualizado_em` e `vw_anexo_publico`. Consequências que valem como regra:
+   - Esses objetos são criados ou alterados **exclusivamente por nova migração SQL versionada**, em SQL bruto, como no item 2.
+   - O `generate` nunca os remove, porque não os conhece — mas também **nunca detecta que sumiram**. Não existe verificação automática de drift para eles; a conferência é humana.
+   - Para consumir uma view pelo Drizzle, declará-la como **existente** (`.existing()`), nunca como objeto a criar. Declarada como nova, o `generate` emite um `CREATE VIEW` que falha contra a view já presente no banco.
+8. **`DATABASE_URL_MIGRACAO` é exclusiva de DDL.** Só o Drizzle Kit e as migrações a usam. Script de manutenção que apenas lê e escreve linhas — espelhamento, importação, seed — usa `DATABASE_URL`, o role da aplicação, sem DDL. Precisar de DDL num script é sinal de que aquilo deveria ser uma migração. Ver ADR-007.
+
+**Revisão obrigatória de migração destrutiva.** Migração que contenha `DROP`, `ALTER`, mudança de tipo de coluna ou remoção de coluna só é aceita depois de o PR responder, por escrito:
+
+- [ ] A coluna é usada por alguma view? `vw_anexo_publico` depende de colunas de `documento`, `documento_arquivo` e `arquivo`. O PostgreSQL recusa alterar o tipo de coluna usada por view, e o erro aparece só no `migrate` — o `generate` produz o SQL sem reclamar.
+- [ ] A alteração toca função usada por coluna gerada? `documento.busca` depende de `sem_acento()`; mexer na função quebra a coluna.
+- [ ] A migração altera ou remove trigger ou view? Então recria os dois explicitamente, no mesmo arquivo e na ordem correta.
+- [ ] A tabela tem `trg_atualizado_em`? Renomear a tabela ou a coluna `atualizado_em` desliga o trigger em silêncio.
 
 **Gate obrigatório do CI:**
 
@@ -241,6 +230,11 @@ Anexo obrigatório sem espelho local, ou áudio público sem consentimento váli
 ```
 
 **Gates do CI (bloqueantes):** typecheck sem erro · Biome limpo · Vitest verde · axe-core sem violação séria ou crítica · `vw_pendencia_publicacao` vazia · Lighthouse CI ≥ 90 em Performance, Acessibilidade, Boas Práticas e SEO · build concluído.
+
+> **Lighthouse CI: exigido, temporariamente não executado.** O gate continua valendo e
+> nenhum critério foi rebaixado, mas o passo saiu do workflow em 2026-09-01 porque
+> `@lhci/cli` nunca foi instalado. A implementação pertence ao item 26 do backlog (§10,
+> Fase 4). Detalhes e o que falta além da dependência: `docs/divida-documental.md` §4.
 
 **Definição de pronto por tarefa:**
 - [ ] Critérios de aceite do arquivo da tarefa atendidos
@@ -304,33 +298,34 @@ Cada tarefa vira um arquivo em `docs/tarefas/NN-nome.md` no formato: *objetivo �
 2. `tokens.css` e escala tipográfica conforme §3, com página de referência visual em `/dev/estilos`
 3. Layout base: cabeçalho, rodapé com créditos de fomento, skip link, navegação por teclado
 4. Drizzle + conexão + migração 0001 (extensões, enums, funções, triggers)
-5. Migração 0002: `arquivo`, `documento`, `documento_arquivo` + view `vw_anexo_publico`
+5. Migração 0002: `arquivo`, `municipio`, `pessoa`, `equipamento`, `consentimento`, `documento`, `documento_arquivo` + view `vw_anexo_publico` (ordem topológica da §16 do doc 02)
 6. Script de espelhamento: baixar do Drive, subir ao storage, calcular SHA-256, registrar em `arquivo`
-7. `/prestacao-de-contas`: tabela mestre, ZIP, versão imprimível
-8. `/anexos.json` e `scripts/verificar-pendencias.ts` como gate de CI
-9. Home v1 com painel de indicadores
+7. Catálogo documental: inventário → `documento` + `documento_arquivo`, com `versao`, `rotulo` e `principal`
+8. `/prestacao-de-contas`: tabela mestre, ZIP, versão imprimível
+9. `/anexos.json` e `scripts/verificar-pendencias.ts` como gate de CI
+10. Home v1 com painel de indicadores
 
 **Fase 2 — Pesquisa e dados**
-10. Migração: `municipio`, `pessoa`, `equipamento`, `consentimento` + seed
-11. `/equipamentos` e `/equipamentos/[slug]` com a ficha assinatura
-12. Migração: `meta`, `meta_evidencia`, `cronograma_atividade`, `indicador` + seed
-13. `/prestacao-de-contas/metas` com semáforo e nota de execução
-14. Pipeline MDX e `/pesquisa/documento-final` capítulo a capítulo
-15. Migração `formulario*` + importador de CSV + `/dados` com dicionário e exportação
+11. Seed de `municipio`, `pessoa`, `equipamento` e `consentimento` — as tabelas já vêm da migração 0002
+12. `/equipamentos` e `/equipamentos/[slug]` com a ficha assinatura
+13. Migração: `meta`, `meta_evidencia`, `cronograma_atividade`, `indicador` + seed
+14. `/prestacao-de-contas/metas` com semáforo e nota de execução
+15. Pipeline MDX e `/pesquisa/documento-final` capítulo a capítulo
+16. Migração `formulario*` + importador de CSV + `/dados` com dicionário e exportação
 
 **Fase 3 — Território e voz**
-16. Migração: `visita`, `midia`, `entrevista`, `entrevista_trecho` + seed das sete visitas
-17. `/campo`: visitas, galeria acessível, entrevistas com transcrição
-18. Migração `temporada`/`episodio` + `/podobservar` com player acessível e capítulos
-19. Feed RSS 2.0 com namespace iTunes em `/api/podcast/rss`
-20. `/mapa` com Leaflet, camadas por situação do equipamento, alternativa em lista para leitor de tela
+17. Migração: `visita`, `midia`, `entrevista`, `entrevista_trecho` + seed das sete visitas
+18. `/campo`: visitas, galeria acessível, entrevistas com transcrição
+19. Migração `temporada`/`episodio` + `/podobservar` com player acessível e capítulos
+20. Feed RSS 2.0 com namespace iTunes em `/api/podcast/rss`
+21. `/mapa` com Leaflet, camadas por situação do equipamento, alternativa em lista para leitor de tela
 
 **Fase 4 — Educação e permanência**
-21. `tema`, `termo`, `material_didatico`, `acao_extensao` + `/educacao`
-22. `contribuicao_escuta` com moderação, expurgo por `pg_cron` e Server Action protegida
-23. `/imprensa`, `/acessibilidade`, `/privacidade`, `/contato`
-24. Busca interna sobre `mv_busca`
-25. Auditoria WCAG final, Lighthouse CI, depósito no Zenodo, arquivamento no Internet Archive
+22. `tema`, `termo`, `material_didatico`, `acao_extensao` + `/educacao`
+23. `contribuicao_escuta` com moderação, expurgo por `pg_cron` e Server Action protegida
+24. `/imprensa`, `/acessibilidade`, `/privacidade`, `/contato`
+25. Busca interna sobre `mv_busca`
+26. Auditoria WCAG final, Lighthouse CI, depósito no Zenodo, arquivamento no Internet Archive
 
 ---
 
@@ -340,7 +335,7 @@ Cada tarefa vira um arquivo em `docs/tarefas/NN-nome.md` no formato: *objetivo �
 
 ```
 Leia docs/01-arquitetura-informacao.md, docs/02-arquitetura-banco.md, AGENTS.md
-e docs/tarefas/07-sala-do-avaliador.md.
+e docs/tarefas/08-sala-do-avaliador.md.
 
 Implemente apenas essa tarefa. Arquivos permitidos: os listados no arquivo da tarefa.
 
@@ -369,7 +364,8 @@ Depois, atualize db/schema.ts e rode `pnpm tipos`.
 ```
 Revise o diff do PR #<n> contra AGENTS.md e docs/02-arquitetura-banco.md.
 Aponte especificamente: constraint do documento que não foi implementada,
-acesso a banco fora de src/dados/consultas/, `any` ou lint suprimido,
+acesso a banco em código de aplicação fora de src/dados/consultas/,
+`any` ou lint suprimido,
 dado fictício, cor ou fonte fora de tokens.css, imagem sem alt.
 Não corrija nada; apenas liste os achados com arquivo e linha.
 ```

@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788118336353,
+      "tag": "0001_fundacao",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788124135522,
+      "tag": "0002_nucleo_prestacao_contas",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1788266516300,
+      "tag": "0003_gate_pendencias",
+      "breakpoints": true
+    }
+  ]
+}

@@ -1,0 +1,1096 @@
+{
+  "id": "648706b0-b63d-4bbc-a8e2-795b7ca55df0",
+  "prevId": "91c21786-f1f9-4d6e-8ada-1ef56ca8f7ce",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.arquivo": {
+      "name": "arquivo",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "chave_storage": {
+          "name": "chave_storage",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "url_publica": {
+          "name": "url_publica",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nome_original": {
+          "name": "nome_original",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tipo_midia": {
+          "name": "tipo_midia",
+          "type": "tipo_midia",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mime_type": {
+          "name": "mime_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bytes": {
+          "name": "bytes",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sha256": {
+          "name": "sha256",
+          "type": "char(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "duracao_seg": {
+          "name": "duracao_seg",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "largura_px": {
+          "name": "largura_px",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "altura_px": {
+          "name": "altura_px",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "origem_url": {
+          "name": "origem_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "origem_sistema": {
+          "name": "origem_sistema",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "espelhado_em": {
+          "name": "espelhado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_arquivo_sha256": {
+          "name": "idx_arquivo_sha256",
+          "columns": [
+            {
+              "expression": "sha256",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_arquivo_tipo": {
+          "name": "idx_arquivo_tipo",
+          "columns": [
+            {
+              "expression": "tipo_midia",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "arquivo_chave_storage_unique": {
+          "name": "arquivo_chave_storage_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "chave_storage"
+          ]
+        },
+        "arquivo_url_publica_unique": {
+          "name": "arquivo_url_publica_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "url_publica"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "arquivo_bytes_check": {
+          "name": "arquivo_bytes_check",
+          "value": "\"arquivo\".\"bytes\" > 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.consentimento": {
+      "name": "consentimento",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "pessoa_id": {
+          "name": "pessoa_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tipo": {
+          "name": "tipo",
+          "type": "tipo_consentimento",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "concedido_em": {
+          "name": "concedido_em",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "escopo": {
+          "name": "escopo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "termo_id": {
+          "name": "termo_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "revogado_em": {
+          "name": "revogado_em",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "observacao": {
+          "name": "observacao",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "consentimento_pessoa_id_pessoa_id_fk": {
+          "name": "consentimento_pessoa_id_pessoa_id_fk",
+          "tableFrom": "consentimento",
+          "tableTo": "pessoa",
+          "columnsFrom": [
+            "pessoa_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "consentimento_termo_id_arquivo_id_fk": {
+          "name": "consentimento_termo_id_arquivo_id_fk",
+          "tableFrom": "consentimento",
+          "tableTo": "arquivo",
+          "columnsFrom": [
+            "termo_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "consentimento_pessoa_id_tipo_key": {
+          "name": "consentimento_pessoa_id_tipo_key",
+          "nullsNotDistinct": false,
+          "columns": [
+            "pessoa_id",
+            "tipo"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.documento": {
+      "name": "documento",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "slug": {
+          "name": "slug",
+          "type": "citext",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "titulo": {
+          "name": "titulo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tipo": {
+          "name": "tipo",
+          "type": "tipo_documento",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "resumo": {
+          "name": "resumo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "autoria": {
+          "name": "autoria",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "data_referencia": {
+          "name": "data_referencia",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "equipamento_id": {
+          "name": "equipamento_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "municipio_id": {
+          "name": "municipio_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "licenca": {
+          "name": "licenca",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'CC BY-SA 4.0'"
+        },
+        "exigido_pelo_edital": {
+          "name": "exigido_pelo_edital",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "ordem_anexo": {
+          "name": "ordem_anexo",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "status_publicacao",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'rascunho'"
+        },
+        "publicado_em": {
+          "name": "publicado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "arquivado_em": {
+          "name": "arquivado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "busca": {
+          "name": "busca",
+          "type": "tsvector",
+          "primaryKey": false,
+          "notNull": false,
+          "generated": {
+            "as": "to_tsvector('portuguese', sem_acento(coalesce(titulo,'') || ' ' || coalesce(resumo,'')))",
+            "type": "stored"
+          }
+        }
+      },
+      "indexes": {
+        "idx_documento_busca": {
+          "name": "idx_documento_busca",
+          "columns": [
+            {
+              "expression": "busca",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "gin",
+          "with": {}
+        },
+        "idx_documento_tipo": {
+          "name": "idx_documento_tipo",
+          "columns": [
+            {
+              "expression": "tipo",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"documento\".\"status\" = 'publicado'",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_documento_anexo": {
+          "name": "idx_documento_anexo",
+          "columns": [
+            {
+              "expression": "ordem_anexo",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"documento\".\"exigido_pelo_edital\" AND \"documento\".\"status\" = 'publicado'",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "documento_equipamento_id_equipamento_id_fk": {
+          "name": "documento_equipamento_id_equipamento_id_fk",
+          "tableFrom": "documento",
+          "tableTo": "equipamento",
+          "columnsFrom": [
+            "equipamento_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "documento_municipio_id_municipio_id_fk": {
+          "name": "documento_municipio_id_municipio_id_fk",
+          "tableFrom": "documento",
+          "tableTo": "municipio",
+          "columnsFrom": [
+            "municipio_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "documento_slug_unique": {
+          "name": "documento_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "slug"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "publicado_exige_data": {
+          "name": "publicado_exige_data",
+          "value": "\"documento\".\"status\" <> 'publicado' OR \"documento\".\"publicado_em\" IS NOT NULL"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.documento_arquivo": {
+      "name": "documento_arquivo",
+      "schema": "",
+      "columns": {
+        "documento_id": {
+          "name": "documento_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "arquivo_id": {
+          "name": "arquivo_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "versao": {
+          "name": "versao",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
+        },
+        "rotulo": {
+          "name": "rotulo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "principal": {
+          "name": "principal",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        }
+      },
+      "indexes": {
+        "idx_doc_arquivo_principal": {
+          "name": "idx_doc_arquivo_principal",
+          "columns": [
+            {
+              "expression": "documento_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "where": "\"documento_arquivo\".\"principal\"",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "documento_arquivo_documento_id_documento_id_fk": {
+          "name": "documento_arquivo_documento_id_documento_id_fk",
+          "tableFrom": "documento_arquivo",
+          "tableTo": "documento",
+          "columnsFrom": [
+            "documento_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "documento_arquivo_arquivo_id_arquivo_id_fk": {
+          "name": "documento_arquivo_arquivo_id_arquivo_id_fk",
+          "tableFrom": "documento_arquivo",
+          "tableTo": "arquivo",
+          "columnsFrom": [
+            "arquivo_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "documento_arquivo_documento_id_arquivo_id_pk": {
+          "name": "documento_arquivo_documento_id_arquivo_id_pk",
+          "columns": [
+            "documento_id",
+            "arquivo_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.equipamento": {
+      "name": "equipamento",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "slug": {
+          "name": "slug",
+          "type": "citext",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nome": {
+          "name": "nome",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nome_curto": {
+          "name": "nome_curto",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tipo": {
+          "name": "tipo",
+          "type": "tipo_equipamento",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "situacao": {
+          "name": "situacao",
+          "type": "situacao_equipamento",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'ativo'"
+        },
+        "municipio_id": {
+          "name": "municipio_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "povoado": {
+          "name": "povoado",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "latitude": {
+          "name": "latitude",
+          "type": "numeric(9, 6)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "longitude": {
+          "name": "longitude",
+          "type": "numeric(9, 6)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ator_chave_id": {
+          "name": "ator_chave_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sintese": {
+          "name": "sintese",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "historico": {
+          "name": "historico",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "destaque_home": {
+          "name": "destaque_home",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "status": {
+          "name": "status",
+          "type": "status_publicacao",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'rascunho'"
+        },
+        "publicado_em": {
+          "name": "publicado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "equipamento_municipio_id_municipio_id_fk": {
+          "name": "equipamento_municipio_id_municipio_id_fk",
+          "tableFrom": "equipamento",
+          "tableTo": "municipio",
+          "columnsFrom": [
+            "municipio_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
+        },
+        "equipamento_ator_chave_id_pessoa_id_fk": {
+          "name": "equipamento_ator_chave_id_pessoa_id_fk",
+          "tableFrom": "equipamento",
+          "tableTo": "pessoa",
+          "columnsFrom": [
+            "ator_chave_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "equipamento_slug_unique": {
+          "name": "equipamento_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "slug"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "coordenadas_completas": {
+          "name": "coordenadas_completas",
+          "value": "(\"equipamento\".\"latitude\" IS NULL) = (\"equipamento\".\"longitude\" IS NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.municipio": {
+      "name": "municipio",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "slug": {
+          "name": "slug",
+          "type": "citext",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nome": {
+          "name": "nome",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "uf": {
+          "name": "uf",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'SE'"
+        },
+        "codigo_ibge": {
+          "name": "codigo_ibge",
+          "type": "char(7)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "regiao": {
+          "name": "regiao",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "populacao": {
+          "name": "populacao",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sintese": {
+          "name": "sintese",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "municipio_slug_unique": {
+          "name": "municipio_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "slug"
+          ]
+        },
+        "municipio_codigo_ibge_unique": {
+          "name": "municipio_codigo_ibge_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "codigo_ibge"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.pessoa": {
+      "name": "pessoa",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "slug": {
+          "name": "slug",
+          "type": "citext",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nome": {
+          "name": "nome",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tipo": {
+          "name": "tipo",
+          "type": "tipo_pessoa",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cargo": {
+          "name": "cargo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "instituicao": {
+          "name": "instituicao",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bio_curta": {
+          "name": "bio_curta",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "foto_id": {
+          "name": "foto_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "exibir_no_site": {
+          "name": "exibir_no_site",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "contato_email": {
+          "name": "contato_email",
+          "type": "citext",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "pessoa_foto_id_arquivo_id_fk": {
+          "name": "pessoa_foto_id_arquivo_id_fk",
+          "tableFrom": "pessoa",
+          "tableTo": "arquivo",
+          "columnsFrom": [
+            "foto_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "pessoa_slug_unique": {
+          "name": "pessoa_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "slug"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.situacao_equipamento": {
+      "name": "situacao_equipamento",
+      "schema": "public",
+      "values": [
+        "ativo",
+        "intermitente",
+        "desativado",
+        "potencial"
+      ]
+    },
+    "public.status_meta": {
+      "name": "status_meta",
+      "schema": "public",
+      "values": [
+        "alcancada",
+        "superada",
+        "em_desenvolvimento",
+        "nao_iniciada",
+        "substituida"
+      ]
+    },
+    "public.status_moderacao": {
+      "name": "status_moderacao",
+      "schema": "public",
+      "values": [
+        "pendente",
+        "aprovado",
+        "rejeitado",
+        "spam"
+      ]
+    },
+    "public.status_publicacao": {
+      "name": "status_publicacao",
+      "schema": "public",
+      "values": [
+        "rascunho",
+        "em_revisao",
+        "publicado",
+        "arquivado"
+      ]
+    },
+    "public.tipo_consentimento": {
+      "name": "tipo_consentimento",
+      "schema": "public",
+      "values": [
+        "uso_imagem",
+        "uso_audio",
+        "dados_pessoais",
+        "publicacao_entrevista"
+      ]
+    },
+    "public.tipo_documento": {
+      "name": "tipo_documento",
+      "schema": "public",
+      "values": [
+        "relatorio_tecnico",
+        "diagnostico_interno",
+        "relato_campo",
+        "formulario_modelo",
+        "relatorio_parcial",
+        "documento_final",
+        "modelagem_estatistica",
+        "entrevista_transcricao",
+        "plano_aula",
+        "identidade_visual",
+        "painel_dados",
+        "outro"
+      ]
+    },
+    "public.tipo_equipamento": {
+      "name": "tipo_equipamento",
+      "schema": "public",
+      "values": [
+        "ecoparque",
+        "museu",
+        "centro_cultural",
+        "comunidade",
+        "rota_turistica",
+        "orgao_publico"
+      ]
+    },
+    "public.tipo_formulario": {
+      "name": "tipo_formulario",
+      "schema": "public",
+      "values": [
+        "rotina_funcionamento",
+        "publico_consumidor"
+      ]
+    },
+    "public.tipo_midia": {
+      "name": "tipo_midia",
+      "schema": "public",
+      "values": [
+        "pdf",
+        "audio",
+        "imagem",
+        "video",
+        "planilha",
+        "apresentacao",
+        "dataset",
+        "outro"
+      ]
+    },
+    "public.tipo_pessoa": {
+      "name": "tipo_pessoa",
+      "schema": "public",
+      "values": [
+        "pesquisador",
+        "ator_chave",
+        "agente_publico",
+        "lideranca_comunitaria",
+        "colaborador"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
