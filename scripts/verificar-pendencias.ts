@@ -113,12 +113,12 @@ export function semCredencial(ehCi: boolean): Diagnostico {
  * chama a satisfazer as chaves que o Next declara como obrigatórias, o que
  * complicaria o teste sem ganhar nada — a função lê uma variável só.
  */
-export function emCi(ci: string | undefined = process.env.CI): boolean {
+export function emCi(ci: string | undefined): boolean {
   return Boolean(ci) && ci !== "false";
 }
 
 async function principal(): Promise<Diagnostico> {
-  if (!process.env.DATABASE_URL) return semCredencial(emCi());
+  if (!process.env.DATABASE_URL) return semCredencial(emCi(process.env.CI));
 
   const { listarPendenciasDePublicacao } = await import(
     "../src/dados/consultas/pendencias"
