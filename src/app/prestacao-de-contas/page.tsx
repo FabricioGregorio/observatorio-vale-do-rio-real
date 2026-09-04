@@ -41,7 +41,11 @@ export default async function SalaDoAvaliador() {
         <ul className="flex list-none flex-wrap gap-x-6 gap-y-2 p-0">
           <li>
             {zip ? (
-              <a href={zip} style={{ color: "var(--color-link)" }}>
+              <a
+                href={zip}
+                className="underline"
+                style={{ color: "var(--color-link)" }}
+              >
                 Baixar tudo (.zip)
               </a>
             ) : (
@@ -51,12 +55,22 @@ export default async function SalaDoAvaliador() {
             )}
           </li>
           <li>
-            <a href="/anexos.json" style={{ color: "var(--color-link)" }}>
+            <a
+              href="/anexos.json"
+              className="underline"
+              style={{ color: "var(--color-link)" }}
+            >
               /anexos.json — versão legível por máquina
             </a>
           </li>
           <li>
-            <Link href="/prestacao-de-contas/imprimir">Versão imprimível</Link>
+            <Link
+              href="/prestacao-de-contas/imprimir"
+              className="underline"
+              style={{ color: "var(--color-link)" }}
+            >
+              Versão imprimível
+            </Link>
           </li>
         </ul>
       </nav>

@@ -56,14 +56,17 @@ duas URLs no `.env.example`.
 
 ---
 
-## 3. Referências a números antigos de tarefa — **não existe**
+## 3. Referências a números antigos de tarefa — resolvido
 
-Verificado em 2026-08-31 por varredura em `docs/*.md` e `docs/decisoes/*.md`: **nenhuma
-ocorrência remanescente**. A renumeração de 2026-08-30 (07→08, 08→09, 09→10, com a nova
-07 de catálogo documental) foi completa, incluindo o backlog do doc 03 §10 e a
-referência do doc 03 §11.
+A varredura de 2026-08-31 cobria apenas `docs/*.md` e `docs/decisoes/*.md`; ela não
+incluía `docs/tarefas/*.md` e, por isso, não podia sustentar a conclusão de que a
+renumeração estava completa. Em 2026-09-02 a cobertura documental passou a incluir
+também `docs/tarefas/*.md`.
 
-Item mantido aqui apenas para registrar que foi conferido e está resolvido.
+A nova varredura encontrou em `docs/tarefas/10-home-indicadores.md` a referência antiga
+à criação da tabela `indicador` na Tarefa 12. A referência foi corrigida para Tarefa 13.
+O item permanece registrado para documentar a lacuna de cobertura anterior e sua
+correção.
 
 ---
 

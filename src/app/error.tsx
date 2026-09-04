@@ -39,7 +39,13 @@ export default function Erro({
         >
           Tentar de novo
         </button>
-        <Link href="/prestacao-de-contas">Ir para a Sala do Avaliador</Link>
+        <Link
+          href="/prestacao-de-contas"
+          className="underline"
+          style={{ color: "var(--color-link)" }}
+        >
+          Ir para a Sala do Avaliador
+        </Link>
       </div>
       {error.digest ? (
         <p className="meta-ficha">Código da ocorrência: {error.digest}</p>

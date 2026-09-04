@@ -16,6 +16,15 @@ import { MENU_RODAPE } from "../../lib/navegacao";
  * aproximado: um bloco falso seria pior do que a ausência declarada.
  *
  * Ver `docs/tarefas/03-layout-base.md`, seção "Fatiamento".
+ *
+ * O foco recebe `focus-visible:outline-destaque`: o contorno padrão é anil, e
+ * anil sobre mata fica em torno de 1,25:1 — o indicador some justamente onde
+ * quem navega por teclado precisa dele. Milho sobre mata dá 7,4:1, já
+ * verificado em `tokens.css`. Nenhum token novo, nenhuma cor nova. *
+ * Os links não pré-carregam: `prefetch={false}`. A auditoria 10B.3.2 mediu
+ * 28.691 bytes por visita em requisições `?_rsc=` para pré-carregar os oito
+ * destinos do menu — páginas que hoje são stubs. O menu está em toda rota, então
+ * o custo se repetia em todas.
  */
 export function Rodape() {
   return (
@@ -32,6 +41,8 @@ export function Rodape() {
               <li key={item.href}>
                 <Link
                   href={item.href}
+                  prefetch={false}
+                  className="focus-visible:outline-destaque"
                   style={{ color: "var(--color-texto-inverso)" }}
                 >
                   {item.rotulo}

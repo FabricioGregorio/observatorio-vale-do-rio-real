@@ -333,7 +333,11 @@ export default function ReferenciaVisual() {
           interativo mostra contorno de 3px em <code>--color-foco</code>.
         </p>
         <div className="flex flex-wrap items-center gap-4">
-          <a href="#conteudo" style={{ color: "var(--color-link)" }}>
+          <a
+            href="#conteudo"
+            className="underline"
+            style={{ color: "var(--color-link)" }}
+          >
             Link de exemplo
           </a>
           <button

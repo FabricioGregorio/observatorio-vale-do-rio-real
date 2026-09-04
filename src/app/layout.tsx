@@ -19,22 +19,31 @@ import "../estilos/tokens.css";
  * com a família auto-hospedada, e o `tokens.css` não precisa ser tocado: a
  * lista original continua valendo como fallback se a fonte não carregar.
  *
- * `latin-ext` entra junto de `latin` por causa dos diacríticos do português.
+ * **Só o subset `latin`.** A auditoria 10B.3.2 mediu: `latin-ext` custava
+ * 94.136 bytes por visita, um quarto do peso da Home, e não é necessário para o
+ * português. As faixas Unicode do CSS gerado mostram que a face `latin` cobre
+ * `U+??` — U+0000 a U+00FF —, e todo diacrítico do português vive entre U+00C0 e
+ * U+00FC: á à â ã ç é ê í ó ô õ ú ü e as maiúsculas. A mesma face traz
+ * `U+2000-206F`, que cobre travessão, reticências e aspas tipográficas da copy.
+ * `latin-ext` serve a línguas do Leste Europeu.
+ *
+ * Ressalva registrada: nome próprio com caractere fora do Latin-1, numa citação
+ * bibliográfica por exemplo, cai na fonte de fallback naquele glifo.
  */
 const archivo = Archivo({
-  subsets: ["latin", "latin-ext"],
+  subsets: ["latin"],
   display: "swap",
   variable: "--font-display",
 });
 
 const literata = Literata({
-  subsets: ["latin", "latin-ext"],
+  subsets: ["latin"],
   display: "swap",
   variable: "--font-leitura",
 });
 
 const plexMono = IBM_Plex_Mono({
-  subsets: ["latin", "latin-ext"],
+  subsets: ["latin"],
   weight: ["400", "500"],
   display: "swap",
   variable: "--font-mono",

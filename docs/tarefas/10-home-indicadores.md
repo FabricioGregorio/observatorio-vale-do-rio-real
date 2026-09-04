@@ -15,16 +15,33 @@ máximo dois cliques.
 ## Arquivos permitidos
 
 ```
-src/app/(site)/page.tsx  src/componentes/home/*
+src/app/page.tsx  src/componentes/home/*
 src/dados/consultas/indicadores.ts  content/paginas/home.mdx
 ```
+
+## Decisões de preparação — 2026-09-02
+
+- A Tarefa 10 adapta `src/app/page.tsx`. A migração da rota principal para um grupo
+  `(site)` fica reservada a uma tarefa estrutural futura; `typedRoutes` permanece como
+  está.
+- `src/dados/consultas/indicadores.ts` não será criado antes da tabela `indicador`. Até
+  a Tarefa 13, a seção de indicadores permanece ausente, sem números provisórios.
+- `content/paginas/home.mdx` continua sendo o formato editorial previsto, mas
+  `@next/mdx` não será instalado nesta preparação. Antes da implementação, é preciso
+  confirmar se a Fase 2 já chegou ou aprovar outro formato de consumo.
+- O texto institucional permanece bloqueado até ser fornecido pelo responsável do
+  projeto ou haver autorização explícita para criar somente a estrutura sem conteúdo
+  final.
+- O comparativo entre municípios permanece pendente: não há fonte oficial aprovada
+  para os dados comparativos, portanto a tabela não será implementada.
+- Nenhum componente da Home será iniciado antes da aprovação desta preparação.
 
 ## Critérios de aceite
 
 - [ ] Apresentação do Observatório e do Coletivo "Tobias, sou Eu!", com o comparativo
       entre Tobias Barreto, Itabaianinha e São Cristóvão
 - [ ] Painel de indicadores lido da tabela `indicador` — nenhum número escrito no código
-- [ ] Enquanto a tabela `indicador` não existir (tarefa 12), a seção não é renderizada;
+- [ ] Enquanto a tabela `indicador` não existir (tarefa 13), a seção não é renderizada;
       não usar número provisório
 - [ ] Caminhos visíveis para Sala do Avaliador, PodObservar e A Pesquisa
 - [ ] Abertura fiel à direção "arquivo vivo": sem número gigante com rótulo pequeno sobre

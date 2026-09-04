@@ -114,6 +114,7 @@ export function TabelaAnexos({ anexos }: { anexos: AnexoPublico[] }) {
               >
                 <a
                   href={anexo.linkPermanente}
+                  className="underline"
                   style={{ color: "var(--color-link)" }}
                 >
                   Baixar
@@ -126,6 +127,7 @@ export function TabelaAnexos({ anexos }: { anexos: AnexoPublico[] }) {
                 {anexo.linkOrigem ? (
                   <a
                     href={anexo.linkOrigem}
+                    className="underline"
                     style={{ color: "var(--color-link)" }}
                   >
                     Origem

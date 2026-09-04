@@ -9,6 +9,11 @@
  *
  * Em telas largas o menu do `Cabecalho` fica visível e este componente some,
  * então nada aqui é a única forma de navegar.
+ *
+ * O foco recebe `focus-visible:outline-destaque`: o contorno padrão é anil, e
+ * anil sobre mata fica em torno de 1,25:1 — o indicador some justamente onde
+ * quem navega por teclado precisa dele. Milho sobre mata dá 7,4:1, já
+ * verificado em `tokens.css`. Nenhum token novo, nenhuma cor nova.
  */
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
@@ -48,7 +53,7 @@ export function MenuMobile() {
         aria-expanded={aberto}
         aria-controls={idPainel}
         onClick={() => setAberto((estava) => !estava)}
-        className="meta-ficha border px-3 py-2"
+        className="meta-ficha border px-3 py-2 focus-visible:outline-destaque"
         style={{
           borderColor: "var(--color-texto-inverso)",
           color: "var(--color-texto-inverso)",
@@ -72,8 +77,9 @@ export function MenuMobile() {
               <li key={item.href}>
                 <Link
                   href={item.href}
+                  prefetch={false}
                   onClick={() => setAberto(false)}
-                  className="block px-2 py-2"
+                  className="block px-2 py-2 focus-visible:outline-destaque"
                   style={{ color: "var(--color-texto-inverso)" }}
                 >
                   {item.rotulo}

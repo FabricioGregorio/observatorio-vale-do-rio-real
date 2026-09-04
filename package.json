@@ -27,7 +27,8 @@
     "pg": "^8.23.0",
     "react": "latest",
     "react-dom": "latest",
-    "tailwindcss": "latest"
+    "tailwindcss": "latest",
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@biomejs/biome": "latest",

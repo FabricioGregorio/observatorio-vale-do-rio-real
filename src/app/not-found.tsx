@@ -19,15 +19,31 @@ export default function NaoEncontrado() {
       <nav aria-label="Caminhos a partir do erro">
         <ul className="flex list-none flex-col gap-2 p-0">
           <li>
-            <Link href="/prestacao-de-contas">
+            <Link
+              href="/prestacao-de-contas"
+              className="underline"
+              style={{ color: "var(--color-link)" }}
+            >
               Sala do Avaliador — todos os anexos da prestação de contas
             </Link>
           </li>
           <li>
-            <Link href="/dados">Portal de dados abertos</Link>
+            <Link
+              href="/dados"
+              className="underline"
+              style={{ color: "var(--color-link)" }}
+            >
+              Portal de dados abertos
+            </Link>
           </li>
           <li>
-            <Link href="/">Página inicial</Link>
+            <Link
+              href="/"
+              className="underline"
+              style={{ color: "var(--color-link)" }}
+            >
+              Página inicial
+            </Link>
           </li>
         </ul>
       </nav>

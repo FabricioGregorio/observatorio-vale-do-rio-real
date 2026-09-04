@@ -78,8 +78,9 @@ observatorio-vale-do-rio-real/
 │   ├── app/                          # rotas espelhando o sitemap da §3 do doc 01
 │   │   ├── (site)/
 │   │   ├── prestacao-de-contas/
+│   │   ├── anexos.json/
+│   │   │   └── route.ts               # /anexos.json
 │   │   ├── api/
-│   │   │   ├── anexos/route.ts       # /anexos.json
 │   │   │   └── podcast/rss/route.ts
 │   │   └── layout.tsx
 │   ├── componentes/
@@ -94,9 +95,15 @@ observatorio-vale-do-rio-real/
 │   ├── e2e/
 │   └── a11y/
 └── scripts/
-    ├── verificar-pendencias.ts       # roda vw_pendencia_publicacao
-    └── gerar-hashes.ts
+    ├── espelhar-anexos.ts            # inclui o cálculo de SHA-256
+    └── verificar-pendencias.ts       # roda vw_pendencia_publicacao
 ```
+
+`/anexos.json` usa deliberadamente o segmento pontuado `src/app/anexos.json/route.ts`:
+o contrato público exige literalmente essa URL, sem o prefixo `/api`. Não existe
+`scripts/gerar-hashes.ts`; a responsabilidade de calcular e registrar o SHA-256 foi
+absorvida pelo fluxo existente de espelhamento em `scripts/espelhar-anexos.ts`. Não se
+cria arquivo vazio para simular essa responsabilidade.
 
 **Regra de ouro da estrutura:** no **código de aplicação**, apenas `src/dados/consultas/*` importa o cliente do banco. Componente, página ou rota que faz query é rejeitado no review. Isso mantém possível o objetivo de gerar tudo em build time, e é por isso que a regra existe.
 
