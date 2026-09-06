@@ -209,11 +209,65 @@ com 11 participantes representáveis. 14/14 validações conformes.
 Estados: 1 `IMPEDIDO` · 11 `RESTRITO` · 3 `ESPELHAVEL` · 18 `PENDENTE` ·
 **0 `PUBLICAVEL`**.
 
+## Prompt 3.2 — checkpoint e primeira carga documental
+
+Executado em **2026-09-06**.
+
+### Checkpoint Git
+
+| | |
+|---|---|
+| Commit | `8d8621e` — *feat: formaliza modelo documental e inventario canonico* |
+| Branch | `feat/home-indicadores` |
+| Escopo | 55 caminhos: Prompts 1 a 3.1 |
+| Fora do commit | `ARCHITECTURE.md`, criado em sessão anterior e fora do escopo 2.3–3.1 |
+| Push | **não** |
+
+### Primeira carga documental — CONCLUÍDA
+
+Executada com `DATABASE_URL_MANUTENCAO`, em transação, com **31 invariantes
+conferidas dentro da transação** e novamente após o COMMIT.
+
+| | |
+|---|---|
+| Migrations aplicadas | `0001`–`0005` |
+| `documento` antes | 0 |
+| `documento` depois | **33** |
+| Natureza | 28 `item_exigido` · 3 `evidencia_complementar` · 2 `item_nao_exigido` |
+| Estado | 1 `IMPEDIDO` · 11 `RESTRITO` · 3 `ESPELHAVEL` · 18 `PENDENTE` · **0 `PUBLICAVEL`** |
+| Revisão de privacidade | 33 `pendente` |
+| `vw_anexo_publico` | **0** |
+| `vw_pendencia_publicacao` | 0 |
+| `arquivo` / `documento_arquivo` | **0 / 0** |
+| `pessoa` / `consentimento` | **0 / 0** |
+
+Derivações persistidas: `A05 ← A02` e `A06 ← A03`, ambas `extracao_secao`.
+
+`arquivo` ficou em zero **por decisão**: `url_publica` é `NOT NULL UNIQUE` e não
+existe URL própria antes do espelhamento. Inventar uma seria fabricar prova.
+
+Idempotência conferida: o segundo dry-run propõe **0 INSERT** e reconhece os 33
+existentes.
+
+Manifesto gerado em memória: **nenhum item elegível ao público**. Nenhum
+upload, nenhuma URL pública, nenhum ZIP.
+
+### Onde a classificação vive
+
+`src/dados/classificacao-documental.ts`, versionado. O `Status` da planilha tem
+outro vocabulário e o mapeamento não é 1 para 1 — `B02` e `A02` são ambos
+`Disponível` e recebem estados diferentes. O carregador não infere estado: item
+sem classificação aprovada faz o script falhar.
+
 ## Próxima tarefa autorizada
 
-**Autorizar o bloco A** — carga documental dos 33 itens, com
-`DATABASE_URL_MANUTENCAO`. O bloco B vem depois, e depende da sua decisão sobre
-criar as onze linhas de `pessoa`.
+Duas frentes, na sua ordem de preferência:
+
+1. **Carga de `pessoa` e `consentimento`** (bloco B) — 11 participantes, 10 com
+   evidência verificável, 5 com data comprovada. Depende da sua autorização
+   para criar as 11 linhas de `pessoa` com `nome` e `tipo`.
+2. **Espelhamento** — subir os originais ao R2 e criar `arquivo` com hash e URL
+   permanente, o que destrava `A02`, `A04` e `D01` de `ESPELHAVEL`.
 
 ---
 
