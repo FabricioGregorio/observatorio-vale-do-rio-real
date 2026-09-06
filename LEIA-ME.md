@@ -2,6 +2,15 @@
 
 Conteúdo pronto para virar o commit inicial do repositório.
 
+## Referências operacionais vigentes
+
+Duas, e só duas:
+
+- `PLANO_EXECUCAO_OBSERVATORIO.md` — como o projeto é conduzido;
+- `ESTADO_ATUAL_PROJETO.md` — onde o projeto está agora.
+
+Versões superadas ficam em `docs/historico/`, apenas para histórico.
+
 ## O que tem aqui
 
 ```

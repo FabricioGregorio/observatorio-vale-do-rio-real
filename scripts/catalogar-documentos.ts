@@ -28,8 +28,10 @@ import {
   categoriaDoItem,
   type ItemInventario,
   lerInventario,
+  type NaturezaDocumento,
   slugDoItem,
 } from "../src/lib/espelhamento";
+import { exigirDerivacaoAtual } from "../src/lib/inventario-derivado";
 
 /** A primeira catalogação usa v1, como a chave gravada pela Tarefa 06. */
 export const VERSAO = 1;
@@ -73,6 +75,46 @@ export function exigidoPeloEdital(item: ItemInventario): boolean {
   throw new Error(
     `"Exigido pelo edital" com valor inesperado: "${item.exigidoPeloEdital}".`,
   );
+}
+
+/**
+ * `natureza` do item, coerente com `Exigido pelo edital` por construção.
+ *
+ * O CHECK `documento_natureza_coerente` da migração 0004 rejeita divergência
+ * entre os dois, então a coerência é garantida aqui, e não descoberta na hora
+ * do INSERT.
+ *
+ * Coluna vazia deriva do booleano, sempre para o valor conservador:
+ * `item_nao_exigido` não infla o denominador dos 28 itens exigidos. Evidência
+ * complementar exige marcação explícita — não se deduz.
+ */
+export function naturezaDoItem(item: ItemInventario): NaturezaDocumento {
+  const exigido = exigidoPeloEdital(item);
+  const declarada = item.natureza.trim().toLowerCase();
+
+  if (declarada === "") {
+    return exigido ? "item_exigido" : "item_nao_exigido";
+  }
+
+  if (
+    declarada !== "item_exigido" &&
+    declarada !== "evidencia_complementar" &&
+    declarada !== "item_nao_exigido"
+  ) {
+    throw new Error(
+      `"Natureza" com valor inesperado em ${item.id}: "${item.natureza}". ` +
+        "Use item_exigido, evidencia_complementar ou item_nao_exigido.",
+    );
+  }
+
+  if ((declarada === "item_exigido") !== exigido) {
+    throw new Error(
+      `${item.id}: "Natureza" (${declarada}) contradiz "Exigido pelo edital" ` +
+        `("${item.exigidoPeloEdital}"). Corrija o inventário antes de carregar.`,
+    );
+  }
+
+  return declarada;
 }
 
 /**
@@ -125,6 +167,8 @@ type CamposDocumento = {
   titulo: string;
   tipo: TipoDocumento;
   exigidoPeloEdital: boolean;
+  /** Coerente com exigidoPeloEdital por construção (migração 0004). */
+  natureza: NaturezaDocumento;
   ordemAnexo: number;
 };
 
@@ -142,6 +186,7 @@ export function camposDoItem(
     titulo,
     tipo: tipoDocumentoDoItem(item),
     exigidoPeloEdital: exigidoPeloEdital(item),
+    natureza: naturezaDoItem(item),
     ordemAnexo,
   };
 }
@@ -152,6 +197,10 @@ async function principal(): Promise<void> {
   const iCsv = argv.indexOf("--csv");
   const caminhoCsv =
     iCsv >= 0 ? (argv[iCsv + 1] ?? "") : "inventario-de-anexos.csv";
+  // O CSV é artefato derivado do XLSX. Carregar uma versão velha do
+  // inventário é pior do que não carregar: aborta em vez de seguir.
+  await exigirDerivacaoAtual();
+
   if (!caminhoCsv) throw new Error("--csv exige um caminho.");
 
   let csv: string;
@@ -168,8 +217,8 @@ async function principal(): Promise<void> {
   const ordens = calcularOrdemAnexo(itens);
 
   // Importado sob demanda: assim as funções puras acima podem ser testadas
-  // sem DATABASE_URL no ambiente.
-  const { db } = await import("../src/dados/cliente");
+  // sem DATABASE_URL_MANUTENCAO no ambiente.
+  const { dbManutencao: db } = await import("../src/dados/clienteManutencao");
 
   const registros: Registro[] = [];
   for (const item of itens) {
@@ -218,6 +267,7 @@ async function principal(): Promise<void> {
             titulo: campos.titulo,
             tipo: campos.tipo,
             exigidoPeloEdital: campos.exigidoPeloEdital,
+            natureza: campos.natureza,
             ordemAnexo: campos.ordemAnexo,
           })
           .returning({ id: documento.id });

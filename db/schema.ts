@@ -149,6 +149,87 @@ export const statusModeracao = pgEnum("status_moderacao", [
   "spam",
 ]);
 
+/**
+ * Natureza do item na Prestação de Contas — migração 0004.
+ *
+ * `exigido_pelo_edital` é booleano e por isso não distingue duas coisas que
+ * precisam ser distintas: um item complementar descoberto na pesquisa e um
+ * item do inventário original que o edital não exige. `D01`/`D02` são o
+ * segundo caso; `B13`/`B14`/`A11`, o primeiro. O denominador dos 28 itens
+ * exigidos conta apenas `item_exigido`.
+ */
+export const naturezaDocumento = pgEnum("natureza_documento", [
+  "item_exigido",
+  "evidencia_complementar",
+  "item_nao_exigido",
+]);
+
+/**
+ * Estado documental oficial (plano de execução §4). Não se confunde com
+ * `status_publicacao`, que é o fluxo editorial de rascunho a arquivado.
+ */
+export const estadoDocumental = pgEnum("estado_documental", [
+  "PUBLICAVEL",
+  "RESTRITO",
+  "ESPELHAVEL",
+  "IMPEDIDO",
+  "PENDENTE",
+]);
+
+/**
+ * Revisão de privacidade — eixo independente do estado documental. Publicar
+ * exige as duas condições ao mesmo tempo, e o CHECK da 0004 impede que
+ * `PUBLICAVEL` exista sem revisão concluída.
+ */
+export const revisaoPrivacidade = pgEnum("revisao_privacidade", [
+  "pendente",
+  "concluida",
+  "bloqueada",
+]);
+
+/**
+ * Como um derivado foi produzido a partir do original.
+ *
+ * `transcricao_leitura_visual` e `ocr_estatistico` são tecnicamente
+ * diferentes e o modelo não os deixa serem confundidos: o derivado do
+ * relatório de Borda da Mata foi produzido por leitura visual das páginas
+ * extraídas, sem motor de OCR, e registrar "OCR" ali seria falso.
+ */
+export const metodoDerivacao = pgEnum("metodo_derivacao", [
+  "transcricao_leitura_visual",
+  "ocr_estatistico",
+  "redacao_versao_publica",
+  "extracao_secao",
+  "conversao_formato",
+]);
+
+/**
+ * Como o consentimento foi obtido — migração 0005.
+ *
+ * `tipo_consentimento` diz **o que** foi consentido (uso de imagem, de áudio).
+ * Isto diz **como**, que é informação diferente e faltava. No campo, o
+ * consentimento foi verbal e gravado na abertura de cada entrevista; não
+ * existe termo assinado no acervo, e o modelo não deve permitir afirmar que
+ * existe.
+ */
+export const modalidadeConsentimento = pgEnum("modalidade_consentimento", [
+  "verbal_gravado",
+  "termo_assinado",
+  "eletronico",
+]);
+
+/**
+ * Situação da evidência do consentimento — migração 0005.
+ *
+ * `nao_localizada` significa exatamente isso: não foi encontrada nesta
+ * verificação. Não significa que o consentimento não existiu.
+ */
+export const evidenciaConsentimento = pgEnum("evidencia_consentimento", [
+  "localizada",
+  "nao_localizada",
+  "pendente_verificacao",
+]);
+
 // ─── 1. arquivo — o binário (doc 02 §5) ────────────────────────────
 
 /**
@@ -180,6 +261,13 @@ export const arquivo = pgTable(
     origemSistema: text("origem_sistema"),
     /** quando saiu do Drive para storage próprio */
     espelhadoEm: timestamp("espelhado_em", { withTimezone: true }),
+    /**
+     * Binário do qual este foi derivado — migração 0004. O original nunca é
+     * substituído: o derivado é linha nova, com hash próprio.
+     */
+    derivadoDeId: uuid("derivado_de_id"),
+    derivacaoMetodo: metodoDerivacao("derivacao_metodo"),
+    derivacaoEm: timestamp("derivacao_em", { withTimezone: true }),
     criadoEm: timestamp("criado_em", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -302,7 +390,27 @@ export const consentimento = pgTable(
       .notNull()
       .references(() => pessoa.id, { onDelete: "cascade" }),
     tipo: tipoConsentimento("tipo").notNull(),
-    concedidoEm: date("concedido_em").notNull(),
+    /**
+     * Migração 0005: passou a aceitar NULL. Em 4 das 8 entrevistas do acervo
+     * a data não é declarada em nenhum arquivo, e `NOT NULL` obrigava a
+     * inventá-la. Data ausente exige `dataIncerta = true`, então a lacuna
+     * fica declarada em vez de silenciosa.
+     */
+    concedidoEm: date("concedido_em"),
+    /** Migração 0005: torna a ausência de data uma afirmação, não um vazio. */
+    dataIncerta: boolean("data_incerta").notNull().default(false),
+    /** Migração 0005. Sem default: a modalidade é declarada, nunca presumida. */
+    modalidade: modalidadeConsentimento("modalidade").notNull(),
+    /** Migração 0005. Default conservador: nada se presume localizado. */
+    evidencia: evidenciaConsentimento("evidencia")
+      .notNull()
+      .default("pendente_verificacao"),
+    /**
+     * Documento que carrega a evidência — a entrevista. Várias pessoas
+     * consentindo na mesma gravação apontam para o mesmo documento, cada uma
+     * com sua própria linha.
+     */
+    evidenciaDocumentoId: uuid("evidencia_documento_id"),
     /** publicação integral, apenas trechos */
     escopo: text("escopo").notNull(),
     /** termo assinado */
@@ -345,6 +453,25 @@ export const documento = pgTable(
     }),
     licenca: text("licenca").notNull().default("CC BY-SA 4.0"),
     exigidoPeloEdital: boolean("exigido_pelo_edital").notNull().default(false),
+    /**
+     * Migração 0004. O default é o valor conservador: linha nova não infla o
+     * denominador dos 28 itens exigidos.
+     */
+    natureza: naturezaDocumento("natureza")
+      .notNull()
+      .default("item_nao_exigido"),
+    /** Migração 0004. Default conservador: nada nasce publicável. */
+    estadoDocumental: estadoDocumental("estado_documental")
+      .notNull()
+      .default("PENDENTE"),
+    /** Migração 0004. Eixo independente do estado. */
+    revisaoPrivacidade: revisaoPrivacidade("revisao_privacidade")
+      .notNull()
+      .default("pendente"),
+    /** Documento do qual este é derivado — ex: A05 deriva de A02. */
+    derivadoDeId: uuid("derivado_de_id"),
+    derivacaoMetodo: metodoDerivacao("derivacao_metodo"),
+    derivacaoEm: timestamp("derivacao_em", { withTimezone: true }),
     /** ordem na Sala do Avaliador */
     ordemAnexo: integer("ordem_anexo"),
     status: statusPublicacao("status").notNull().default("rascunho"),
@@ -436,6 +563,12 @@ export const vwAnexoPublico = pgView("vw_anexo_publico", {
   sha256: char("sha256", { length: 64 }),
   publicadoEm: timestamp("publicado_em", { withTimezone: true }),
   espelhado: boolean("espelhado"),
+  /** Colunas acrescentadas pela migração 0004, ao fim da view. */
+  natureza: naturezaDocumento("natureza"),
+  obrigatorio: boolean("obrigatorio"),
+  estadoDocumental: estadoDocumental("estado_documental"),
+  revisaoPrivacidade: revisaoPrivacidade("revisao_privacidade"),
+  derivadoDeSlug: citext("derivado_de_slug"),
 }).existing();
 
 /**

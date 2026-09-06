@@ -33,6 +33,7 @@ const item = (parcial: Partial<ItemInventario> = {}): ItemInventario => ({
   fonteAtual: "Google Docs",
   linkAtual: "https://docs.google.com/document/d/abc/export?format=pdf",
   slugProposto: "relatorio-tecnico-recanto-da-serra",
+  natureza: "",
   ...parcial,
 });
 

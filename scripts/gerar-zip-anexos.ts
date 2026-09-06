@@ -1,9 +1,9 @@
 /**
  * Empacotamento do "Baixar tudo (.zip)" — Tarefa 08.
  *
- * Roda **antes** do `next build`, monta um único ZIP com todos os anexos
- * espelhados e o publica no R2. Nunca sob demanda, nunca em request, nunca por
- * proxy, nunca em `public/` (ADR-006).
+ * Roda **antes** do `next build`, monta um único ZIP com as evidências elegíveis
+ * pelo Manifesto e o publica no R2. Nunca inclui item sem estado, revisão,
+ * proveniência, hash ou arquivo comprovado.
  *
  * Comportamento sem credenciais, decidido em 2026-08-31:
  *
@@ -21,25 +21,16 @@
  *   pnpm tsx scripts/gerar-zip-anexos.ts
  */
 
-import { createHash } from "node:crypto";
-import { zipSync } from "fflate";
-import { listarAnexosPublicos } from "../src/dados/consultas/anexos";
+import { listarEvidenciasDeAnexos } from "../src/dados/consultas/anexos";
 import {
   baixarObjeto,
   credenciaisDeStoragePresentes,
   enviarObjeto,
 } from "../src/lib/storage";
-import { CHAVE_ZIP_ANEXOS, nomeNoPacote } from "../src/lib/zip-anexos";
+import { CHAVE_ZIP_ANEXOS } from "../src/lib/zip-anexos";
+import { gerarZipPublico } from "../src/lib/zip-publico";
 
 const ehProducao = process.env.NODE_ENV === "production";
-
-/** Chave do objeto no R2 a partir da URL pública gravada em `arquivo`. */
-function chaveDaUrl(linkPermanente: string): string {
-  const base = process.env.STORAGE_PUBLIC_URL?.replace(/\/+$/, "") ?? "";
-  return base && linkPermanente.startsWith(base)
-    ? linkPermanente.slice(base.length + 1)
-    : linkPermanente;
-}
 
 async function principal(): Promise<void> {
   if (!credenciaisDeStoragePresentes() || !process.env.STORAGE_PUBLIC_URL) {
@@ -57,8 +48,19 @@ async function principal(): Promise<void> {
     return;
   }
 
-  const anexos = await listarAnexosPublicos();
-  if (anexos.length === 0) {
+  const evidencias = await listarEvidenciasDeAnexos();
+  const base = process.env.STORAGE_PUBLIC_URL?.replace(/\/+$/, "") ?? "";
+  const resultado = await gerarZipPublico(
+    evidencias,
+    {
+      baixar: async (chave) => baixarObjeto(chave),
+      enviar: async (chave, corpo, mime, sha256) =>
+        enviarObjeto(chave, corpo, mime, sha256),
+    },
+    CHAVE_ZIP_ANEXOS,
+    base,
+  );
+  if (resultado.estado === "sem_candidatos") {
     console.warn(
       "[zip-anexos] nenhum anexo publicado e espelhado: nada a empacotar. " +
         "O pacote anterior, se existir, permanece intocado no R2.",
@@ -66,24 +68,8 @@ async function principal(): Promise<void> {
     return;
   }
 
-  console.log(`[zip-anexos] empacotando ${anexos.length} anexo(s)…`);
-  const conteudo: Record<string, Uint8Array> = {};
-  for (const anexo of anexos) {
-    const bytes = await baixarObjeto(chaveDaUrl(anexo.linkPermanente));
-    conteudo[nomeNoPacote(anexo.slug, anexo.linkPermanente)] = new Uint8Array(
-      bytes,
-    );
-    console.log(`  + ${anexo.slug} (${bytes.byteLength} bytes)`);
-  }
-
-  // `level: 0` armazena sem recomprimir: PDF, MP3 e imagens já vêm
-  // comprimidos, e deflacioná-los de novo gasta CPU para ganho perto de zero.
-  const pacote = Buffer.from(zipSync(conteudo, { level: 0 }));
-  const sha256 = createHash("sha256").update(pacote).digest("hex");
-
-  await enviarObjeto(CHAVE_ZIP_ANEXOS, pacote, "application/zip", sha256);
   console.log(
-    `[zip-anexos] publicado ${CHAVE_ZIP_ANEXOS} — ${pacote.byteLength} bytes, sha ${sha256.slice(0, 12)}…`,
+    `[zip-anexos] publicado ${CHAVE_ZIP_ANEXOS} — ${resultado.quantidade} arquivo(s), sha ${resultado.sha256.slice(0, 12)}…`,
   );
 }
 

@@ -16,6 +16,8 @@
     "migrar": "drizzle-kit migrate",
     "gerar-migracao": "drizzle-kit generate",
     "seed": "node -e \"console.log('Sem seed: banco ainda fora do escopo do bootstrap.')\"",
+    "derivar-inventario": "python scripts/derivar-inventario.py",
+    "conferir-inventario": "python scripts/derivar-inventario.py --verificar",
     "zip-anexos": "tsx scripts/gerar-zip-anexos.ts"
   },
   "dependencies": {

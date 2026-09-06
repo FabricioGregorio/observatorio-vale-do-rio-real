@@ -8,3 +8,8 @@ playwright-report/
 .lighthouseci/
 test-results/
 coverage/
+
+# Artefato derivado de inventario-de-anexos.xlsx.
+# Regenerado por scripts/derivar-inventario.py; nunca editar à mão.
+inventario-de-anexos.csv
+inventario-de-anexos.csv.origem

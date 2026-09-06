@@ -24,7 +24,7 @@ import { join } from "node:path";
 import { eq } from "drizzle-orm";
 
 import { arquivo } from "../db/schema";
-import { db } from "../src/dados/cliente";
+import { dbManutencao as db } from "../src/dados/clienteManutencao";
 import {
   backoffMs,
   categoriaDoItem,
@@ -41,6 +41,7 @@ import {
   type TipoMidia,
   tipoMidiaDeMime,
 } from "../src/lib/espelhamento";
+import { exigirDerivacaoAtual } from "../src/lib/inventario-derivado";
 import { consultarObjeto, enviarObjeto, urlPublica } from "../src/lib/storage";
 
 const TIMEOUT_MS = 60_000;
@@ -287,6 +288,10 @@ async function principal(): Promise<void> {
   const iCsv = argv.indexOf("--csv");
   const caminhoCsv =
     iCsv >= 0 ? (argv[iCsv + 1] ?? "") : "inventario-de-anexos.csv";
+  // O CSV é artefato derivado do XLSX. Carregar uma versão velha do
+  // inventário é pior do que não carregar: aborta em vez de seguir.
+  await exigirDerivacaoAtual();
+
   if (!caminhoCsv) throw new Error("--csv exige um caminho.");
 
   let csv: string;

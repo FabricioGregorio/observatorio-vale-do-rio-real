@@ -107,7 +107,7 @@ cria arquivo vazio para simular essa responsabilidade.
 
 **Regra de ouro da estrutura:** no **código de aplicação**, apenas `src/dados/consultas/*` importa o cliente do banco. Componente, página ou rota que faz query é rejeitado no review. Isso mantém possível o objetivo de gerar tudo em build time, e é por isso que a regra existe.
 
-A regra governa o **caminho de renderização**, não o repositório inteiro. **Scripts de manutenção** — espelhamento, catalogação, importação, seed, em `scripts/` e `db/` — podem importar `src/dados/cliente.ts`, desde que: usem `DATABASE_URL`; não executem DDL; e não sejam chamados por nenhum código que renderize página. O site público continua sem consultar o PostgreSQL em tempo de requisição (ADR-001).
+A regra governa o **caminho de renderização**, não o repositório inteiro. **Scripts de manutenção** — espelhamento, catalogação, importação, seed, em `scripts/` e `db/` — podem acessar o banco sem renderizar páginas: os de leitura usam `src/dados/cliente.ts`/`DATABASE_URL`, e os de DML usam `src/dados/clienteManutencao.ts`/`DATABASE_URL_MANUTENCAO`; nenhum executa DDL. O site público continua sem consultar o PostgreSQL em tempo de requisição (ADR-001).
 
 ---
 
@@ -201,7 +201,7 @@ export async function listarAnexosPublicados(): Promise<AnexoPublico[]> {
    - Esses objetos são criados ou alterados **exclusivamente por nova migração SQL versionada**, em SQL bruto, como no item 2.
    - O `generate` nunca os remove, porque não os conhece — mas também **nunca detecta que sumiram**. Não existe verificação automática de drift para eles; a conferência é humana.
    - Para consumir uma view pelo Drizzle, declará-la como **existente** (`.existing()`), nunca como objeto a criar. Declarada como nova, o `generate` emite um `CREATE VIEW` que falha contra a view já presente no banco.
-8. **`DATABASE_URL_MIGRACAO` é exclusiva de DDL.** Só o Drizzle Kit e as migrações a usam. Script de manutenção que apenas lê e escreve linhas — espelhamento, importação, seed — usa `DATABASE_URL`, o role da aplicação, sem DDL. Precisar de DDL num script é sinal de que aquilo deveria ser uma migração. Ver ADR-007.
+8. **As credenciais são separadas por privilégio.** `DATABASE_URL_MIGRACAO` é exclusiva de DDL e só o Drizzle Kit/migrações a usam. A aplicação consulta via `DATABASE_URL` (somente leitura). Scripts de manutenção que leem e escrevem linhas — espelhamento, catalogação, importação e seed — usam `DATABASE_URL_MANUTENCAO`, sem DDL. Nenhuma delas faz fallback para outra variável. Ver ADR-007 e ADR-011.
 
 **Revisão obrigatória de migração destrutiva.** Migração que contenha `DROP`, `ALTER`, mudança de tipo de coluna ou remoção de coluna só é aceita depois de o PR responder, por escrito:
 
@@ -401,10 +401,17 @@ Estes são os problemas que aparecem com mais frequência quando a implementaç�
 ```
 # .env.local — nunca commitado
 DATABASE_URL=
-DATABASE_URL_MIGRACAO=        # usuário com DDL, separado da aplicação
-STORAGE_ENDPOINT=
-STORAGE_ACCESS_KEY=
-STORAGE_SECRET=
+DATABASE_URL_MANUTENCAO=
+DATABASE_URL_MIGRACAO=        # usuário com DDL, separado da aplicação e manutenção
+STORAGE_PUBLIC_ENDPOINT=
+STORAGE_PUBLIC_BUCKET=
+STORAGE_PUBLIC_ACCESS_KEY=
+STORAGE_PUBLIC_SECRET=
+STORAGE_PUBLIC_URL=
+STORAGE_PRIVATE_ENDPOINT=
+STORAGE_PRIVATE_BUCKET=
+STORAGE_PRIVATE_ACCESS_KEY=
+STORAGE_PRIVATE_SECRET=
 REVALIDATE_SECRET=
 TURNSTILE_SECRET=
 NEXT_PUBLIC_SITE_URL=

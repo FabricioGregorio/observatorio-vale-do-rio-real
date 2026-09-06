@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 
 export default async function SalaDoAvaliador() {
   const anexos = await listarAnexosPublicos();
-  const zip = urlDoZipDeAnexos();
+  const zip = anexos.length > 0 ? urlDoZipDeAnexos() : null;
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-12">

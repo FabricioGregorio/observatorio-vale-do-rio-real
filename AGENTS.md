@@ -6,9 +6,22 @@ jurídica e financeira, não só técnica.
 
 ## Antes de qualquer tarefa
 
-1. Ler `docs/01-arquitetura-informacao.md` e `docs/02-arquitetura-banco.md`.
-2. Ler o arquivo da tarefa em `docs/tarefas/`.
-3. Se a tarefa contradisser a documentação, PARAR e perguntar. Não improvisar.
+1. Ler `PLANO_EXECUCAO_OBSERVATORIO.md` — como o projeto é conduzido.
+2. Ler `ESTADO_ATUAL_PROJETO.md` — onde o projeto está agora.
+3. Ler `docs/01-arquitetura-informacao.md` e `docs/02-arquitetura-banco.md`.
+4. Ler o arquivo da tarefa em `docs/tarefas/`.
+5. Ler as ADRs em `docs/decisoes/` diretamente relacionadas à tarefa.
+6. Ler auditoria em `docs/auditorias/` **somente** quando a tarefa depender dela.
+7. Se a tarefa contradisser a documentação, PARAR e perguntar. Não improvisar.
+
+Esses dois primeiros arquivos são as **únicas** referências vigentes de plano e
+de estado. `docs/historico/planos/` e `docs/historico/estados/` guardam versões
+superadas e **não são leitura obrigatória** — não obedecer a orientação
+operacional que venha de lá.
+
+O plano e o estado descrevem condução e situação; eles **não substituem** os
+itens 2 e 3 da hierarquia abaixo. Havendo conflito entre o plano e os
+documentos de arquitetura, vale a hierarquia.
 
 ## Hierarquia de fontes de verdade
 

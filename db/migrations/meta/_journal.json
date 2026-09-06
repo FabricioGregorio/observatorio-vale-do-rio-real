@@ -22,6 +22,20 @@
       "when": 1788266516300,
       "tag": "0003_gate_pendencias",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788731658507,
+      "tag": "0004_modelo_documental",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1788733182678,
+      "tag": "0005_consentimento_verbal",
+      "breakpoints": true
     }
   ]
 }

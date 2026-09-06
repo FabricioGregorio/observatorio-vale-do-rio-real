@@ -7,7 +7,7 @@
  *
  * Referências:
  * - ADR-003 (todo binário vive em storage de objetos, com URL própria e hash)
- * - ADR-006 (Cloudflare R2, API S3, variáveis STORAGE_*)
+ * - ADR-006 (Cloudflare R2, API S3, variáveis STORAGE_PUBLIC_*)
  * - doc 03 §13 (variáveis de ambiente)
  */
 import {
@@ -17,13 +17,7 @@ import {
   S3Client,
 } from "@aws-sdk/client-s3";
 
-function exigir(nome: string): string {
-  const valor = process.env[nome];
-  if (!valor) {
-    throw new Error(`${nome} não definida. Consulte .env.example.`);
-  }
-  return valor;
-}
+import { exigirConfiguracao as exigir } from "./storage-configuracao";
 
 let clienteMemo: S3Client | null = null;
 
@@ -32,10 +26,10 @@ export function cliente(): S3Client {
   if (clienteMemo) return clienteMemo;
   clienteMemo = new S3Client({
     region: "auto",
-    endpoint: exigir("STORAGE_ENDPOINT"),
+    endpoint: exigir("STORAGE_PUBLIC_ENDPOINT"),
     credentials: {
-      accessKeyId: exigir("STORAGE_ACCESS_KEY"),
-      secretAccessKey: exigir("STORAGE_SECRET"),
+      accessKeyId: exigir("STORAGE_PUBLIC_ACCESS_KEY"),
+      secretAccessKey: exigir("STORAGE_PUBLIC_SECRET"),
     },
   });
   return clienteMemo;
@@ -53,7 +47,10 @@ export async function consultarObjeto(
 ): Promise<{ sha256: string | null; bytes: number | null } | null> {
   try {
     const r = await cliente().send(
-      new HeadObjectCommand({ Bucket: exigir("STORAGE_BUCKET"), Key: chave }),
+      new HeadObjectCommand({
+        Bucket: exigir("STORAGE_PUBLIC_BUCKET"),
+        Key: chave,
+      }),
     );
     return {
       sha256: r.Metadata?.sha256 ?? null,
@@ -80,7 +77,7 @@ export async function enviarObjeto(
 ): Promise<void> {
   await cliente().send(
     new PutObjectCommand({
-      Bucket: exigir("STORAGE_BUCKET"),
+      Bucket: exigir("STORAGE_PUBLIC_BUCKET"),
       Key: chave,
       Body: corpo,
       ContentType: mimeType,
@@ -96,7 +93,10 @@ export async function enviarObjeto(
  */
 export async function baixarObjeto(chave: string): Promise<Buffer> {
   const r = await cliente().send(
-    new GetObjectCommand({ Bucket: exigir("STORAGE_BUCKET"), Key: chave }),
+    new GetObjectCommand({
+      Bucket: exigir("STORAGE_PUBLIC_BUCKET"),
+      Key: chave,
+    }),
   );
   if (!r.Body) throw new Error(`Objeto ${chave} veio sem corpo.`);
   return Buffer.from(await r.Body.transformToByteArray());
@@ -105,9 +105,9 @@ export async function baixarObjeto(chave: string): Promise<Buffer> {
 /** `true` quando as quatro variáveis de acesso ao R2 estão definidas. */
 export function credenciaisDeStoragePresentes(): boolean {
   return [
-    "STORAGE_ENDPOINT",
-    "STORAGE_BUCKET",
-    "STORAGE_ACCESS_KEY",
-    "STORAGE_SECRET",
+    "STORAGE_PUBLIC_ENDPOINT",
+    "STORAGE_PUBLIC_BUCKET",
+    "STORAGE_PUBLIC_ACCESS_KEY",
+    "STORAGE_PUBLIC_SECRET",
   ].every((nome) => Boolean(process.env[nome]));
 }

@@ -206,10 +206,11 @@ Chave: `arquivos/<categoria>/<slug>-v<n>.<ext>`
 
 ### Credencial de banco
 
-- O script **não** executa DDL. Usa `DATABASE_URL` (role da aplicação), importando
-  **`src/dados/cliente.ts`** — o cliente que já existe.
-- **Não** usar `DATABASE_URL_MIGRACAO`.
-- Não criar uma terceira credencial nem um novo módulo de cliente.
+- O script **não** executa DDL. Usa `DATABASE_URL_MANUTENCAO`, importando
+  **`src/dados/clienteManutencao.ts`** — o cliente separado para DML.
+- **Não** usar `DATABASE_URL` (somente leitura) nem `DATABASE_URL_MIGRACAO`.
+- A variável de manutenção é obrigatória e não faz fallback para outra credencial.
+  Esta redação supersede a proibição histórica de terceira credencial; ver ADR-011.
 - O doc 03 §2 e o AGENTS.md foram corrigidos para deixar claro que a regra de acesso ao
   banco governa o caminho de renderização, não scripts de manutenção.
 
@@ -253,9 +254,9 @@ de `origem_sistema`.
 
 Permanecem em aberto:
 
-1. **Permissões do role da aplicação.** A ADR-007 prevê `SELECT/INSERT/UPDATE/DELETE`
-   por `ALTER DEFAULT PRIVILEGES`, mas os roles ainda não foram provisionados em
-   ambiente algum. Sem isso, `DATABASE_URL` não tem como escrever em `arquivo`.
+1. **Permissões do role de manutenção.** A ADR-011 separa `DATABASE_URL` (somente
+   leitura) de `DATABASE_URL_MANUTENCAO` (DML sem DDL). O ambiente precisa manter o
+   segundo provisionado para que o script escreva em `arquivo`.
 2. **Qualidade do inventário.** Em 15 das 30 linhas a coluna `Fonte atual` contém um
    número em vez do nome da fonte, e `Link atual` está vazia. Corrigir metadado do
    inventário é decisão humana e está fora do escopo desta tarefa.

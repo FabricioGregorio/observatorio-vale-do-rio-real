@@ -1,6 +1,11 @@
 import { eq } from "drizzle-orm";
 
 import { vwAnexoPublico } from "../../../db/schema";
+import {
+  type EvidenciaManifesto,
+  evidenciaManifestoSchema,
+  podePublicar,
+} from "../../lib/manifesto-evidencias";
 
 /**
  * Consulta dos anexos públicos — alimenta a Sala do Avaliador, a versão
@@ -19,6 +24,10 @@ import { vwAnexoPublico } from "../../../db/schema";
  */
 
 export type AnexoPublico = {
+  codigo: string;
+  estado: "PUBLICAVEL";
+  revisaoPrivacidade: "concluida";
+  derivadoDe: string[];
   ordemAnexo: number | null;
   slug: string;
   titulo: string;
@@ -34,6 +43,80 @@ export type AnexoPublico = {
   publicadoEm: Date | null;
 };
 
+export type EvidenciaDeAnexo = {
+  manifesto: EvidenciaManifesto;
+  anexo: Omit<
+    AnexoPublico,
+    "codigo" | "estado" | "revisaoPrivacidade" | "derivadoDe"
+  >;
+  /** Compatibilidade histórica; nunca concede autorização pública. */
+  publicadoLegado: boolean;
+};
+
+/**
+ * Adapta a view legada ao Manifesto. O banco atual ainda não possui estado nem
+ * revisão de privacidade, portanto ambos ficam ausentes e falham fechados.
+ */
+export async function listarEvidenciasDeAnexos(): Promise<EvidenciaDeAnexo[]> {
+  if (!process.env.DATABASE_URL) return [];
+  const { db } = await import("../cliente");
+  const linhas = await db
+    .select()
+    .from(vwAnexoPublico)
+    .where(eq(vwAnexoPublico.espelhado, true));
+
+  return linhas.flatMap((l) => {
+    if (
+      !l.slug ||
+      !l.titulo ||
+      !l.tipo ||
+      !l.licenca ||
+      !l.linkPermanente ||
+      !l.mimeType ||
+      !l.sha256 ||
+      l.bytes === null
+    ) {
+      return [];
+    }
+    const derivadoDe = [
+      `documento:${l.slug}`,
+      ...(l.linkOrigem ? [`origem:${l.linkOrigem}`] : []),
+    ];
+    return [
+      {
+        manifesto: evidenciaManifestoSchema.parse({
+          codigo: l.ordemAnexo === null ? l.slug : String(l.ordemAnexo),
+          entregavel: l.titulo,
+          estado: null,
+          revisao_privacidade: null,
+          url: l.linkPermanente,
+          sha256: l.sha256,
+          doi: null,
+          observacao: null,
+          derivado_de: derivadoDe,
+          arquivo_existe: true,
+        }),
+        anexo: {
+          ordemAnexo: l.ordemAnexo,
+          slug: l.slug,
+          titulo: l.titulo,
+          tipo: l.tipo,
+          resumo: l.resumo,
+          dataReferencia: l.dataReferencia,
+          licenca: l.licenca,
+          linkPermanente: l.linkPermanente,
+          linkOrigem: l.linkOrigem,
+          mimeType: l.mimeType,
+          bytes: l.bytes,
+          sha256: l.sha256,
+          publicadoEm: l.publicadoEm,
+        },
+        publicadoLegado: true,
+      },
+    ];
+  });
+}
+
 /** Anexos publicados e efetivamente espelhados, na ordem da Sala do Avaliador. */
 export async function listarAnexosPublicos(): Promise<AnexoPublico[]> {
   if (!process.env.DATABASE_URL) {
@@ -44,42 +127,16 @@ export async function listarAnexosPublicos(): Promise<AnexoPublico[]> {
     return [];
   }
 
-  // Importado sob demanda: `src/dados/cliente.ts` lança ao ser carregado sem a
-  // variável, e um import estático derrubaria o build antes da checagem acima.
-  const { db } = await import("../cliente");
-
-  const linhas = await db
-    .select()
-    .from(vwAnexoPublico)
-    .where(eq(vwAnexoPublico.espelhado, true));
-
-  // A view garante NOT NULL nestas colunas por construção — vêm de colunas
-  // obrigatórias de `arquivo` e `documento`. O filtro deixa isso explícito em
-  // vez de confiar numa asserção de tipo.
-  return linhas.flatMap((l) =>
-    l.slug &&
-    l.titulo &&
-    l.tipo &&
-    l.licenca &&
-    l.linkPermanente &&
-    l.mimeType &&
-    l.sha256 &&
-    l.bytes !== null
+  const evidencias = await listarEvidenciasDeAnexos();
+  return evidencias.flatMap(({ manifesto, anexo }) =>
+    podePublicar(manifesto)
       ? [
           {
-            ordemAnexo: l.ordemAnexo,
-            slug: l.slug,
-            titulo: l.titulo,
-            tipo: l.tipo,
-            resumo: l.resumo,
-            dataReferencia: l.dataReferencia,
-            licenca: l.licenca,
-            linkPermanente: l.linkPermanente,
-            linkOrigem: l.linkOrigem,
-            mimeType: l.mimeType,
-            bytes: l.bytes,
-            sha256: l.sha256,
-            publicadoEm: l.publicadoEm,
+            ...anexo,
+            codigo: manifesto.codigo,
+            estado: "PUBLICAVEL",
+            revisaoPrivacidade: "concluida",
+            derivadoDe: manifesto.derivado_de,
           },
         ]
       : [],

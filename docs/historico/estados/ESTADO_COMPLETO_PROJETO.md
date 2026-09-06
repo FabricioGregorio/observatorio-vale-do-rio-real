@@ -1,3 +1,11 @@
+> **SUPERADO — preservado apenas para histórico.**
+> Não usar como orientação operacional vigente.
+> Referências vigentes: [`PLANO_EXECUCAO_OBSERVATORIO.md`](../../../PLANO_EXECUCAO_OBSERVATORIO.md)
+> e [`ESTADO_ATUAL_PROJETO.md`](../../../ESTADO_ATUAL_PROJETO.md).
+> Movido em 2026-09-06 pela consolidação de governança.
+
+---
+
 # Estado completo do projeto
 
 **Projeto:** Observatório do Vale do Rio Real  

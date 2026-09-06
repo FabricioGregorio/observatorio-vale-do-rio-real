@@ -71,8 +71,13 @@ padrão nesta versão, e a rota viraria dinâmica, contra a ADR-001.
 Mantido, e **gerado em build**. Nunca sob demanda, em request ou por proxy.
 
 O ZIP é produzido por `scripts/gerar-zip-anexos.ts`, executado antes do `next build`.
-O script usa a mesma consulta da Sala (com `espelhado = true`), busca os objetos no R2
-pelo cliente S3 que já existe em `src/lib/storage.ts` e grava um único arquivo.
+O script adapta os registros à consulta canônica do Manifesto, aplica `podePublicar`
+(`PUBLICAVEL`, revisão de privacidade concluída, arquivo, hash e proveniência) e só
+então busca os objetos no R2 pelo cliente S3 existente. `status = publicado` é
+compatibilidade histórica e nunca autoriza entrada no ZIP.
+
+Quando não há candidato elegível, o script continua o build sem gerar nem fazer
+upload de ZIP vazio. A Sala só oferece o link quando há anexos públicos elegíveis.
 
 **O artefato é publicado no R2**, não em `public/`. O link do botão aponta para
 `STORAGE_PUBLIC_URL`. A razão é a mesma que a ADR-006 usou para escolher o R2: o site

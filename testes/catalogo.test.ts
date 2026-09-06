@@ -24,6 +24,7 @@ const item = (parcial: Partial<ItemInventario> = {}): ItemInventario => ({
   fonteAtual: "Google Docs",
   linkAtual: "https://docs.google.com/document/d/abc/edit",
   slugProposto: "relatorio-tecnico-recanto-da-serra",
+  natureza: "",
   ...parcial,
 });
 
@@ -196,6 +197,7 @@ describe("camposDoItem", () => {
       titulo: "Relatório Técnico — Recanto da Serra",
       tipo: "relatorio_tecnico",
       exigidoPeloEdital: true,
+      natureza: "item_exigido",
       ordemAnexo: 2,
     });
   });

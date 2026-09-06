@@ -21,7 +21,19 @@ export type ItemInventario = {
   fonteAtual: string;
   linkAtual: string;
   slugProposto: string;
+  /**
+   * Coluna `Natureza` do inventário — opcional, para que um CSV exportado
+   * antes de a coluna existir continue sendo lido. Vazia significa "derivar
+   * de Exigido pelo edital", que é o comportamento conservador.
+   */
+  natureza: string;
 };
+
+/** Vocabulário fechado de `natureza_documento` (migração 0004). */
+export type NaturezaDocumento =
+  | "item_exigido"
+  | "evidencia_complementar"
+  | "item_nao_exigido";
 
 /** Categorias de storage — vocabulário fechado do inventário (Tarefa 06). */
 export const CATEGORIAS_STORAGE = [
@@ -335,6 +347,9 @@ export function lerInventario(csv: string): ItemInventario[] {
   if (linhas.length === 0) throw new Error("Inventário vazio.");
   const cabecalho = (linhas[0] ?? []).map((c) => c.trim());
   const indice: Record<string, number> = {};
+  // Coluna opcional: não entra em COLUNAS_ESPERADAS para não quebrar CSV antigo.
+  const iNatureza = cabecalho.indexOf("Natureza");
+  if (iNatureza >= 0) indice.Natureza = iNatureza;
   for (const nome of COLUNAS_ESPERADAS) {
     const i = cabecalho.indexOf(nome);
     if (i < 0)
@@ -353,5 +368,6 @@ export function lerInventario(csv: string): ItemInventario[] {
     fonteAtual: valor(l, "Fonte atual"),
     linkAtual: valor(l, "Link atual"),
     slugProposto: valor(l, "Slug proposto"),
+    natureza: indice.Natureza === undefined ? "" : valor(l, "Natureza"),
   }));
 }
