@@ -42,7 +42,8 @@ import {
   tipoMidiaDeMime,
 } from "../src/lib/espelhamento";
 import { exigirDerivacaoAtual } from "../src/lib/inventario-derivado";
-import { consultarObjeto, enviarObjeto, urlPublica } from "../src/lib/storage";
+import { consultarObjeto } from "../src/lib/storage";
+import { bucketPrivado, enviarObjetoPrivado } from "../src/lib/storage-privado";
 
 const TIMEOUT_MS = 60_000;
 const MAX_TENTATIVAS = 3;
@@ -223,7 +224,10 @@ async function processarItem(
           `objeto ${chave} já existe com ${encontrado}. Nada foi sobrescrito.`,
         );
       }
-      if (!objeto) await enviarObjeto(chave, corpo, mimeType, sha256);
+      // Destino padrão: bucket PRIVADO. Espelhar não é publicar — o
+      // acesso público depende do gate PUBLICAVEL + revisão concluída,
+      // e é decidido depois, por derivado ou por promoção explícita.
+      if (!objeto) await enviarObjetoPrivado(chave, corpo, mimeType, sha256);
     } catch (erro) {
       return reg("erro_r2", mensagem(erro));
     }
@@ -232,7 +236,12 @@ async function processarItem(
     try {
       await db.insert(arquivo).values({
         chaveStorage: chave,
-        urlPublica: urlPublica(chave),
+        bucket: bucketPrivado(),
+        visibilidade: "privado",
+        // Objeto privado não tem URL pública. O CHECK
+        // `arquivo_visibilidade_coerente` da migração 0006 recusa a
+        // combinação incoerente.
+        urlPublica: null,
         nomeOriginal: item.item || null,
         tipoMidia,
         mimeType,

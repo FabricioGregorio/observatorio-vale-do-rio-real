@@ -230,6 +230,19 @@ export const evidenciaConsentimento = pgEnum("evidencia_consentimento", [
   "pendente_verificacao",
 ]);
 
+/**
+ * Onde o objeto está exposto — migração 0006.
+ *
+ * `privado` é o default: espelhar não é publicar. Um documento `ESPELHAVEL`
+ * com revisão de privacidade pendente pode ter o binário copiado para storage
+ * controlado, e **não** pode ganhar acesso público. Só sai de `privado` depois
+ * do gate `PUBLICAVEL` + `revisao_privacidade = concluida`.
+ */
+export const visibilidadeArquivo = pgEnum("visibilidade_arquivo", [
+  "privado",
+  "publico",
+]);
+
 // ─── 1. arquivo — o binário (doc 02 §5) ────────────────────────────
 
 /**
@@ -243,8 +256,26 @@ export const arquivo = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     /** ex: arquivos/analise-de-dados/recanto-da-serra-v2.pdf */
     chaveStorage: text("chave_storage").notNull().unique(),
-    /** URL estável do domínio próprio */
-    urlPublica: text("url_publica").notNull().unique(),
+    /**
+     * Bucket real onde o objeto vive — migração 0006. `chave_storage` diz a
+     * chave, não o bucket, e com dois buckets a chave sozinha é ambígua.
+     * Sem default: o bucket é declarado, nunca presumido.
+     */
+    bucket: text("bucket").notNull(),
+    /** Migração 0006. Default conservador: nada nasce público. */
+    visibilidade: visibilidadeArquivo("visibilidade")
+      .notNull()
+      .default("privado"),
+    /**
+     * URL estável do domínio próprio.
+     *
+     * Migração 0006: passou a aceitar NULL. Objeto no bucket privado **não
+     * tem** URL pública, e `NOT NULL` obrigava a inventar uma — ou a usar o
+     * endpoint S3 como se fosse URL pública, o que é pior. O CHECK
+     * `arquivo_visibilidade_coerente` amarra os dois campos: público exige
+     * URL, privado exige a ausência dela.
+     */
+    urlPublica: text("url_publica").unique(),
     nomeOriginal: text("nome_original"),
     tipoMidia: tipoMidia("tipo_midia").notNull(),
     mimeType: text("mime_type").notNull(),

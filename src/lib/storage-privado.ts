@@ -17,6 +17,16 @@ export function clientePrivado(): S3Client {
   });
 }
 
+/**
+ * Nome do bucket privado, para registrar em `arquivo.bucket`.
+ *
+ * O banco precisa dizer em qual bucket o objeto está: `chave_storage`
+ * sozinha é ambígua com dois buckets.
+ */
+export function bucketPrivado(): string {
+  return exigir("STORAGE_PRIVATE_BUCKET");
+}
+
 export async function enviarObjetoPrivado(
   chave: string,
   corpo: Buffer,

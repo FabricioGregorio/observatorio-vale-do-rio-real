@@ -15,8 +15,8 @@ Como o projeto deve ser conduzido é assunto de
 | | |
 |---|---|
 | Branch | `feat/home-indicadores` |
-| HEAD | `38f3e1427ebd6ef5a66ba1d8ba2e94399ed7689a` |
-| Working tree | sujo, sem commit — alterações desta consolidação e de etapas anteriores |
+| Último checkpoint | `4a4c3ae` — *feat: registra carga documental canonica* |
+| Push | nenhum; a branch não tem upstream |
 
 ## Infraestrutura
 
@@ -24,14 +24,14 @@ Como o projeto deve ser conduzido é assunto de
 |---|---|
 | Prompt 1 | **concluído** |
 | PostgreSQL | 18.6 |
-| Migrations aplicadas | `0001_fundacao`, `0002_nucleo_prestacao_contas`, `0003_gate_pendencias` |
+| Migrations aplicadas | `0001`–`0006` — a última é `0006_arquivo_privado` |
 | Roles | `app_observatorio` (leitura), `manutencao_observatorio` (DML sem DDL), role real das migrations (DDL) |
 | Isolamento provado | 15/15 conformes; operações negadas falharam com SQLSTATE 42501 pelo privilégio esperado |
 | Sequences | não aplicáveis ao schema — chaves em UUID |
 | R2 | buckets público e privado validados; GET anônimo no privado negado |
 | Manifesto de Evidências | existe, em `src/lib/manifesto-evidencias.ts` |
 | ZIP público | gate canônico `PUBLICAVEL` + `revisao_privacidade = concluida`; não gera pacote vazio |
-| Banco | `documento`, `arquivo`, `documento_arquivo` e `consentimento` com **zero linhas** |
+| Banco | `documento` = **33**; `arquivo`, `documento_arquivo`, `pessoa` e `consentimento` = **0** |
 
 ## Fonte canônica
 
@@ -259,15 +259,62 @@ outro vocabulário e o mapeamento não é 1 para 1 — `B02` e `A02` são ambos
 `Disponível` e recebem estados diferentes. O carregador não infere estado: item
 sem classificação aprovada faz o script falhar.
 
+## Prompt 3.3 — checkpoint pós-carga e modelo de storage
+
+Executado em **2026-09-06**. **Nenhum upload ocorreu.**
+
+| | |
+|---|---|
+| Segundo checkpoint | `4a4c3ae` — *feat: registra carga documental canonica* |
+| Migrations aplicadas | `0001`–`0006` |
+| `documento` | **33** — intacto |
+| `arquivo` / `documento_arquivo` | **0 / 0** |
+| `pessoa` / `consentimento` | 0 / 0 |
+| `vw_anexo_publico` | **0** |
+
+### Migração 0006 — o modelo não representava arquivo privado
+
+Auditoria antes do primeiro upload encontrou dois impedimentos:
+
+1. **`arquivo.url_publica` era `NOT NULL UNIQUE`**, e não havia `bucket` nem
+   `visibilidade`. Registrar objeto privado exigiria inventar URL ou usar o
+   endpoint S3 como se fosse URL pública.
+2. **`espelhar-anexos.ts` mirava o bucket público** e gravava
+   `urlPublica(chave)` — espelhar qualquer item, inclusive `RESTRITO`, o
+   colocaria publicamente acessível.
+
+A 0006 acrescentou `bucket` (NOT NULL, sem default), `visibilidade`
+(`privado`/`publico`, default `privado`) e tornou `url_publica` anulável, com
+o CHECK `(visibilidade = 'publico') = (url_publica IS NOT NULL)`. A
+`vw_anexo_publico` passou a exigir visibilidade pública e URL presente. O
+script foi corrigido para o bucket privado. `ADR-015` registra.
+
+Validada 8/8 contra o banco com rollback, incluindo o caso mais adverso —
+documento `PUBLICAVEL`, revisão concluída, arquivo espelhado e principal, só
+que privado: **a view devolve zero**. O caso de controle com arquivo público
+devolve um, provando que o zero vem da visibilidade.
+
+### Dry-run do espelhamento
+
+[`docs/carga/DRY_RUN_ESPELHAMENTO_2026-09-06.md`](./docs/carga/DRY_RUN_ESPELHAMENTO_2026-09-06.md):
+**10 objetos privados propostos**, 0 públicos. A02 (1 arquivo), A04 (1) e D01
+(8, é conjunto). Nenhum pode ir ao bucket público hoje — os três estão com
+revisão pendente.
+
+### `vw_pendencia_publicacao` = 0 está correto
+
+Investigado: as três ramificações exigem `status = 'publicado'` ou
+`estado_documental = 'PUBLICAVEL'`, e nenhum dos 33 satisfaz. A view detecta
+**anomalia entre candidatos à publicação**, não "trabalho restante". O nome
+engana; proposta de renomeação registrada na `ADR-015`, sem migração.
+
 ## Próxima tarefa autorizada
 
-Duas frentes, na sua ordem de preferência:
+**Primeiro espelhamento privado** — 10 objetos ao bucket `observatorio-privado`,
+com `url_publica = NULL`. Depois dele, `A02`, `A04` e `D01` passam a ter
+`arquivo` com hash e chave reais, ainda sem acesso público.
 
-1. **Carga de `pessoa` e `consentimento`** (bloco B) — 11 participantes, 10 com
-   evidência verificável, 5 com data comprovada. Depende da sua autorização
-   para criar as 11 linhas de `pessoa` com `nome` e `tipo`.
-2. **Espelhamento** — subir os originais ao R2 e criar `arquivo` com hash e URL
-   permanente, o que destrava `A02`, `A04` e `D01` de `ESPELHAVEL`.
+A carga de `pessoa` e `consentimento` (11 participantes) segue não autorizada.
 
 ---
 

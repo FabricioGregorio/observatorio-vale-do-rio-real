@@ -36,6 +36,13 @@
       "when": 1788733182678,
       "tag": "0005_consentimento_verbal",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1788735280960,
+      "tag": "0006_arquivo_privado",
+      "breakpoints": true
     }
   ]
 }
