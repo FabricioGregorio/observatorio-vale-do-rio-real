@@ -14,12 +14,14 @@ dependência, nenhum OCR, nenhum Excel ou LibreOffice.
 Uso:
     python scripts/derivar-inventario.py
     python scripts/derivar-inventario.py --verificar   # não escreve; só valida
+    python scripts/derivar-inventario.py --stdout      # CSV atual em memória
 """
 
 from __future__ import annotations
 
 import csv
 import hashlib
+import io
 import sys
 import zipfile
 import xml.etree.ElementTree as ET
@@ -246,6 +248,13 @@ def principal(argv: list[str]) -> int:
     except ErroDerivacao as e:
         print(f"[derivar] contrato do inventário violado: {e}", file=sys.stderr)
         return 1
+
+    if "--stdout" in argv:
+        # Consumo direto pelo executor: sem CSV/sidecar persistido ou stale.
+        memoria = io.StringIO(newline="")
+        csv.writer(memoria, lineterminator="\n").writerows(linhas)
+        sys.stdout.buffer.write(memoria.getvalue().encode("utf-8"))
+        return 0
 
     origem_sha = sha256_do_arquivo(ORIGEM)
     print(f"[derivar] fonte:   {ORIGEM.name}")

@@ -1,0 +1,78 @@
+/**
+ * Vínculos aprovados: DRY_RUN_ESPELHAMENTO_2026-09-06.md, §10–12.
+ * Hashes atuais: VERIFICACAO_PRE_UPLOAD_2026-09-07.md, medidos na fonte
+ * canônica; adotados no Prompt 3.4.1. Não há hash histórico integral de D01.
+ * A ordem e o código são declarados, nunca inferidos do nome do arquivo.
+ */
+export const LOTE_PRIVADO_INICIAL = [
+  [
+    "A02",
+    "relatorios/relatorio-tecnico-recanto-da-serra.pdf",
+    "arquivos/analise-de-dados/relatorio-tecnico-recanto-da-serra-v1.pdf",
+    "18b7bbb11b6157af525c7e1c88b7e385763dadc094bb60fdf6f3a27d9c2aff91",
+    true,
+  ],
+  [
+    "A04",
+    "relatorios/relatorio-tecnico-serra-dos-macacos.pdf",
+    "arquivos/analise-de-dados/relatorio-tecnico-serra-dos-macacos-v1.pdf",
+    "7e966429d1fccae8f7583ebc0fb6644c8f6393390e5a2a0d633cbe79a79a7cde",
+    true,
+  ],
+  [
+    "D01",
+    "identidade-visual/coletivo-tobias-sou-eu/logo-oficial-tobias-sou-eu.png",
+    "arquivos/publicidade/identidade-visual-01-logo-oficial-tobias-sou-eu-v1.png",
+    "30e62b84e725fd2cace825a6805a094481272b315e5d85187aa5614382016337",
+    false,
+  ],
+  [
+    "D01",
+    "identidade-visual/coletivo-tobias-sou-eu/logo.pdf",
+    "arquivos/publicidade/identidade-visual-02-logo-v1.pdf",
+    "14e3b886621e0d493e808dfd28e46c3886743997b30b06f7d09ea3940a5a59a2",
+    false,
+  ],
+  [
+    "D01",
+    "identidade-visual/observatorio/horizontal-monocromatica-escura.png",
+    "arquivos/publicidade/identidade-visual-03-horizontal-monocromatica-escura-v1.png",
+    "efd532d88beeccce71a3e92c6705b582676f2965d90fb7599fde9383381ef940",
+    false,
+  ],
+  [
+    "D01",
+    "identidade-visual/observatorio/horizontal-monocromatica-escura.svg",
+    "arquivos/publicidade/identidade-visual-04-horizontal-monocromatica-escura-v1.svg",
+    "8bda07efbe684aaae64cb28ff3b69b10cb572058aa9c4dfb04dbb670c6cef1dc",
+    false,
+  ],
+  [
+    "D01",
+    "identidade-visual/observatorio/icon.png",
+    "arquivos/publicidade/identidade-visual-05-icon-v1.png",
+    "6b230265d3c50b864bed83c5d3e7ddd02bd01998a92de818fefae487afc2571b",
+    false,
+  ],
+  [
+    "D01",
+    "identidade-visual/observatorio/icon.svg",
+    "arquivos/publicidade/identidade-visual-06-icon-v1.svg",
+    "f19d71e2ed22bfc1aac44be4760a07517d1f88cb2186cf6b59cdcbfa97d11883",
+    false,
+  ],
+  [
+    "D01",
+    "identidade-visual/observatorio/logo-e-texto.png",
+    "arquivos/publicidade/identidade-visual-07-logo-e-texto-v1.png",
+    "d98a0eff2803f1819c8ab28cdd8ee61589ceba1f3ad97fe7d2911897e11f5116",
+    false,
+  ],
+  [
+    "D01",
+    "identidade-visual/observatorio/primeiro-post-observatorio.pdf",
+    "arquivos/publicidade/identidade-visual-08-primeiro-post-observatorio-v1.pdf",
+    "3721a0e64c4ecf3e928206e5f9f9c1042303c2c5e9f205e38e9b095f85dcfdfe",
+    false,
+  ],
+] as const;

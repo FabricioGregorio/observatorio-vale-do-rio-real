@@ -23,5 +23,13 @@ function exigirUrlManutencao(): string {
 
 const pool = new Pool({ connectionString: exigirUrlManutencao() });
 
+/** Uso exclusivo dos scripts que controlam transação e reconciliação. */
+export const poolManutencao = pool;
+
 /** Instância Drizzle para scripts que fazem DML, sem permissão de DDL. */
 export const dbManutencao = drizzle(pool, { schema });
+
+/** Scripts encerram as conexões no finally, inclusive quando falham. */
+export async function encerrarManutencao(): Promise<void> {
+  await pool.end();
+}

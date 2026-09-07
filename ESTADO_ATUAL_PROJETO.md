@@ -6,7 +6,7 @@ projeto está agora?**
 Como o projeto deve ser conduzido é assunto de
 [`PLANO_EXECUCAO_OBSERVATORIO.md`](./PLANO_EXECUCAO_OBSERVATORIO.md).
 
-**Data:** 2026-09-06
+**Data:** 2026-09-07
 
 ---
 
@@ -15,8 +15,9 @@ Como o projeto deve ser conduzido é assunto de
 | | |
 |---|---|
 | Branch | `feat/home-indicadores` |
-| Último checkpoint | `4a4c3ae` — *feat: registra carga documental canonica* |
-| Push | nenhum; a branch não tem upstream |
+| Checkpoint pré-upload | commit desta alteração — *feat: prepara espelhamento privado seguro*; base `97bc88c` |
+| Upstream | `origin/main`; pendência de segurança, não alterado nesta rodada |
+| Push nesta rodada | nenhum; a configuração de upstream não comprova push anterior |
 
 ## Infraestrutura
 
@@ -308,11 +309,39 @@ Investigado: as três ramificações exigem `status = 'publicado'` ou
 **anomalia entre candidatos à publicação**, não "trabalho restante". O nome
 engana; proposta de renomeação registrada na `ADR-015`, sem migração.
 
-## Próxima tarefa autorizada
+## Prompt 3.4.1 — executor concluído; parada antes do upload
 
-**Primeiro espelhamento privado** — 10 objetos ao bucket `observatorio-privado`,
-com `url_publica = NULL`. Depois dele, `A02`, `A04` e `D01` passam a ter
-`arquivo` com hash e chave reais, ainda sem acesso público.
+**Pronto tecnicamente para o lote fechado de dez objetos privados.**
+Resta somente autorização humana para os dez uploads, incluindo confirmação
+administrativa de r2.dev desativado e inexistência de custom domain público.
+Essa configuração não foi inventada nem atestada pelo executor.
+
+Registro vigente:
+[`DRY_RUN_FINAL_PRIVADO_2026-09-07.md`](./docs/carga/DRY_RUN_FINAL_PRIVADO_2026-09-07.md).
+A [verificação anterior](./docs/carga/VERIFICACAO_PRE_UPLOAD_2026-09-07.md)
+permanece como histórico; seus bloqueios foram tratados no Prompt 3.4.1.
+
+- Executor `scripts/espelhar-anexos.ts`: modo padrão seguro, `--dry-run` e
+  execução real somente com `--executar`.
+- Dry-run real do executor: **10 operações; A02=1; A04=1; D01=8**;
+  50.896.322 bytes, dez chaves ausentes e zero colisões.
+- Fonte canônica atual: **10/10 hashes conferidos; zero divergências**.
+  D01 registra `hash_historico_anterior = nao_disponivel`; os hashes completos
+  atuais foram adotados conforme instrução humana, sem inventar histórico.
+- D01: oito vínculos neutros `principal=false`, permitidos pelo schema.
+- Colisão protegida por leitura autenticada e PUT condicional; GET remoto com
+  novo SHA-256/bytes antes de INSERT atômico de arquivo e vínculo.
+- Compensação só de criação própria; ausência confirmada; COMMIT incerto
+  reconciliado em conexão independente antes de qualquer exclusão.
+- Credencial exclusiva do executor: `DATABASE_URL_MANUTENCAO`.
+- Gates: tipos e lint passaram (quatro avisos CSS preexistentes);
+  **234 testes passaram e três de upload real foram omitidos**.
+- Checkpoint reúne toda a implementação pré-upload desde `97bc88c` em um
+  único commit. `ARCHITECTURE.md` permanece intacto, fora do escopo e do commit.
+- **Nenhum upload, publicação, build ou push.** `documento=33`;
+  `arquivo=documento_arquivo=pessoa=consentimento=PUBLICAVEL=vw_anexo_publico=0`.
+- Upstream preservado: **feat/home-indicadores → origin/main**; pendência de
+  segurança a resolver separadamente antes de qualquer push.
 
 A carga de `pessoa` e `consentimento` (11 participantes) segue não autorizada.
 

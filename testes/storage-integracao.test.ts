@@ -30,7 +30,11 @@ const nomes = [
   "STORAGE_PRIVATE_ACCESS_KEY",
   "STORAGE_PRIVATE_SECRET",
 ];
-const configurado = nomes.every((nome) => Boolean(process.env[nome]?.trim()));
+// Credenciais presentes não autorizam upload. Estes testes escrevem nos dois
+// buckets; executar somente em rodada com autorização explícita para isso.
+const configurado =
+  process.env.TESTE_R2_ESCRITA === "autorizada" &&
+  nomes.every((nome) => Boolean(process.env[nome]?.trim()));
 const hash = (corpo: Buffer) =>
   createHash("sha256").update(corpo).digest("hex");
 function status(erro: unknown): number | undefined {
