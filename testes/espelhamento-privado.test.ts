@@ -1,10 +1,10 @@
 import { Pool } from "pg";
 import { describe, expect, test } from "vitest";
-
 import {
   CLASSIFICACAO,
   DISTRIBUICAO_ESPERADA,
 } from "../src/dados/classificacao-documental";
+import { LOTE_PRIVADO_INICIAL } from "../src/dados/lote-privado-inicial";
 import {
   evidenciaManifestoSchema,
   manifestoPublico,
@@ -252,7 +252,25 @@ describe.skipIf(!URL_MANUTENCAO)(
                   (select count(*)::int from documento
                     where estado_documental = 'PUBLICAVEL') as pub`,
         );
-        expect(r.rows[0]).toEqual({ d: 33, a: 0, da: 0, v: 0, pub: 0 });
+        // Prompt 3.4.2: a carga privada foi autorizada e concluída.
+        expect(r.rows[0]).toEqual({ d: 33, a: 10, da: 10, v: 0, pub: 0 });
+        const arquivos = await pool.query(
+          `select a.chave_storage, a.sha256, a.bucket, a.visibilidade,
+                  a.url_publica, da.principal, da.versao
+           from arquivo a join documento_arquivo da on da.arquivo_id=a.id`,
+        );
+        expect(arquivos.rows).toHaveLength(10);
+        for (const [, , chave, sha256, principal] of LOTE_PRIVADO_INICIAL) {
+          expect(arquivos.rows).toContainEqual({
+            chave_storage: chave,
+            sha256,
+            principal,
+            versao: 1,
+            bucket: "observatorio-privado",
+            visibilidade: "privado",
+            url_publica: null,
+          });
+        }
       } finally {
         await pool.end();
       }

@@ -15,7 +15,7 @@ Como o projeto deve ser conduzido é assunto de
 | | |
 |---|---|
 | Branch | `feat/home-indicadores` |
-| Checkpoint pré-upload | commit desta alteração — *feat: prepara espelhamento privado seguro*; base `97bc88c` |
+| Checkpoint pré-upload | `4b6411e171e77846965c8622c2b5aaedbc3424ff` — *feat: prepara espelhamento privado seguro* |
 | Upstream | `origin/main`; pendência de segurança, não alterado nesta rodada |
 | Push nesta rodada | nenhum; a configuração de upstream não comprova push anterior |
 
@@ -32,7 +32,7 @@ Como o projeto deve ser conduzido é assunto de
 | R2 | buckets público e privado validados; GET anônimo no privado negado |
 | Manifesto de Evidências | existe, em `src/lib/manifesto-evidencias.ts` |
 | ZIP público | gate canônico `PUBLICAVEL` + `revisao_privacidade = concluida`; não gera pacote vazio |
-| Banco | `documento` = **33**; `arquivo`, `documento_arquivo`, `pessoa` e `consentimento` = **0** |
+| Banco | `documento` = **33**; `arquivo` = **10**; `documento_arquivo` = **10**; `pessoa` = **0**; `consentimento` = **0** |
 
 ## Fonte canônica
 
@@ -311,6 +311,8 @@ engana; proposta de renomeação registrada na `ADR-015`, sem migração.
 
 ## Prompt 3.4.1 — executor concluído; parada antes do upload
 
+Registro da etapa anterior. A autorização e execução posteriores estão no Prompt 3.4.2 abaixo.
+
 **Pronto tecnicamente para o lote fechado de dez objetos privados.**
 Resta somente autorização humana para os dez uploads, incluindo confirmação
 administrativa de r2.dev desativado e inexistência de custom domain público.
@@ -344,6 +346,99 @@ permanece como histórico; seus bloqueios foram tratados no Prompt 3.4.1.
   segurança a resolver separadamente antes de qualquer push.
 
 A carga de `pessoa` e `consentimento` (11 participantes) segue não autorizada.
+
+
+## Prompt 3.4.2 — primeiro espelhamento privado concluído
+
+Executado em **2026-09-07**, a partir do checkpoint pré-upload `4b6411e`.
+Autorização humana explícita para somente A02=1, A04=1 e D01=8.
+O responsável confirmou manualmente **r2.dev desativado**, **nenhum Custom
+Domain** no bucket privado e credenciais R2 conferidas em `.env.local`.
+Essa confirmação administrativa é humana, não uma conclusão da API S3.
+
+### Execução e invariantes
+
+Comandos executados na raiz do repositório:
+
+```sh
+node --import tsx scripts/espelhar-anexos.ts --dry-run
+node --import tsx scripts/espelhar-anexos.ts --executar
+```
+
+O dry-run imediatamente anterior confirmou exatamente **10 objetos**,
+A02/A04/D01=1/1/8, dez chaves ausentes e hashes canônicos íntegros.
+O executor do checkpoint foi utilizado sem alteração.
+
+| Verificação | Resultado |
+|---|---|
+| Uploads tentados / concluídos | **10 / 10** |
+| SHA-256 remoto e bytes conferidos antes da persistência | **10/10** |
+| Volume total | **50.896.322 bytes** |
+| Colisões iguais / diferentes | **0 / 0** |
+| Falhas de upload ou persistência | **0** |
+| Compensações / objetos órfãos | **0 / 0** |
+| documento / arquivo / documento_arquivo | **33 / 10 / 10** |
+| pessoa / consentimento | **0 / 0** |
+| Bucket dos dez arquivos | **observatorio-privado** |
+| Visibilidade dos dez arquivos | **privado** |
+| url_publica dos dez arquivos | **NULL** |
+| PUBLICAVEL / vw_anexo_publico | **0 / 0** |
+| Revisões de privacidade | **33 pendente**, sem alteração |
+| D01 | **8 vínculos, todos principal=false**, versão 1 |
+| A02 / A04 | **1 vínculo principal cada**, versão 1 |
+| Objetos enviados ao bucket público | **0; bucket público intocado** |
+
+Cada objeto foi baixado por acesso autenticado e teve SHA-256 e tamanho
+recalculados antes dos INSERTs atômicos de arquivo/vínculo. ETag não foi usado
+como prova de integridade. Chaves e hashes correspondem ao
+[dry-run aprovado](./docs/carga/DRY_RUN_FINAL_PRIVADO_2026-09-07.md).
+
+### Não exposição e Manifesto
+
+GET sem credenciais, cookies ou assinatura nas dez chaves pelo endpoint S3:
+**10 respostas HTTP 400; nenhum conteúdo entregue**. Nenhum acesso anônimo
+foi encontrado nesse endpoint. Ausência de r2.dev e custom domains foi
+confirmada pelo responsável, como registrado acima; não foram habilitados,
+criados ou modificados domínios, URLs públicas, presigned URLs ou ACLs.
+
+Manifesto derivado dos 33 documentos e vínculos atuais, validado pelo contrato
+Zod e filtrado pelo gate canônico, **somente em memória**: representação pública
+`[]`, zero anexos públicos e zero chaves privadas. Nenhum arquivo de Manifesto
+ou ZIP foi gravado ou enviado.
+
+### Idempotência e encerramento
+
+O dry-run pós-carga reconheceu **10/10 como `ja_espelhado`**, com nova leitura
+autenticada e conferência dos hashes/bytes: **zero uploads necessários, zero
+INSERTs duplicados, zero sobrescritas**. Código de saída 0.
+
+Ocorrência de verificação: a primeira tentativa desse dry-run ficou vários
+minutos sem progresso e foi encerrada após identificação do processo de
+leitura. A causa não foi determinada. A repetição do mesmo comando concluiu
+em aproximadamente nove segundos. **Nenhum upload real foi repetido** e não
+houve falha de upload, persistência ou compensação.
+
+Pools encerrados em `finally`, clientes S3 destruídos após uso e processos
+da rodada concluídos; o processo da tentativa interrompida também foi
+encerrado. **Processos/conexões locais pendentes desta execução: 0.**
+
+### Gates e próximo passo
+
+`pnpm tipos` e `pnpm lint` passaram; o lint mantém quatro avisos CSS
+preexistentes. `pnpm teste`: **234 aprovados, 3 omitidos, zero falhas**.
+Os três testes que criam objetos reais permaneceram desativados com
+`TESTE_R2_ESCRITA=proibida`; a autorização cobre apenas os dez objetos do lote.
+
+O teste de invariantes da carga, antes fixado em zero arquivos, foi atualizado
+para exigir os dez registros autorizados e conferir chaves, hashes,
+visibilidade, bucket, URL nula e papéis. Justificativa do arquivo adicional:
+a nova carga autorizada exige que o gate valide o estado pós-espelhamento.
+Nenhuma asserção de privacidade foi removida.
+
+**Próximo passo: revisão de privacidade, ainda não iniciada.**
+Nenhuma carga de pessoa/consentimento, publicação, build, ZIP, commit ou push
+foi realizada nesta rodada. `ARCHITECTURE.md` permanece intacto e fora do
+escopo. Upstream mantido: `feat/home-indicadores → origin/main`.
 
 ---
 
