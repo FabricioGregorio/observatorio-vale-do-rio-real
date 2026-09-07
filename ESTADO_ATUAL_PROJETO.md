@@ -435,10 +435,48 @@ visibilidade, bucket, URL nula e papéis. Justificativa do arquivo adicional:
 a nova carga autorizada exige que o gate valide o estado pós-espelhamento.
 Nenhuma asserção de privacidade foi removida.
 
-**Próximo passo: revisão de privacidade, ainda não iniciada.**
+**Próximo passo registrado naquela etapa:** iniciar a revisão de privacidade.
+Esse passo foi posteriormente concluído nos Prompts 3.5.1 e 3.6, conforme a
+seção seguinte.
 Nenhuma carga de pessoa/consentimento, publicação, build, ZIP, commit ou push
 foi realizada nesta rodada. `ARCHITECTURE.md` permanece intacto e fora do
 escopo. Upstream mantido: `feat/home-indicadores → origin/main`.
+
+---
+
+## Prompt 3.6 — revisão registrada e derivados públicos seguros produzidos
+
+Concluído em **2026-09-07**, após o checkpoint exclusivo do relatório de
+privacidade `8283d8b`. O checkpoint não foi enviado ao remoto.
+
+- `documento.revisao_privacidade = concluida` para A02, A04 e D01, em uma
+  transação de exatamente três linhas; os três estados documentais continuam
+  `ESPELHAVEL`.
+- Seis derivados locais foram produzidos fora do Git em
+  `OBSERVATORIO_FONTES_DIR/derivados-publicos/`: A02 e D01-01, D01-02,
+  D01-03, D01-05 e D01-07.
+- A02 teve a seção nominal da página 7 removida de forma irrecuperável no
+  derivado; as outras 13 páginas preservam a camada textual.
+- Os cinco derivados D01 receberam apenas saneamento de metadados. Os PNGs
+  preservam exatamente os pixels; o PDF preserva páginas e conteúdo visual.
+- Manifesto local estruturado:
+  `derivados-publicos/manifesto-derivados-2026-09-07.json`, com proveniência,
+  método, MIME, bytes e hashes de origem e saída.
+- D01-04 e D01-06 foram confirmados como candidatos sem transformação. A04 e
+  D01-08 não receberam derivados e continuam sujeitos a decisão humana.
+- Integridade final dos originais: **10/10 hashes coincidentes**.
+- Validação dos derivados: metadados removidos, hashes novos, conteúdo e
+  dimensões preservados conforme o tipo; inspeção visual dos PDFs concluída.
+- Nenhum registro de `arquivo` ou `documento_arquivo` foi criado para os
+  derivados; nenhum upload ao R2, publicação, `PUBLICAVEL`, pessoa,
+  consentimento, build ou push.
+- Banco após a operação: `documento=33`, `arquivo=10`,
+  `documento_arquivo=10`, `PUBLICAVEL=0`, `vw_anexo_publico=0`.
+- Gates: tipos e lint passaram (quatro avisos CSS preexistentes); 234 testes
+  passaram e três foram omitidos. Build não executado.
+
+O conjunto seguro está preparado para uma decisão humana posterior de
+publicação. A operação atual não concede nem presume essa autorização.
 
 ---
 

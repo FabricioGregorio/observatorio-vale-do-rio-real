@@ -676,3 +676,79 @@ a `PUBLICAVEL`.
 15. Decisões humanas restantes: **alcance da autorização/natureza contextual do nome em A04; base/autorização e tratamento das imagens de D01-08, especialmente a com menor aparente**.
 16. Algum `PUBLICAVEL` foi criado: **NÃO**.
 17. Upload realizado: **NÃO**.
+
+---
+
+## 11. Registro operacional — Prompt 3.6
+
+### 11.1 Checkpoint e gravação da revisão
+
+O relatório de inspeção direta foi isolado antes de qualquer derivação no
+commit `8283d8b` (`docs: registra revisao de privacidade inicial`). O commit
+contém somente este relatório; não houve push.
+
+Em seguida, uma transação atualizou exclusivamente
+`documento.revisao_privacidade` para `concluida` nos documentos A02, A04 e
+D01. Os estados documentais foram conferidos antes e depois e permaneceram
+`ESPELHAVEL`. A transação afetou exatamente três linhas. Nenhuma linha de
+`arquivo`, `documento_arquivo`, `pessoa` ou `consentimento` foi criada ou
+alterada.
+
+### 11.2 Derivados locais produzidos
+
+Os derivados estão fora do Git, em
+`OBSERVATORIO_FONTES_DIR/derivados-publicos/`. O manifesto estruturado local é
+`manifesto-derivados-2026-09-07.json` e registra proveniência, método, MIME,
+tamanho, hash do original e hash do derivado. Todos permanecem marcados como
+`NAO_PUBLICAVEL`.
+
+| Origem | Derivado | Método | Bytes | SHA-256 do derivado |
+|---|---|---|---:|---|
+| A02 | `A02/a02-relatorio-tecnico-recanto-da-serra-publico-v1.pdf` | Tarjamento de privacidade e saneamento de metadados | 756.239 | `b314cd7a5330276ecccc0c7cfe7dfe6461da721055318c15957db5cd7848961a` |
+| D01-01 | `D01/d01-01-logo-oficial-tobias-sou-eu-publico-v1.png` | Saneamento de metadados | 257.102 | `b8842594544c579a9fc508a912b9a913030013eb6de16704a007c7fefcc323f5` |
+| D01-02 | `D01/d01-02-logo-publico-v1.pdf` | Saneamento de metadados | 12.943.416 | `882810f458c2bb92d51c24dad691bb2553d0373125e70884e25856571ca2f551` |
+| D01-03 | `D01/d01-03-horizontal-monocromatica-escura-publico-v1.png` | Saneamento de metadados | 129.763 | `a52ccb2202f19b93e383e22295ff68e781ba3dbb5403983168c40b47c332659e` |
+| D01-05 | `D01/d01-05-icon-publico-v1.png` | Saneamento de metadados | 100.975 | `ec8c13aee802c5baaac15a11a5c8813ff5cb6733107bcae6c9c82dd79b6426a4` |
+| D01-07 | `D01/d01-07-logo-e-texto-publico-v1.png` | Saneamento de metadados | 400.824 | `9af5c7b249456496cf0a6a66a67a4262c1959be04eed93f9197ec02fc9e25846` |
+
+No A02, somente a página 7 foi substituída por uma página rasterizada a 300
+DPI com tarja opaca sobre toda a seção nominal e a mensagem “Informações
+nominais removidas na versão pública”. O conteúdo sensível original não foi
+retido como texto, anotação ou objeto recuperável nessa página. As outras 13
+páginas preservam a camada textual e o conteúdo original.
+
+Nos quatro PNGs, dimensões, modo de cor e pixels foram preservados; a
+reescrita removeu os metadados. No PDF D01-02, páginas e conteúdo visual foram
+preservados, com remoção das propriedades do documento.
+
+### 11.3 Validações e itens não derivados
+
+- Os dez originais foram recalculados após a produção: **10/10 hashes
+  coincidentes** com o lote canônico.
+- Os dois PDFs derivados não contêm metadados, XMP, formulários ou anotações.
+- Os identificadores nominais lidos da página 7 do A02 não aparecem no texto
+  extraído do derivado.
+- A inspeção visual cobriu as 14 páginas do A02 e o PDF D01-02. No A02, as
+  páginas 1–6 e 8–14 são visualmente idênticas; a tarja da página 7 não cobre
+  as seções seguintes nem o gráfico.
+- Os quatro PNGs derivados são pixel a pixel idênticos aos originais.
+- D01-04 e D01-06 foram reinspecionados como XML válido. Continuam candidatos
+  a publicação do original, sem transformação; D01-06 mantém duas imagens
+  incorporadas sem EXIF, XMP, GPS, comentário ou autoria.
+- A04 não recebeu derivado. A decisão sobre o nome institucional e a base de
+  autorização permanece humana.
+- D01-08 não recebeu derivado. A decisão sobre as fotografias, especialmente
+  a presença de menor aparente, permanece humana.
+
+### 11.4 Limites desta operação
+
+Nenhum derivado foi cadastrado em `arquivo` ou `documento_arquivo`, enviado ao
+R2 ou promovido a `PUBLICAVEL`. O bucket público permaneceu intocado. Não
+houve carga de pessoa/consentimento, alteração dos originais, build, push ou
+decisão automática de publicação. Ao fim da operação, permanecem
+`documento=33`, `arquivo=10`, `documento_arquivo=10`, `PUBLICAVEL=0` e
+`vw_anexo_publico=0`.
+
+Gates finais: `pnpm tipos`, `pnpm lint` e `pnpm teste` passaram. O lint
+preserva quatro avisos CSS preexistentes; os testes somaram 234 aprovados e
+três omitidos. O build não foi executado, conforme o escopo.
