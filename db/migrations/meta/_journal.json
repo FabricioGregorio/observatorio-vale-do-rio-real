@@ -43,6 +43,13 @@
       "when": 1788735280960,
       "tag": "0006_arquivo_privado",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1788816127021,
+      "tag": "0007_publicacao_multiarquivo",
+      "breakpoints": true
     }
   ]
 }

@@ -35,6 +35,8 @@ function evidencia(
     anexo: {
       ordemAnexo: 1,
       slug: "a01",
+      rotuloArquivo: "Arquivo de teste",
+      principal: true,
       titulo: "Objeto de teste",
       tipo: "outro",
       resumo: null,
@@ -46,6 +48,9 @@ function evidencia(
       bytes: 9,
       sha256: hash,
       publicadoEm: null,
+      arquivoOrigemId: null,
+      arquivoRelacao: null,
+      arquivoDerivacaoMetodo: null,
     },
     publicadoLegado: true,
   };
@@ -95,7 +100,7 @@ describe("fluxo usado pelo gerador do ZIP público", () => {
     expect(resultado.estado).toBe("publicado");
     expect(recebido).not.toBeNull();
     if (!recebido) throw new Error("ZIP não recebido no teste");
-    const arquivo = unzipSync(recebido)["a01.txt"];
+    const arquivo = unzipSync(recebido)["a01/a01.txt"];
     expect(arquivo).toBeDefined();
     expect(Buffer.from(arquivo as Uint8Array)).toEqual(corpo);
   });

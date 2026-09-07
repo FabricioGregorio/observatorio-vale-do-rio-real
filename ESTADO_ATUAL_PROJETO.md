@@ -508,5 +508,45 @@ passaram e três foram omitidos. O build não foi executado.
 
 ---
 
+## Prompt 3.8 — arquitetura multiarquivo corrigida, sem publicação
+
+Concluído em **2026-09-07**. A auditoria foi preservada primeiro no checkpoint
+`865e24d`. Em seguida, a decisão da ADR-016 foi aceita e implementada pela
+migration oficial 0007, aplicada com a credencial exclusiva de migração.
+
+- `arquivo` permanece um objeto físico armazenado; a identidade de localização
+  agora é `UNIQUE(bucket, chave_storage)`, e `sha256` continua não único.
+- Proveniência física distingue `derivado_de_id` de `replica_de_id`, com FK,
+  checks de não autorreferência e exclusividade entre as relações.
+- `metodo_derivacao` passou a representar `tarjamento_privacidade` e
+  `sanitizacao_metadados`; réplica byte-identical não é derivação.
+- `vw_anexo_publico` mantém todos os gates canônicos, publica cada vínculo
+  válido e expõe `principal` como informação, sem usá-lo como filtro.
+- O Manifesto usa natureza, estado e revisão reais da view e representa uma
+  entrada por objeto físico público. Sala do Avaliador, `/anexos.json` e ZIP
+  preservam todos os arquivos de um documento; o ZIP usa uma pasta por slug
+  para evitar colisão de nomes.
+- Teste transacional com rollback: D01=7 públicos e D01-08=0, tanto com zero
+  principais quanto com um principal; A02=1 derivado e original privado=0.
+  No cenário integrado, view, Manifesto, `/anexos.json`, Sala e ZIP usam os
+  mesmos 8 arquivos; A04=0.
+- Testes de integridade confirmaram: mesmo SHA em objetos privado e público é
+  permitido; mesma chave em buckets diferentes é permitida; o mesmo par
+  `(bucket, chave_storage)` é recusado.
+- Estado real pós-migration e pós-rollback: `documento=33`, `arquivo=10`,
+  `documento_arquivo=10`, `PUBLICAVEL=0` e `vw_anexo_publico=0`.
+- Dry-run público revalidado somente com oito `HeadObject`: A02=1, D01=7,
+  objetos existentes/colisões=0. Nenhum `PutObject` foi executado.
+- Gates: tipos e lint passaram; o lint conserva quatro avisos CSS preexistentes.
+  **236 testes passaram e três foram omitidos**.
+- Nenhum upload, publicação, A04, D01-08, pessoa/consentimento, build, mudança
+  em `.env.local` ou push ocorreu. `ARCHITECTURE.md` segue intacto e fora.
+
+O bloqueio externo permanece: `STORAGE_PUBLIC_URL` ainda usa `r2.dev`. A
+arquitetura está pronta para o lote, mas publicação real continua proibida até
+o responsável aprovar e configurar o domínio público final de produção.
+
+---
+
 Histórico detalhado das etapas: [`docs/historico/estados/`](./docs/historico/estados/).
 Não é leitura obrigatória.

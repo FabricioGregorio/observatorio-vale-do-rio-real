@@ -199,6 +199,8 @@ export const metodoDerivacao = pgEnum("metodo_derivacao", [
   "transcricao_leitura_visual",
   "ocr_estatistico",
   "redacao_versao_publica",
+  "tarjamento_privacidade",
+  "sanitizacao_metadados",
   "extracao_secao",
   "conversao_formato",
 ]);
@@ -255,7 +257,7 @@ export const arquivo = pgTable(
   {
     id: uuid("id").primaryKey().defaultRandom(),
     /** ex: arquivos/analise-de-dados/recanto-da-serra-v2.pdf */
-    chaveStorage: text("chave_storage").notNull().unique(),
+    chaveStorage: text("chave_storage").notNull(),
     /**
      * Bucket real onde o objeto vive — migração 0006. `chave_storage` diz a
      * chave, não o bucket, e com dois buckets a chave sozinha é ambígua.
@@ -297,6 +299,12 @@ export const arquivo = pgTable(
      * substituído: o derivado é linha nova, com hash próprio.
      */
     derivadoDeId: uuid("derivado_de_id"),
+    /**
+     * Objeto físico copiado byte a byte de outra localização. Não é derivado:
+     * a réplica preserva o SHA-256 e existe para representar, por exemplo, o
+     * mesmo SVG nos buckets privado e público.
+     */
+    replicaDeId: uuid("replica_de_id"),
     derivacaoMetodo: metodoDerivacao("derivacao_metodo"),
     derivacaoEm: timestamp("derivacao_em", { withTimezone: true }),
     criadoEm: timestamp("criado_em", { withTimezone: true })
@@ -308,6 +316,15 @@ export const arquivo = pgTable(
   },
   (t) => [
     check("arquivo_bytes_check", sql`${t.bytes} > 0`),
+    check(
+      "arquivo_replica_nao_reflexiva",
+      sql`${t.replicaDeId} IS NULL OR ${t.replicaDeId} <> ${t.id}`,
+    ),
+    check(
+      "arquivo_proveniencia_unica",
+      sql`num_nonnulls(${t.derivadoDeId}, ${t.replicaDeId}) <= 1`,
+    ),
+    unique("arquivo_bucket_chave_key").on(t.bucket, t.chaveStorage),
     index("idx_arquivo_sha256").on(t.sha256),
     index("idx_arquivo_tipo").on(t.tipoMidia),
   ],
@@ -574,10 +591,11 @@ export const documentoArquivo = pgTable(
  * declaração serve só para consultá-la com tipagem — **não gera DDL e não
  * entra em migração**.
  *
- * A view junta `documento`, `documento_arquivo` (só o principal) e `arquivo`,
- * filtrando `status = 'publicado'` e `arquivado_em IS NULL`. Ela **expõe**
- * `espelhado`, mas não filtra por ele: quem consome é que decide, e a Sala do
- * Avaliador exige `espelhado = true`.
+ * A view junta `documento`, todos os vínculos de `documento_arquivo` e
+ * `arquivo`. A migração 0007 deixou de tratar `principal` como autorização:
+ * ele é somente informação de preferência. O gate filtra documento publicado,
+ * não arquivado, PUBLICAVEL, com revisão concluída, e objeto público espelhado
+ * com URL.
  */
 export const vwAnexoPublico = pgView("vw_anexo_publico", {
   ordemAnexo: integer("ordem_anexo"),
@@ -600,6 +618,12 @@ export const vwAnexoPublico = pgView("vw_anexo_publico", {
   estadoDocumental: estadoDocumental("estado_documental"),
   revisaoPrivacidade: revisaoPrivacidade("revisao_privacidade"),
   derivadoDeSlug: citext("derivado_de_slug"),
+  /** Colunas acrescentadas pela migração 0007, sempre ao fim da view. */
+  principal: boolean("principal"),
+  rotuloArquivo: text("rotulo_arquivo"),
+  arquivoOrigemId: uuid("arquivo_origem_id"),
+  arquivoRelacao: text("arquivo_relacao"),
+  arquivoDerivacaoMetodo: metodoDerivacao("arquivo_derivacao_metodo"),
 }).existing();
 
 /**
@@ -608,10 +632,9 @@ export const vwAnexoPublico = pgView("vw_anexo_publico", {
  * Criada pela migração 0003, em SQL bruto. `.existing()` apenas a declara para
  * consulta tipada: não gera DDL e não entra em migração.
  *
- * Denuncia documento exigido pelo edital, publicado e sem arquivo espelhado.
- * A view usa LEFT JOIN de propósito — é o documento *sem* arquivo principal que
- * interessa aqui, exatamente o caso que a vw_anexo_publico esconde por usar
- * JOIN.
+ * Denuncia documento exigido pelo edital, publicado e sem arquivo principal
+ * espelhado. A view usa LEFT JOIN de propósito para que a ausência do vínculo
+ * preferencial continue observável pelo gate de pendências.
  *
  * Nesta fatia a view tem só o ramo do anexo. O ramo do áudio público sem
  * consentimento depende da tabela `entrevista`, que ainda não existe, e entra

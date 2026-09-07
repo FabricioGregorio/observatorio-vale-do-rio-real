@@ -164,7 +164,7 @@ describe("persistência atômica e reconciliação em conexão independente", ()
     );
     expect(trava).toBeGreaterThan(-1);
     expect(leitura).toBeGreaterThan(trava);
-    expect(consultas[trava]?.[1]).toEqual([op.chave]);
+    expect(consultas[trava]?.[1]).toEqual([`${op.bucket}/${op.chave}`]);
   });
 
   test("ROLLBACK sem resposta não autoriza exclusão", async () => {

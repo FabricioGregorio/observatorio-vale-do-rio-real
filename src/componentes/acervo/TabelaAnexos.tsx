@@ -85,13 +85,19 @@ export function TabelaAnexos({ anexos }: { anexos: AnexoPublico[] }) {
         </thead>
         <tbody>
           {anexos.map((anexo) => (
-            <tr key={anexo.slug}>
+            <tr key={anexo.linkPermanente}>
               <th
                 scope="row"
                 className="border-b p-2 text-left font-normal align-top"
                 style={{ borderColor: "var(--color-borda)" }}
               >
                 <span className="block">{anexo.titulo}</span>
+                {anexo.rotuloArquivo ? (
+                  <span className="meta-ficha block">
+                    {anexo.rotuloArquivo}
+                    {anexo.principal ? " · arquivo principal" : ""}
+                  </span>
+                ) : null}
                 {anexo.resumo ? (
                   <span
                     className="block"

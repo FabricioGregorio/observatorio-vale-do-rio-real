@@ -1,3 +1,4 @@
+import type { AnexoPublico } from "../../dados/consultas/anexos";
 import { listarAnexosPublicos } from "../../dados/consultas/anexos";
 
 /**
@@ -14,29 +15,38 @@ import { listarAnexosPublicos } from "../../dados/consultas/anexos";
  */
 export const dynamic = "force-static";
 
+/** Serialização pura: uma entrada por objeto público, inclusive multiarquivo. */
+export function serializarAnexos(anexos: readonly AnexoPublico[]) {
+  return {
+    gerado_em: new Date().toISOString(),
+    total: anexos.length,
+    anexos: anexos.map((a) => ({
+      ordem: a.ordemAnexo,
+      slug: a.slug,
+      titulo: a.titulo,
+      rotulo_arquivo: a.rotuloArquivo,
+      principal: a.principal,
+      tipo: a.tipo,
+      resumo: a.resumo,
+      data_referencia: a.dataReferencia,
+      licenca: a.licenca,
+      link_permanente: a.linkPermanente,
+      link_origem: a.linkOrigem,
+      mime_type: a.mimeType,
+      bytes: a.bytes,
+      sha256: a.sha256,
+      arquivo_origem_id: a.arquivoOrigemId,
+      arquivo_relacao: a.arquivoRelacao,
+      arquivo_derivacao_metodo: a.arquivoDerivacaoMetodo,
+      publicado_em: a.publicadoEm,
+    })),
+  };
+}
+
 export async function GET() {
   const anexos = await listarAnexosPublicos();
 
-  return Response.json(
-    {
-      gerado_em: new Date().toISOString(),
-      total: anexos.length,
-      anexos: anexos.map((a) => ({
-        ordem: a.ordemAnexo,
-        slug: a.slug,
-        titulo: a.titulo,
-        tipo: a.tipo,
-        resumo: a.resumo,
-        data_referencia: a.dataReferencia,
-        licenca: a.licenca,
-        link_permanente: a.linkPermanente,
-        link_origem: a.linkOrigem,
-        mime_type: a.mimeType,
-        bytes: a.bytes,
-        sha256: a.sha256,
-        publicado_em: a.publicadoEm,
-      })),
-    },
-    { headers: { "content-type": "application/json; charset=utf-8" } },
-  );
+  return Response.json(serializarAnexos(anexos), {
+    headers: { "content-type": "application/json; charset=utf-8" },
+  });
 }

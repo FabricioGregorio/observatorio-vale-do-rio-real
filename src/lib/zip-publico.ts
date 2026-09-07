@@ -49,8 +49,11 @@ export async function gerarZipPublico(
         `hash divergente para ${manifesto.codigo}; ZIP não publicado.`,
       );
     }
-    conteudo[nomeNoPacote(anexo.slug, manifesto.url as string)] =
-      new Uint8Array(bytes);
+    const nome = nomeNoPacote(anexo.slug, manifesto.url as string);
+    if (conteudo[nome]) {
+      throw new Error(`nome duplicado no ZIP público: ${nome}.`);
+    }
+    conteudo[nome] = new Uint8Array(bytes);
   }
 
   const pacote = Buffer.from(zipSync(conteudo, { level: 0 }));

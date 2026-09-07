@@ -24,14 +24,12 @@ export function urlDoZipDeAnexos(): string | null {
 }
 
 /**
- * Nome do arquivo dentro do pacote. Usa o slug do documento e a extensão que
- * a chave de storage já carrega, para o avaliador reconhecer o item pelo mesmo
- * nome que vê na tabela.
+ * Nome do arquivo dentro do pacote. Cada documento recebe uma pasta e o nome
+ * físico do objeto é preservado; assim sete arquivos de D01 não colidem entre
+ * si, inclusive quando compartilham a mesma extensão.
  */
 export function nomeNoPacote(slug: string, linkPermanente: string): string {
   const semQuery = linkPermanente.split("?")[0] ?? "";
   const ultimo = semQuery.split("/").pop() ?? "";
-  const ponto = ultimo.lastIndexOf(".");
-  const extensao = ponto >= 0 ? ultimo.slice(ponto) : "";
-  return `${slug}${extensao}`;
+  return `${slug}/${ultimo || "arquivo"}`;
 }

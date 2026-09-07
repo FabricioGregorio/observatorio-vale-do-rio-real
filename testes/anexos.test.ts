@@ -89,24 +89,26 @@ describe("pacote .zip", () => {
     expect(urlDoZipDeAnexos()).toBeNull();
   });
 
-  test("nome dentro do pacote usa o slug e preserva a extensão", () => {
+  test("nome dentro do pacote usa pasta do documento e nome físico", () => {
     expect(
       nomeNoPacote(
         "relatorio-tecnico-recanto-da-serra",
         "https://arquivos.exemplo.org/arquivos/analise-de-dados/relatorio-tecnico-recanto-da-serra-v1.pdf",
       ),
-    ).toBe("relatorio-tecnico-recanto-da-serra.pdf");
+    ).toBe(
+      "relatorio-tecnico-recanto-da-serra/relatorio-tecnico-recanto-da-serra-v1.pdf",
+    );
   });
 
   test("ignora query ao deduzir a extensão", () => {
     expect(
       nomeNoPacote("entrevista-x", "https://x/y/entrevista-x-v1.mp3?v=2"),
-    ).toBe("entrevista-x.mp3");
+    ).toBe("entrevista-x/entrevista-x-v1.mp3");
   });
 
   test("sem extensão na URL, o nome fica só com o slug", () => {
     expect(nomeNoPacote("painel-vivo", "https://x/y/painel-vivo-v1")).toBe(
-      "painel-vivo",
+      "painel-vivo/painel-vivo-v1",
     );
   });
 });

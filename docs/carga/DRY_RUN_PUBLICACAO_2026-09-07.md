@@ -1,7 +1,7 @@
 # Dry-run da primeira publicação — A02 e D01-01 a D01-07
 
 **Data:** 2026-09-07
-**Operação:** somente leitura local + `HeadObject`
+**Operação:** somente leitura local + `HeadObject`, revalidada após a migration 0007
 **Uploads:** 0
 **Alterações no banco:** 0
 
@@ -24,3 +24,10 @@ abaixo **não estão aprovadas para produção**.
 Bucket futuro configurado: `observatorio-publico`. As oito consultas HEAD
 retornaram ausência. Nenhum `PutObject`, cópia, exclusão ou listagem ampla foi
 executado. A04 e D01-08 não integram o lote.
+
+## Revalidação após a correção multiarquivo
+
+Após a aplicação da migration 0007, as mesmas oito chaves foram consultadas
+novamente com `HeadObject`: **8 consultas, 0 objetos existentes e 0 colisões**.
+O lote permanece A02=1 e D01=7. A operação não executou `PutObject` e não
+alterou banco, configuração ou storage.

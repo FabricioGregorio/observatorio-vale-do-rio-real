@@ -28,8 +28,22 @@ export type AnexoPublico = {
   estado: "PUBLICAVEL";
   revisaoPrivacidade: "concluida";
   derivadoDe: string[];
+  derivadoDeDocumento: string | null;
+  arquivoOrigemId: string | null;
+  arquivoRelacao: "derivado" | "replica" | null;
+  arquivoDerivacaoMetodo:
+    | "transcricao_leitura_visual"
+    | "ocr_estatistico"
+    | "redacao_versao_publica"
+    | "tarjamento_privacidade"
+    | "sanitizacao_metadados"
+    | "extracao_secao"
+    | "conversao_formato"
+    | null;
   ordemAnexo: number | null;
   slug: string;
+  rotuloArquivo: string | null;
+  principal: boolean;
   titulo: string;
   tipo: string;
   resumo: string | null;
@@ -47,24 +61,26 @@ export type EvidenciaDeAnexo = {
   manifesto: EvidenciaManifesto;
   anexo: Omit<
     AnexoPublico,
-    "codigo" | "estado" | "revisaoPrivacidade" | "derivadoDe"
+    | "codigo"
+    | "estado"
+    | "revisaoPrivacidade"
+    | "derivadoDe"
+    | "derivadoDeDocumento"
   >;
   /** Compatibilidade histórica; nunca concede autorização pública. */
   publicadoLegado: boolean;
 };
 
-/**
- * Adapta a view legada ao Manifesto. O banco atual ainda não possui estado nem
- * revisão de privacidade, portanto ambos ficam ausentes e falham fechados.
- */
-export async function listarEvidenciasDeAnexos(): Promise<EvidenciaDeAnexo[]> {
-  if (!process.env.DATABASE_URL) return [];
-  const { db } = await import("../cliente");
-  const linhas = await db
-    .select()
-    .from(vwAnexoPublico)
-    .where(eq(vwAnexoPublico.espelhado, true));
+export type LinhaAnexoPublico = typeof vwAnexoPublico.$inferSelect;
 
+/**
+ * Uma linha pública da view produz uma evidência. Assim um documento com sete
+ * objetos públicos permanece com sete entradas; `principal` é informação de
+ * preferência e não colapsa o conjunto.
+ */
+export function adaptarLinhasDaView(
+  linhas: readonly LinhaAnexoPublico[],
+): EvidenciaDeAnexo[] {
   return linhas.flatMap((l) => {
     if (
       !l.slug ||
@@ -74,31 +90,46 @@ export async function listarEvidenciasDeAnexos(): Promise<EvidenciaDeAnexo[]> {
       !l.linkPermanente ||
       !l.mimeType ||
       !l.sha256 ||
-      l.bytes === null
+      l.bytes === null ||
+      l.natureza === null ||
+      l.obrigatorio === null ||
+      l.estadoDocumental === null ||
+      l.revisaoPrivacidade === null ||
+      l.principal === null
     ) {
       return [];
     }
     const derivadoDe = [
       `documento:${l.slug}`,
       ...(l.linkOrigem ? [`origem:${l.linkOrigem}`] : []),
+      ...(l.arquivoOrigemId ? [`arquivo:${l.arquivoOrigemId}`] : []),
     ];
     return [
       {
         manifesto: evidenciaManifestoSchema.parse({
           codigo: l.ordemAnexo === null ? l.slug : String(l.ordemAnexo),
           entregavel: l.titulo,
-          estado: null,
-          revisao_privacidade: null,
+          natureza: l.natureza,
+          obrigatorio: l.obrigatorio,
+          estado: l.estadoDocumental,
+          revisao_privacidade: l.revisaoPrivacidade,
           url: l.linkPermanente,
           sha256: l.sha256,
           doi: null,
           observacao: null,
           derivado_de: derivadoDe,
+          derivado_de_documento: l.derivadoDeSlug,
+          derivacao_metodo: null,
+          arquivo_origem_id: l.arquivoOrigemId,
+          arquivo_relacao: l.arquivoRelacao,
+          arquivo_derivacao_metodo: l.arquivoDerivacaoMetodo,
           arquivo_existe: true,
         }),
         anexo: {
           ordemAnexo: l.ordemAnexo,
           slug: l.slug,
+          rotuloArquivo: l.rotuloArquivo,
+          principal: l.principal,
           titulo: l.titulo,
           tipo: l.tipo,
           resumo: l.resumo,
@@ -110,11 +141,46 @@ export async function listarEvidenciasDeAnexos(): Promise<EvidenciaDeAnexo[]> {
           bytes: l.bytes,
           sha256: l.sha256,
           publicadoEm: l.publicadoEm,
+          arquivoOrigemId: l.arquivoOrigemId,
+          arquivoRelacao:
+            l.arquivoRelacao === "derivado" || l.arquivoRelacao === "replica"
+              ? l.arquivoRelacao
+              : null,
+          arquivoDerivacaoMetodo: l.arquivoDerivacaoMetodo,
         },
         publicadoLegado: true,
       },
     ];
   });
+}
+
+export async function listarEvidenciasDeAnexos(): Promise<EvidenciaDeAnexo[]> {
+  if (!process.env.DATABASE_URL) return [];
+  const { db } = await import("../cliente");
+  const linhas = await db
+    .select()
+    .from(vwAnexoPublico)
+    .where(eq(vwAnexoPublico.espelhado, true));
+  return adaptarLinhasDaView(linhas);
+}
+
+export function selecionarAnexosPublicos(
+  evidencias: readonly EvidenciaDeAnexo[],
+): AnexoPublico[] {
+  return evidencias.flatMap(({ manifesto, anexo }) =>
+    podePublicar(manifesto)
+      ? [
+          {
+            ...anexo,
+            codigo: manifesto.codigo,
+            estado: "PUBLICAVEL",
+            revisaoPrivacidade: "concluida",
+            derivadoDe: manifesto.derivado_de,
+            derivadoDeDocumento: manifesto.derivado_de_documento,
+          },
+        ]
+      : [],
+  );
 }
 
 /** Anexos publicados e efetivamente espelhados, na ordem da Sala do Avaliador. */
@@ -128,17 +194,5 @@ export async function listarAnexosPublicos(): Promise<AnexoPublico[]> {
   }
 
   const evidencias = await listarEvidenciasDeAnexos();
-  return evidencias.flatMap(({ manifesto, anexo }) =>
-    podePublicar(manifesto)
-      ? [
-          {
-            ...anexo,
-            codigo: manifesto.codigo,
-            estado: "PUBLICAVEL",
-            revisaoPrivacidade: "concluida",
-            derivadoDe: manifesto.derivado_de,
-          },
-        ]
-      : [],
-  );
+  return selecionarAnexosPublicos(evidencias);
 }

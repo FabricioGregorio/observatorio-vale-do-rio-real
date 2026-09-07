@@ -142,8 +142,9 @@ export class BancoEspelhamento {
       a.origem_url, a.origem_sistema, (a.espelhado_em is not null) espelhado,
       d.slug, da.principal, da.versao
       from arquivo a left join documento_arquivo da on da.arquivo_id=a.id
-      left join documento d on d.id=da.documento_id where a.chave_storage=$1`,
-          [op.chave],
+      left join documento d on d.id=da.documento_id
+      where a.bucket=$1 and a.chave_storage=$2`,
+          [op.bucket, op.chave],
         )
       ).rows,
     );
@@ -184,7 +185,9 @@ export class BancoEspelhamento {
     await c.query("set local statement_timeout = '20s'");
     // A reconciliação usa a mesma trava e aguarda o término da transação
     // anterior; SELECT isolado poderia observar ausência antes do COMMIT.
-    await c.query("select pg_advisory_xact_lock(hashtext($1))", [op.chave]);
+    await c.query("select pg_advisory_xact_lock(hashtext($1))", [
+      `${op.bucket}/${op.chave}`,
+    ]);
   }
 
   async persistir(op: OperacaoPrivada): Promise<void> {
