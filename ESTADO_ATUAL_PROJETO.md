@@ -480,5 +480,33 @@ publicação. A operação atual não concede nem presume essa autorização.
 
 ---
 
+## Prompt 3.7 — auditoria de prontidão da primeira publicação
+
+Auditado em **2026-09-07**, sem upload, publicação, migration ou alteração
+persistente no banco. O checkpoint documental pós-derivados é `b73f8e1`.
+
+Resultado: **não pronto para autorização**. O banco aceita objetos públicos e
+privados com o mesmo SHA-256 quando usam chaves diferentes, mas o caminho
+público atual não representa o lote D01=7: `vw_anexo_publico` lê somente o
+vínculo principal, e existe no máximo um principal por documento. Além disso,
+o adaptador do Manifesto substitui natureza, estado e revisão existentes por
+`null`, fazendo Sala, `/anexos.json` e ZIP falharem fechados com zero itens.
+
+O teste em transação desfeita confirmou: D01 retorna 0 com sete vínculos não
+principais e 1 com um principal; A02 retorna somente o derivado e exclui o
+original privado no SQL. Estado real após rollback: `arquivo=10`,
+`documento_arquivo=10`, `PUBLICAVEL=0`, `vw_anexo_publico=0`.
+
+Dry-run público: oito candidatos exatos, A02=1 e D01=7, com oito chaves
+inexistentes no bucket público. `STORAGE_PUBLIC_URL` aponta para `r2.dev`, não
+para domínio próprio, e bloqueia produção. Relatório em
+`docs/auditorias/AUDITORIA_PRONTIDAO_PRIMEIRA_PUBLICACAO_2026-09-07.md`;
+proposta de correção, ainda não aprovada, na ADR-016.
+
+Gates: tipos e lint passaram (quatro avisos CSS preexistentes); 234 testes
+passaram e três foram omitidos. O build não foi executado.
+
+---
+
 Histórico detalhado das etapas: [`docs/historico/estados/`](./docs/historico/estados/).
 Não é leitura obrigatória.
