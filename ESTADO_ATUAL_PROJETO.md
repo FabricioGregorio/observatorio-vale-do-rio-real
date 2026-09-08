@@ -15,7 +15,7 @@ Como o projeto deve ser conduzido é assunto de
 | | |
 |---|---|
 | Branch | `feat/home-indicadores` |
-| Checkpoint pré-upload | `4b6411e171e77846965c8622c2b5aaedbc3424ff` — *feat: prepara espelhamento privado seguro* |
+| Checkpoint pré-publicação | `11c309943094534ad0af424fccc7e916195cc39a` — *feat: define cache da primeira publicacao* |
 | Upstream | `origin/main`; pendência de segurança, não alterado nesta rodada |
 | Push nesta rodada | nenhum; a configuração de upstream não comprova push anterior |
 
@@ -32,7 +32,10 @@ Como o projeto deve ser conduzido é assunto de
 | R2 | buckets público e privado validados; GET anônimo no privado negado |
 | Manifesto de Evidências | existe, em `src/lib/manifesto-evidencias.ts` |
 | ZIP público | gate canônico `PUBLICAVEL` + `revisao_privacidade = concluida`; não gera pacote vazio |
-| Banco | `documento` = **33**; `arquivo` = **10**; `documento_arquivo` = **10**; `pessoa` = **0**; `consentimento` = **0** |
+| Banco | `documento` = **33**; `arquivo` = **18**; `documento_arquivo` = **18**; `pessoa` = **0**; `consentimento` = **0** |
+| Primeira publicação | **8 objetos**: A02=1 e D01=7; `vw_anexo_publico`=8; A04 e D01-08 fora |
+| Domínio público | `https://acervo.observatoriotobiassoueu.com.br` |
+| Cache público | `public, max-age=86400`, sem `immutable` |
 
 ## Fonte canônica
 
@@ -587,6 +590,47 @@ publicação de qualquer arquivo.
 O lote público conceitual permanece **A02=1 + D01-01..07=7, total=8**.
 D01-08=0. Nenhum registro de banco ou arquivo de origem foi alterado; nenhum
 upload, publicação, pessoa/consentimento, build ou push foi executado.
+
+---
+
+## Prompt 3.10 — primeira publicação pública concluída
+
+Executado em **2026-09-08**, a partir do checkpoint pré-publicação
+`11c309943094534ad0af424fccc7e916195cc39a`, com autorização humana explícita
+para somente A02 e D01-01..07.
+
+- O dry-run imediatamente anterior confirmou **8 objetos ausentes**, sem
+  colisões: A02=1, D01=7, A04=0 e D01-08=0.
+- Foram feitos **8/8 uploads** no bucket `observatorio-publico`, sem ACL
+  manual, com MIME real e `Cache-Control: public, max-age=86400`.
+- Os oito objetos foram baixados por acesso autenticado antes da persistência:
+  SHA-256, bytes, MIME e Cache-Control conferiram em **8/8**.
+- Uma única transação inseriu oito registros em `arquivo`, oito vínculos em
+  `documento_arquivo` e, por exigência do contrato vigente da view, promoveu
+  A02 e D01 para `PUBLICAVEL`, `revisao_privacidade=concluida`,
+  `status=publicado` e `publicado_em` preenchido. Nenhum outro documento foi
+  promovido.
+- Estado confirmado após o COMMIT: `documento=33`, `arquivo=18`,
+  `documento_arquivo=18`, `PUBLICAVEL=2`, `vw_anexo_publico=8`,
+  `pessoa=0` e `consentimento=0`.
+- Proveniência: A02 é derivado por `tarjamento_privacidade`; D01-01, 02, 03,
+  05 e 07 são derivados por `sanitizacao_metadados`; D01-04 e D01-06 são
+  réplicas byte-identical.
+- As oito URLs no Custom Domain responderam HTTP 200 e conferiram SHA-256,
+  bytes, MIME e Cache-Control. Não há URL `r2.dev` nem endpoint S3 nas saídas.
+- Manifesto real, `/anexos.json`, Sala do Avaliador e conjunto lógico do ZIP
+  contêm os mesmos **8 arquivos**. O ZIP foi produzido somente em memória para
+  validação e **não foi enviado**.
+- A02 original continua privado. A04 permanece `ESPELHAVEL`. D01-08 permanece
+  privado como referência visual interna. Nenhum dos três aparece em
+  Manifesto, JSON, Sala ou conjunto lógico do ZIP.
+- O dry-run posterior reconheceu 8/8 objetos e registros como idênticos:
+  zero `PutObject`, zero INSERT, zero promoção e zero sobrescrita.
+- Não houve falha, compensação ou objeto público órfão. Não houve build,
+  deploy, carga de pessoa/consentimento ou push.
+
+Registro operacional completo:
+[`docs/carga/PRIMEIRA_PUBLICACAO_PUBLICA_2026-09-08.md`](./docs/carga/PRIMEIRA_PUBLICACAO_PUBLICA_2026-09-08.md).
 
 ---
 

@@ -219,6 +219,29 @@ describe.skipIf(!urlManutencao || !bucketPublico || !urlPublica)(
 
     test("A02=1, D01=7 e todos os consumidores recebem os mesmos 8", async () => {
       await comRollback(async (cliente) => {
+        // O banco real já contém a primeira publicação. Para continuar
+        // exercitando o caminho completo de inserção, reconstituímos o estado
+        // imediatamente anterior somente nesta transação, sempre desfeita.
+        await cliente.query(`
+          delete from documento_arquivo da
+           using arquivo a, documento d
+           where da.arquivo_id = a.id
+             and da.documento_id = d.id
+             and a.visibilidade = 'publico'
+             and d.slug in (
+               'identidade-visual',
+               'relatorio-tecnico-recanto-da-serra'
+             )
+        `);
+        await cliente.query(
+          `
+          delete from arquivo
+           where visibilidade = 'publico'
+             and bucket = $1
+             and chave_storage like 'arquivos/%'
+        `,
+          [bucketPublico],
+        );
         await cliente.query(
           `update documento
               set estado_documental='PUBLICAVEL', status='publicado',

@@ -1,5 +1,10 @@
 # Dry-run da primeira publicação — A02 e D01-01 a D01-07
 
+> **Situação posterior:** este documento permanece como registro histórico do
+> estado pré-publicação. A operação autorizada foi concluída em 2026-09-08 e
+> está registrada em
+> [`PRIMEIRA_PUBLICACAO_PUBLICA_2026-09-08.md`](./PRIMEIRA_PUBLICACAO_PUBLICA_2026-09-08.md).
+
 **Data:** 2026-09-07
 **Operação:** somente leitura local + `HeadObject`, revalidada após a migration 0007
 **Uploads:** 0

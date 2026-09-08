@@ -241,7 +241,7 @@ describe.skipIf(!URL_MANUTENCAO)(
       expect(linhas).toBe(1);
     });
 
-    test("a carga documental persistida segue intacta e sem nada público", async () => {
+    test("a primeira publicação preserva intactos os dez arquivos privados", async () => {
       const pool = new Pool({ connectionString: URL_MANUTENCAO });
       try {
         const r = await pool.query(
@@ -252,12 +252,14 @@ describe.skipIf(!URL_MANUTENCAO)(
                   (select count(*)::int from documento
                     where estado_documental = 'PUBLICAVEL') as pub`,
         );
-        // Prompt 3.4.2: a carga privada foi autorizada e concluída.
-        expect(r.rows[0]).toEqual({ d: 33, a: 10, da: 10, v: 0, pub: 0 });
+        // Prompt 3.10: oito registros públicos foram acrescentados sem
+        // substituir nem expor os dez objetos privados do Prompt 3.4.2.
+        expect(r.rows[0]).toEqual({ d: 33, a: 18, da: 18, v: 8, pub: 2 });
         const arquivos = await pool.query(
           `select a.chave_storage, a.sha256, a.bucket, a.visibilidade,
                   a.url_publica, da.principal, da.versao
-           from arquivo a join documento_arquivo da on da.arquivo_id=a.id`,
+           from arquivo a join documento_arquivo da on da.arquivo_id=a.id
+          where a.visibilidade = 'privado'`,
         );
         expect(arquivos.rows).toHaveLength(10);
         for (const [, , chave, sha256, principal] of LOTE_PRIVADO_INICIAL) {
