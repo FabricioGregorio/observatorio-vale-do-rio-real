@@ -345,7 +345,10 @@ Rollback conceitual:
 - [Cloudflare — gerenciar registros DNS](https://developers.cloudflare.com/dns/manage-dns-records/how-to/create-dns-records/)
 - [Cloudflare — proxy status](https://developers.cloudflare.com/dns/proxy-status/)
 
-## 14. Bloqueios e prontidão
+## 14. Bloqueios e prontidão no preflight local
+
+Esta seção registra o estado anterior à configuração manual e foi superada
+pela auditoria remota da seção 15.
 
 Bloqueios para o **primeiro deploy**:
 
@@ -362,3 +365,120 @@ O projeto está **pronto para uma tarefa de configuração remota sem deploy**,
 desde que ela use acesso humano autorizado, não confirme a importação pelo
 botão Deploy e respeite esta allowlist. Ele **não está pronto para o primeiro
 deploy público** enquanto os bloqueios acima permanecerem.
+
+## 15. Auditoria remota final — Prompt 4.6
+
+Auditoria somente leitura executada em 2026-09-08 com Vercel CLI `59.11.7`,
+sem deploy, build remoto, push, conexão Git, domínio, DNS, ZIP, banco, R2 ou
+migration.
+
+### Identidade e vínculo
+
+- conta autenticada: `fabriciogregorio1111-2329`;
+- team/owner: `fabricios-projects-e8743b90` (`Fabrício's projects`);
+- projeto: `observatorio-vale-rio-real`;
+- o `.vercel/project.json` local aponta para esse projeto e team;
+- `.vercel/` está ignorado pelo Git e não será versionado;
+- a proteção de `.vercel/` foi a única alteração local anterior encontrada no
+  baseline, em `.gitignore`.
+
+### Estado remoto observado
+
+| Configuração | Local esperado | Vercel remoto | Status |
+|---|---|---|---|
+| Framework | Next.js | Next.js | conforme |
+| Root Directory | `.` | `.` | conforme |
+| Build Command | `pnpm build` | `pnpm build` | conforme |
+| Install Command | default | default detectado | conforme |
+| Output Directory | default do Next.js | Next.js default | conforme |
+| Node | `24.x` | `24.x` | conforme |
+| `DATABASE_URL` | Production, Secret, read-only | Production, Secret/Hidden | conforme; valor não consultado |
+| `SITE_URL` | Production, Config, origem institucional | Production, Config | conforme por escopo/tipo; valor público confirmado pelo responsável |
+| `STORAGE_PUBLIC_URL` | Production, Config, domínio do acervo | Production, Config | conforme por escopo/tipo; valor público confirmado pelo responsável |
+| Git | desconectado | nenhum repositório apresentado; estado manual confirmado | conforme |
+| Domains | zero | zero no team/projeto | conforme |
+| Deployments | zero | zero | conforme |
+
+A CLI não devolve o texto aberto de variáveis Config em `env ls`; ela mostrou
+representação criptografada. Para não puxar também o segredo do banco nem tocar
+em `.env.local`, nenhum `env pull` foi executado. Assim, os valores públicos
+exatos de `SITE_URL` e `STORAGE_PUBLIC_URL` são a confirmação humana desta
+sessão, confrontada com o esperado local; nomes, tipos e ambientes foram
+confirmados remotamente.
+
+Production contém exatamente:
+
+| Nome | Tipo remoto | Ambiente |
+|---|---|---|
+| `DATABASE_URL` | Secret/Hidden | Production |
+| `SITE_URL` | Config | Production |
+| `STORAGE_PUBLIC_URL` | Config | Production |
+
+Preview e Development remoto não contêm variáveis. Nenhuma das 13 variáveis
+proibidas do preflight foi encontrada: credenciais de manutenção/migration,
+credenciais/endpoint/bucket do R2 público ou privado,
+`STORAGE_PRIVATE_PUBLIC_URL` e `OBSERVATORIO_FONTES_DIR` estão ausentes.
+
+Consultas específicas confirmaram ainda:
+
+- zero Deploy Hooks;
+- zero cron jobs;
+- zero recursos de Marketplace integrations;
+- zero Vercel Blob stores conectados ao projeto;
+- nenhum Custom Domain;
+- região Sandbox `iad1`, sem failover, como metadado informativo; não é uma
+  configuração inesperada de aplicação.
+
+O subcomando `vercel git` expõe apenas operações mutáveis de conectar e
+desconectar, sem comando de status. Nenhuma delas foi executada. A ausência de
+integração Git foi confirmada pelo estado manual informado e pela ausência de
+repositório nos metadados do projeto; o primeiro deployment continuará manual
+e sem Git conectado.
+
+### pnpm
+
+O repositório fixa `packageManager: pnpm@11.25.0`, usa lockfile `9.0` e não tem
+`engines`. Não existe configuração remota observável que rejeite essa versão,
+mas a aceitação efetiva do pnpm 11 só pode ser comprovada pelo primeiro build
+remoto. Estado: **`INDETERMINADO_ATÉ_DEPLOY`**, não bloqueador automático.
+
+### Plano exato do primeiro deployment controlado
+
+O deployment continua proibido nesta auditoria. Quando houver autorização
+humana específica:
+
+1. confirmar branch, working tree limpa e hash exato do checkpoint;
+2. confirmar que o ZIP público já existe e responde no endereço oferecido pela
+   Sala do Avaliador;
+3. reconferir zero deployments e a allowlist de três envs em Production;
+4. executar manualmente, sem Git conectado, o deployment de Production do
+   diretório já vinculado; Preview não tem `DATABASE_URL` e não será usado;
+5. acompanhar o build remoto e confirmar que `pnpm build` chama somente
+   `next build`;
+6. confirmar zero escrita no banco e zero upload/alteração no R2;
+7. registrar a versão de pnpm realmente usada no log remoto;
+8. testar primeiro a URL temporária `*.vercel.app`;
+9. validar Home e Sala do Avaliador;
+10. validar `/anexos.json` com oito arquivos e `/dev/estilos` com 404;
+11. validar sitemap, robots, canonical, Open Graph e ausência de segredo em
+    HTML, JavaScript e logs;
+12. conferir que os links do acervo continuam no Custom Domain do R2;
+13. se qualquer gate falhar, não associar domínio e encerrar o deployment como
+    não aprovado;
+14. somente depois do smoke aprovado abrir tarefa separada para domínio e DNS.
+
+### Bloqueios restantes
+
+- o ZIP público ainda não foi publicado e continua sendo bloqueador funcional
+  porque a Sala já oferece seu endereço;
+- a estratégia de chave fixa/sobrescrita do ZIP continua pendente para a
+  operação/republicação;
+- pnpm 11.25.0 permanece `INDETERMINADO_ATÉ_DEPLOY`;
+- os valores públicos das duas variáveis Config foram confirmados pelo
+  responsável, mas não foram recuperados em texto aberto pela auditoria;
+- o primeiro deployment ainda exige autorização humana específica.
+
+A configuração remota está coerente e pronta para a autorização do primeiro
+deployment controlado **depois da publicação separada do ZIP**. Não está pronta
+para associar domínio customizado, que permanece etapa posterior ao smoke na
+URL temporária.

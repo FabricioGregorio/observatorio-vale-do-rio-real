@@ -13,3 +13,6 @@ coverage/
 # Regenerado por scripts/derivar-inventario.py; nunca editar à mão.
 inventario-de-anexos.csv
 inventario-de-anexos.csv.origem
+
+# Vínculo local com a Vercel; nunca versionar.
+.vercel/

@@ -683,3 +683,39 @@ publicação de ZIP, upload, alteração de banco/R2/DNS ou push.
 
 Próximo passo: configurar o projeto e as variáveis mínimas na Vercel, fechar o
 domínio/redirect e publicar o ZIP em autorização separada antes do deploy.
+
+---
+
+## Prompt 4.6 — auditoria remota final da Vercel
+
+Auditoria somente leitura concluída em **2026-09-08**, com Vercel CLI
+`59.11.7`, sem deployment, build remoto, push, conexão Git, domínio, DNS, ZIP,
+banco, R2 ou migration.
+
+- Projeto remoto: `observatorio-vale-rio-real`, no team
+  `fabricios-projects-e8743b90` (`Fabrício's projects`).
+- O diretório local está vinculado ao projeto correto por
+  `.vercel/project.json`; `.vercel/` está ignorado e não foi versionado.
+- Deployments: **0**.
+- Git remoto: **desconectado**; nenhuma integração foi criada.
+- Custom Domains: **0**; apex, `www` e DNS continuam intocados. O subdomínio
+  `acervo` permanece no R2.
+- Production contém somente `DATABASE_URL` como Secret/Hidden e `SITE_URL` e
+  `STORAGE_PUBLIC_URL` como Config. Preview e Development remoto estão vazios.
+- Nenhuma credencial de manutenção, migration, storage público operacional,
+  storage privado ou fonte canônica foi encontrada na Vercel.
+- Os valores públicos informados pelo responsável permanecem
+  `https://observatoriotobiassoueu.com.br` e
+  `https://acervo.observatoriotobiassoueu.com.br`. A CLI confirmou nome, tipo e
+  ambiente, mas não revelou o texto aberto; nenhum `env pull` foi usado.
+- Build remoto configurado como Next.js, raiz `.`, `pnpm build`, Install e
+  Output defaults e Node `24.x`.
+- Zero Deploy Hooks, cron jobs, integrações Marketplace e Vercel Blob stores
+  conectados ao projeto.
+- O repositório fixa pnpm `11.25.0`, lockfile `9.0` e não possui `engines`.
+  Compatibilidade remota: **`INDETERMINADO_ATÉ_DEPLOY`**.
+
+Próximo passo: publicar o ZIP em autorização operacional separada e, depois,
+solicitar autorização específica para o primeiro deployment manual/controlado,
+sem Git conectado. O smoke ocorrerá primeiro na URL `*.vercel.app`; domínio e
+DNS permanecem etapa posterior.
