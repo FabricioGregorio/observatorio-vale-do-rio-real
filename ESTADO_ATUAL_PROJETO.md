@@ -880,3 +880,98 @@ resultado da verificação.
 - **Segundo deployment não executado.** Os dois bloqueios estão corrigidos e
   verificados localmente; a promoção ao domínio institucional segue dependendo
   de nova autorização humana.
+
+---
+
+## Prompt 4.9 — segundo deployment: correções validadas em produção
+
+Executado em **2026-09-08**, uma única vez, a partir do commit
+`3c68bd45ef5ae8e17824cd4ddb1ce047e3994d86`, sem push, integração Git, domínio
+customizado, DNS, migration, escrita no banco, alteração no R2, publicação de
+ZIP ou terceiro deployment.
+
+- Deployment Production `dpl_9uudmMsKygEowzpSkt6Gpt73BUiE`: **READY** em 23 s.
+- URL imutável: `https://observatorio-vale-rio-real-625so9uc2.vercel.app`,
+  protegida por SSO da Vercel (302), como na rodada anterior.
+- Alias público usado no smoke:
+  `https://observatorio-vale-rio-real.vercel.app`. Não é Custom Domain; o total
+  continua **zero**.
+- Build remoto: Node `24.x`, pnpm `11.25.0`, Next.js `16.3.4`, 223 arquivos,
+  cache do deployment anterior restaurado, `pnpm build` → `next build`, 19/19
+  páginas e as mesmas 18 rotas. Nenhum erro; único warning é o já conhecido do
+  driver PostgreSQL sobre `sslmode`.
+- Preflight em execução única: tipos e lint passaram com os quatro warnings CSS
+  preexistentes, **256 testes** com 3 omitidos e **54 de acessibilidade**. A
+  falha intermitente registrada no Prompt 4.8 **não reapareceu**, e a suíte não
+  foi repetida para forçar um resultado verde.
+
+### Os dois bloqueios do primeiro deployment estão resolvidos
+
+**ZIP.** No HTML servido pelo deployment real: `anexos.zip` = 0 ocorrências,
+`Baixar tudo` = 0, e a própria string `zip` = 0, sem nenhum `display:none` ou
+`visibility:hidden` na página. O elemento não existe — não foi apenas escondido.
+Os oito links `Baixar` individuais continuam lá, e
+`acervo.observatoriotobiassoueu.com.br/prestacao-de-contas/anexos.zip` segue
+respondendo **404**, como deve.
+
+**375 px.** Sala, versão imprimível e Home fecham em
+`scrollWidth = clientWidth = 375`, com `body.scrollWidth` também 375. Em 768 px
+e 1440 px: 753 e 1425, sem overflow. O contêiner conserva `position: relative`,
+`clientWidth` 343 e `scrollWidth` 621 — a rolagem é dele.
+
+Os oito `code.sr-only` continuam com borda direita em 629 px. Isso é o
+resultado esperado, não uma sobra do defeito: a caixa de layout deles não muda,
+mas o contêiner agora é o bloco container que os clipa, e por isso eles deixaram
+de somar ao `scrollWidth` do documento.
+
+### Verificações no deployment real
+
+- Rotas: Home, Sala, imprimível, `robots.txt` e `sitemap.xml` em 200;
+  `/dev/estilos` em **404**; `/anexos.json` em 200 com **8**.
+- `/anexos.json`: `relatorio-tecnico-recanto-da-serra`=1 e
+  `identidade-visual`=7, todas as URLs em
+  `acervo.observatoriotobiassoueu.com.br/arquivos/`, sem A04, sem D01-08, sem
+  `r2.dev` e sem endpoint S3.
+- Acervo: **8/8 links com HTTP 200**.
+- Canonical, Open Graph, `robots.txt` e as 12 URLs do sitemap mantêm
+  `https://observatoriotobiassoueu.com.br`; zero ocorrências de `vercel.app` no
+  sitemap. `SITE_URL` não foi alterada.
+- Acessibilidade no ambiente real: uma `h1`, zero tabelas sem caption, zero
+  `th` sem `scope` (6 `col` + 8 `row`), região nomeada presente, zero imagens
+  sem `alt`, zero links vazios, nenhum erro de console e foco visível de 3 px ao
+  navegar por Tab. Focar o último `<summary>` da tabela rolou o contêiner para
+  `scrollLeft=278`: a última coluna é alcançável só com teclado.
+- Varredura de seis páginas e oito bundles: zero segredo, zero `DATABASE_URL`,
+  zero credencial R2, zero `r2.dev`, zero caminho local, zero
+  `OBSERVATORIO_FONTES_DIR`, zero D01-08 e zero source map público.
+- Banco e bucket público idênticos antes e depois: `documento=33`,
+  `arquivo=18`, `documento_arquivo=18`, `vw_anexo_publico=8`, `PUBLICAVEL=2`;
+  bucket com 8 objetos e listagem byte a byte igual, sem ZIP.
+- Envs Production continuam sendo exatamente três; **`ZIP_ANEXOS_PUBLICADO`
+  permanece ausente na Vercel**, como planejado. Preview e Development sem
+  variáveis.
+
+### Falso positivo registrado
+
+A string `serra-dos-macacos` aparece uma vez na Home. É a `key` de um item do
+mapa territorial exibindo o topônimo *Serra dos Macacos*, um dos quatro pontos
+de visita de `src/dados/territorio/pontos.ts`. **Não é o documento A04**, cujo
+slug é `relatorio-tecnico-serra-dos-macacos` e que não aparece em lugar nenhum
+da saída pública. Nenhum arquivo, hash ou link de A04 foi publicado.
+
+### Dívida visual mantida
+
+Em 375 px o `<caption>` acompanha a largura interna da tabela e termina em
+637 px, fora da área visível até o usuário rolar o contêiner. Os três critérios
+foram conferidos: ocorre só dentro do contêiner, não causa overflow do
+documento e o caption continua íntegro e ligado à tabela para leitor de tela.
+Dívida visual **baixa**; a tabela não foi redesenhada.
+
+### O que continua pendente
+
+- **ZIP não publicado** — operação separada, com autorização própria. Só depois
+  dela é que `ZIP_ANEXOS_PUBLICADO=true` deve ser criada na Vercel.
+- **Domínio institucional não associado.** Tecnicamente liberado: os bloqueios
+  que impediam a promoção foram resolvidos e validados. DNS, apex e `www`
+  seguem etapa própria.
+- **Git desconectado** e **nenhum push** — inalterados por decisão.

@@ -202,3 +202,21 @@ artefato de produção local. Permanecem, como antes:
 - ZIP publicado: **não** — operação separada, com autorização própria;
 - segundo deployment: **não executado**, aguardando autorização;
 - Custom Domains, DNS, `www`, GitHub e push: **inalterados**.
+
+---
+
+## Encerramento — validado pelo segundo deployment
+
+Os dois achados deste documento foram corrigidos no Prompt 4.8 e **validados na
+infraestrutura real da Vercel** pelo segundo deployment
+`dpl_9uudmMsKygEowzpSkt6Gpt73BUiE`, em 2026-09-08.
+
+No HTML servido pelo novo deployment, `anexos.zip` e `Baixar tudo` têm zero
+ocorrências e não há CSS escondendo nada; em 375 px a Sala e a versão
+imprimível fecham em `scrollWidth = clientWidth = 375`. Banco e R2 permaneceram
+inalterados.
+
+Registro completo em
+[`SEGUNDO_DEPLOY_VERCEL_2026-09-08.md`](./SEGUNDO_DEPLOY_VERCEL_2026-09-08.md).
+Este documento fica como retrato do primeiro deployment e dos achados que ele
+revelou; não deve ser lido como estado atual.

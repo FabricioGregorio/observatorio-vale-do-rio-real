@@ -569,3 +569,56 @@ relative` no contêiner resolveu, e as três larguras passaram a fechar em
 | Autorização para o segundo deployment | **pendente** |
 | Associar domínio / DNS / `www` | **bloqueado** até o segundo deployment passar no smoke |
 | Conectar GitHub | **não autorizado** |
+
+---
+
+## 18. Segundo deployment controlado — Prompt 4.9, 2026-09-08
+
+Autorização humana para exatamente um deployment Production, destinado a
+validar as correções do Prompt 4.8 na infraestrutura real.
+
+- deployment: `dpl_9uudmMsKygEowzpSkt6Gpt73BUiE`;
+- commit: `3c68bd45ef5ae8e17824cd4ddb1ce047e3994d86`;
+- target/status: Production / `READY`, em 23 s;
+- URL imutável: `https://observatorio-vale-rio-real-625so9uc2.vercel.app`;
+- alias público de teste: `https://observatorio-vale-rio-real.vercel.app`;
+- Node/pnpm/Next: `24.x` / `11.25.0` / `16.3.4`;
+- 223 arquivos enviados, cache do deployment anterior restaurado, 19/19 páginas.
+
+Preflight: os quatro gates passaram em execução única — tipos, lint com os
+quatro warnings CSS preexistentes, 256 testes com 3 omitidos e 54 de
+acessibilidade. A falha intermitente registrada no Prompt 4.8 não reapareceu, e
+a suíte não foi repetida.
+
+### Os dois bloqueios, validados em produção
+
+O HTML servido pelo deployment tem **zero** ocorrências de `anexos.zip`, de
+`Baixar tudo` e da própria string `zip`, sem nenhum CSS de ocultação — o
+elemento não existe, e não está apenas escondido. Os oito anexos individuais
+continuam presentes, e o objeto do ZIP no acervo continua respondendo 404.
+
+Em 375 px, Sala, versão imprimível e Home fecham em
+`scrollWidth = clientWidth = 375`. Em 768 px e 1440 px, 753 e 1425 sem
+overflow. O contêiner mantém rolagem própria, 621 contra 343.
+
+### Estado remoto, antes e depois
+
+Inalterado nos dois momentos: Custom Domains **0**, Git **desconectado**,
+Production com exatamente `DATABASE_URL`, `SITE_URL` e `STORAGE_PUBLIC_URL`, e
+`ZIP_ANEXOS_PUBLICADO` **ausente** — como a seção 17 previa. Preview e
+Development continuam sem variáveis. Banco e bucket público idênticos antes e
+depois; nenhum ZIP.
+
+### O que segue bloqueado
+
+| Item | Situação |
+|---|---|
+| Associar `observatoriotobiassoueu.com.br` | **liberado tecnicamente**, aguardando execução autorizada |
+| DNS e `www` | não alterados; etapa própria |
+| Conectar GitHub | **não autorizado** |
+| Publicar o ZIP | **não autorizado**; operação separada |
+| Terceiro deployment | **não autorizado** |
+| Push | **não realizado** |
+
+Registro probatório completo em
+[`SEGUNDO_DEPLOY_VERCEL_2026-09-08.md`](./SEGUNDO_DEPLOY_VERCEL_2026-09-08.md).
