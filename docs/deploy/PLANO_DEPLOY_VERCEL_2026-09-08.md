@@ -482,3 +482,45 @@ A configuração remota está coerente e pronta para a autorização do primeiro
 deployment controlado **depois da publicação separada do ZIP**. Não está pronta
 para associar domínio customizado, que permanece etapa posterior ao smoke na
 URL temporária.
+
+## 16. Primeiro deployment controlado — Prompt 4.7
+
+A decisão humana de 2026-09-08 substituiu, apenas para esta rodada, o bloqueio
+prévio do ZIP: o primeiro deployment Production foi autorizado sem publicar o
+pacote. Exatamente um deployment foi criado, manualmente e sem Preview:
+
+- deployment: `dpl_8f6opr5pwpnqgDcFEJWzVzEyHWu6`;
+- checkpoint: `7dea44bada6a7c7d9f4b59c067fb9cdde452c6a9`;
+- target/status: Production / `READY`;
+- URL imutável:
+  `https://observatorio-vale-rio-real-75v7er8wc.vercel.app`;
+- alias público de teste:
+  `https://observatorio-vale-rio-real.vercel.app`;
+- Node/pnpm: `24.x` / `11.25.0`;
+- comando remoto: `pnpm build`, que executou `next build` com sucesso.
+
+O alias público passou nos endpoints essenciais e expôs exatamente A02=1 e
+D01-01..07=7. A04 e D01-08 ficaram ausentes; os oito links do acervo responderam
+200. Banco e R2 permaneceram byte/logicamente inalterados, e nenhum ZIP foi
+enviado. A URL imutável está protegida por SSO da Vercel (302); o alias padrão
+do projeto é público (200). Nenhum Custom Domain foi adicionado.
+
+### Achados do smoke que bloqueiam o domínio principal
+
+1. A Sala gera o link fixo `/prestacao-de-contas/anexos.zip` quando há anexos,
+   mas esse objeto/rota responde 404. A decisão de não publicar o ZIP foi
+   respeitada; a UI, porém, oferece um link quebrado.
+2. Em viewport de 375 px, a tabela força `scrollWidth=629` tanto na Sala quanto
+   na versão imprimível. Home e as três páginas em 768 px/1440 px não
+   apresentaram overflow.
+
+Não executar redeploy automático. A correção desses achados requer tarefa,
+gates e autorização humana específicos. Até lá:
+
+- associar `observatoriotobiassoueu.com.br`: **bloqueado**;
+- alterar DNS ou configurar `www`: **bloqueado**;
+- conectar GitHub: **não autorizado**;
+- segundo deployment: **não autorizado**.
+
+O registro probatório completo está em
+[`PRIMEIRO_DEPLOY_VERCEL_2026-09-08.md`](./PRIMEIRO_DEPLOY_VERCEL_2026-09-08.md).

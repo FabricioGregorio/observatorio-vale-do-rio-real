@@ -719,3 +719,57 @@ Próximo passo: publicar o ZIP em autorização operacional separada e, depois,
 solicitar autorização específica para o primeiro deployment manual/controlado,
 sem Git conectado. O smoke ocorrerá primeiro na URL `*.vercel.app`; domínio e
 DNS permanecem etapa posterior.
+
+---
+
+## Prompt 4.7 — primeiro deployment controlado na Vercel
+
+Executado em **2026-09-08**, uma única vez, a partir do checkpoint
+`7dea44bada6a7c7d9f4b59c067fb9cdde452c6a9`, sem push, integração Git, domínio
+customizado, DNS, migration, escrita no banco ou alteração no R2.
+
+- Deployment Production `dpl_8f6opr5pwpnqgDcFEJWzVzEyHWu6`: **READY**.
+- URL imutável gerada:
+  `https://observatorio-vale-rio-real-75v7er8wc.vercel.app`. Ela responde 302
+  para o SSO da Vercel por proteção da URL de deployment.
+- Alias público atribuído pela própria Vercel:
+  `https://observatorio-vale-rio-real.vercel.app`. Foi nele que os smoke tests
+  públicos foram executados. Isso não configura Custom Domain; o total de
+  Custom Domains continua zero.
+- Build remoto: Node `24.x`, pnpm `11.25.0`, instalação concluída, `pnpm build`
+  e `next build` concluídos; 19 páginas estáticas geradas. O único warning
+  relevante foi o aviso já conhecido do driver PostgreSQL sobre a futura
+  mudança semântica de `sslmode`; nenhum erro de build ocorreu.
+- Smoke HTTP: Home, Sala, `/anexos.json`, `robots.txt`, `sitemap.xml` e versão
+  imprimível responderam 200; `/dev/estilos` respondeu 404.
+- `/anexos.json` contém 8 arquivos: A02=1, D01-01..07=7, A04=0 e D01-08=0.
+  Os 8/8 links do acervo responderam 200 no host
+  `acervo.observatoriotobiassoueu.com.br`.
+- Canonical, Open Graph e sitemap mantêm intencionalmente
+  `https://observatoriotobiassoueu.com.br`, sem substituição por `vercel.app`.
+- Varredura de HTML, nove bundles JavaScript, responses, logs e source maps
+  encontrou zero segredo, URL de banco, path local, storage privado, endpoint
+  S3, `r2.dev` ou dado `RESTRITO`. Nenhum source map público foi encontrado.
+- Antes e depois do deployment, o banco permaneceu em `documento=33`,
+  `arquivo=18`, `documento_arquivo=18` e `vw_anexo_publico=8`.
+- Os fingerprints dos buckets permaneceram idênticos: público com 8 objetos e
+  privado com 10; nenhum objeto novo/alterado e nenhum ZIP.
+- Gates locais pós-deploy: tipos e lint passaram (quatro warnings CSS
+  preexistentes), 252 testes passaram com 3 omitidos e acessibilidade passou
+  em 46/46.
+
+O deployment está tecnicamente íntegro, mas **não está aprovado para associação
+do domínio principal**. O smoke encontrou dois bloqueios funcionais que exigem
+correção e uma nova autorização de deployment:
+
+1. a Sala oferece `Baixar tudo (.zip)`, mas o endereço responde 404 porque o
+   ZIP permanece corretamente não publicado nesta rodada;
+2. a tabela da Sala e a versão imprimível alargam o documento para 629 px em
+   viewport de 375 px. Em 768 px e 1440 px não há overflow.
+
+O Caderno de Estudos continua documentalmente `PENDENTE`; nenhum conteúdo ou
+prazo foi inventado. O estado não é contradito na saída pública, embora a Sala
+com anexos não apresente uma linha específica sobre o Caderno.
+
+Registro completo:
+[`docs/deploy/PRIMEIRO_DEPLOY_VERCEL_2026-09-08.md`](./docs/deploy/PRIMEIRO_DEPLOY_VERCEL_2026-09-08.md).
