@@ -752,3 +752,72 @@ decisão automática de publicação. Ao fim da operação, permanecem
 Gates finais: `pnpm tipos`, `pnpm lint` e `pnpm teste` passaram. O lint
 preserva quatro avisos CSS preexistentes; os testes somaram 234 aprovados e
 três omitidos. O build não foi executado, conforme o escopo.
+
+---
+
+## 12. Decisões humanas posteriores — 2026-09-08
+
+Esta seção atualiza somente as decisões operacionais que estavam abertas. Os
+achados factuais da inspeção direta permanecem preservados como histórico.
+Nenhum dado pessoal é reproduzido neste adendo.
+
+### 12.1 A04 — nome institucional autorizado a permanecer
+
+O responsável decidiu que o nome institucional citado pode permanecer em uma
+eventual versão pública. Portanto:
+
+- não tarjar o nome institucional;
+- não criar derivado apenas para remover esse nome;
+- manter `revisao_privacidade = concluida`;
+- considerar A04 futuramente como candidato a publicação somente se nenhum
+  outro bloqueio documental existir.
+
+Esta decisão não publica A04. A classificação atual permanece
+`item_exigido`, `ESPELHAVEL`, revisão concluída e status de rascunho; o arquivo
+continua privado e sem URL pública.
+
+### 12.2 D01-08 — manter privado por função documental interna
+
+O responsável esclareceu que
+`identidade-visual/observatorio/primeiro-post-observatorio.pdf` foi colocado na
+fonte exclusivamente como **referência visual interna/material de inspiração**
+para o desenvolvimento do site. Não foi fornecido com intenção de integrar o
+acervo público.
+
+Decisão definitiva para o fluxo atual: **MANTER_PRIVADO**.
+
+- não publicar nem produzir derivado público;
+- não incluir no Manifesto, `/anexos.json`, ZIP ou Sala do Avaliador públicos;
+- não incluir em futuros dry-runs de publicação;
+- preservar o objeto no storage privado.
+
+A presença de pessoas ou menor aparente permanece como achado factual da
+inspeção, mas deixa de ser o motivo principal da exclusão. O motivo principal é
+a função de referência/inspiração interna, fora do conjunto destinado à
+publicação.
+
+Classificação atual: vínculo com D01 (`item_nao_exigido`, `ESPELHAVEL`, revisão
+concluída e status de rascunho); arquivo privado, sem URL pública e não
+principal. Nenhum desses campos foi alterado nesta documentação.
+
+### 12.3 Auditoria de outras referências internas
+
+Foram auditados os oito caminhos da pasta de identidade visual, confrontando
+nome, tipo, conteúdo visual já inspecionado e classificação atual. A lista de
+candidatos que aparentam função interna contém somente:
+
+| Caminho | Descrição | Por que parece referência interna | Classificação atual |
+|---|---|---|---|
+| `identidade-visual/observatorio/primeiro-post-observatorio.pdf` | Peça visual multipágina usada como referência de desenvolvimento | O responsável confirmou finalidade exclusiva de referência/inspiração e ausência de intenção de integrar o acervo público | D01; `item_nao_exigido`; `ESPELHAVEL`; revisão concluída; rascunho; arquivo privado, sem URL pública e não principal |
+
+Os outros sete arquivos são logomarcas ou variações gráficas: dois ativos do
+coletivo e cinco do Observatório. Nenhum outro aparentou ser referência interna,
+inspiração visual ou material de trabalho fora do conjunto de identidade. Isso
+não os promove nem altera sua classificação; qualquer decisão futura continua
+dependendo de autorização humana.
+
+### 12.4 Lote público conceitual preservado
+
+O lote permanece A02=1 e D01-01..07=7, totalizando **8** arquivos. A04 não foi
+adicionado ao lote nesta decisão e D01-08 permanece com quantidade **0**.
+Nenhum upload, publicação, derivado, alteração de banco ou push foi executado.

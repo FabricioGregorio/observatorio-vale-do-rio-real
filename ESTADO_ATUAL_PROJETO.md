@@ -6,7 +6,7 @@ projeto está agora?**
 Como o projeto deve ser conduzido é assunto de
 [`PLANO_EXECUCAO_OBSERVATORIO.md`](./PLANO_EXECUCAO_OBSERVATORIO.md).
 
-**Data:** 2026-09-07
+**Data:** 2026-09-08
 
 ---
 
@@ -545,6 +545,48 @@ migration oficial 0007, aplicada com a credencial exclusiva de migração.
 O bloqueio externo permanece: `STORAGE_PUBLIC_URL` ainda usa `r2.dev`. A
 arquitetura está pronta para o lote, mas publicação real continua proibida até
 o responsável aprovar e configurar o domínio público final de produção.
+
+---
+
+## Decisões humanas de 2026-09-08 — A04 e D01-08
+
+O responsável resolveu as duas decisões que permaneciam abertas na revisão de
+privacidade, sem autorizar publicação nesta rodada.
+
+### A04
+
+O nome institucional citado pode permanecer na versão pública. Não deve ser
+tarjado e não justifica, isoladamente, a criação de derivado. A revisão de
+privacidade continua `concluida`. A04 pode ser avaliado futuramente como
+candidato a publicação se não houver outro bloqueio documental; nesta rodada
+permanece `ESPELHAVEL`, em rascunho, com seu único arquivo privado e sem URL
+pública.
+
+### D01-08
+
+`identidade-visual/observatorio/primeiro-post-observatorio.pdf` é referência
+visual interna/material de inspiração usado no desenvolvimento do site. Não foi
+fornecido para integrar o acervo público. A decisão definitiva para o fluxo
+atual é `MANTER_PRIVADO`: sem derivado público, Manifesto, `/anexos.json`, ZIP,
+Sala do Avaliador ou futuros dry-runs de publicação.
+
+Os achados visuais da inspeção permanecem como registro factual, mas a presença
+de pessoas ou menor aparente deixa de ser o motivo principal da exclusão. O
+motivo principal é a função documental interna, fora do conjunto destinado à
+publicação.
+
+### Auditoria da área de identidade visual
+
+Foram conferidos os oito arquivos da pasta de identidade visual e o registro
+anterior de inspeção direta. O único candidato a referência interna/material de
+trabalho é D01-08. Os outros sete são logomarcas ou variações gráficas do
+coletivo e do Observatório; nenhum outro aparentou exercer a função de material
+interno. Essa conferência não altera estado, natureza nem autorização de
+publicação de qualquer arquivo.
+
+O lote público conceitual permanece **A02=1 + D01-01..07=7, total=8**.
+D01-08=0. Nenhum registro de banco ou arquivo de origem foi alterado; nenhum
+upload, publicação, pessoa/consentimento, build ou push foi executado.
 
 ---
 
