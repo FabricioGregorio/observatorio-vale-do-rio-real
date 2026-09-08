@@ -88,6 +88,11 @@ export async function principal(
   console.log(
     `[zip-anexos] publicado ${CHAVE_ZIP_ANEXOS} — ${resultado.quantidade} arquivo(s), sha ${resultado.sha256.slice(0, 12)}…`,
   );
+  console.log(
+    "[zip-anexos] a Sala do Avaliador só oferece o download depois de " +
+      "ZIP_ANEXOS_PUBLICADO=true no ambiente do build. Enquanto a variável não " +
+      "for definida, o pacote existe no R2 mas o botão continua oculto.",
+  );
 }
 
 const caminhoExecutado = process.argv[1];

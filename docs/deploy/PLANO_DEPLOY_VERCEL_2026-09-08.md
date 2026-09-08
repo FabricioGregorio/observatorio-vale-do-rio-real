@@ -524,3 +524,48 @@ gates e autorização humana específicos. Até lá:
 
 O registro probatório completo está em
 [`PRIMEIRO_DEPLOY_VERCEL_2026-09-08.md`](./PRIMEIRO_DEPLOY_VERCEL_2026-09-08.md).
+
+---
+
+## 17. Bloqueios corrigidos — Prompt 4.8, 2026-09-08
+
+Os dois achados da seção 16 foram corrigidos no código, a partir do checkpoint
+`3e7f62fd5fff0cd5a8dc2cb0b7d835903b1dbe87`. Nada remoto foi tocado: **zero
+deployments novos**, Custom Domains ainda 0, Git ainda desconectado, DNS
+inalterado, ZIP ainda não publicado, banco e R2 sem alteração.
+
+### 1. O CTA do ZIP passou a ter gate próprio
+
+`urlDoZipDeAnexos()` exige agora, além de `STORAGE_PUBLIC_URL`, a variável
+`ZIP_ANEXOS_PUBLICADO=true`. Só o valor exato conta; ausente ou qualquer outro
+valor significa não publicado, e o item some da Sala. Nenhuma verificação
+remota ao R2 entra no caminho de renderização.
+
+Isso muda a matriz de ambientes: `ZIP_ANEXOS_PUBLICADO` é a **quarta** variável
+possível em Production, e ela só deve ser criada **depois** de `pnpm publicar-zip`
+concluir com sucesso — nunca antes. Hoje ela não existe em nenhum ambiente da
+Vercel, e é assim que deve permanecer enquanto o pacote não for publicado.
+
+Production continua, portanto, com exatamente três variáveis: `DATABASE_URL`,
+`SITE_URL` e `STORAGE_PUBLIC_URL`.
+
+### 2. O overflow em 375 px tinha outra causa
+
+A seção 16 atribuiu o `scrollWidth=629` à largura mínima da tabela. A medição
+provou o contrário: a tabela é clipada corretamente pelo contêiner de rolagem,
+e quem escapava eram os oito `<code class="sr-only">` do SHA-256 — absolutos,
+sem ancestral posicionado, logo com bloco container no `<html>`. `position:
+relative` no contêiner resolveu, e as três larguras passaram a fechar em
+`scrollWidth = clientWidth`.
+
+### Condições pendentes para o segundo deployment
+
+| Condição | Situação |
+|---|---|
+| Bloqueios funcionais do smoke | **resolvidos e verificados localmente** |
+| Gates locais | tipos, lint, 256 testes e 54 de acessibilidade passando |
+| Build local de produção | executado uma vez, 19/19 páginas |
+| ZIP publicado | **não** — segue como operação separada e autorização própria |
+| Autorização para o segundo deployment | **pendente** |
+| Associar domínio / DNS / `www` | **bloqueado** até o segundo deployment passar no smoke |
+| Conectar GitHub | **não autorizado** |

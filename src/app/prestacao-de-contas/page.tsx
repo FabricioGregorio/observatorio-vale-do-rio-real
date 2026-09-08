@@ -40,8 +40,15 @@ export default async function SalaDoAvaliador() {
 
       <nav aria-label="Recursos da Sala do Avaliador">
         <ul className="flex list-none flex-wrap gap-x-6 gap-y-2 p-0">
-          <li>
-            {zip ? (
+          {/*
+            Enquanto o pacote não estiver publicado e declarado, o item não
+            existe — nem como link, nem como aviso. Oferecer o download de um
+            objeto que responde 404 é o oposto do que a Sala do Avaliador
+            existe para fazer (doc 01 §0.2). Os oito anexos individuais são
+            independentes disto e continuam listados abaixo.
+          */}
+          {zip ? (
+            <li>
               <a
                 href={zip}
                 className="underline"
@@ -49,12 +56,8 @@ export default async function SalaDoAvaliador() {
               >
                 Baixar tudo (.zip)
               </a>
-            ) : (
-              <span className="meta-ficha">
-                Pacote .zip ainda não publicado
-              </span>
-            )}
-          </li>
+            </li>
+          ) : null}
           <li>
             <a
               href="/anexos.json"

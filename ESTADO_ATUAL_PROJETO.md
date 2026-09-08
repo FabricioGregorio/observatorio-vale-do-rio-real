@@ -16,8 +16,16 @@ Como o projeto deve ser conduzido é assunto de
 |---|---|
 | Branch | `feat/home-indicadores` |
 | Checkpoint pré-publicação | `11c309943094534ad0af424fccc7e916195cc39a` — *feat: define cache da primeira publicacao* |
-| Upstream | `origin/main`; pendência de segurança, não alterado nesta rodada |
-| Push nesta rodada | nenhum; a configuração de upstream não comprova push anterior |
+| Upstream | **nenhum.** `feat/home-indicadores` não tem upstream configurado; `git rev-parse --abbrev-ref @{u}` responde *no upstream configured*. `main` e `feat/bootstrap` têm; esta branch nunca teve |
+| Push nesta rodada | nenhum; a branch nunca foi enviada ao remoto |
+
+> **Correção de 2026-09-08.** Até o Prompt 4.7 este documento registrava, aqui e
+> no fecho de várias seções de prompt, um upstream `feat/home-indicadores →
+> origin/main`. Isso nunca foi verdade: o que existe na configuração é
+> `branch.feat/home-indicadores.vscode-merge-base = origin/main`, que é base de
+> comparação do editor, não upstream. As seções históricas abaixo preservam o
+> texto original; onde elas afirmam upstream mantido ou preservado, leia
+> **nenhum upstream**.
 
 ## Infraestrutura
 
@@ -25,7 +33,7 @@ Como o projeto deve ser conduzido é assunto de
 |---|---|
 | Prompt 1 | **concluído** |
 | PostgreSQL | 18.6 |
-| Migrations aplicadas | `0001`–`0006` — a última é `0006_arquivo_privado` |
+| Migrations aplicadas | `0001`–`0007` — a última é `0007_publicacao_multiarquivo`, aplicada no Prompt 3.8 |
 | Roles | `app_observatorio` (leitura), `manutencao_observatorio` (DML sem DDL), role real das migrations (DDL) |
 | Isolamento provado | 15/15 conformes; operações negadas falharam com SQLSTATE 42501 pelo privilégio esperado |
 | Sequences | não aplicáveis ao schema — chaves em UUID |
@@ -773,3 +781,102 @@ com anexos não apresente uma linha específica sobre o Caderno.
 
 Registro completo:
 [`docs/deploy/PRIMEIRO_DEPLOY_VERCEL_2026-09-08.md`](./docs/deploy/PRIMEIRO_DEPLOY_VERCEL_2026-09-08.md).
+
+---
+
+## Prompt 4.8 — os dois bloqueios do primeiro deployment, corrigidos localmente
+
+Executado em **2026-09-08**, a partir do checkpoint
+`3e7f62fd5fff0cd5a8dc2cb0b7d835903b1dbe87`, **sem segundo deployment**, sem
+publicação de ZIP, upload no R2, escrita no banco, migration, DNS, domínio,
+integração GitHub ou push.
+
+### Bloqueio 1 — CTA do ZIP
+
+A causa não era o ZIP: era o critério do botão. `urlDoZipDeAnexos()` montava a
+URL a partir de `STORAGE_PUBLIC_URL` e a Sala exibia o link sempre que houvesse
+anexos. Com o Custom Domain configurado e oito anexos publicados, as duas
+condições estavam satisfeitas — e o objeto nunca havia sido enviado. Uma
+`ListObjectsV2` somente leitura no bucket público confirmou: **8 objetos,
+nenhum `anexos.zip`**.
+
+A função passou a exigir também `ZIP_ANEXOS_PUBLICADO=true`, declaração
+explícita de publicação já consumada. Fail-closed: ausente, vazia ou com
+qualquer outro valor significa não publicado. Nenhuma consulta remota ao R2 é
+feita para renderizar a página. Sem o pacote, **o item some da Sala** — nem
+link, nem aviso. `pnpm publicar-zip` passou a lembrar, ao final, que o botão só
+aparece depois da variável.
+
+Os oito anexos individuais são independentes disso e não mudaram.
+
+### Bloqueio 2 — overflow horizontal em 375 px
+
+A tabela **não** era a culpada. Ela mede 621 px e sempre foi corretamente
+clipada pelo contêiner com `overflow-x: auto`.
+
+O que escapava eram os oito `<code class="sr-only">` que guardam o SHA-256
+integral. `sr-only` é `position: absolute`, e não havia ancestral posicionado:
+o bloco container deles era o `<html>`, não o contêiner de rolagem — e um
+contêiner de rolagem só clipa descendentes para os quais ele participa do bloco
+container. Cada um ficava na coluna do hash, com borda direita em **629 px**,
+exatamente o `scrollWidth` medido no smoke de produção.
+
+Correção: `position: relative` no contêiner, que passa a ser o bloco container
+desses elementos e a clipá-los. Uma classe. Nenhuma coluna escondida, nenhuma
+informação truncada, nenhum `overflow-x: hidden` global.
+
+O contêiner virou `<section>` com nome acessível, e a folha de impressão da
+versão imprimível solta o clipe horizontal — no papel não há rolagem, e sem
+isso as colunas da direita não sairiam impressas.
+
+### Medições
+
+| Rota | 375 px antes | 375 px depois | 768 px | 1440 px |
+|---|---|---|---|---|
+| `/prestacao-de-contas` | 629 | **375** | 753/753 | 1425/1425 |
+| `/prestacao-de-contas/imprimir` | 629 | **375** | 753/753 | 1425/1425 |
+| `/` (controle) | 375 | 375 | — | 1425/1425 |
+
+`documentElement.scrollWidth` contra `documentElement.clientWidth`. Sob emulação
+móvel `innerWidth` reporta o conteúdo, não a viewport de layout; a medida
+confiável é `clientWidth`. O contêiner da tabela conserva `scrollWidth` 621 e
+`clientWidth` 343: **a rolagem é dele, não da página**.
+
+### Verificações desta rodada
+
+- Build local: `pnpm build` executado **uma vez**, 19/19 páginas estáticas, 18
+  rotas, mesmo conjunto do Prompt 4.7. Único aviso é o já conhecido do driver
+  PostgreSQL sobre `sslmode`.
+- Smoke do artefato de produção: Home, Sala, imprimível, `robots.txt` e
+  `sitemap.xml` em 200; `/dev/estilos` em **404**; `/anexos.json` com **8**.
+- O HTML da Sala tem **zero** ocorrências de `anexos.zip` e de `Baixar tudo`.
+- Banco antes e depois, por `DATABASE_URL` somente leitura, role
+  `app_observatorio`: `documento=33`, `arquivo=18`, `documento_arquivo=18`,
+  `vw_anexo_publico=8` — sendo `identidade-visual`=7 e
+  `relatorio-tecnico-recanto-da-serra`=1 —, `PUBLICAVEL=2`, `pessoa=0`,
+  `consentimento=0`. Nenhuma escrita.
+- A04 (`relatorio-tecnico-serra-dos-macacos`) segue `ESPELHAVEL`, revisão
+  concluída, `status=rascunho`, fora da publicação. D01-08 segue privado.
+- Bucket público: impressão digital idêntica antes e depois — **8 objetos, sem
+  ZIP**. Bucket privado não foi tocado.
+- Gates: tipos e lint passaram, mantendo os quatro warnings CSS preexistentes;
+  **256 testes passaram e 3 foram omitidos**; acessibilidade passou em
+  **54/54**.
+
+Ressalva registrada: numa das catorze execuções da suíte, um teste falhou uma
+única vez e o nome não foi capturado. Treze execuções seguintes passaram, assim
+como seis execuções dirigidas ao arquivo que mais depende de subprocesso e de
+arquivo compartilhado. **A falha não foi reproduzida e sua causa não foi
+determinada.**
+
+`pnpm pendencias` não atesta nada nesta máquina: ele roda sem `.env.local` e
+declara `DATABASE_URL ausente`. Isso é comportamento próprio do script, não
+resultado da verificação.
+
+### O que continua pendente
+
+- **ZIP não publicado.** Continua sendo operação separada, com autorização
+  própria. A correção deste prompt não a antecipa nem a dispensa.
+- **Segundo deployment não executado.** Os dois bloqueios estão corrigidos e
+  verificados localmente; a promoção ao domínio institucional segue dependendo
+  de nova autorização humana.

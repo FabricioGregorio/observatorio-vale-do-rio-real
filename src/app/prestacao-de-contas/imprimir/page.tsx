@@ -42,6 +42,15 @@ export default async function VersaoImprimivel() {
             font-size: 0.8em;
             word-break: break-all;
           }
+          /*
+            No papel não existe rolagem: o contêiner que segura a tabela na
+            tela precisa soltar o clipe horizontal, senão as colunas da direita
+            simplesmente não saem impressas. A tabela então se ajusta à largura
+            da folha, como qualquer tabela de documento.
+          */
+          section[aria-label] {
+            overflow: visible !important;
+          }
           table {
             page-break-inside: auto;
           }

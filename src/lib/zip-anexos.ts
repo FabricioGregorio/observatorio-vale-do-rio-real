@@ -14,11 +14,31 @@
 export const CHAVE_ZIP_ANEXOS = "prestacao-de-contas/anexos.zip";
 
 /**
- * URL pública do pacote, ou `null` quando `STORAGE_PUBLIC_URL` não está
- * definida — caso em que a página informa que o pacote ainda não foi
- * publicado, em vez de oferecer um link que não abre.
+ * Declaração explícita de que o objeto do ZIP existe no bucket público.
+ *
+ * Só quem executou `pnpm publicar-zip` sabe disso; a chave sozinha não prova
+ * nada, e derivar a URL a partir de `STORAGE_PUBLIC_URL` provava apenas que o
+ * domínio do acervo está configurado. Foi exatamente esse o defeito do primeiro
+ * deployment: os oito anexos existiam, o domínio existia, o pacote não — e a
+ * Sala oferecia um download que respondia 404.
+ *
+ * Fail-closed, como todo gate do projeto: ausente, vazia ou com qualquer outro
+ * valor significa **não publicado**. Nenhuma verificação remota é feita para
+ * responder isso; o R2 não é consultado para renderizar a página.
+ */
+export function zipDeAnexosPublicado(): boolean {
+  return process.env.ZIP_ANEXOS_PUBLICADO?.trim().toLowerCase() === "true";
+}
+
+/**
+ * URL pública do pacote, ou `null` enquanto não houver pacote publicado.
+ *
+ * Exige as duas condições ao mesmo tempo: domínio público configurado **e**
+ * publicação declarada. Faltando qualquer uma, a Sala do Avaliador não oferece
+ * o download — em vez de oferecer um link que não abre.
  */
 export function urlDoZipDeAnexos(): string | null {
+  if (!zipDeAnexosPublicado()) return null;
   const base = process.env.STORAGE_PUBLIC_URL?.replace(/\/+$/, "");
   return base ? `${base}/${CHAVE_ZIP_ANEXOS}` : null;
 }

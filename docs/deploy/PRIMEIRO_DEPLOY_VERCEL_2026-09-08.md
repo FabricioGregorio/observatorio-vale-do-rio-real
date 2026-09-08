@@ -123,6 +123,11 @@ associar o domínio principal:
 2. em 375 px, a Sala e a versão imprimível têm `scrollWidth=629`, causado pela
    largura mínima efetiva da tabela. Em 768 px e 1440 px o smoke passou.
 
+> **Nota de 2026-09-08.** A atribuição do achado 2 à largura da tabela, escrita
+> acima, estava **errada**. A medição do Prompt 4.8 mostrou que a tabela sempre
+> foi clipada corretamente; a causa eram os `sr-only` do hash. Ver a seção de
+> correção ao final deste documento.
+
 O Caderno de Estudos continua `PENDENTE` nas fontes documentais vigentes. A
 saída pública não afirma que ele foi concluído, mas a tabela preenchida também
 não apresenta uma linha explícita sobre esse estado.
@@ -141,3 +146,59 @@ tarefa e nova autorização humana.
 - ZIP publicado: não;
 - banco/R2 alterados: não;
 - domínio/DNS alterados: não.
+
+---
+
+## Correção dos dois achados — Prompt 4.8, 2026-09-08
+
+Os dois bloqueios acima foram corrigidos localmente, a partir do checkpoint
+`3e7f62fd5fff0cd5a8dc2cb0b7d835903b1dbe87`. **Nenhum segundo deployment foi
+executado**, nenhum ZIP foi publicado, e banco, R2, DNS, domínio e GitHub não
+foram tocados.
+
+### Achado 1 — link do ZIP
+
+Diagnóstico: o defeito estava no critério de exibição, não no pacote.
+`urlDoZipDeAnexos()` derivava a URL de `STORAGE_PUBLIC_URL`, e a Sala mostrava
+o link sempre que houvesse anexos. Depois da primeira publicação as duas
+condições passaram a ser verdadeiras ao mesmo tempo, e o botão apareceu para um
+objeto inexistente. Uma `ListObjectsV2` somente leitura no bucket público
+confirmou o fato: **8 objetos, nenhum `prestacao-de-contas/anexos.zip`**.
+
+Correção: a URL passou a exigir também `ZIP_ANEXOS_PUBLICADO=true` — declaração
+explícita de publicação já ocorrida, fail-closed, sem nenhuma consulta remota ao
+R2 no caminho de renderização. Sem o pacote, o item inteiro desaparece da Sala.
+Os oito anexos individuais não dependem disso e continuam publicados.
+
+### Achado 2 — overflow em 375 px
+
+Diagnóstico: **a tabela não era a causa.** Com 621 px de largura, ela sempre foi
+corretamente clipada pelo contêiner `overflow-x: auto`. Quem escapava eram os
+oito `<code class="sr-only">` do SHA-256 integral: `position: absolute` sem
+ancestral posicionado, portanto com bloco container no `<html>` e não no
+contêiner de rolagem — e um contêiner de rolagem não clipa descendente cujo
+bloco container está fora dele. Cada um terminava em **629 px**, o mesmo número
+medido no smoke deste deployment.
+
+Correção: `position: relative` no contêiner. Ele passa a ser o bloco container
+desses elementos e a clipá-los. Nenhuma coluna foi escondida, nenhuma informação
+truncada e nenhum `overflow-x: hidden` global foi introduzido.
+
+### Medições locais, artefato de produção
+
+| Rota | 375 antes | 375 depois | 768 | 1440 |
+|---|---|---|---|---|
+| `/prestacao-de-contas` | 629 | **375** | 753 | 1425 |
+| `/prestacao-de-contas/imprimir` | 629 | **375** | 753 | 1425 |
+
+`documentElement.scrollWidth` contra `clientWidth`. O contêiner da tabela
+conserva rolagem própria (621 contra 343): a informação não foi reduzida.
+
+### Situação para o segundo deployment
+
+Os dois achados que bloqueavam a promoção estão resolvidos e verificados no
+artefato de produção local. Permanecem, como antes:
+
+- ZIP publicado: **não** — operação separada, com autorização própria;
+- segundo deployment: **não executado**, aguardando autorização;
+- Custom Domains, DNS, `www`, GitHub e push: **inalterados**.

@@ -65,7 +65,31 @@ export function TabelaAnexos({ anexos }: { anexos: AnexoPublico[] }) {
   }
 
   return (
-    <div className="overflow-x-auto">
+    /*
+      `relative` não é decoração: é a correção do overflow horizontal em 375 px.
+
+      Cada linha guarda o SHA-256 integral num `<code className="sr-only">`, que
+      é `position: absolute`. Sem ancestral posicionado, o bloco container desses
+      elementos é o `<html>`, e não este contêiner de rolagem — e um contêiner de
+      rolagem só clipa descendentes para os quais ele participa do bloco
+      container. Os oito `sr-only` escapavam do clip na coluna do hash, a ~628 px,
+      e faziam `documentElement.scrollWidth` ir a 629 px numa viewport de 375 px.
+      A tabela em si (621 px) sempre foi clipada corretamente: ela nunca foi a
+      causa. Com `relative`, os `sr-only` passam a ser clipados aqui dentro e a
+      página deixa de rolar na horizontal — a tabela continua rolando.
+
+      `<section>` nomeada: dá à região rolável um nome de landmark, para quem
+      navega por leitor de tela saber onde entrou. Sem `tabindex` de propósito —
+      um contêiner rolável só precisa virar parada de teclado quando não tem
+      conteúdo focável dentro, e aqui toda linha tem o link "Baixar" e o
+      `<summary>` do hash integral, inclusive na última coluna: tabular por eles
+      já rola a tabela até o fim. A `<table>`, o `<caption>` e os `th[scope]`
+      seguem intactos.
+    */
+    <section
+      className="relative w-full max-w-full overflow-x-auto"
+      aria-label="Tabela de anexos — rolável na horizontal"
+    >
       <table className="w-full border-collapse text-left">
         <caption className="mb-3 text-left">
           Anexos da prestação de contas: {anexos.length}{" "}
@@ -172,6 +196,6 @@ export function TabelaAnexos({ anexos }: { anexos: AnexoPublico[] }) {
           ))}
         </tbody>
       </table>
-    </div>
+    </section>
   );
 }
