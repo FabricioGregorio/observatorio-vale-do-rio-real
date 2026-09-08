@@ -622,3 +622,141 @@ depois; nenhum ZIP.
 
 Registro probatório completo em
 [`SEGUNDO_DEPLOY_VERCEL_2026-09-08.md`](./SEGUNDO_DEPLOY_VERCEL_2026-09-08.md).
+
+---
+
+## 19. Domínios associados à Vercel — Prompt 5.0, 2026-09-08
+
+Autorização humana para associar os dois domínios ao projeto e descobrir a
+configuração DNS exigida. **Nenhum DNS foi alterado**, nenhum nameserver foi
+tocado, o Registro.br não foi acessado, o registro `acervo` não foi modificado e
+não houve terceiro deployment.
+
+`--force` **não** foi usado em nenhum momento. Antes da operação o team tinha
+zero domínios, e nem o apex nem o `www` pertenciam a outro projeto.
+
+### O que foi feito
+
+Dois comandos, ambos apontando para o projeto já vinculado:
+
+```text
+vercel domains add observatoriotobiassoueu.com.br observatorio-vale-rio-real
+vercel domains add www.observatoriotobiassoueu.com.br observatorio-vale-rio-real
+```
+
+Os dois retornaram `domain_added`. A leitura da API do projeto confirma os dois
+anexados, com `verified: true`, `redirect: null` e `redirectStatusCode: null`.
+
+**Custom Domains do projeto: 2.** `vercel domains ls` mostra "1 Domain" porque
+lista **zonas apex** registradas no team, não entradas de projeto; a zona é uma
+só. O alias `observatorio-vale-rio-real.vercel.app` continua existindo e não é
+Custom Domain.
+
+Os dois aparecem como `invalid-configuration`. Isso é o esperado nesta fase: o
+DNS ainda não foi alterado.
+
+### Nenhuma verificação de propriedade é exigida
+
+A API devolveu, para os dois domínios:
+
+```text
+project.verified        = true
+project.verification    = []
+verificationError       = null
+acceptedChallenges      = []
+domainOwnership         = current-scope
+conflicts               = []
+```
+
+**Não há TXT de ownership a criar.** A propriedade já está reconhecida no escopo
+atual; falta apenas o apontamento.
+
+### Registros exigidos — valores exatos devolvidos pela Vercel
+
+`vercel domains verify` devolve, para este projeto, um array `recommended` com
+alternativas ranqueadas. O campo `recommended.records` é a recomendação
+explícita:
+
+| Domínio | Type | Name | Value | Proxy Cloudflare |
+|---|---|---|---|---|
+| apex | `CNAME` | `@` | `f3d04172207a1b46.vercel-dns-017.com.` | **DNS only** |
+| www | `CNAME` | `www` | `f3d04172207a1b46.vercel-dns-017.com.` | **DNS only** |
+
+O `DNS only` não é preferência nossa: a própria Vercel devolve
+`"disableProxy": true` nos dois registros.
+
+Alternativas devolvidas, por ranking, caso o responsável prefira endereço IP:
+
+| Rank | Tipo | Valores |
+|---|---|---|
+| 1 | IPv4 | `216.198.79.1` e `64.29.17.1` |
+| 2 | IPv4 | `76.76.21.21` |
+| 1 | CNAME | `f3d04172207a1b46.vercel-dns-017.com.` |
+| 2 | CNAME | `cname.vercel-dns.com.` |
+
+`vercel domains inspect` sugere, num texto mais antigo,
+`A observatoriotobiassoueu.com.br 76.76.21.21`. É a alternativa de **rank 2** do
+mesmo conjunto, não uma recomendação diferente. Nenhum valor acima foi inferido
+de documentação: todos vieram da saída da CLI para este projeto.
+
+### CNAME no apex e os registros de e-mail
+
+O apex hoje **não tem** A, AAAA nem CNAME. Tem, e deve continuar tendo:
+
+| Tipo | Valor atual | Situação |
+|---|---|---|
+| `MX` | `0 .` — null MX de RFC 7505, "este domínio não recebe e-mail" | **não tocar** |
+| `TXT` | `v=spf1 -all` | **não tocar** |
+
+Pelo RFC 1034 um CNAME no apex não coexiste com outros registros. A Cloudflare
+resolve isso com *CNAME flattening*: ela aceita o CNAME na raiz, serve os
+endereços achatados e **preserva MX e TXT**. Por isso a recomendação da Vercel é
+aplicável aqui. Se o responsável preferir não depender do flattening, os dois
+`A` de rank 1 convivem com MX e TXT sem qualquer ressalva — as duas opções são
+válidas e vieram da Vercel.
+
+### Estado do DNS antes da ação humana
+
+| Host | Hoje | Observação |
+|---|---|---|
+| `observatoriotobiassoueu.com.br` | zona existe; **sem A/AAAA/CNAME** | nada a substituir; o registro será criação |
+| `www.observatoriotobiassoueu.com.br` | **NXDOMAIN** | não existe; será criação |
+| `acervo.observatoriotobiassoueu.com.br` | `104.21.87.4`, `172.67.139.26` e IPv6, **proxied** | R2, HTTP 200, **não tocar** |
+| Nameservers | `edna.ns.cloudflare.com`, `zod.ns.cloudflare.com` | Cloudflare segue autoritativa; **não alterar** |
+
+Como não existe A/AAAA/CNAME em `@` nem em `www`, **não há conflito a resolver**
+— a Vercel também devolveu `conflicts: []`. Nenhum registro precisa ser removido.
+MX, TXT/SPF, DKIM, DMARC e `acervo` ficam intocados.
+
+O `disableProxy` vale **apenas** para os novos registros de `@` e `www`. O
+`acervo` é proxied de propósito, por ser domínio gerenciado do R2, e permanece
+exatamente como está.
+
+### Redirect www → apex
+
+**Não configurado nesta tarefa**, conforme instrução. A auditoria mostra que a
+Vercel oferece isso nativamente, por propriedade do domínio no projeto — os
+campos `redirect` e `redirectStatusCode`, hoje ambos `null`.
+
+Caminho para configurar depois, sem código e sem `vercel.json`:
+
+> Vercel → projeto `observatorio-vale-rio-real` → **Settings** → **Domains** →
+> entrada `www.observatoriotobiassoueu.com.br` → **Redirect to** →
+> `observatoriotobiassoueu.com.br`, com status **308 Permanent**.
+
+O apex permanece o domínio principal. A operação não depende de verificação de
+propriedade — os dois já constam `verified: true` —, mas só produz efeito depois
+que o DNS resolver.
+
+### Próximo passo: ação humana na Cloudflare
+
+Criar dois registros no painel da Cloudflare, na zona
+`observatoriotobiassoueu.com.br`, ambos com a nuvem **cinza (DNS only)**:
+
+| # | Type | Name | Target | Proxy | Ação |
+|---|---|---|---|---|---|
+| 1 | `CNAME` | `@` | `f3d04172207a1b46.vercel-dns-017.com.` | DNS only | criar |
+| 2 | `CNAME` | `www` | `f3d04172207a1b46.vercel-dns-017.com.` | DNS only | criar |
+
+Nada mais deve ser criado, alterado ou removido. Depois disso,
+`vercel domains verify` para cada domínio confirma a propagação.

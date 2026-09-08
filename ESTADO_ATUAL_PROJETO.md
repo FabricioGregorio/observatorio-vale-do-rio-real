@@ -975,3 +975,61 @@ Dívida visual **baixa**; a tabela não foi redesenhada.
   que impediam a promoção foram resolvidos e validados. DNS, apex e `www`
   seguem etapa própria.
 - **Git desconectado** e **nenhum push** — inalterados por decisão.
+
+---
+
+## Prompt 5.0 — domínios associados à Vercel, DNS ainda inalterado
+
+Executado em **2026-09-08**, a partir de
+`977fc243f44fc5f61c3582957b3e082f4db23c80`. **Nenhuma alteração de DNS**,
+nameserver, Registro.br, registro `acervo`, deployment, Git, push, ZIP, banco ou
+R2.
+
+- `observatoriotobiassoueu.com.br` e `www.observatoriotobiassoueu.com.br` foram
+  associados ao projeto `observatorio-vale-rio-real`. **Custom Domains do
+  projeto: 2.** Antes eram 0, e nenhum dos dois pertencia a outro projeto.
+  `--force` não foi usado.
+- Os dois constam `verified: true`, com `redirect` e `redirectStatusCode` nulos.
+  **Nenhum TXT de propriedade é exigido**: `verification: []`,
+  `acceptedChallenges: []`, `domainOwnership: current-scope`, `conflicts: []`.
+- Os dois aparecem como `invalid-configuration`, o que é esperado enquanto o DNS
+  não for alterado.
+- Deployments permanecem **2**; Production segue `READY`; Git segue
+  **desconectado**.
+
+### Registros que a Vercel devolveu para este projeto
+
+| Domínio | Type | Name | Value | Proxy |
+|---|---|---|---|---|
+| apex | `CNAME` | `@` | `f3d04172207a1b46.vercel-dns-017.com.` | **DNS only** |
+| www | `CNAME` | `www` | `f3d04172207a1b46.vercel-dns-017.com.` | **DNS only** |
+
+`disableProxy: true` veio da própria Vercel. Alternativas devolvidas, por
+ranking: IPv4 rank 1 `216.198.79.1` e `64.29.17.1`; rank 2 `76.76.21.21`; CNAME
+rank 2 `cname.vercel-dns.com.`. Nenhum valor foi inferido de documentação.
+
+### DNS atual e ausência de conflito
+
+O apex não tem A, AAAA nem CNAME hoje, e `www` é NXDOMAIN: os dois registros
+serão **criação**, não substituição. O apex conserva `MX 0 .` (null MX de RFC
+7505) e `TXT v=spf1 -all`, que **não devem ser tocados**. A Cloudflare achata
+CNAME na raiz e preserva esses registros; quem preferir evitar o flattening pode
+usar os dois `A` de rank 1, igualmente devolvidos pela Vercel.
+
+`acervo.observatoriotobiassoueu.com.br` continua proxied na Cloudflare,
+respondendo HTTP 200, servido pelo R2 — **intocado**, e fora do escopo do
+`disableProxy`, que vale só para `@` e `www`. Nameservers seguem
+`edna.ns.cloudflare.com` e `zod.ns.cloudflare.com`.
+
+### Redirect www → apex
+
+Não configurado, por instrução. É recurso nativo da Vercel, pelos campos
+`redirect`/`redirectStatusCode` do domínio no projeto: **Settings → Domains →
+`www…` → Redirect to `observatoriotobiassoueu.com.br`, 308 Permanent**. Não
+exige código nem `vercel.json`. O apex permanece o domínio principal.
+
+### Próximo passo
+
+Ação humana na Cloudflare: criar os dois CNAME acima, ambos **DNS only**, sem
+mexer em mais nada. Depois, `vercel domains verify` em cada domínio confirma a
+propagação.
