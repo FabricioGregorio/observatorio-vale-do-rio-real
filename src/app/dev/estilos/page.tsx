@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 /**
  * Página de referência visual (Tarefa 02).
@@ -18,6 +19,19 @@ export const metadata: Metadata = {
   title: "Referência visual — tokens",
   robots: { index: false, follow: false },
 };
+
+type InterromperCom404 = () => never;
+
+/**
+ * Mantém a decisão testável sem reatribuir `process.env.NODE_ENV`: em produção
+ * o render é interrompido pelo 404 nativo; nos demais ambientes nada acontece.
+ */
+export function exigirAmbienteDeDesenvolvimento(
+  ambiente: string | undefined,
+  interromper: InterromperCom404 = notFound,
+): void {
+  if (ambiente === "production") interromper();
+}
 
 // ─── Leitura dos tokens ────────────────────────────────────────────
 
@@ -138,6 +152,8 @@ const ESCALA = [
 ];
 
 export default function ReferenciaVisual() {
+  exigirAmbienteDeDesenvolvimento(process.env.NODE_ENV);
+
   const tokens = lerTokens();
   const cores = [...tokens.keys()].filter((n) => n.startsWith("--color-"));
 

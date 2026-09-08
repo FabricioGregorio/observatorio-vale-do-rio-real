@@ -41,7 +41,7 @@ Todas responderam `200` no servidor local.
 | `/acessibilidade` | `src/app/acessibilidade/page.tsx` | Server | rota editorial | não | não | explícito |
 | `/privacidade` | `src/app/privacidade/page.tsx` | Server | rota editorial | não | não | explícito |
 | `/contato` | `src/app/contato/page.tsx` | Server | rota editorial | não | não | explícito |
-| `/dev/estilos` | `src/app/dev/estilos/page.tsx` | Server | referência visual interna | tokens CSS | controles de exemplo | não se aplica |
+| `/dev/estilos` | `src/app/dev/estilos/page.tsx` | Server; 404 em produção | referência visual interna | tokens CSS | controles de exemplo | não se aplica |
 
 A rota inexistente usada pela suíte retornou `404` e ofereceu caminhos válidos para a Sala, Dados e Home. Não foram encontradas rotas documentadas centrais ausentes na fatia implementada.
 
@@ -73,19 +73,19 @@ As dez páginas-stub usavam o título genérico da raiz. O conteúdo e o `h1` es
 
 `/dev/estilos` responde `200` e contém “Link de exemplo” e “Botão de exemplo”. A página está fora da navegação e declara ser interna, não expõe dados privados e não interfere nas rotas centrais. Ainda assim, são dois elementos de demonstração alcançáveis por URL e o botão não executa ação funcional.
 
-**Situação:** não corrigido. Remover, restringir ou manter a referência visual é decisão humana sobre o ambiente de produção. Não bloqueia o freeze pelos critérios desta auditoria.
+**Situação:** resolvido em 2026-09-08 por decisão humana. A rota continua disponível quando `NODE_ENV !== production` e chama o `notFound()` nativo do Next quando `NODE_ENV === production`. Não há redirecionamento, mensagem de rota oculta, middleware, autenticação ou variável adicional. Os dois controles de demonstração permanecem apenas na ferramenta de desenvolvimento e deixam de integrar a superfície pública de produção.
 
 ## 8. Correções realizadas
 
 1. Estado vazio da Sala e da versão imprimível alinhado ao gate canônico e ao Caderno `PENDENTE`.
 2. Títulos únicos e descritivos para dez rotas editoriais.
-3. Testes Playwright adicionados para estado vazio, ausência de ZIP, JSON vazio sem marcadores privados e títulos das rotas.
+3. Rota de referência visual restrita ao desenvolvimento, com 404 nativo em produção.
+4. Testes adicionados para estado vazio, ausência de ZIP, JSON vazio sem marcadores privados, títulos das rotas e proteção da rota interna.
 
-Foram corrigidas duas famílias de defeitos; os testes constituem a cobertura das correções.
+Foram corrigidas três famílias de defeitos; os testes constituem a cobertura das correções.
 
 ## 9. Pendências humanas
 
-- Decidir se `/dev/estilos` deve permanecer acessível em produção, ser restringida ou removida antes do freeze.
 - O manual de marcas E02 e o bloco definitivo de créditos continuam pendentes conforme as fontes vigentes; não foram inventados.
 - O Caderno de Estudos permanece `PENDENTE`. Nenhum arquivo, URL ou prazo novo foi criado.
 - A01 permanece impedido; nenhum link de Figma foi apresentado como anexo disponível.
@@ -132,7 +132,7 @@ O menu mobile aparece em 375 px e cede lugar à navegação larga a partir de 76
 
 ## 14. Riscos para freeze de 14/09
 
-- A decisão sobre `/dev/estilos` deve ser tomada antes da exposição definitiva, embora não seja bloqueadora.
+- `/dev/estilos` permanece útil no desenvolvimento e deixa de existir para o público em produção.
 - Quando o primeiro lote público for efetivamente autorizado, deve haver novo smoke test com o conjunto real das saídas Sala/JSON/ZIP; esta auditoria respeitou o estado de zero arquivos e não tocou R2 ou banco.
 - E02 continua impedindo o bloco definitivo de marcas e créditos, conforme já documentado. A reserva textual atual é explícita e não usa marca inventada.
 - A propagação DNS não foi verificada nem alterada nesta tarefa.
@@ -141,4 +141,4 @@ Não foi identificado bloqueador atual segundo os critérios definidos: não hou
 
 ## 15. Conclusão
 
-O site está funcional no estado pré-publicação com zero anexos públicos. Home, mapa, Sala, impressão e JSON funcionam sem banco ou storage; o Manifesto e o ZIP permanecem fail-closed; e D01-08 não alcança superfície pública. As duas inconsistências objetivas encontradas foram corrigidas e cobertas por testes. Resta uma decisão humana de baixa severidade sobre a rota interna de estilos, sem bloqueio atual para o freeze de 14/09.
+O site está funcional no estado pré-publicação com zero anexos públicos. Home, mapa, Sala, impressão e JSON funcionam sem banco ou storage; o Manifesto e o ZIP permanecem fail-closed; e D01-08 não alcança superfície pública. As três inconsistências objetivas encontradas foram corrigidas e cobertas por testes. Não resta achado aberto nesta auditoria nem bloqueio atual para o freeze de 14/09.
