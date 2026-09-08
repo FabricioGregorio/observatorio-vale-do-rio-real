@@ -760,3 +760,116 @@ Criar dois registros no painel da Cloudflare, na zona
 
 Nada mais deve ser criado, alterado ou removido. Depois disso,
 `vercel domains verify` para cada domínio confirma a propagação.
+
+---
+
+## 20. Domínio público concluído — Prompts 5.1 a 5.3, 2026-09-08
+
+### Propagação e TLS
+
+Os dois CNAME foram criados manualmente na Cloudflare, ambos DNS only. A
+propagação confirmou a configuração recomendada:
+
+| Host | Resolve por | Resultado |
+|---|---|---|
+| apex | CNAME de raiz achatado pela Cloudflare | `216.198.79.1` e `64.29.17.1`; Vercel reporta `configuredBy: "A"` |
+| `www` | CNAME | `f3d04172207a1b46.vercel-dns-017.com` → `64.29.17.65` e `216.198.79.65`; `configuredBy: "CNAME"` |
+
+Os dois passaram a `configured-correctly`, com `verified: true`,
+`misconfigured: false`, `issues: []` e `verificationError: null`.
+
+`MX 0 .` e `TXT v=spf1 -all` continuam intactos no apex — o flattening da
+Cloudflare preservou os dois, como previsto na seção 19.
+
+A Vercel emitiu **dois certificados Let's Encrypt separados**, um por domínio,
+não um SAN conjunto:
+
+| Certificado | CN / SAN | Emissão | Validade | Renovação |
+|---|---|---|---|---|
+| `cert_dVXR6qjMzY9CspiUg6TfHUYu` | `observatoriotobiassoueu.com.br` | 08/09/2026 18:50:34 UTC | 07/12/2026 | automática |
+| `cert_duTe9tunUjdF5ixkYAcX8SRH` | `www.observatoriotobiassoueu.com.br` | 08/09/2026 19:00:41 UTC | 07/12/2026 | automática |
+
+O certificado do `www` saiu cerca de dez minutos depois do apex. Nesse intervalo
+o `www` apresentava o certificado do apex e falhava por nome incorreto
+(`SEC_E_WRONG_PRINCIPAL`) — estado transitório de emissão, não erro de
+configuração. Nada foi feito para corrigi-lo: nenhum Refresh, nenhuma alteração
+de DNS. Depois da emissão, os quatro IPs de borda da Vercel foram conferidos com
+SNI explícito e **todos** serviam o certificado com
+`SAN = DNS:www.observatoriotobiassoueu.com.br`.
+
+### Redirect www → apex
+
+Configurado pelo recurso nativo de Domain Redirect, sem código, sem
+`vercel.json`, sem Bulk Redirects. O mecanismo é o endpoint documentado no
+OpenAPI público da Vercel, exposto pela própria CLI:
+
+```text
+PATCH /v9/projects/{idOrName}/domains/{domain}
+{"redirect":"observatoriotobiassoueu.com.br","redirectStatusCode":308}
+```
+
+Estado resultante:
+
+| Domínio | `redirect` | `redirectStatusCode` |
+|---|---|---|
+| `observatoriotobiassoueu.com.br` | `null` | `null` |
+| `www.observatoriotobiassoueu.com.br` | `observatoriotobiassoueu.com.br` | **308** |
+
+O apex permanece o domínio canônico e **não** redireciona.
+
+Comportamento verificado, sem seguir o redirect:
+
+| Origem no `www` | Status | `Location` |
+|---|---|---|
+| `/` | 308 | `https://observatoriotobiassoueu.com.br/` |
+| `/prestacao-de-contas` | 308 | `…/prestacao-de-contas` |
+| `/prestacao-de-contas/imprimir` | 308 | `…/prestacao-de-contas/imprimir` |
+| `/anexos.json` | 308 | `…/anexos.json` |
+| `/?teste=1` | 308 | `…/?teste=1` |
+| `/prestacao-de-contas?a=1&b=2` | 308 | `…/prestacao-de-contas?a=1&b=2` |
+
+**Path e query string são preservados** pelo comportamento nativo. Seguindo o
+redirect: exatamente **um salto**, host final `observatoriotobiassoueu.com.br`,
+HTTP 200, TLS válido, sem loop.
+
+### Smoke final no domínio canônico
+
+| Rota | Status |
+|---|---|
+| `/` | 200 |
+| `/prestacao-de-contas` | 200 |
+| `/prestacao-de-contas/imprimir` | 200 |
+| `/anexos.json` | 200, 8 anexos |
+| `/dev/estilos` | **404** |
+| `/robots.txt` | 200 |
+| `/sitemap.xml` | 200, 12 URLs |
+
+Canonical e Open Graph das treze páginas públicas apontam para o apex; **zero**
+ocorrências de `www` como canonical. O sitemap não tem nenhum `<loc>` com `www`
+nem com `vercel.app` — a única string `www.` no arquivo é o namespace XML
+`www.sitemaps.org`, do próprio padrão.
+
+Em 375 px, no domínio real: Home, Sala e versão imprimível fecham em
+`scrollWidth = clientWidth = 375`. O contêiner da tabela conserva `position:
+relative` e rolagem própria.
+
+Privacidade no domínio real: `anexos.zip`, `Baixar tudo`, A04 e D01-08 com
+**zero** ocorrências na Sala; `/anexos.json` com 8, sendo A02=1 e D01=7; os oito
+links do acervo em **8/8**; o ZIP no acervo segue em **404**.
+
+`acervo.observatoriotobiassoueu.com.br` responde 200 e permanece proxied na
+Cloudflare, servido pelo R2, intocado em todas as etapas.
+
+### Estado da infraestrutura pública
+
+| Item | Situação |
+|---|---|
+| Domínio canônico | **ativo** em `https://observatoriotobiassoueu.com.br` |
+| `www` | **308 permanente** para o apex |
+| TLS | válido nos dois, renovação automática |
+| DNS | Cloudflare autoritativa; nameservers inalterados |
+| Acervo | R2, intocado |
+| Deployments | **2**; nenhum novo nesta etapa |
+| Git | **desconectado** |
+| ZIP | **não publicado** |
+| Push | **não realizado** |

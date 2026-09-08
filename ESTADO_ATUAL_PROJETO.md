@@ -1033,3 +1033,69 @@ exige código nem `vercel.json`. O apex permanece o domínio principal.
 Ação humana na Cloudflare: criar os dois CNAME acima, ambos **DNS only**, sem
 mexer em mais nada. Depois, `vercel domains verify` em cada domínio confirma a
 propagação.
+
+---
+
+## Prompts 5.1 a 5.3 — domínio público no ar
+
+Concluído em **2026-09-08**. O site está publicamente acessível no domínio
+institucional. Sem deployment novo, sem alteração de DNS, Cloudflare,
+nameservers, `acervo`, Git, push, ZIP, banco ou R2.
+
+### Endereços
+
+| | |
+|---|---|
+| Domínio canônico | **`https://observatoriotobiassoueu.com.br`** — HTTP 200, TLS válido |
+| `www` | **308 permanente** para o apex, preservando path e query |
+| Acervo | `https://acervo.observatoriotobiassoueu.com.br` — 200, R2, intocado |
+| Alias técnico | `observatorio-vale-rio-real.vercel.app` continua existindo |
+
+### DNS e TLS
+
+Os dois CNAME criados na Cloudflare, DNS only, resolveram como recomendado: o
+apex por CNAME de raiz achatado (`216.198.79.1`, `64.29.17.1`,
+`configuredBy: "A"`) e o `www` por CNAME
+(`f3d04172207a1b46.vercel-dns-017.com`, `configuredBy: "CNAME"`). Os dois estão
+`configured-correctly` e `verified: true`, sem `issues`.
+
+`MX 0 .` e `TXT v=spf1 -all` do apex permaneceram intactos: o flattening da
+Cloudflare os preservou.
+
+Dois certificados Let's Encrypt **separados**, um por domínio, com renovação
+automática e validade até 07/12/2026 — apex emitido às 18:50:34 UTC, `www` às
+19:00:41 UTC. No intervalo de dez minutos entre os dois, o `www` apresentava o
+certificado do apex e falhava por nome incorreto; foi estado transitório de
+emissão, e nada foi feito para forçá-lo. Depois, os quatro IPs de borda foram
+conferidos com SNI e todos serviam o certificado correto.
+
+### Redirect
+
+Configurado pelo recurso nativo de Domain Redirect da Vercel — endpoint
+documentado no OpenAPI público, sem código, `vercel.json` ou Bulk Redirects.
+`www` tem `redirect = observatoriotobiassoueu.com.br` e
+`redirectStatusCode = 308`; o apex mantém os dois campos `null` e **não**
+redireciona. Verificado: um único salto, host final no apex, 200, sem loop,
+com `?teste=1` e `?a=1&b=2` preservados.
+
+### Smoke final no domínio real
+
+Home, Sala, versão imprimível, `robots.txt` e `sitemap.xml` em 200;
+`/dev/estilos` em **404**; `/anexos.json` em 200 com **8** (A02=1, D01=7).
+Canonical e Open Graph das treze páginas apontam para o apex, com zero
+ocorrências de `www`; o sitemap tem 12 URLs, nenhuma com `www` ou `vercel.app`.
+
+Em 375 px, no domínio real, Home, Sala e imprimível fecham em
+`scrollWidth = clientWidth = 375`.
+
+Privacidade confirmada em produção: `anexos.zip`, `Baixar tudo`, A04 e D01-08
+com zero ocorrências; oito links do acervo em **8/8**; ZIP no acervo em **404**.
+
+### Estado da infraestrutura
+
+Deployments: **2**. Git: **desconectado**. ZIP: **não publicado**. Push:
+**nenhum**. Custom Domains: **2**.
+
+**A infraestrutura pública principal está concluída.** O que resta do escopo de
+publicação é a decisão sobre o ZIP, que segue sendo operação separada com
+autorização própria.

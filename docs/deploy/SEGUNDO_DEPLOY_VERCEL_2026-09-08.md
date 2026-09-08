@@ -255,3 +255,20 @@ transparência: nenhuma credencial foi manipulada aqui.
 Os dois bloqueios que impediam a promoção estão validados na infraestrutura
 real. A associação de `observatoriotobiassoueu.com.br` e a configuração de DNS
 continuam sendo etapa própria, com autorização própria.
+
+---
+
+## Encerramento — domínio institucional associado
+
+Este deployment é o que passou a servir o domínio público. Em 2026-09-08, sem
+qualquer deployment adicional, `observatoriotobiassoueu.com.br` e
+`www.observatoriotobiassoueu.com.br` foram associados ao projeto, o DNS foi
+apontado manualmente na Cloudflare e a Vercel emitiu certificado para os dois.
+
+O apex é o domínio canônico e responde 200; o `www` responde **308 permanente**
+para o apex, preservando path e query. O acervo no R2 permaneceu intocado.
+
+Os artefatos validados aqui — CTA do ZIP ausente e ausência de overflow em
+375 px — foram reconferidos no domínio real, com o mesmo resultado.
+
+Detalhes em [`PLANO_DEPLOY_VERCEL_2026-09-08.md`](./PLANO_DEPLOY_VERCEL_2026-09-08.md), seção 20.
