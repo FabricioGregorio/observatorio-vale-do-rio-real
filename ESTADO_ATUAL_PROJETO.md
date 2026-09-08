@@ -1099,3 +1099,83 @@ Deployments: **2**. Git: **desconectado**. ZIP: **não publicado**. Push:
 **A infraestrutura pública principal está concluída.** O que resta do escopo de
 publicação é a decisão sobre o ZIP, que segue sendo operação separada com
 autorização própria.
+
+---
+
+## Prompt Frontend 1.1 — fase de frontend iniciada, planejamento concluído
+
+Executado em **2026-09-08**, a partir de
+`7398b1d347b4d394fe397ab013e99c5487a01416`, na branch `feat/home-indicadores`.
+
+Rodada de **auditoria, direção e planejamento**. Nenhum componente, CSS,
+dependência, migração, banco, R2, Vercel ou DNS foi alterado. Nenhum build,
+deploy ou push.
+
+### Direção Visual Frontend 1.0 — aprovada
+
+`docs/frontend/DIRECAO_VISUAL_FRONTEND_1_0.md` passou a viver no repositório.
+É decisão humana e **fonte de verdade visual** da fase de frontend. Conceito
+adotado: **CARTOGRAFIA VIVA**. Hero oficial: `home.jpg`. Não foi alterada nesta
+rodada.
+
+### Plano da Home Piloto 1.0 — criado
+
+`docs/frontend/PLANO_HOME_PILOTO_1_0.md`, 32 seções. Registra a auditoria do
+frontend atual, o inventário de assets, a arquitetura proposta, os riscos, oito
+fases de implementação e dezesseis questões abertas.
+
+### Achados que mudam decisões
+
+- **Cor institucional medida:** `#026A69`, verde-azulado do Observatório —
+  87,59 % de `icon.png` e 68,07 % de `logo-e-texto.png`. **Não existe em
+  `tokens.css`.** O Coletivo tem paleta própria e divergente: `#9E309E`,
+  `#E7C500`, `#F15A24`.
+- **Cinco dos seis "SVG" de identidade são PNG base64 em invólucro SVG** —
+  `logo observatorio.svg`, `icon.svg`, `cactus.svg`, `carcará.svg`,
+  `igreja.svg`. Não escalam, não recolorem e não servem como biblioteca
+  iconográfica. O único vetor real é
+  `horizontal-monocromatica-escura.svg`.
+- **Fonte oficial da marca: NÃO identificada.** Nenhum arquivo declara
+  `font-family` ou preserva texto editável; o lettering do vetor real está em
+  curvas. Reproduzir a marca exige usar o próprio vetor.
+- **Overlay do Hero medido:** sobre `home.jpg` (4000×3000), overlay mata
+  `#12301F` precisa de **α ≥ 0,50** para 4,61:1 no percentil 95 de luminância.
+  Recomendado **α = 0,60** (5,76:1).
+- **Orçamento de performance:** a Home está em 318.134 B de 500.000 B.
+  **Folga de 181.866 B** para acomodar Hero, dark mode, Central de
+  Acessibilidade e pôster cartográfico.
+- **MapLibre continua fora.** A biblioteca pesa 295.215 B e não cabe na folga.
+  A ADR-010 segue em vigor. A evolução para melhoria progressiva exigiria
+  **ADR-018 + nova medição + autorização humana**.
+
+### Dois bloqueios registrados
+
+1. **Menu principal.** O doc 01 §3 fixa `O Observatório · A Pesquisa · Dados ·
+   Diário de Campo · PodObservar · Educação`; a Direção Visual §8.3 aprova
+   `Observatório · Território · Pesquisa · Dados · PodObservar · Acervo`.
+   `/territorio` e `/acervo` não existem como rotas, e `typedRoutes: true`
+   reprova `Link` para rota inexistente. Alterar o doc 01 não é atribuição do
+   agente: exige **ADR-017** e decisão humana antes da fase H1.
+2. **Marca monocromática do Coletivo.** Não há versão clara no corpus, e a cor
+   institucional dá 2,30:1 sobre mata. Afeta Hero, header e rodapé.
+
+### Conteúdo publicável por seção da Home
+
+| Seção | Estado |
+|---|---|
+| Hero | ✅ fotografia, título e autoria existem |
+| Território | ✅ geometria e recorte reais; 4 pontos sem coordenada |
+| Pesquisa em campo | ✅ evidências aprovadas em `recorte.ts`; fotos não espelhadas |
+| Dados | ❌ A11 é `RESTRITO`; tabela `indicador` não existe |
+| Pessoas | ❌ `pessoa=0`, `consentimento=0`, E01 `Pendente` |
+| PodObservar | ❌ C04 `Pendente`, nenhum episódio |
+| Acervo | ✅ **8 arquivos publicados** — A02 + D01-01..07 |
+| Transparência | ✅ texto aprovado |
+| Créditos de fomento | ❌ E02 `Pendente` |
+
+### Implementação NÃO iniciada
+
+A fase de frontend está **em planejamento**. Nenhuma linha de frontend foi
+escrita. A próxima ação correta é humana: responder as questões Q1 (menu) e Q3
+(marca do Coletivo) e autorizar a **Fase H0 — Fundação de tokens e tema**, a
+única que não depende de nenhuma questão aberta.
