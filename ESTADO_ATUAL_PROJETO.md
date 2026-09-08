@@ -636,3 +636,50 @@ Registro operacional completo:
 
 Histórico detalhado das etapas: [`docs/historico/estados/`](./docs/historico/estados/).
 Não é leitura obrigatória.
+
+---
+
+## Prompt 4.3 — primeiro build controlado e metadados de produção
+
+Executado em **2026-09-08**, a partir do checkpoint `aa0c354`, sem deploy,
+publicação de ZIP, upload, alteração de banco/R2/DNS ou push.
+
+- Provider decidido pelo responsável: **Vercel**. A configuração do projeto e
+  do domínio no provider ainda não foi executada.
+- Origem canônica do site: `https://observatoriotobiassoueu.com.br`, fornecida
+  server-side por `SITE_URL`. O acervo permanece separado em
+  `https://acervo.observatoriotobiassoueu.com.br`.
+- `metadataBase`, canonical e Open Graph usam a origem canônica por uma única
+  função. `sitemap.xml` lista doze páginas públicas; `robots.txt` referencia o
+  sitemap e exclui `/dev/`.
+- Decisão de `www`: futuramente
+  `https://www.observatoriotobiassoueu.com.br` terá redirect permanente para o
+  domínio canônico sem `www`, configurado no provider; nenhum redirect ou DNS
+  foi alterado nesta rodada.
+- `DATABASE_URL` passou a ser obrigatória em produção. Ausência falha antes de
+  gerar Sala, Manifesto e `/anexos.json` vazios; development e test preservam o
+  comportamento local sem banco. Credenciais de manutenção e migração não são
+  usadas pelo build.
+- O único `pnpm build` autorizado executou somente `next build` e passou no
+  Next.js 16.3.4. O contador de geração concluiu 19/19; a tabela final listou
+  18 rotas estáticas: as 15 rotas conhecidas, `_not-found`, `robots.txt` e
+  `sitemap.xml`.
+- Smoke do artefato: Home e Sala responderam 200; `/anexos.json` retornou 8;
+  `/dev/estilos` retornou 404 em produção; canonical e Open Graph foram
+  conferidos nas páginas públicas.
+- Estado antes e depois: `documento=33`, `arquivo=18`,
+  `documento_arquivo=18`, `vw_anexo_publico=8`. O bucket público permaneceu
+  com oito objetos e a mesma impressão digital; ZIP ausente.
+- O build não informou se `next/font/google` fez download. A telemetria do
+  Next.js estava **habilitada** e não foi alterada.
+- Quatro credenciais de storage apareceram somente no cache local efêmero do
+  Turbopack, não em output de servidor/cliente. Os caches foram removidos e a
+  varredura final de 1.078 arquivos encontrou zero valor secreto. Credenciais
+  R2 não devem ser configuradas no ambiente de build da Vercel.
+- Gates pós-build: tipos e lint passaram, com os quatro warnings CSS
+  preexistentes; **252 testes passaram e três foram omitidos**; acessibilidade
+  passou em **46/46**.
+- Processo temporário do smoke encerrado; porta 3000 sem listener.
+
+Próximo passo: configurar o projeto e as variáveis mínimas na Vercel, fechar o
+domínio/redirect e publicar o ZIP em autorização separada antes do deploy.

@@ -414,7 +414,7 @@ STORAGE_PRIVATE_ACCESS_KEY=
 STORAGE_PRIVATE_SECRET=
 REVALIDATE_SECRET=
 TURNSTILE_SECRET=
-NEXT_PUBLIC_SITE_URL=
+SITE_URL=
 ```
 
 Commitar `.env.example` com as chaves e valores vazios. Segredos de produção só na Vercel e no GitHub Actions. O usuário da aplicação não tem permissão de DDL — separação que impede um agente de alterar o schema fora do fluxo de migração, mesmo por engano.

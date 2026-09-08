@@ -1,7 +1,6 @@
-import type { Metadata } from "next";
-
 import { TabelaAnexos } from "../../../componentes/acervo/TabelaAnexos";
 import { listarAnexosPublicos } from "../../../dados/consultas/anexos";
+import { metadadosDaRota } from "../../../lib/site-url";
 
 /**
  * Versão imprimível da Sala do Avaliador (doc 01 §4).
@@ -11,10 +10,11 @@ import { listarAnexosPublicos } from "../../../dados/consultas/anexos";
  * do site e imprime os links de forma legível.
  */
 
-export const metadata: Metadata = {
-  title: "Prestação de Contas — versão imprimível",
+export const metadata = metadadosDaRota({
+  pathname: "/prestacao-de-contas/imprimir",
+  titulo: "Prestação de Contas — versão imprimível",
   robots: { index: false, follow: true },
-};
+});
 
 export default async function VersaoImprimivel() {
   const anexos = await listarAnexosPublicos();

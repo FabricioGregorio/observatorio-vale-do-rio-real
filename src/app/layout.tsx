@@ -4,6 +4,7 @@ import { Cabecalho } from "../componentes/layout/Cabecalho";
 import { PularConteudo } from "../componentes/layout/PularConteudo";
 import { Rodape } from "../componentes/layout/Rodape";
 import { ID_CONTEUDO } from "../lib/navegacao";
+import { metadadosDaRota, obterSiteUrl } from "../lib/site-url";
 import "../estilos/tokens.css";
 
 /**
@@ -50,8 +51,12 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Observatório do Vale do Rio Real",
-  description: "Arquivo público do Observatório do Vale do Rio Real.",
+  metadataBase: obterSiteUrl(),
+  ...metadadosDaRota({
+    pathname: "/",
+    titulo: "Observatório do Vale do Rio Real",
+    descricao: "Arquivo público do Observatório do Vale do Rio Real.",
+  }),
 };
 
 export default function RootLayout({

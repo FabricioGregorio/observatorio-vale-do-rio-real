@@ -125,7 +125,7 @@ Cada público precisa chegar ao seu destino em **no máximo dois cliques a parti
 | Item do edital | Ex.: "Anexo — Relatórios Técnicos" |
 | Descrição | Texto curto |
 | Formato | PDF, MP3, CSV, painel |
-| **Link permanente** | URL do próprio site (`obsvaledoriorreal.org/arquivos/...`) |
+| **Link permanente** | URL do acervo próprio (`acervo.observatoriotobiassoueu.com.br/arquivos/...`) |
 | Link de origem | Drive/Figma, como redundância |
 | Data de publicação | ISO |
 | Hash SHA-256 | Integridade do arquivo (diferencial forte em auditoria) |

@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 
 import { TabelaAnexos } from "../../componentes/acervo/TabelaAnexos";
 import { listarAnexosPublicos } from "../../dados/consultas/anexos";
+import { metadadosDaRota } from "../../lib/site-url";
 import { urlDoZipDeAnexos } from "../../lib/zip-anexos";
 
 /**
@@ -16,11 +16,12 @@ import { urlDoZipDeAnexos } from "../../lib/zip-anexos";
  * Gerada em build. O banco não é consultado em tempo de requisição (ADR-001).
  */
 
-export const metadata: Metadata = {
-  title: "Prestação de Contas — Sala do Avaliador",
-  description:
+export const metadata = metadadosDaRota({
+  pathname: "/prestacao-de-contas",
+  titulo: "Prestação de Contas — Sala do Avaliador",
+  descricao:
     "Todos os anexos da prestação de contas, com link permanente, data e hash SHA-256.",
-};
+});
 
 export default async function SalaDoAvaliador() {
   const anexos = await listarAnexosPublicos();

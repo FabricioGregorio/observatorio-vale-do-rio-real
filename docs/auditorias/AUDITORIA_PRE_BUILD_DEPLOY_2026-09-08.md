@@ -21,10 +21,11 @@ A publicação do ZIP passou para `pnpm publicar-zip`, fora do CI e protegida
 pela flag literal `--publicar`, validada antes de qualquer consulta ao banco ou
 storage.
 
-Com essa correção, o primeiro build controlado está tecnicamente liberado, mas
-o deploy público ainda não: não há target de deploy materialmente configurado,
-o domínio do site não está integrado aos metadados e o botão do ZIP seria
-renderizado embora o objeto ZIP ainda não tenha sido publicado.
+O primeiro build controlado foi executado no Prompt 4.3 e passou sem efeitos
+persistentes no banco ou R2. O responsável escolheu Vercel, o domínio canônico
+foi integrado aos metadados e a ausência de `DATABASE_URL` passou a falhar em
+produção. O deploy público ainda não foi executado: falta configurar o projeto
+no provider e o ZIP continua sem publicação.
 
 ## 1. Cadeia real do build
 
@@ -125,9 +126,9 @@ Somente nomes são registrados abaixo.
 | Classificação | Variáveis | Uso atual |
 |---|---|---|
 | `BUILD_REQUIRED` | `DATABASE_URL` | leitura de `vw_anexo_publico`; precisa existir no build de produção para não gerar acervo vazio |
+| `BUILD_REQUIRED` | `SITE_URL` | origem canônica server-side de metadataBase, canonical, Open Graph, sitemap e robots |
 | `BUILD_REQUIRED` | `STORAGE_PUBLIC_URL` | domínio dos links do acervo e do ZIP |
 | `RUNTIME_REQUIRED` | nenhuma no conjunto estático atual | as 15 rotas auditadas não precisam consultar banco por requisição |
-| `OPTIONAL` | `NEXT_PUBLIC_SITE_URL` | declarada, mas ainda não consumida; valor será público quando usada |
 | `OPTIONAL` | `REVALIDATE_SECRET`, `TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET`, `ZENODO_API_TOKEN` | integrações futuras, sem consumidor atual |
 | `LOCAL_ONLY` | `OBSERVATORIO_FONTES_DIR` | originais fora do Git; não participa do build |
 | `LOCAL_ONLY` | `NODE_ENV` | gerida pelas ferramentas; não deve ser fixada manualmente no deploy |
@@ -144,7 +145,7 @@ segredos do R2 para servir as URLs já gravadas no banco.
 
 | Target | Estado |
 |---|---|
-| Vercel | Documentado nos docs 01/03 e citado em `.env.example`; não há `vercel.json`, workflow de deploy ou configuração versionada do projeto. |
+| Vercel | **Escolhido pelo responsável no Prompt 4.3**; ainda não há conexão/configuração material do projeto ou workflow de deploy. |
 | Hostinger | Inexistente no repositório. |
 | Docker | Apenas cogitado para banco/dev; não há Dockerfile nem compose da aplicação. |
 | Node server | Next suporta, mas o repositório não tem script `start` nem configuração operacional. |
@@ -152,8 +153,8 @@ segredos do R2 para servir as URLs já gravadas no banco.
 | Static export | Não configurado; não há `output: "export"`. |
 | GitHub Actions | CI configurado, sem etapa de deploy. |
 
-Portanto, **nenhum target de deploy está efetivamente configurado**. Vercel é
-o único target documentado, ainda como decisão operacional não materializada.
+Portanto, Vercel é o target decidido, mas ainda não está efetivamente
+configurado. A configuração externa será uma etapa posterior e explícita.
 
 ## 6. Domínios e metadados
 
@@ -163,17 +164,16 @@ Os papéis estão separados conceitualmente:
 - `observatoriotobiassoueu.com.br`: domínio pretendido do site;
 - `www.observatoriotobiassoueu.com.br`: redirect futuro, ainda não configurado.
 
-O código usa o domínio do acervo indiretamente por `STORAGE_PUBLIC_URL`. O
-layout raiz não define `metadataBase`, canonical ou Open Graph URL. Não existem
-`sitemap.ts`, `robots.ts` ou arquivos estáticos equivalentes. A variável
-`NEXT_PUBLIC_SITE_URL` está sem consumidor e seu exemplo contém apenas
-`https://`.
+O código usa o domínio do acervo indiretamente por `STORAGE_PUBLIC_URL`. Desde
+o Prompt 4.3, o domínio institucional vem exclusivamente de `SITE_URL`, sem
+prefixo público, e alimenta `metadataBase`, canonical por pathname, Open Graph,
+`sitemap.ts` e `robots.ts`. Site e acervo permanecem separados.
 
-Foram encontrados dois achados relevantes de domínio: um placeholder em
-`.env.example` e o domínio antigo `obsvaledoriorreal.org` como exemplo no doc
-01. Há ainda três URLs localhost/127.0.0.1 intencionais em configuração de
-Playwright/Lighthouse, além do PostgreSQL localhost do CI; nenhuma delas é
-importada pelo código público.
+Os dois achados relevantes foram corrigidos: o placeholder de `.env.example`
+foi substituído pelo nome `SITE_URL`, sem valor, e o exemplo atual do doc 01 usa
+o domínio real do acervo. Há três URLs localhost/127.0.0.1 intencionais em
+configuração de Playwright/Lighthouse, além do PostgreSQL localhost do CI;
+nenhuma delas é importada pelo código público.
 
 ## 7. Classificação das 15 rotas
 
@@ -246,9 +246,9 @@ dos dois entra em Sala, Manifesto, `/anexos.json` ou conjunto do ZIP.
 |---|---|---|
 | Bloqueador de build | `pnpm build` podia executar `PutObject` do ZIP. | **Corrigido**: build puro e comando explícito. |
 | Bloqueador de deploy | Sala pode oferecer o ZIP ainda não publicado. | Autorizar `pnpm publicar-zip` em tarefa separada ou mudar o gate visual com decisão própria. |
-| Bloqueador de deploy | Nenhum target real configurado. | Decidir provider e materializar configuração/ambiente/rollback. |
-| Alto | Ausência de `DATABASE_URL` gera acervo vazio em vez de falhar. | Validar env obrigatória no pipeline de produção sem prejudicar builds locais. |
-| Médio | Domínio do site não alimenta metadataBase/canonical/OG; sitemap e robots ausentes. | Fechar domínio/redirect e implementar SEO antes do deploy. |
+| Bloqueador de deploy | Vercel escolhida, mas projeto/domínios/ambiente ainda não configurados. | Materializar configuração e rollback em etapa explícita. |
+| Resolvido | Ausência de `DATABASE_URL` gerava acervo vazio em produção. | Produção agora falha; development/test continuam permitindo o estado vazio. |
+| Resolvido | Domínio do site não alimentava metadataBase/canonical/OG; sitemap e robots ausentes. | `SITE_URL` centraliza os metadados e arquivos especiais. |
 | Médio | Publicação explícita do ZIP sobrescreve chave fixa. | Antes do primeiro ZIP real, confirmar se a chave estável deve sobrescrever ou se haverá versionamento/ponteiro. |
 | Baixo | `next/font/google` depende de rede durante o build. | Garantir saída HTTPS no ambiente ou avaliar fonte local em tarefa própria. |
 | Baixo | A telemetria anônima do Next.js não está explicitamente desativada. | Decidir se o ambiente controlado deve definir `NEXT_TELEMETRY_DISABLED=1`. |
@@ -262,5 +262,42 @@ Preenchido após a execução dos gates obrigatórios, sem `pnpm build`:
 - `pnpm teste`: 244 aprovados, 3 omitidos, zero falhas;
 - `pnpm a11y`: 46 aprovados, zero falhas.
 
-Nenhum build, deploy, upload, publicação adicional, mudança de banco,
-migration, DNS/R2 ou push foi realizado nesta auditoria.
+Na etapa 4.2, nenhum build, deploy, upload, publicação adicional, mudança de
+banco, migration, DNS/R2 ou push foi realizado. A execução única autorizada
+posteriormente está registrada na seção seguinte.
+
+## 13. Execução controlada — Prompt 4.3
+
+O único `pnpm build` autorizado executou `next build` no Next.js 16.3.4 e
+concluiu com sucesso. O contador de geração concluiu 19/19; a tabela final
+listou 18 rotas estáticas: as 15 rotas já conhecidas, `_not-found`,
+`robots.txt` e `sitemap.xml`. O warning observado foi o aviso do driver
+PostgreSQL sobre mudança futura na semântica de `sslmode`. Download de fontes
+não foi observável no log; o acesso estava autorizado.
+
+Smoke local do output:
+
+- Home e Sala: HTTP 200;
+- `/anexos.json`: HTTP 200, total 8;
+- `/dev/estilos`: HTTP 404;
+- canonical e Open Graph: origem institucional correta em todas as páginas;
+- sitemap: 12 URLs, todas sob a origem canônica;
+- robots: sitemap canônico e `Disallow: /dev/`.
+
+Antes e depois do build, o banco permaneceu em `33/18/18` e a view em 8. O R2
+permaneceu com oito objetos, sem ZIP, e com a mesma impressão digital de
+metadados. Nenhum efeito persistente foi encontrado.
+
+A telemetria do Next.js estava habilitada e não foi alterada. A primeira
+varredura encontrou valores de quatro credenciais R2 somente no cache local
+efêmero do Turbopack, não nos artefatos server/client. Os caches ignorados pelo
+Git foram removidos; a varredura final de 1.078 arquivos encontrou zero valor
+secreto. O ambiente de build da Vercel deve receber apenas as variáveis
+necessárias e nunca as credenciais operacionais R2.
+
+Gates pós-build: `pnpm tipos` passou; `pnpm lint` passou com os quatro warnings
+CSS preexistentes; `pnpm teste` teve 252 aprovações, três omissões e zero
+falhas; `pnpm a11y` teve 46 aprovações e zero falhas.
+
+O redirect permanente de `www` para o domínio sem `www` foi documentado, sem
+implementação no Next: será configurado no provider junto com DNS/domínios.

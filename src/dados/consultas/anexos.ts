@@ -18,9 +18,8 @@ import {
  *
  * Sem `DATABASE_URL` — máquina de desenvolvimento sem credencial — a função
  * avisa e devolve lista vazia, e a página renderiza o estado vazio explícito.
- * `next build` define `NODE_ENV=production` sempre, então essa distinção não
- * poderia vir dali. O pipeline real não cai neste ramo: o `ci.yml` define a
- * variável.
+ * Em produção, porém, a ausência é erro explícito: um build publicável não
+ * pode gerar Sala, Manifesto e `/anexos.json` vazios por configuração faltante.
  */
 
 export type AnexoPublico = {
@@ -72,6 +71,23 @@ export type EvidenciaDeAnexo = {
 };
 
 export type LinhaAnexoPublico = typeof vwAnexoPublico.$inferSelect;
+
+/**
+ * Decide se a consulta pode prosseguir sem contaminar testes com mutação de
+ * NODE_ENV. Produção falha fechada; development e test preservam o estado vazio.
+ */
+export function databaseUrlDisponivel(
+  ambiente: string | undefined,
+  databaseUrl: string | undefined,
+): boolean {
+  const configurada = Boolean(databaseUrl?.trim());
+  if (ambiente === "production" && !configurada) {
+    throw new Error(
+      "DATABASE_URL ausente: builds de produção exigem a credencial read-only para gerar o acervo público.",
+    );
+  }
+  return configurada;
+}
 
 /**
  * Uma linha pública da view produz uma evidência. Assim um documento com sete
@@ -155,7 +171,9 @@ export function adaptarLinhasDaView(
 }
 
 export async function listarEvidenciasDeAnexos(): Promise<EvidenciaDeAnexo[]> {
-  if (!process.env.DATABASE_URL) return [];
+  if (!databaseUrlDisponivel(process.env.NODE_ENV, process.env.DATABASE_URL)) {
+    return [];
+  }
   const { db } = await import("../cliente");
   const linhas = await db
     .select()
@@ -185,10 +203,10 @@ export function selecionarAnexosPublicos(
 
 /** Anexos publicados e efetivamente espelhados, na ordem da Sala do Avaliador. */
 export async function listarAnexosPublicos(): Promise<AnexoPublico[]> {
-  if (!process.env.DATABASE_URL) {
+  if (!databaseUrlDisponivel(process.env.NODE_ENV, process.env.DATABASE_URL)) {
     console.warn(
       "[anexos] DATABASE_URL ausente: a Sala do Avaliador será gerada vazia. " +
-        "Isto é esperado em máquina sem credencial; o CI define a variável.",
+        "Isto é permitido somente em development e test.",
     );
     return [];
   }

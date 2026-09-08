@@ -3,6 +3,13 @@ import { CaminhosPrioritarios } from "../componentes/home/CaminhosPrioritarios";
 import { ChamadaAcervo } from "../componentes/home/ChamadaAcervo";
 import { CAMINHOS_PRIORITARIOS } from "../componentes/home/caminhos";
 import { SecaoMapa } from "../componentes/home/SecaoMapa";
+import { metadadosDaRota } from "../lib/site-url";
+
+export const metadata = metadadosDaRota({
+  pathname: "/",
+  titulo: "Observatório do Vale do Rio Real",
+  descricao: "Arquivo público do Observatório do Vale do Rio Real.",
+});
 
 /**
  * Home — fatia estrutural (Tarefa 10A).

@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import { metadadosDaRota } from "../../lib/site-url";
 
-export const metadata: Metadata = {
-  title: "A Pesquisa — Observatório do Vale do Rio Real",
-};
+export const metadata = metadadosDaRota({
+  pathname: "/pesquisa",
+  titulo: "A Pesquisa — Observatório do Vale do Rio Real",
+});
 
 /**
  * Stub de rota — Tarefa 03.
