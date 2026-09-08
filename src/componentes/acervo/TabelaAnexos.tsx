@@ -53,9 +53,12 @@ export function TabelaAnexos({ anexos }: { anexos: AnexoPublico[] }) {
         }}
       >
         <p>
-          Nenhum anexo publicado e espelhado até o momento. A tabela aparece
-          aqui assim que os arquivos forem espelhados e os documentos
-          publicados.
+          Não há anexos públicos disponíveis neste momento. Isso não significa
+          que a prestação de contas esteja concluída. O Caderno de Estudos
+          continua PENDENTE porque ainda não existe; ele não é um anexo
+          indisponível nem deve receber link provisório. A tabela será exibida
+          somente para arquivos que tenham passado pelos gates documental, de
+          privacidade e de publicação.
         </p>
       </div>
     );

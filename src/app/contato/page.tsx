@@ -1,3 +1,9 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Contato — Observatório do Vale do Rio Real",
+};
+
 /**
  * Stub de rota — Tarefa 03.
  *
