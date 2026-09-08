@@ -73,6 +73,7 @@ describe("contrato S3 privado — nenhum acesso de rede", () => {
       Metadata: { sha256: hash, execucao: "esta" },
       IfNoneMatch: "*",
     });
+    expect(send.mock.calls[0]?.[0].input).not.toHaveProperty("CacheControl");
     expect(destroy).toHaveBeenCalledOnce();
   });
 

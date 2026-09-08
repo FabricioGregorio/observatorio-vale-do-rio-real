@@ -21,6 +21,9 @@ import { exigirConfiguracao as exigir } from "./storage-configuracao";
 
 let clienteMemo: S3Client | null = null;
 
+/** Política aprovada para a primeira publicação pública; deliberadamente sem `immutable`. */
+export const CACHE_CONTROL_PUBLICO = "public, max-age=86400";
+
 /** Cliente S3 apontado para o R2. Criado sob demanda, uma vez por processo. */
 export function cliente(): S3Client {
   if (clienteMemo) return clienteMemo;
@@ -81,6 +84,7 @@ export async function enviarObjeto(
       Key: chave,
       Body: corpo,
       ContentType: mimeType,
+      CacheControl: CACHE_CONTROL_PUBLICO,
       Metadata: { sha256 },
     }),
   );
