@@ -61,10 +61,10 @@ jobs:
       # Gate de integridade: anexo obrigatório sem espelho local quebra o
       # build. Traduz em pipeline o risco de maior impacto do projeto.
       #
-      # Roda ANTES do build de propósito: é o build que produz o artefato
-      # publicável — inclusive o pacote .zip enviado ao R2 pelo
-      # scripts/gerar-zip-anexos.ts. Denunciar depois disso seria denunciar
-      # tarde.
+      # Roda ANTES do build de propósito: o build produz o artefato do site.
+      # Desde o Prompt 4.2, `pnpm build` não publica o pacote ZIP nem executa
+      # qualquer escrita no R2; essa operação exige `pnpm publicar-zip` e não
+      # faz parte deste workflow.
       #
       # O ramo do áudio público sem consentimento válido ainda não está na
       # view: depende da tabela `entrevista`, que é de Fase 3. Ver

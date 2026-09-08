@@ -299,7 +299,8 @@ Regras:
 
 ### ZIP público
 
-Gerado em build, publicado no bucket público. Entram **somente** itens que
+Gerado e publicado por operação explícita separada (`pnpm publicar-zip`),
+nunca como efeito de `pnpm build`. Vive no bucket público. Entram **somente** itens que
 satisfaçam, ao mesmo tempo:
 
 ```text
@@ -354,17 +355,17 @@ pnpm lint       # biome
 pnpm teste      # vitest
 pnpm a11y       # playwright + axe
 pnpm pendencias # gate de pendências de publicação
-pnpm build      # inclui o gerador de ZIP
+pnpm build      # somente compilação do site
+pnpm publicar-zip # operação externa explícita; não faz parte do build
 ```
 
 Regras de execução:
 
 - mudança documental: `pnpm lint` e `pnpm teste` bastam;
 - mudança de código ou configuração: acrescentar `pnpm tipos`;
-- **`pnpm build` não roda sem necessidade** — ele carrega o gerador de ZIP no
-  caminho e pode publicar;
-- se o build puder publicar algo novo: **parar antes do upload e pedir
-  autorização**;
+- **`pnpm build` é compilação somente** e não pode publicar no storage;
+- qualquer publicação externa, inclusive o ZIP, exige comando separado e
+  autorização explícita;
 - Lighthouse CI continua exigido e temporariamente não executado; o gate não foi
   rebaixado.
 

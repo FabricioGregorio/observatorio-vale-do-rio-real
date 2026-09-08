@@ -31,7 +31,8 @@ testes/*  ·  package.json  ·  pnpm-lock.yaml
 - [ ] Tabela real (`<table>` com `<caption>` e `<th scope>`), navegável por leitor de tela;
       em telas estreitas vira lista de fichas sem perder a semântica
 - [ ] SHA-256 truncado na exibição, com valor integral copiável
-- [ ] Botão "Baixar tudo (.zip)" gerado em build, não sob demanda
+- [ ] Botão "Baixar tudo (.zip)" aponta para objeto gerado por operação
+      explícita separada, nunca sob demanda nem como efeito do build
 - [ ] Versão imprimível em `/prestacao-de-contas/imprimir`, com folha de estilo de impressão
 - [ ] `/anexos.json` servindo o mesmo conjunto, com `Content-Type: application/json`
 - [ ] A consulta filtra `espelhado = true`: a Sala só mostra anexo com espelho próprio
@@ -42,6 +43,8 @@ testes/*  ·  package.json  ·  pnpm-lock.yaml
 
 ```bash
 pnpm build && pnpm a11y
+# Em operação separada e somente com autorização humana:
+pnpm publicar-zip
 curl -s localhost:3000/anexos.json | head
 ```
 
@@ -68,9 +71,13 @@ padrão nesta versão, e a rota viraria dinâmica, contra a ADR-001.
 
 ### "Baixar tudo (.zip)"
 
-Mantido, e **gerado em build**. Nunca sob demanda, em request ou por proxy.
+Mantido, e **gerado por operação explícita separada**. Nunca durante o build,
+sob demanda, em request ou por proxy. Esta regra foi atualizada no Prompt 4.2
+depois que a primeira publicação criou oito candidatos reais e tornou o
+`PutObject` implícito um bloqueador objetivo.
 
-O ZIP é produzido por `scripts/gerar-zip-anexos.ts`, executado antes do `next build`.
+O ZIP é produzido por `scripts/gerar-zip-anexos.ts`, executado somente por
+`pnpm publicar-zip`, que fornece a flag obrigatória `--publicar`.
 O script adapta os registros à consulta canônica do Manifesto, aplica `podePublicar`
 (`PUBLICAVEL`, revisão de privacidade concluída, arquivo, hash e proveniência) e só
 então busca os objetos no R2 pelo cliente S3 existente. `status = publicado` é
@@ -96,19 +103,20 @@ comprimidos.
 
 `src/lib/storage.ts` ganha `GetObjectCommand` — hoje só tem `Head` e `Put`.
 
-**Comportamento na ausência de credenciais** — decidido em 2026-09-01, porque o script
-entra no `pnpm build` e as credenciais não existem em todo ambiente:
+**Comportamento na ausência de credenciais** — decidido em 2026-09-01 e
+preservado para a operação explícita, porque as credenciais não existem em todo
+ambiente:
 
 - **Desenvolvimento e teste, sem credenciais do R2:** o script **não gera o ZIP** e
-  **termina com sucesso**, informando o que deixou de fazer. `pnpm build` continua
-  funcionando na máquina de quem não tem acesso ao storage.
+  **termina com sucesso**, informando o que deixou de fazer.
 - **Produção, sem as credenciais obrigatórias:** **falha explícita**, com código de saída
   diferente de zero. Publicar a Sala do Avaliador com o botão "Baixar tudo" apontando
   para um objeto que não existe seria pior do que não publicar.
 
-A distinção entre os dois casos vem de `NODE_ENV`, que funciona ali porque o script
-roda **fora** do `next build`. O silêncio nunca é a saída: nos dois casos o script diz
-em texto o que fez e por quê.
+A distinção entre os dois casos vem de `NODE_ENV`. O silêncio nunca é a saída:
+nos dois casos o script diz o que fez e por quê. Independentemente das
+credenciais, sem a flag `--publicar` o executor falha antes de consultar banco
+ou storage.
 
 ### Consulta sem `DATABASE_URL` — decidido em 2026-09-01
 

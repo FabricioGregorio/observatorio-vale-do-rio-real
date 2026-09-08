@@ -1,25 +1,28 @@
 /**
  * Empacotamento do "Baixar tudo (.zip)" — Tarefa 08.
  *
- * Roda **antes** do `next build`, monta um único ZIP com as evidências elegíveis
- * pelo Manifesto e o publica no R2. Nunca inclui item sem estado, revisão,
- * proveniência, hash ou arquivo comprovado.
+ * Operação externa deliberadamente separada do `next build`: monta um único
+ * ZIP com as evidências elegíveis pelo Manifesto e o publica no R2. Nunca
+ * inclui item sem estado, revisão, proveniência, hash ou arquivo comprovado.
  *
- * Comportamento sem credenciais, decidido em 2026-08-31:
+ * A publicação exige a flag literal `--publicar`. Sem ela, o processo falha
+ * antes de consultar banco ou storage. Isso impede que compilação, CI ou uma
+ * invocação acidental causem `PutObject`.
+ *
+ * Comportamento sem credenciais, decidido em 2026-08-31 e preservado para a
+ * operação explícita:
  *
  * - fora de produção: **não gera** e **termina com sucesso**, dizendo o que
- *   deixou de fazer — assim `pnpm build` funciona na máquina de quem não tem
- *   acesso ao storage;
+ *   deixou de fazer;
  * - em produção: **falha explícita**, com código diferente de zero. Publicar a
  *   Sala do Avaliador com o botão apontando para um objeto inexistente seria
  *   pior do que não publicar.
  *
- * Aqui `NODE_ENV` serve como discriminador porque o script roda fora do
- * `next build` — dentro dele, `NODE_ENV` é sempre `production`.
- *
  * Uso:
- *   pnpm tsx scripts/gerar-zip-anexos.ts
+ *   pnpm publicar-zip
  */
+
+import { pathToFileURL } from "node:url";
 
 import { listarEvidenciasDeAnexos } from "../src/dados/consultas/anexos";
 import {
@@ -32,7 +35,21 @@ import { gerarZipPublico } from "../src/lib/zip-publico";
 
 const ehProducao = process.env.NODE_ENV === "production";
 
-async function principal(): Promise<void> {
+export function exigirAutorizacaoPublicacaoZip(
+  argumentos: readonly string[],
+): void {
+  if (argumentos.length !== 1 || argumentos[0] !== "--publicar") {
+    throw new Error(
+      "publicação do ZIP não autorizada: use pnpm publicar-zip, que fornece a flag explícita --publicar.",
+    );
+  }
+}
+
+export async function principal(
+  argumentos: readonly string[] = process.argv.slice(2),
+): Promise<void> {
+  exigirAutorizacaoPublicacaoZip(argumentos);
+
   if (!credenciaisDeStoragePresentes() || !process.env.STORAGE_PUBLIC_URL) {
     const recado =
       "credenciais do R2 ausentes: o pacote .zip não foi gerado nem publicado.";
@@ -73,7 +90,13 @@ async function principal(): Promise<void> {
   );
 }
 
-principal().catch((erro) => {
-  console.error(erro instanceof Error ? erro.message : String(erro));
-  process.exit(1);
-});
+const caminhoExecutado = process.argv[1];
+if (
+  caminhoExecutado &&
+  import.meta.url === pathToFileURL(caminhoExecutado).href
+) {
+  principal().catch((erro) => {
+    console.error(erro instanceof Error ? erro.message : String(erro));
+    process.exit(1);
+  });
+}

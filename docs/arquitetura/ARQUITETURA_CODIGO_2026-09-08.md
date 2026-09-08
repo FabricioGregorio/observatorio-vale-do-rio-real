@@ -114,7 +114,10 @@ Comandos principais:
 - `pnpm pendencias`: gate documental;
 - `pnpm verificar`: composição dos cinco gates anteriores.
 
-O workflow de CI abre PostgreSQL efêmero, aplica migrações e roda tipos, lint, testes, pendências, build e acessibilidade em pull requests e pushes na `main`. O `pnpm build` chama primeiro a geração do ZIP; por isso não é um comando puramente local de compilação quando há configuração de publicação disponível.
+O workflow de CI abre PostgreSQL efêmero, aplica migrações e roda tipos, lint,
+testes, pendências, build e acessibilidade em pull requests e pushes na `main`.
+Desde o Prompt 4.2, `pnpm build` executa somente `next build`; a geração e o
+upload do ZIP exigem `pnpm publicar-zip`, fora do workflow e com flag explícita.
 
 ## 8. Pontos quentes de manutenção
 
