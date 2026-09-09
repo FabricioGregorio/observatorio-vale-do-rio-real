@@ -45,6 +45,32 @@ test.describe("Home", () => {
     await expect(page.locator("#hero-tipografia")).toHaveCount(0);
   });
 
+  test("o título usa a largura editorial aprovada sem quebra manual", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    const titulo = page.locator("#hero-home h1");
+
+    const medidas = await titulo.evaluate((elemento) => {
+      const range = document.createRange();
+      range.selectNodeContents(elemento);
+      const topos = [...range.getClientRects()].map((retangulo) =>
+        Math.round(retangulo.top * 100),
+      );
+      return {
+        largura: elemento.getBoundingClientRect().width,
+        linhas: new Set(topos).size,
+        quebrasManuais: elemento.querySelectorAll("br").length,
+      };
+    });
+
+    expect(medidas.largura).toBeGreaterThanOrEqual(800);
+    expect(medidas.largura).toBeLessThanOrEqual(950);
+    expect(medidas.linhas).toBe(2);
+    expect(medidas.quebrasManuais).toBe(0);
+  });
+
   test("o cabeçalho real omite destinos sem rota e não duplica o banner", async ({
     page,
   }) => {

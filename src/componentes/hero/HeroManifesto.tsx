@@ -181,7 +181,7 @@ export function HeroManifesto({
         ) : (
           <div className="flex flex-col gap-4">
             <h1
-              className="max-w-3xl text-2xl sm:text-3xl lg:text-4xl"
+              className="max-w-3xl text-2xl sm:text-3xl lg:max-w-4xl lg:text-4xl"
               id={tituloId}
               style={{ color: "var(--hero-texto)" }}
             >

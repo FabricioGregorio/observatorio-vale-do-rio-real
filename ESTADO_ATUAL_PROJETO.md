@@ -1435,3 +1435,15 @@ continua excedido, sem recompressão que degradasse o documento fotográfico.
 
 Estado: **implementado e validado localmente; não publicado**. Não houve deploy,
 push, banco, R2, Vercel, DNS ou mudança de infraestrutura.
+
+### H1.2 — largura editorial do título, 2026-09-09
+
+O título do Hero B integrado à Home passou de 768 para 896 px em 1440, reduzindo
+a composição de três para duas linhas sem mudar font-size, line-height, peso ou
+tracking. A regra é responsiva (`lg:max-w-4xl`): 768 permanece legível em duas
+linhas e 375/320 preservam as quatro linhas da composição mobile. Não há `<br>`
+manual nem overflow horizontal.
+
+Fotografia, crop, overlay, marcas, cabeçalho, mapa e próxima seção permaneceram
+inalterados. Registro: [`H1_2_REFINAMENTO_LARGURA_TITULO.md`](./docs/frontend/H1_2_REFINAMENTO_LARGURA_TITULO.md).
+Estado local; sem deploy, push ou mudança de infraestrutura.
