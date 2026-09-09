@@ -40,7 +40,11 @@ for (const pagina of PAGINAS) {
           // hover e foco mudam preenchimento *e* espessura do traço, o que é
           // verificado em `mapa.spec.ts`. Sublinhar um polígono não significa
           // nada.
-          if (link.closest("svg") !== null) return false;
+          if (
+            link.closest("svg") !== null ||
+            link.closest(".cabecalho-prototipo") !== null
+          )
+            return false;
 
           const estilo = getComputedStyle(link);
           const sublinhado = estilo.textDecorationLine.includes("underline");

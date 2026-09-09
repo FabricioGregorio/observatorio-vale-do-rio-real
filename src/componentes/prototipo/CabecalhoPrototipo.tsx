@@ -35,6 +35,7 @@ import { MENU_ALVO } from "./menuAlvo";
  */
 
 export const ID_DO_CABECALHO = "cabecalho-prototipo";
+export const ID_DO_CABECALHO_HOME = "cabecalho-home";
 
 /**
  * Estilo do recolhimento, escopado pela classe do cabeçalho.
@@ -54,17 +55,29 @@ const CSS_DO_CABECALHO = `
 .cabecalho-prototipo{transition:transform var(--duracao-hover) var(--easing-padrao)}
 .cabecalho-prototipo[data-recolhido="true"]{transform:translateY(-100%)}
 .cabecalho-prototipo[data-recolhido="false"]{transform:translateY(0)}
+.cabecalho-prototipo :focus-visible{outline-color:var(--color-destaque)}
 `.trim();
 
-export function CabecalhoPrototipo() {
+export function CabecalhoPrototipo({
+  contexto = "prototipo",
+}: {
+  contexto?: "prototipo" | "home";
+}) {
+  const idDoCabecalho =
+    contexto === "home" ? ID_DO_CABECALHO_HOME : ID_DO_CABECALHO;
+  const itensDoMenu =
+    contexto === "home"
+      ? MENU_ALVO.filter((item) => item.href !== null)
+      : MENU_ALVO;
+
   return (
     <header
       className="cabecalho-prototipo fixed inset-x-0 top-0"
-      id={ID_DO_CABECALHO}
+      id={idDoCabecalho}
       style={{ zIndex: "var(--z-cabecalho)" }}
     >
       <style>{CSS_DO_CABECALHO}</style>
-      <CabecalhoReativo idDoCabecalho={ID_DO_CABECALHO} />
+      <CabecalhoReativo idDoCabecalho={idDoCabecalho} />
 
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-4">
         <Link
@@ -85,7 +98,7 @@ export function CabecalhoPrototipo() {
 
         <nav aria-label="Principal" className="hidden lg:block">
           <ul className="flex list-none flex-wrap items-center gap-5 p-0">
-            {MENU_ALVO.map((item) => (
+            {itensDoMenu.map((item) => (
               <li key={item.rotulo}>
                 {item.href === null ? (
                   /*

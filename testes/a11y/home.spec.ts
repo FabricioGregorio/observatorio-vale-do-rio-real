@@ -14,14 +14,71 @@ test.describe("Home", () => {
     await page.goto("/");
     const h1 = page.getByRole("heading", { level: 1 });
     await expect(h1).toHaveCount(1);
-    await expect(h1).toHaveText("Observatório do Vale do Rio Real");
+    await expect(h1).toHaveText(
+      "Observatório de Cultura e Economia Criativa da Região do Vale do Rio Real",
+    );
   });
 
-  test("leva à Sala do Avaliador como ação principal", async ({ page }) => {
+  test("leva à Sala do Avaliador pela ação institucional do cabeçalho", async ({
+    page,
+  }) => {
     await page.goto("/");
     await expect(
-      page.getByRole("link", { name: "Abrir a Prestação de Contas" }),
+      page
+        .locator("#cabecalho-home")
+        .getByRole("link", { name: "Prestação de Contas", exact: true }),
     ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Abrir a Prestação de Contas" }),
+    ).toHaveCount(0);
+  });
+
+  test("integra somente o Hero B aprovado e mantém as marcas circulares", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await expect(page.locator("#hero-home")).toBeVisible();
+    await expect(
+      page.locator('#hero-home [data-marca-circular="true"]'),
+    ).toHaveCount(2);
+    await expect(page.locator("#hero-wordmark")).toHaveCount(0);
+    await expect(page.locator("#hero-tipografia")).toHaveCount(0);
+  });
+
+  test("o cabeçalho real omite destinos sem rota e não duplica o banner", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+
+    await expect(page.locator("header:visible")).toHaveCount(1);
+    const nav = page.getByRole("navigation", { name: "Principal" });
+    for (const rotulo of ["Território", "Acervo"]) {
+      await expect(nav.getByText(rotulo, { exact: true })).toHaveCount(0);
+    }
+    for (const destino of [
+      "/observatorio",
+      "/pesquisa",
+      "/dados",
+      "/podobservar",
+    ]) {
+      await expect(nav.locator(`a[href="${destino}"]`)).toHaveCount(1);
+    }
+  });
+
+  test("a Central de Acessibilidade funciona na Home", async ({ page }) => {
+    await page.goto("/");
+    const gatilho = page.getByRole("button", { name: "Acessibilidade" });
+    await gatilho.click();
+
+    const painel = page.getByRole("dialog", { name: "Acessibilidade" });
+    await expect(painel).toBeVisible();
+    await page.getByRole("button", { name: "Escuro" }).click();
+    await expect(page.locator("html")).toHaveAttribute("data-tema", "escuro");
+
+    await page.keyboard.press("Escape");
+    await expect(painel).toBeHidden();
+    await expect(gatilho).toBeFocused();
   });
 
   test("mostra os caminhos prioritários", async ({ page }) => {
@@ -74,12 +131,35 @@ test.describe("Home", () => {
     expect(conteudo).not.toContain("ranking");
   });
 
-  test("cabe em 360 px sem rolagem horizontal", async ({ page }) => {
-    await page.setViewportSize({ width: 360, height: 720 });
+  for (const largura of [320, 375, 768, 1440]) {
+    for (const tema of ["light", "dark"] as const) {
+      test(`${largura}px no tema ${tema} não tem overflow horizontal`, async ({
+        page,
+      }) => {
+        await page.emulateMedia({ colorScheme: tema });
+        await page.setViewportSize({ width: largura, height: 800 });
+        await page.goto("/");
+        const transborda = await page.evaluate(
+          () => document.documentElement.scrollWidth > window.innerWidth,
+        );
+        expect(transborda).toBe(false);
+      });
+    }
+  }
+
+  test("equivalente a zoom 200% mantém título e transição utilizáveis", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 720, height: 450 });
     await page.goto("/");
-    const transborda = await page.evaluate(
-      () => document.documentElement.scrollWidth > window.innerWidth,
-    );
-    expect(transborda).toBe(false);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth > window.innerWidth,
+      ),
+    ).toBe(false);
+    await expect(page.locator("#hero-home h1")).toBeVisible();
+    await expect(
+      page.getByRole("navigation", { name: "Caminhos prioritários" }),
+    ).toBeVisible();
   });
 });

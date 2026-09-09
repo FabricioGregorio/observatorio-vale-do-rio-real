@@ -1411,3 +1411,27 @@ Contraste mínimo dos textos amostrados no Hero B: 6,45:1. Tipos e lint passaram
 `pnpm verificar` retornou código 0, com o gate de pendências sem atestado por
 ausência de `DATABASE_URL` no ambiente do comando, conforme comportamento já
 documentado.
+
+### Integração local do Hero B na Home, 2026-09-09
+
+Após checkpoint próprio (`9ef823d`), o Hero B revisado foi integrado à Home
+local com autorização humana explícita. A abertura anterior saiu da composição;
+o título oficial do Hero passou a ser o único `h1`. O cabeçalho aprovado
+substitui o legado somente na Home e omite `Território` e `Acervo`, porque essas
+rotas ainda não existem. A Central de Acessibilidade e a ação para
+`/prestacao-de-contas` continuam funcionais.
+
+`CaminhosPrioritarios`, mapa, municípios, acervo, rodapé e Sala do Avaliador
+não foram redesenhados. O Hero preserva exatamente os derivados e o tratamento
+das marcas circulares da baseline aprovada. Registro completo em
+[`H1_INTEGRACAO_HERO_HOME.md`](./docs/frontend/H1_INTEGRACAO_HERO_HOME.md).
+
+Validação visual local realizada em 1440/375 claro e escuro e 320 claro, com
+capturas fora do Git; 768 e zoom equivalente a 200% também foram verificados.
+Sem overflow horizontal nos quatro breakpoints e nos dois temas. Build estático
+passou; `/dev/hero` respondeu 404 em produção. O LCP foi a fotografia correta.
+O peso medido foi 668.029 B em 1440 e 549.280 B em 375: o referencial de 500 kB
+continua excedido, sem recompressão que degradasse o documento fotográfico.
+
+Estado: **implementado e validado localmente; não publicado**. Não houve deploy,
+push, banco, R2, Vercel, DNS ou mudança de infraestrutura.

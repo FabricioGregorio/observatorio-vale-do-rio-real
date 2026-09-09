@@ -1,8 +1,9 @@
-import { AberturaObservatorio } from "../componentes/home/AberturaObservatorio";
+import { HeroManifesto } from "../componentes/hero/HeroManifesto";
 import { CaminhosPrioritarios } from "../componentes/home/CaminhosPrioritarios";
 import { ChamadaAcervo } from "../componentes/home/ChamadaAcervo";
 import { CAMINHOS_PRIORITARIOS } from "../componentes/home/caminhos";
 import { SecaoMapa } from "../componentes/home/SecaoMapa";
+import { CabecalhoPrototipo } from "../componentes/prototipo/CabecalhoPrototipo";
 import { metadadosDaRota } from "../lib/site-url";
 
 export const metadata = metadadosDaRota({
@@ -12,11 +13,11 @@ export const metadata = metadadosDaRota({
 });
 
 /**
- * Home — fatia estrutural (Tarefa 10A).
+ * Home — fatia estrutural (Tarefa 10A) com Hero Manifesto integrado (H1/H2).
  *
  * A estrutura planejada da Home tem cinco seções:
  *
- *   Abertura → Caminhos prioritários → Apresentação → Território → Acervo
+ *   Hero Manifesto → Caminhos prioritários → Apresentação → Território → Acervo
  *
  * Duas delas **não** são renderizadas nesta fatia, e a ausência é deliberada:
  *
@@ -43,11 +44,24 @@ export const metadata = metadadosDaRota({
  */
 export default function Home() {
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 py-12">
-      <AberturaObservatorio />
-      <CaminhosPrioritarios caminhos={CAMINHOS_PRIORITARIOS} />
-      <SecaoMapa />
-      <ChamadaAcervo />
+    <div id="home-com-hero">
+      {/*
+        O layout raiz ainda serve o cabeçalho legado às demais rotas. Nesta
+        página ele é substituído pela casca aprovada do Hero; a regra está
+        escopada à presença da própria Home e não afeta nenhuma outra rota.
+      */}
+      <style>{`body:has(#home-com-hero)>header:not(.cabecalho-prototipo){display:none}`}</style>
+      <CabecalhoPrototipo contexto="home" />
+      <HeroManifesto variante="tipografia" id="hero-home" />
+
+      <div
+        className="mx-auto flex max-w-6xl flex-col gap-12 border-t px-4 py-12"
+        style={{ borderColor: "var(--color-borda)" }}
+      >
+        <CaminhosPrioritarios caminhos={CAMINHOS_PRIORITARIOS} />
+        <SecaoMapa />
+        <ChamadaAcervo />
+      </div>
     </div>
   );
 }

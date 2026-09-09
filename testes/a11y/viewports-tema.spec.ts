@@ -97,7 +97,10 @@ for (const tema of TEMAS) {
       await page.emulateMedia({ colorScheme: tema });
       await page.goto("/");
 
-      const razao = await contrasteDe(page, "main p");
+      // O Hero tem medição própria sobre o pixel composto da fotografia.
+      // Aqui continua valendo o propósito original: texto corrido sobre a
+      // superfície semântica da página, abaixo da primeira dobra.
+      const razao = await contrasteDe(page, "#home-com-hero > div p");
       expect(razao).not.toBeNull();
       expect(razao as number).toBeGreaterThanOrEqual(4.5);
     });

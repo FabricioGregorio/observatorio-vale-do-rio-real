@@ -2434,3 +2434,27 @@ DNS. Nenhum deploy. Nenhum push. Nenhuma alteração da
 [Direção Visual](./DIRECAO_VISUAL_FRONTEND_1_0.md).
 
 A próxima ação correta é **humana**: responder Q1 e Q3, e autorizar H0.
+
+## 32.5 Atualização H1/H2 — integração local autorizada
+
+> **Atualização de 2026-09-09.** O trecho acima registra o estado anterior às
+> decisões humanas posteriores. H0 foi concluída; Q1, Q3, Q4 e Q5 foram
+> resolvidas; o **Hero B revisado** foi escolhido e sua integração local na
+> Home foi autorizada expressamente.
+
+H1/H2 estão implementadas localmente na extensão estrita autorizada:
+
+- Hero B revisado substitui a abertura antiga;
+- cabeçalho aprovado substitui o legado somente na Home;
+- apenas as quatro rotas reais aparecem como links;
+- `Território` e `Acervo` permanecem ausentes da Home enquanto não têm rota;
+- Central mínima e CTA real foram preservadas;
+- conteúdo abaixo do Hero não foi redesenhado;
+- `/dev/hero` permanece laboratório, fora do sitemap e 404 em produção.
+
+Registro técnico e medições:
+[`H1_INTEGRACAO_HERO_HOME.md`](./H1_INTEGRACAO_HERO_HOME.md).
+
+O referencial de 500 kB segue excedido e documentado. Por decisão da tarefa,
+a fotografia aprovada não foi degradada para atingir o número. A implementação
+continua **local, não publicada**, sem push ou alteração de infraestrutura.

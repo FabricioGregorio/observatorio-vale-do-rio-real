@@ -687,13 +687,15 @@ test.describe("isolamento da rota", () => {
     expect(await resposta.text()).toContain("Disallow: /dev/");
   });
 
-  test("a Home pública continua sem o protótipo", async ({ page }) => {
+  test("a Home usa apenas a variante B aprovada, sem os seletores do laboratório", async ({
+    page,
+  }) => {
     await page.goto("/");
     await expect(page.locator("#hero-wordmark")).toHaveCount(0);
     await expect(page.locator("#hero-tipografia")).toHaveCount(0);
-    // A Home segue com o h1 estrutural que a Tarefa 10A entregou.
+    await expect(page.locator("#hero-home")).toHaveCount(1);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-      "Observatório do Vale do Rio Real",
+      "Observatório de Cultura e Economia Criativa da Região do Vale do Rio Real",
     );
   });
 });
