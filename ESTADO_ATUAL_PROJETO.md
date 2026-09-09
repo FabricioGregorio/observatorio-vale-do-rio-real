@@ -1260,3 +1260,121 @@ Home **não** redesenhada. Mapa **não** alterado. Sala do Avaliador **não** re
 
 **Próxima fase: H1 — cabeçalho, navegação e rodapé**, que exige antes a criação das
 rotas `/territorio` e `/acervo`.
+
+---
+
+## Prompt Frontend 1.3 — H1: Hero Manifesto prototipado, em avaliação humana
+
+Executado em **2026-09-09**, a partir de
+`5717f334b6c698d43459bd5b5623601cccec8cfd`, na branch `feat/home-indicadores`.
+
+**Rodada de protótipo controlado.** Duas variantes reais do Hero em
+`/dev/hero`, rota de desenvolvimento que responde **404 em produção**. A Home
+pública **não foi alterada**. Nenhuma variante foi aplicada, nenhuma rota nova,
+nenhum deploy, nenhum push.
+
+Registro completo:
+[`docs/frontend/H1_HERO_MANIFESTO_PROTOTIPO.md`](./docs/frontend/H1_HERO_MANIFESTO_PROTOTIPO.md).
+
+### As duas variantes
+
+Tudo idêntico entre elas — fotografia, recortes, tokens, overlay, cabeçalho,
+autoria. A única diferença é quem carrega visualmente o nome do Observatório:
+
+- **Hero A** — a marca oficial é o elemento visual principal. O `h1` existe no
+  DOM por extenso, escondido visualmente.
+- **Hero B** — o nome é construído em Archivo; a marca oficial assina, menor,
+  acima do título.
+
+**Recomendação técnica: Hero B**, por acessibilidade e responsividade — o nome
+visível **é** o `h1`, amplia com o zoom e reflui em qualquer largura. **A
+escolha é humana e continua aberta.**
+
+### Achados sobre a fotografia
+
+- **`home.jpg` é retrato 3000×4000, não paisagem.** O arquivo está gravado como
+  4000×3000, mas traz `Orientation = 6` no EXIF. O
+  `PLANO_HOME_PILOTO_1_0.md` §7.2 dizia "4:3 paisagem"; **corrigido**. A
+  consequência inverte a dificuldade prevista: o mobile recebe o formato
+  nativo, e é o desktop que extrai uma faixa horizontal de origem vertical.
+- **O EXIF traz GPS**, além de marca e modelo do aparelho, firmware, data,
+  miniatura embutida e XMP. **Nada disso chega ao site** — os derivados nascem
+  de pixels desenhados em `canvas`, e um teste confere ausência de EXIF, XMP e
+  vestígio de GPS arquivo por arquivo. As coordenadas não foram registradas em
+  lugar nenhum.
+- **Achado devolvido ao humano:** o original carrega a coordenada e a data
+  2026-04-05, dentro do período de campo. Se isso constitui documentação de um
+  ponto de pesquisa é decisão humana — `pontos.ts` continua com
+  `coordenadas: null`.
+
+### Derivados e marcas
+
+| Arquivo | Dimensões | Bytes |
+|---|---|---|
+| `hero-observatorio-desktop-1440.webp` | 1440×936 | 291.126 |
+| `hero-observatorio-mobile-540.webp` | 540×1024 | 182.298 |
+| `observatorio-monocromatica-escura.svg` | 1600×900 | 31.520 (cópia literal) |
+| `coletivo-tobias-sou-eu-640.webp` | 640×512 | 35.934 |
+
+O original de 6,86 MB **não entrou no Git**. Só recorte, redimensionamento,
+compressão, conversão e remoção de metadado — nenhum asset de marca alterado.
+
+Produzidos por `pnpm derivar-hero`, que usa o **Chromium do Playwright** como
+codificador. Nenhuma dependência nova: o projeto não tem `sharp` e a máquina não
+tem ImageMagick nem `cwebp`.
+
+### Revisão de uma conclusão da H0
+
+A H0 §7 concluiu que a marca do Coletivo precisaria de "superfície clara de
+apoio" sobre o Hero escuro. A inspeção do arquivo mostrou a premissa
+incompleta: **a marca é um painel magenta opaco** com lettering amarelo — ela
+traz o próprio fundo e já é a superfície de apoio. Placa adicional a faria
+parecer selo de patrocinador.
+
+O número 2,30:1 segue correto e segue proibindo usar a **cor** magenta como
+texto sobre escuro; ele não se aplica a um painel opaco.
+
+### Contraste medido
+
+Sobre o pixel realmente pintado — fotografia com as duas camadas de overlay —,
+no pior caso entre nove pontos. **Mínimo: 6,26:1**, contra piso AA de 4,5:1.
+
+### Bloqueio de peso
+
+| Largura | Base | Mídia | Total | Orçamento (500 kB) |
+|---|---|---|---|---|
+| 1440 | ~256 kB | 359 kB | **~615 kB** | **estoura 23%** |
+| 375 | ~256 kB | 250 kB | **~506 kB** | **estoura 1%** |
+
+Esta fotografia é o pior caso para compressão. O teto de 120 kB estimado no
+plano **não é alcançável** com nenhum codificador disponível aqui. Caminhos
+possíveis — AVIF, aliviar as fontes, rever o orçamento do doc 01 §7, servir
+menor, recortar com menos folhagem — estão listados na H1 §15. **Nenhum foi
+tomado: a decisão precede aplicar qualquer variante à Home.**
+
+### Pendência do SHA — resolvida
+
+`fontes.ts` passou a registrar **dois** hashes, sem mudança estrutural:
+`sha256DaResposta` (procedência) e `sha256DoArquivo` (integridade). Eles
+divergem legitimamente para a lista de nomes — a API responde compacto, o
+arquivo foi salvo formatado —, e um teste confirma que reserializar compacto
+reproduz o hash da resposta. Nenhum dado geográfico foi tocado; o registro, que
+era inconferível, agora é conferido a cada `pnpm teste`.
+
+### Custo
+
+| Item | Antes | Depois |
+|---|---|---|
+| Client Components | 2 | **4** — `CabecalhoReativo` (não renderiza nada) e `CentralAcessibilidade` |
+| Dependências | — | **nenhuma nova** |
+| Testes | 351 + 99 | **374 + 143** |
+| Warnings de lint | 4 | **4** |
+| Rotas no build | 19 | 20 — a nova é `/dev/hero`, 404 em produção |
+
+### Bloqueios antes de aplicar à Home
+
+Escolher A ou B · orçamento de peso · codificador AVIF · rotas `/territorio` e
+`/acervo` · marca do Observatório com fundo transparente · SVG da marca com
+31,5 kB · consentimento E01 · decisão sobre o GPS do original.
+
+**Aguardando escolha humana entre Hero A e Hero B.**

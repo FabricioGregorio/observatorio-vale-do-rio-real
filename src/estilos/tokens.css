@@ -91,6 +91,30 @@
   --color-marca: var(--color-observatorio);
   --color-foco: var(--color-anil);
 
+  /* --- Hero — Fase H1 ------------------------------------------------------
+     O Hero é escuro nos **dois** temas: fotografia documental com véu por
+     cima. Não é o tema que decide a cor do texto ali, é a fotografia.
+
+     São dois estratos, com funções distintas:
+
+       véu    uniforme e discreto, garante o piso de contraste em qualquer
+              ponto do quadro, inclusive onde a fotografia é mais clara;
+       base   fundo do gradiente, onde o texto se assenta;
+       meio   parada intermediária, para a transição não ter costura visível.
+
+     Escurecer o quadro inteiro por igual apagaria a fotografia, que é
+     documento. O gradiente adensa só onde o texto está — a copa, o céu e as
+     placas continuam legíveis como fotografia (instrução H1 §13).
+
+     A cor é mata em transparência: a temperatura do overlay acompanha a
+     temperatura dominante do projeto, e não um cinza neutro. */
+
+  --hero-veu: rgb(18 48 31 / 0.42);
+  --hero-meio: rgb(18 48 31 / 0.62);
+  --hero-base: rgb(14 22 17 / 0.9);
+  --hero-texto: var(--color-pedra);
+  --hero-metadado: rgb(231 229 222 / 0.82);
+
   /* Texto por cima de um preenchimento de milho — marcador, tarja, seleção.
      **Invariante de tema, de propósito**: milho é a mesma cor nos dois temas,
      então o texto sobre ele também precisa ser. Deixar este papel seguir
@@ -206,6 +230,13 @@
     --color-acento: var(--color-barro-claro);
     --color-marca: var(--color-observatorio-claro);
     --color-foco: var(--color-milho);
+
+    /* No tema escuro o Hero adensa um pouco: uma fotografia clara demais no
+       topo de uma pagina escura destoa da propria pagina. A fotografia
+       continua reconhecivel — o passo e pequeno de proposito. */
+    --hero-veu: rgb(14 22 17 / 0.52);
+    --hero-meio: rgb(14 22 17 / 0.7);
+    --hero-base: rgb(14 22 17 / 0.94);
   }
 }
 
@@ -224,6 +255,13 @@
   --color-acento: var(--color-barro-claro);
   --color-marca: var(--color-observatorio-claro);
   --color-foco: var(--color-milho);
+
+  /* No tema escuro o Hero adensa um pouco: uma fotografia clara demais no
+     topo de uma pagina escura destoa da propria pagina. A fotografia
+     continua reconhecivel — o passo e pequeno de proposito. */
+  --hero-veu: rgb(14 22 17 / 0.52);
+  --hero-meio: rgb(14 22 17 / 0.7);
+  --hero-base: rgb(14 22 17 / 0.94);
 }
 
 /* =============================================================================

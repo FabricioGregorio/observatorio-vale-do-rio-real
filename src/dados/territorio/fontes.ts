@@ -7,7 +7,7 @@
  * (doc 01 §4). Dado de mapa sem procedência registrada é tão indefensável
  * numa auditoria quanto anexo sem espelho.
  *
- * Nenhum arquivo foi baixado. `obtidoEm`, `licenca` e `sha256` são `null`
+ * Nenhum arquivo foi baixado. `obtidoEm`, `licenca` e os dois hashes são `null`
  * porque não existe artefato — não porque a informação foi esquecida.
  */
 
@@ -24,8 +24,25 @@ export type FonteTerritorial = {
   readonly licenca: string | null;
   /** Texto de atribuição a exibir onde o dado for publicado. */
   readonly atribuicao: string | null;
-  /** SHA-256 do arquivo obtido, para conferência de integridade. */
-  readonly sha256: string | null;
+  /**
+   * SHA-256 da **resposta da fonte**, exatamente como ela chegou pela rede.
+   *
+   * Prova a procedência: é este valor que liga o arquivo ao que o IBGE
+   * devolveu naquela data.
+   */
+  readonly sha256DaResposta: string | null;
+  /**
+   * SHA-256 do **arquivo como está versionado** neste repositório.
+   *
+   * Os dois hashes divergem quando o arquivo é reformatado ao ser salvo — foi
+   * o que aconteceu com a lista de nomes, gravada com indentação de dois
+   * espaços enquanto a API responde compacta. Registrar só um dos dois torna o
+   * registro inconferível: quem baixa o repositório não consegue validar o
+   * arquivo que tem em mãos.
+   *
+   * `testes/territorio.test.ts` confere este valor contra o arquivo real.
+   */
+  readonly sha256DoArquivo: string | null;
 };
 
 /**
@@ -61,7 +78,11 @@ export const FONTES_TERRITORIAIS: readonly FonteTerritorial[] = [
     licenca:
       "Dado público do IBGE, publicado sob a Política de Dados Abertos do Executivo Federal (Decreto nº 8.777/2016). A API não declara licença específica — ver a ressalva em LEIA-ME.md desta pasta.",
     atribuicao: "Fonte: IBGE — Malhas Territoriais, malha municipal.",
-    sha256: "a5fd01bff5670857f444a1f15a7a54daf3c4512a05a274de22fee12bfee2561b",
+    sha256DaResposta:
+      "a5fd01bff5670857f444a1f15a7a54daf3c4512a05a274de22fee12bfee2561b",
+    // O arquivo foi salvo sem reformatação: os dois hashes coincidem.
+    sha256DoArquivo:
+      "a5fd01bff5670857f444a1f15a7a54daf3c4512a05a274de22fee12bfee2561b",
   },
   {
     arquivo: "municipios-sergipe-nomes.json",
@@ -73,7 +94,15 @@ export const FONTES_TERRITORIAIS: readonly FonteTerritorial[] = [
     licenca:
       "Dado público do IBGE, publicado sob a Política de Dados Abertos do Executivo Federal (Decreto nº 8.777/2016). A API não declara licença específica — ver a ressalva em LEIA-ME.md desta pasta.",
     atribuicao: "Fonte: IBGE — API de localidades.",
-    sha256: "2678c3b209f60db7337e410458f8ce43ea76abae4f0f45a960de33117f5801c5",
+    // A API responde JSON compacto; o arquivo foi salvo com indentação de dois
+    // espaços. Os dois hashes divergem por isso, e não por diferença de
+    // conteúdo: reserializar o arquivo em forma compacta reproduz exatamente o
+    // hash da resposta. Até a Fase H1 só o primeiro estava registrado, e o
+    // registro era inconferível contra o arquivo do repositório.
+    sha256DaResposta:
+      "2678c3b209f60db7337e410458f8ce43ea76abae4f0f45a960de33117f5801c5",
+    sha256DoArquivo:
+      "b304f78ef0a2c06117b38af86c1897f448763eef4b14f953eefa0dddeb984701",
   },
   {
     arquivo: "sergipe.geojson",
@@ -84,7 +113,8 @@ export const FONTES_TERRITORIAIS: readonly FonteTerritorial[] = [
     obtidoEm: null,
     licenca: null,
     atribuicao: null,
-    sha256: null,
+    sha256DaResposta: null,
+    sha256DoArquivo: null,
   },
   {
     arquivo: "pontos-visita.json",
@@ -94,6 +124,7 @@ export const FONTES_TERRITORIAIS: readonly FonteTerritorial[] = [
     obtidoEm: null,
     licenca: null,
     atribuicao: null,
-    sha256: null,
+    sha256DaResposta: null,
+    sha256DoArquivo: null,
   },
 ];

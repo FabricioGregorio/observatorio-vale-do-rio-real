@@ -400,7 +400,16 @@ Nenhuma copy nova é criada por este plano. Onde algo for proposta, está marcad
 
 ## 7.2 A fotografia: medições
 
-`home.jpg` — **4000×3000 px, 4:3 paisagem, 6.858 kB**.
+`home.jpg` — **3000×4000 px, retrato, 6.858 kB**.
+
+> **⚠ CORRIGIDO na H1.** Este documento dizia "4000×3000, 4:3 paisagem". O
+> arquivo está *gravado* assim, mas traz `Orientation = 6` no EXIF: para
+> exibir corretamente é preciso girar 90° no sentido horário. **A fotografia é
+> retrato.** O erro veio de ler as dimensões sem aplicar a orientação.
+>
+> A consequência inverte a dificuldade prevista abaixo: o mobile recebe o
+> formato nativo, e é o **desktop** que precisa extrair uma faixa horizontal de
+> uma origem vertical. Ver [H1](./H1_HERO_MANIFESTO_PROTOTIPO.md) §3.2.
 
 Luminância relativa média por faixa horizontal (amostra 160 px de largura):
 
@@ -481,11 +490,20 @@ Orçamento proposto para o Hero, dentro dos 181.866 B de folga:
 
 | Item | Teto proposto |
 |---|---|
-| Hero, variante servida a 1440 px (AVIF) | **120.000 B** |
+| Hero, variante servida a 1440 px (AVIF) | ~~**120.000 B**~~ — **inalcançável, ver nota** |
 | Hero, variante servida a 375 px (AVIF) | 35.000 B |
 | Tema + Central de Acessibilidade + narração (JS) | 25.000 B |
 | Reserva para o pôster cartográfico | 15.000 B |
 | **Margem restante** | ~21.866 B |
+
+> **⚠ MEDIDO na H1: a estimativa acima não se sustenta.** Esta fotografia é o
+> pior caso para compressão — folhagem e grama de alta frequência em quase todo
+> o quadro. Em WebP, o derivado de 1440×936 pesa **291 kB** em qualidade 0,55, e
+> mesmo em qualidade 0,4 não desce de 239 kB, já com perda visível. Somada à
+> base de ~256 kB, a Home fica em **~615 kB** em 1440 — 23% acima do orçamento.
+> Os 120 kB foram estimados antes de medir. Ver
+> [H1](./H1_HERO_MANIFESTO_PROTOTIPO.md) §15 para os caminhos possíveis, todos
+> de decisão humana.
 
 **Critério de aceite:** a Home, no breakpoint de pior caso, permanece **< 500 kB
 transferidos**, medido no build servido, do mesmo modo que a ADR-010 mediu. Se a
@@ -2139,6 +2157,12 @@ papéis com equivalente dark medido; `prefers-color-scheme` respeitado **sem JS*
 
 ## FASE H1 — Cabeçalho, navegação e rodapé
 
+> **Atualização de 2026-09-09.** O Hero e a casca do cabeçalho foram
+> **prototipados** em `/dev/hero`, em duas variantes, para decisão humana —
+> registro em [`H1_HERO_MANIFESTO_PROTOTIPO.md`](./H1_HERO_MANIFESTO_PROTOTIPO.md).
+> **Nada foi aplicado à Home**, e o menu do site continua o do doc 01: as rotas
+> `/territorio` e `/acervo` ainda não existem, e a ADR-017 proíbe rota falsa.
+
 **⚠ BLOQUEADA por R02.** Só inicia depois da ADR-017 e da atualização do doc 01 §3.
 
 **Objetivo.** Brand rail, menu, utilidades isoladas, hide-on-scroll, navegação mobile
@@ -2338,8 +2362,8 @@ Checklist completo na §9.4. Portões duros:
 | ~~**Q1**~~ | ✅ **RESOLVIDA em 2026-09-09** — menu alvo aprovado e registrado na [ADR-017](../decisoes/ADR-017-navegacao-alvo-do-frontend.md). Permanece aberto apenas **onde** `/territorio` e `/acervo` vivem: rotas novas ou reaproveitamento de `/mapa` e `/prestacao-de-contas/anexos`. | H1 | humano |
 | **Q2** | **Ordem da Home:** o bloco `00 — Observatório e Coletivo` é aceito entre o Hero e o Território? | H5 | humano |
 | ~~**Q3**~~ | ✅ **RESOLVIDA em 2026-09-09** — a ausência não é bloqueio. Em composição escura, usa-se a marca oficial **colorida sobre superfície neutra/clara de apoio**; proibido redesenhar, recolorir, vetorizar ou inventar versão branca. Uma versão monocromática oficial, se fornecida, substitui a solução. | — | decidido |
-| **Q4** | **Overlay do Hero:** α = 0,60 (recomendado, 5,76:1) ou α = 0,50 (piso AA, 4,61:1)? | H2 | humano — Direção Visual §30.1 |
-| **Q5** | **Crop do Hero:** o recorte automático de `next/image` preserva pessoas e placas em 375 px, ou é preciso derivado nomeado? | H2 | humano, após ver |
+| ~~**Q4**~~ | ✅ **RESOLVIDA na H1** — o overlay chapado deu lugar a **véu uniforme + gradiente**, que a instrução autoriza e que preserva melhor a fotografia. Contraste medido no pixel pintado: **mínimo 6,26:1**, bem acima do piso. | — | resolvido |
+| ~~**Q5**~~ | ✅ **RESOLVIDA na H1** — recorte automático não serve: são duas **composições** distintas, não dois tamanhos. Os derivados são nomeados e servidos por `<picture>` com `media`. Em 375 não cabem pessoas e placas juntas; a escolha preservou as placas. Ver H1 §3.4. | — | resolvido |
 | **Q6** | **Menu mobile sem JavaScript:** a solução D usa folha com estado. Sem JS, o gatilho não abre. Aceita-se `details`/`:target` como base progressiva, ou a navegação sem JS fica só no rodapé? Isso toca "funcionar sem JavaScript nas páginas de leitura" (doc 01 §7). | **H1** | humano |
 | **Q7** | **Seção 03:** declarar o estado dos indicadores é aceitável, ou a seção deve ser omitida como na 10A? | H7 | humano |
 | **Q8** | **`sergipe.geojson`:** autoriza-se baixar o contorno do estado do IBGE, com a mesma disciplina de procedência? Auditado na H0: a **malha municipal existe e está íntegra** (75 municípios, SHA confere); o que falta é só o **contorno externo do estado**, arquivo distinto. | H3 | humano |

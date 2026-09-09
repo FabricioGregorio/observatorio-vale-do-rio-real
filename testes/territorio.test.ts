@@ -24,6 +24,11 @@ import {
   nomeAcessivelDoMunicipio,
 } from "../src/componentes/mapa/identificacao";
 import { MapaTerritorio } from "../src/componentes/mapa/MapaTerritorio";
+import {
+  DERIVADOS_DO_HERO,
+  MARCA_COLETIVO,
+  MARCA_OBSERVATORIO,
+} from "../src/dados/hero/derivados";
 import { FONTES_TERRITORIAIS } from "../src/dados/territorio/fontes";
 import {
   type MunicipioDoMapa,
@@ -34,6 +39,7 @@ import { RECORTE_TERRITORIAL } from "../src/dados/territorio/recorte";
 import type { PontoDeVisita } from "../src/dados/territorio/tipos";
 import {
   CAMINHO_DA_MALHA,
+  CAMINHO_DOS_NOMES,
   carregarMalhaMunicipal,
   carregarNomesDeMunicipios,
   MUNICIPIOS_DE_SERGIPE,
@@ -137,7 +143,14 @@ describe("ausência de dado territorial inventado", () => {
         fonte.atribuicao,
         `${fonte.arquivo} sem atribuição`,
       ).not.toBeNull();
-      expect(fonte.sha256, `${fonte.arquivo} sem hash`).not.toBeNull();
+      expect(
+        fonte.sha256DaResposta,
+        `${fonte.arquivo} sem hash da resposta`,
+      ).not.toBeNull();
+      expect(
+        fonte.sha256DoArquivo,
+        `${fonte.arquivo} sem hash do arquivo`,
+      ).not.toBeNull();
     }
   });
 
@@ -151,7 +164,18 @@ describe("ausência de dado territorial inventado", () => {
     expect(naoDeclarados).toEqual([]);
   });
 
-  test("public/media está vazia de mídia", () => {
+  /**
+   * Até a Fase H1 este teste exigia `public/` **vazia de mídia**, e passava por
+   * vacuidade. A H1 trouxe os primeiros arquivos, e a regra que importava
+   * nunca foi "a pasta está vazia" — era **nenhuma mídia sem procedência
+   * registrada**. É essa que continua valendo, agora com conteúdo de verdade
+   * para exercê-la.
+   *
+   * Um `.jpg` de banco de imagem, uma foto de outro lugar ou um derivado
+   * gerado à mão e copiado para cá não estão declarados em nenhum módulo de
+   * dados, e falham aqui.
+   */
+  test("toda mídia em public/ está declarada com procedência", () => {
     const midia = /\.(png|jpe?g|webp|avif|gif|svg|geojson|mp3|mp4|pdf)$/i;
     const encontrados: string[] = [];
 
@@ -159,12 +183,39 @@ describe("ausência de dado territorial inventado", () => {
       for (const nome of readdirSync(dir)) {
         const caminho = join(dir, nome);
         if (statSync(caminho).isDirectory()) varrer(caminho);
-        else if (midia.test(nome)) encontrados.push(caminho);
+        else if (midia.test(nome)) encontrados.push(nome);
       }
     }
     varrer("public");
 
-    expect(encontrados).toEqual([]);
+    const declarados = new Set<string>([
+      ...DERIVADOS_DO_HERO.map((d) => d.arquivo),
+      MARCA_OBSERVATORIO.arquivo,
+      MARCA_COLETIVO.arquivo,
+    ]);
+
+    const semProcedencia = encontrados.filter((nome) => !declarados.has(nome));
+    expect(semProcedencia).toEqual([]);
+  });
+
+  /**
+   * O original da fotografia do Hero tem 6,86 MB e vive no corpus, fora do
+   * repositório. Copiá-lo para `public/` seria publicar EXIF com GPS, marca do
+   * aparelho e data de captura.
+   */
+  test("nenhum original bruto foi copiado para public/", () => {
+    const grandes: string[] = [];
+
+    function varrer(dir: string) {
+      for (const nome of readdirSync(dir)) {
+        const caminho = join(dir, nome);
+        if (statSync(caminho).isDirectory()) varrer(caminho);
+        else if (statSync(caminho).size > 1_000_000) grandes.push(caminho);
+      }
+    }
+    varrer("public");
+
+    expect(grandes).toEqual([]);
   });
 
   test("as cinco pastas de mídia previstas existem", () => {
@@ -346,15 +397,45 @@ describe("malha municipal do IBGE", () => {
    * `fontes.ts` é o que permite provar, depois, que é o mesmo arquivo que veio
    * do IBGE — a mesma conferência que a Sala do Avaliador faz com os anexos.
    */
-  test("o arquivo confere com o SHA-256 registrado", () => {
-    const fonte = FONTES_TERRITORIAIS.find(
-      (item) => item.arquivo === "municipios-sergipe.geojson",
-    );
+  test.each([
+    ["municipios-sergipe.geojson", CAMINHO_DA_MALHA],
+    ["municipios-sergipe-nomes.json", CAMINHO_DOS_NOMES],
+  ])("%s confere com o SHA-256 do arquivo registrado", (arquivo, caminho) => {
+    const fonte = FONTES_TERRITORIAIS.find((item) => item.arquivo === arquivo);
     const hash = createHash("sha256")
-      .update(readFileSync(CAMINHO_DA_MALHA))
+      .update(readFileSync(caminho))
       .digest("hex");
 
-    expect(fonte?.sha256).toBe(hash);
+    expect(fonte?.sha256DoArquivo).toBe(hash);
+  });
+
+  /**
+   * O hash da resposta prova de onde o arquivo veio; o hash do arquivo prova
+   * que é o mesmo que está aqui. Quando o arquivo é reformatado ao ser salvo,
+   * os dois divergem — e é legítimo que divirjam, desde que os dois estejam
+   * registrados.
+   *
+   * Até a Fase H1 existia um campo só, preenchido com o hash da resposta. O
+   * registro da lista de nomes era, na prática, inconferível: ninguém
+   * conseguia validar o arquivo do repositório com o valor publicado.
+   */
+  test("a lista de nomes tem os dois hashes, e eles divergem por formatação", () => {
+    const fonte = FONTES_TERRITORIAIS.find(
+      (item) => item.arquivo === "municipios-sergipe-nomes.json",
+    );
+
+    expect(fonte?.sha256DaResposta).not.toBe(fonte?.sha256DoArquivo);
+
+    // A divergência é de formatação, não de conteúdo: reserializado compacto,
+    // o arquivo reproduz exatamente o hash da resposta original.
+    const conteudo = JSON.parse(
+      readFileSync(CAMINHO_DOS_NOMES, "utf8"),
+    ) as unknown;
+    const compacto = createHash("sha256")
+      .update(JSON.stringify(conteudo))
+      .digest("hex");
+
+    expect(compacto).toBe(fonte?.sha256DaResposta);
   });
 
   test("a origem registrada é a malha intermediária por município", () => {
