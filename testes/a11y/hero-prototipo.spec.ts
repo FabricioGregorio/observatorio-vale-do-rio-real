@@ -131,6 +131,59 @@ async function contrasteDoTexto(
 }
 
 test.describe("estrutura do protótipo", () => {
+  test("Hero B usa símbolo compacto e mantém o nome visível sem imagens", async ({
+    page,
+  }) => {
+    await page.route("**/media/logos/**", (rota) => rota.abort());
+    await page.goto(ROTA);
+    const hero = page.locator("#hero-tipografia");
+    await expect(hero.locator("h1")).toBeVisible();
+    await expect(
+      hero.getByText("Coletivo Cultural", { exact: false }),
+    ).toBeVisible();
+    await expect(
+      hero.locator('img[src$="observatorio-monocromatica-escura.svg"]'),
+    ).toHaveCount(0);
+    await expect(
+      hero.locator('img[src$="observatorio-simbolo-256.png"]'),
+    ).toHaveCount(1);
+  });
+
+  test("Hero B enquadra as duas marcas como círculos sem distorção", async ({
+    page,
+  }) => {
+    await page.goto(ROTA);
+    const marcas = page.locator(
+      '#hero-tipografia [data-marca-circular="true"]',
+    );
+
+    await expect(marcas).toHaveCount(2);
+    for (const marca of await marcas.all()) {
+      const medida = await marca.evaluate((el) => {
+        const caixa = el.getBoundingClientRect();
+        const imagem = el.querySelector("img");
+        if (!(imagem instanceof HTMLImageElement)) {
+          throw new Error("Marca circular sem imagem");
+        }
+        const estiloDaCaixa = getComputedStyle(el);
+        const estiloDaImagem = getComputedStyle(imagem);
+        return {
+          altura: caixa.height,
+          largura: caixa.width,
+          clipPath: estiloDaCaixa.clipPath,
+          objectFit: estiloDaImagem.objectFit,
+          objectPosition: estiloDaImagem.objectPosition,
+        };
+      });
+
+      expect(medida.largura).toBe(64);
+      expect(medida.altura).toBe(64);
+      expect(medida.clipPath).toContain("circle(50%");
+      expect(medida.objectFit).toBe("cover");
+      expect(medida.objectPosition).toBe("50% 50%");
+    }
+  });
+
   test("a rota responde e traz as duas variantes", async ({ page }) => {
     await page.goto(ROTA);
     for (const v of VARIANTES) {
@@ -302,7 +355,7 @@ test.describe("contraste sobre a fotografia", () => {
 
         const razao = await contrasteDoTexto(
           page,
-          `${v.seletor} p[class*="text-lg"]`,
+          `${v.seletor} [data-autoria]`,
         );
         expect(razao).toBeGreaterThanOrEqual(4.5);
       });
@@ -341,10 +394,10 @@ test.describe("contraste sobre a fotografia", () => {
 
         for (const [seletor, rotulo] of [
           ["#hero-wordmark .meta-ficha", "A metadado"],
-          ['#hero-wordmark p[class*="text-lg"]', "A autoria"],
+          ["#hero-wordmark [data-autoria]", "A autoria"],
           ["#hero-tipografia .meta-ficha", "B metadado"],
           ["#hero-tipografia h1", "B título"],
-          ['#hero-tipografia p[class*="text-lg"]', "B autoria"],
+          ["#hero-tipografia [data-autoria]", "B autoria"],
         ] as const) {
           const razao = await contrasteDoTexto(page, seletor);
           linhas.push(

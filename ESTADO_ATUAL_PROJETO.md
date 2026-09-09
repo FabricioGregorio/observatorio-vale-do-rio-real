@@ -1378,3 +1378,36 @@ Escolher A ou B · orçamento de peso · codificador AVIF · rotas `/territorio`
 31,5 kB · consentimento E01 · decisão sobre o GPS do original.
 
 **Aguardando escolha humana entre Hero A e Hero B.**
+
+### Revisão H1 — correção da marca, 2026-09-09
+
+O responsável indicou **Hero B como base recomendada** e solicitou uma nova
+composição com marca de apoio. Implementada localmente em `/dev/hero`: símbolo
+oficial de `icon.png`, redimensionado integralmente, com seu fundo verde-azulado;
+título completo em Archivo e assinatura compacta do Coletivo. A peça horizontal
+preta permanece apenas no Hero A, como referência anterior.
+
+Registro: [`H1_CORRECAO_MARCA_HERO_B.md`](./docs/frontend/H1_CORRECAO_MARCA_HERO_B.md).
+Novas capturas em pasta separada; as anteriores foram preservadas. **Hero B revisado
+passa a ser a recomendação; a composição final continua em avaliação humana.**
+A Home pública e a infraestrutura não foram alteradas. Sem deploy ou push.
+O orçamento de peso e os demais pré-requisitos de publicação continuam pendentes.
+
+### Refinamento H1 — marcas circulares, 2026-09-09
+
+Por instrução do responsável, as duas marcas do Hero B revisado foram tratadas
+como selos circulares de 64 px no protótipo `/dev/hero`. Os mesmos assets oficiais
+continuam em uso, preservando suas proporções com enquadramento central e máscara:
+o Observatório perde apenas excesso teal vertical; o Coletivo perde apenas margens
+laterais e cantos. Nenhuma parte central das identidades foi redesenhada,
+recolorida ou distorcida. O Hero A, o cabeçalho e a Home pública não foram
+alterados por este refinamento. Sem deploy, push ou mudança de infraestrutura.
+
+Validação local: 1440 e 375 px nos temas claro e escuro, inspeção adicional em
+320 px, zoom 200% e ausência de overflow em 320/375/768/1440 nos dois temas.
+Contraste mínimo dos textos amostrados no Hero B: 6,45:1. Tipos e lint passaram
+(quatro avisos preexistentes); 375 testes unitários passaram, três foram pulados;
+145 testes de navegador passaram; build local de 20 páginas estáticas concluído.
+`pnpm verificar` retornou código 0, com o gate de pendências sem atestado por
+ausência de `DATABASE_URL` no ambiente do comando, conforme comportamento já
+documentado.

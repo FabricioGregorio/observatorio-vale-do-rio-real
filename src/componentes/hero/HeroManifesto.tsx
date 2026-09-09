@@ -2,6 +2,7 @@ import {
   CAMINHO_DAS_MARCAS,
   MARCA_COLETIVO,
   MARCA_OBSERVATORIO,
+  SIMBOLO_OBSERVATORIO,
 } from "../../dados/hero/derivados";
 import { FotografiaHero } from "./FotografiaHero";
 
@@ -13,18 +14,16 @@ import { FotografiaHero } from "./FotografiaHero";
  *
  * ## As duas variantes
  *
- * A diferença entre elas é **uma só**: quem carrega visualmente o nome do
- * Observatório.
+ * A preserva o wordmark horizontal como referência histórica. B revisado
+ * mantém o título em texto real e o símbolo oficial como apoio compacto.
  *
  * - `wordmark` — a marca oficial é o elemento visual principal. Aproxima-se ao
  *   máximo da identidade existente sem inventar fonte, porque usa o próprio
  *   vetor.
- * - `tipografia` — o nome é construído em Archivo, e a marca oficial aparece
- *   menor, ao lado. Não finge que Archivo é a fonte da logo: são coisas
- *   declaradamente diferentes, convivendo.
+ * - `tipografia` — nome em Archivo, símbolo vertical junto ao metadado e
+ *   autoria do Coletivo em assinatura compacta. Archivo não imita o lettering.
  *
- * Tudo o mais é idêntico: mesma fotografia, mesmos tokens, mesma hierarquia
- * institucional, mesma navegação. É o que torna a comparação honesta.
+ * Fotografia, recortes, overlay e título permanecem iguais à primeira rodada.
  *
  * ## O `h1` existe nas duas
  *
@@ -65,6 +64,42 @@ const AUTORIA = "Uma iniciativa do Coletivo Cultural “Tobias, sou Eu!”";
  * afirmação falsa (Direção Visual §1.6).
  */
 const METADADO = "SERGIPE / BRASIL";
+
+/**
+ * Enquadramento circular das marcas no Hero B revisado.
+ *
+ * A máscara atua sobre uma caixa quadrada e `object-cover` preserva a proporção
+ * do arquivo: o símbolo do Observatório perde somente o excesso teal vertical;
+ * a marca do Coletivo perde somente margens laterais e cantos. O núcleo das
+ * duas identidades permanece inteiro, sem esticar ou redesenhar nenhum asset.
+ */
+function MarcaCircular({
+  alt,
+  arquivo,
+  altura,
+  largura,
+}: {
+  alt: string;
+  arquivo: string;
+  altura: number;
+  largura: number;
+}) {
+  return (
+    <span
+      className="block h-16 w-16 shrink-0 overflow-hidden"
+      data-marca-circular="true"
+      style={{ clipPath: "circle(50% at 50% 50%)" }}
+    >
+      <img
+        alt={alt}
+        className="h-full w-full object-cover object-center"
+        height={altura}
+        src={`${CAMINHO_DAS_MARCAS}/${arquivo}`}
+        width={largura}
+      />
+    </span>
+  );
+}
 
 export function HeroManifesto({
   variante,
@@ -109,9 +144,19 @@ export function HeroManifesto({
       />
 
       <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 pt-24 pb-10 sm:gap-6 sm:pb-16">
-        <p className="meta-ficha" style={{ color: "var(--hero-metadado)" }}>
-          {METADADO}
-        </p>
+        <div className="flex items-center gap-4">
+          {variante === "tipografia" && (
+            <MarcaCircular
+              alt={SIMBOLO_OBSERVATORIO.alt}
+              altura={SIMBOLO_OBSERVATORIO.altura}
+              arquivo={SIMBOLO_OBSERVATORIO.arquivo}
+              largura={SIMBOLO_OBSERVATORIO.largura}
+            />
+          )}
+          <p className="meta-ficha" style={{ color: "var(--hero-metadado)" }}>
+            {METADADO}
+          </p>
+        </div>
 
         {variante === "wordmark" ? (
           <>
@@ -135,23 +180,6 @@ export function HeroManifesto({
           </>
         ) : (
           <div className="flex flex-col gap-4">
-            {/*
-              A marca oficial vem **antes** do título, pequena, como assinatura
-              de abertura. Depois dele ela competiria com o próprio nome que
-              acabou de ser lido — duas vezes a mesma informação, uma embaixo da
-              outra. Aqui ela assina e sai da frente.
-
-              Ela não tenta imitar o lettering com Archivo: são declaradamente
-              coisas diferentes, e é justamente essa diferença que a variante B
-              coloca em avaliação.
-            */}
-            <img
-              alt={MARCA_OBSERVATORIO.alt}
-              className="h-auto w-32 sm:w-48"
-              height={MARCA_OBSERVATORIO.altura}
-              src={`${CAMINHO_DAS_MARCAS}/${MARCA_OBSERVATORIO.arquivo}`}
-              width={MARCA_OBSERVATORIO.largura}
-            />
             <h1
               className="max-w-3xl text-2xl sm:text-3xl lg:text-4xl"
               id={tituloId}
@@ -168,9 +196,16 @@ export function HeroManifesto({
           idealizador e realizador, não um selo de patrocínio, e por isso a
           autoria se lê como frase, não como régua de logos.
         */}
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+        <div
+          className={
+            variante === "tipografia"
+              ? "flex items-center gap-4"
+              : "flex flex-wrap items-center gap-x-5 gap-y-3"
+          }
+        >
           <p
-            className="text-lg"
+            className={variante === "tipografia" ? "text-base" : "text-lg"}
+            data-autoria="true"
             style={{
               color: "var(--hero-texto)",
               fontFamily: "var(--font-leitura)",
@@ -178,13 +213,22 @@ export function HeroManifesto({
           >
             {AUTORIA}
           </p>
-          <img
-            alt={MARCA_COLETIVO.alt}
-            className="h-auto w-20 sm:w-28"
-            height={MARCA_COLETIVO.altura}
-            src={`${CAMINHO_DAS_MARCAS}/${MARCA_COLETIVO.arquivo}`}
-            width={MARCA_COLETIVO.largura}
-          />
+          {variante === "tipografia" ? (
+            <MarcaCircular
+              alt={MARCA_COLETIVO.alt}
+              altura={MARCA_COLETIVO.altura}
+              arquivo={MARCA_COLETIVO.arquivo}
+              largura={MARCA_COLETIVO.largura}
+            />
+          ) : (
+            <img
+              alt={MARCA_COLETIVO.alt}
+              className="h-auto w-20 sm:w-28"
+              height={MARCA_COLETIVO.altura}
+              src={`${CAMINHO_DAS_MARCAS}/${MARCA_COLETIVO.arquivo}`}
+              width={MARCA_COLETIVO.largura}
+            />
+          )}
         </div>
       </div>
     </section>

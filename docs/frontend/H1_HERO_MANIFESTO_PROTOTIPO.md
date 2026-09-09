@@ -6,6 +6,11 @@
 **Status:** PROTÓTIPO EM AVALIAÇÃO — **nenhuma variante foi aplicada à Home**
 **Rota:** `/dev/hero` — desenvolvimento apenas, 404 em produção
 
+> **Revisão posterior na mesma data:** o responsável indicou B como base e pediu
+> corrigir a marca. A composição recomendada agora usa o símbolo oficial compacto;
+> ver [correção do Hero B](./H1_CORRECAO_MARCA_HERO_B.md). As medições e descrições
+> abaixo retratam a primeira rodada, com a marca horizontal, e são preservadas.
+
 **Fonte de verdade visual:** [`DIRECAO_VISUAL_FRONTEND_1_0.md`](./DIRECAO_VISUAL_FRONTEND_1_0.md),
 não alterada nesta rodada.
 

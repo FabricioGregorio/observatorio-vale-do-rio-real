@@ -61,13 +61,13 @@ export function exigirAmbienteDeDesenvolvimento(
 const VARIANTES: { chave: VarianteDoHero; titulo: string; nota: string }[] = [
   {
     chave: "wordmark",
-    titulo: "Hero A — wordmark oficial",
+    titulo: "Hero A — referência anterior",
     nota: "A marca oficial carrega visualmente o nome. Nada é recriado com fonte: o lettering vem do próprio vetor. O h1 existe no DOM, por extenso, para leitor de tela e indexação.",
   },
   {
     chave: "tipografia",
-    titulo: "Hero B — tipografia editorial",
-    nota: "O nome é construído em Archivo, e a marca oficial aparece menor, ao lado. Não finge que Archivo é a fonte da logo — são coisas declaradamente diferentes.",
+    titulo: "Hero B revisado — recomendado",
+    nota: "Nome completo em Archivo, símbolo oficial e marca do Coletivo em selos circulares compactos. Os arquivos oficiais preservam proporção e identidade; apenas as margens externas são mascaradas.",
   },
 ];
 
@@ -119,7 +119,8 @@ export default function PrototipoDoHero() {
 
         <p style={{ maxWidth: "var(--largura-leitura)" }}>
           Esta rota é de desenvolvimento e responde 404 em produção. Nenhuma
-          variante foi aplicada à Home: a escolha entre A e B é humana.
+          variante foi aplicada à Home. Hero B é a base indicada pelo
+          responsável; esta revisão da composição está em avaliação.
         </p>
 
         <dl className="flex flex-col gap-3">

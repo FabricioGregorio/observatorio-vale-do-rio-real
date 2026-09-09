@@ -28,6 +28,7 @@ import {
   DERIVADOS_DO_HERO,
   MARCA_COLETIVO,
   MARCA_OBSERVATORIO,
+  SIMBOLO_OBSERVATORIO,
 } from "../src/dados/hero/derivados";
 import { FONTES_TERRITORIAIS } from "../src/dados/territorio/fontes";
 import {
@@ -191,6 +192,7 @@ describe("ausência de dado territorial inventado", () => {
     const declarados = new Set<string>([
       ...DERIVADOS_DO_HERO.map((d) => d.arquivo),
       MARCA_OBSERVATORIO.arquivo,
+      SIMBOLO_OBSERVATORIO.arquivo,
       MARCA_COLETIVO.arquivo,
     ]);
 

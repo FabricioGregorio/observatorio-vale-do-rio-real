@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import {
   CAMINHO_DAS_MARCAS,
-  MARCA_OBSERVATORIO,
+  SIMBOLO_OBSERVATORIO,
 } from "../../dados/hero/derivados";
 import { CabecalhoReativo } from "./CabecalhoReativo";
 import { CentralAcessibilidade } from "./CentralAcessibilidade";
@@ -69,16 +69,17 @@ export function CabecalhoPrototipo() {
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-4">
         <Link
           className="shrink-0"
+          aria-label="Observatório — página inicial"
           href="/"
           prefetch={false}
           style={{ borderRadius: "var(--radius-ficha)" }}
         >
           <img
-            alt={MARCA_OBSERVATORIO.alt}
+            alt=""
             className="h-9 w-auto sm:h-10"
-            height={MARCA_OBSERVATORIO.altura}
-            src={`${CAMINHO_DAS_MARCAS}/${MARCA_OBSERVATORIO.arquivo}`}
-            width={MARCA_OBSERVATORIO.largura}
+            height={SIMBOLO_OBSERVATORIO.altura}
+            src={`${CAMINHO_DAS_MARCAS}/${SIMBOLO_OBSERVATORIO.arquivo}`}
+            width={SIMBOLO_OBSERVATORIO.largura}
           />
         </Link>
 

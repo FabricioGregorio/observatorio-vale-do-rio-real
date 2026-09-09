@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -5,6 +6,7 @@ import { describe, expect, test } from "vitest";
 import {
   DERIVADOS_DO_HERO,
   PASTA_DOS_DERIVADOS,
+  SIMBOLO_OBSERVATORIO,
 } from "../src/dados/hero/derivados";
 
 /**
@@ -21,6 +23,16 @@ import {
  */
 
 const PASTA = join(process.cwd(), PASTA_DOS_DERIVADOS);
+
+test("o símbolo de apoio conserva o derivado conferido e seu orçamento", () => {
+  const simbolo = SIMBOLO_OBSERVATORIO;
+  const bytes = readFileSync(join("public/media/logos", simbolo.arquivo));
+  expect(createHash("sha256").update(bytes).digest("hex")).toBe(simbolo.sha256);
+  expect(bytes.length).toBe(simbolo.bytes);
+  expect(bytes.length).toBeLessThan(15_000);
+  expect(bytes.readUInt32BE(16)).toBe(simbolo.largura);
+  expect(bytes.readUInt32BE(20)).toBe(simbolo.altura);
+});
 
 /** Lê os "chunks" de um contêiner RIFF/WebP. */
 function chunksDoWebp(bytes: Buffer): { nome: string; tamanho: number }[] {

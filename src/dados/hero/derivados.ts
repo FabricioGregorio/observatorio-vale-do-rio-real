@@ -135,6 +135,21 @@ export const MARCA_OBSERVATORIO = {
   alt: "Observatório de Cultura e Economia Criativa da Região do Vale do Rio Real",
 } as const;
 
+/** Símbolo oficial de apoio do Hero B revisado; mantém o fundo institucional. */
+export const SIMBOLO_OBSERVATORIO = {
+  arquivo: "observatorio-simbolo-256.png",
+  origem: "identidade-visual/observatorio/icon.png",
+  sha256Original:
+    "6b230265d3c50b864bed83c5d3e7ddd02bd01998a92de818fefae487afc2571b",
+  largura: 256,
+  altura: 320,
+  bytes: 13_026,
+  sha256: "5404186e9658408aaf2ca3521c2fceeb87d2f23cb8f46bd89d02e93296ce8283",
+  transformacao:
+    "redimensionamento integral de 1080x1350 para 256x320 em PNG, sem recorte, recoloração ou remoção de fundo; sem metadados do original",
+  alt: "Símbolo oficial do Observatório: telescópio, serra e caminho",
+} as const;
+
 /**
  * Marca do Coletivo Cultural "Tobias, sou Eu!".
  *
