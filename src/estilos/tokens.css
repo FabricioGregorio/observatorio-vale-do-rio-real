@@ -7,10 +7,22 @@
    REGRA: nenhum valor de cor, família tipográfica ou raio pode ser escrito
    fora deste arquivo. Se um componente precisa de algo que não está aqui,
    o token é adicionado aqui primeiro, com nome semântico.
+
+   ORGANIZAÇÃO (Fase H0):
+
+     1. paleta bruta       valores literais, um lugar só
+     2. papéis semânticos  o que os componentes usam — sensíveis a tema
+     3. tipografia, motion, camadas, layout
+     4. papéis no escuro   os mesmos nomes, outros valores
+     5. base e utilitários
+
+   Componentes referenciam **papéis**, nunca a paleta bruta. É isso que faz o
+   modo escuro existir sem tocar em componente nenhum: o `var(--color-fundo)`
+   que já está escrito em cada `style` passa a resolver para outro valor.
    ========================================================================== */
 
 @theme {
-  /* --- Paleta bruta -------------------------------------------------------
+  /* --- 1. Paleta bruta — luz do dia ---------------------------------------
      Conceito: arquivo vivo. Referências materiais do próprio objeto de
      pesquisa — mata fechada, ficha de campo, tinta de registro, milho da
      agricultura familiar, barro da casa de taipa.
@@ -24,31 +36,78 @@
   --color-barro: #8a4b2a;
   --color-carvao: #171a17;
 
+  /* Assinatura institucional do Observatório — verde-azulado.
+     NÃO é decorativa e NÃO substitui `mata`. Os dois papéis são distintos:
+     `mata` é atmosfera territorial; este é a marca.
+     Valor medido nos arquivos oficiais da identidade, não estimado:
+       icon.png ................ 87,59% dos pixels
+       logo-e-texto.png ........ 68,07% dos pixels
+       primeiro-post (D01-08) .. presente nos operadores de cor do vetor
+     Ver docs/frontend/H0_FUNDACAO_VISUAL_TEMA.md §4. */
+  --color-observatorio: #026a69;
+
   /* Variações operacionais — derivadas, não inventadas */
   --color-mata-claro: #1d4630;
   --color-pedra-fundo: #f2f1ec;
   --color-pedra-borda: #d3d0c6;
+  --color-branco: #ffffff;
+  --color-carvao-suave: #4a504a;
+  /* Fronteira que identifica um controle sozinha, e por isso precisa de 3:1
+     (WCAG 1.4.11) — ver o bloco de contraste no fim do arquivo. */
+  --color-pedra-borda-forte: #767b74;
+  /* Anil aprofundado para o estado de hover de link. */
+  --color-anil-escuro: #162943;
 
-  /* --- Papéis semânticos --------------------------------------------------
+  /* --- Paleta bruta — noite ----------------------------------------------
+     O escuro do projeto é **mata muito escura**, não preto: a temperatura
+     dominante continua sendo a mesma no claro e no escuro. Inversão
+     preto/branco está descartada por decisão humana (Direção Visual §5.4). */
+
+  --color-noite: #0e1611;
+  --color-noite-elevada: #16211a;
+  --color-noite-borda: #2c3a30;
+  --color-noite-borda-forte: #5a7064;
+  --color-pedra-suave: #a8b0a6;
+  --color-anil-claro: #8fb8d6;
+  --color-anil-claro-forte: #b6d4e8;
+  --color-barro-claro: #c97b4e;
+  --color-observatorio-claro: #2a9d96;
+
+  /* --- 2. Papéis semânticos — luz do dia ----------------------------------
      Componentes usam ESTES nomes, nunca os brutos acima. */
 
   --color-fundo: var(--color-pedra-fundo);
-  --color-fundo-elevado: #ffffff;
+  --color-fundo-elevado: var(--color-branco);
   --color-fundo-inverso: var(--color-mata);
   --color-texto: var(--color-carvao);
-  --color-texto-suave: #4a504a;
+  --color-texto-suave: var(--color-carvao-suave);
   --color-texto-inverso: var(--color-pedra);
   --color-link: var(--color-anil);
+  --color-link-hover: var(--color-anil-escuro);
   --color-borda: var(--color-pedra-borda);
+  --color-borda-forte: var(--color-pedra-borda-forte);
   --color-destaque: var(--color-milho);
   --color-acento: var(--color-barro);
+  --color-marca: var(--color-observatorio);
   --color-foco: var(--color-anil);
 
-  /* --- Tipografia ---------------------------------------------------------
+  /* Texto por cima de um preenchimento de milho — marcador, tarja, seleção.
+     **Invariante de tema, de propósito**: milho é a mesma cor nos dois temas,
+     então o texto sobre ele também precisa ser. Deixar este papel seguir
+     `--color-texto` faria o texto virar pedra no escuro, sobre um fundo
+     amarelo claro: 1,5:1. É o par que o teste de contraste pegou. */
+  --color-texto-sobre-destaque: var(--color-carvao);
+
+  /* --- 3a. Tipografia -----------------------------------------------------
      Três papéis, todos com suporte pleno a diacríticos do português.
-     display   Archivo        títulos, numerais de ficha
+     display   Archivo        títulos, numerais de ficha, navegação
      leitura   Literata       documento final, transcrições, texto longo
-     mono      IBM Plex Mono  metadados, datas, hashes, códigos de meta */
+     mono      IBM Plex Mono  metadados, datas, hashes, códigos de meta
+
+     Nenhuma família nova entra sem revisão. O lettering da marca **não** é
+     reproduzido com fonte: a fonte oficial não está identificada em nenhum
+     arquivo de identidade, e imitá-la seria inventar a marca. Quando a
+     identidade exata for necessária, usa-se o asset oficial. */
 
   --font-display: "Archivo", "Archivo Variable", system-ui, sans-serif;
   --font-leitura: "Literata", Georgia, serif;
@@ -68,20 +127,127 @@
   --tracking-display: -0.02em;
   --tracking-mono: 0.04em;
   --leading-leitura: 1.65;
+  --leading-titulo: 1.15;
+  --peso-titulo: 600;
+  --peso-numeral: 700;
 
-  /* --- Layout ------------------------------------------------------------- */
+  /* --- 3b. Movimento ------------------------------------------------------
+     Escala aprovada: site 3–4/10 (Direção Visual §12.1). Os valores são
+     orientativos; o que decide a percepção é o easing com o contexto.
+
+     A troca de tema é **instantânea** de propósito: animar a página inteira
+     mudando de cor é pior que o corte para quem tem sensibilidade vestibular
+     ou fotossensibilidade. Aqui a ausência de animação é a escolha acessível.
+
+     Os tokens são zerados sob `prefers-reduced-motion` mais abaixo, para que
+     quem lê o token receba a resposta certa — e não só quem é alcançado pela
+     regra global. */
+
+  --duracao-hover: 150ms;
+  --duracao-revelacao: 240ms;
+  --duracao-painel: 240ms;
+  --duracao-tema: 0ms;
+
+  --easing-padrao: cubic-bezier(0.4, 0, 0.2, 1);
+  --easing-entrada: cubic-bezier(0, 0, 0.2, 1);
+  --easing-saida: cubic-bezier(0.4, 0, 1, 1);
+
+  /* --- 3c. Camadas --------------------------------------------------------
+     Ordem declarada uma vez, para que ninguém escolha um z-index no olho.
+     O link de pular fica acima de tudo: ele precisa aparecer sobre qualquer
+     painel ou cabeçalho que esteja aberto. */
+
+  --z-conteudo: 1;
+  --z-cabecalho: 50;
+  --z-barra-mobile: 60;
+  --z-painel: 80;
+  --z-pular: 100;
+
+  /* --- 3d. Layout --------------------------------------------------------- */
   --largura-leitura: 68ch;
   --largura-conteudo: 1180px;
   --radius-ficha: 2px; /* fichas de arquivo não têm cantos macios */
 }
 
 /* =============================================================================
-   Base
+   4. Papéis no escuro
+
+   Só os **papéis** mudam; a paleta bruta é a mesma em qualquer tema. Nenhum
+   componente é tocado: `var(--color-fundo)` já está escrito em cada `style`
+   inline e passa a resolver para o valor noturno.
+
+   A cascata implementa a decisão humana (Direção Visual §5.4 e §29):
+
+     sem data-tema        → o sistema decide (prefers-color-scheme)
+     data-tema="claro"    → claro, mesmo com o sistema no escuro
+     data-tema="escuro"   → escuro, mesmo com o sistema no claro
+
+   Os dois blocos abaixo são **idênticos por contrato**, e `testes/tema.test.ts`
+   falha se divergirem. Duas definições da mesma coisa divergem em silêncio, e
+   num projeto operado por agentes a errada é obedecida sem ninguém perceber
+   (doc 03 §4). A duplicação existe porque o CSS não tem como unir uma media
+   query e um seletor de atributo numa regra só; a checagem automatizada é o
+   que a torna segura.
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) {
+    --color-fundo: var(--color-noite);
+    --color-fundo-elevado: var(--color-noite-elevada);
+    --color-fundo-inverso: var(--color-mata-claro);
+    --color-texto: var(--color-pedra);
+    --color-texto-suave: var(--color-pedra-suave);
+    --color-texto-inverso: var(--color-pedra);
+    --color-link: var(--color-anil-claro);
+    --color-link-hover: var(--color-anil-claro-forte);
+    --color-borda: var(--color-noite-borda);
+    --color-borda-forte: var(--color-noite-borda-forte);
+    --color-destaque: var(--color-milho);
+    --color-acento: var(--color-barro-claro);
+    --color-marca: var(--color-observatorio-claro);
+    --color-foco: var(--color-milho);
+  }
+}
+
+:root[data-tema="escuro"] {
+  --color-fundo: var(--color-noite);
+  --color-fundo-elevado: var(--color-noite-elevada);
+  --color-fundo-inverso: var(--color-mata-claro);
+  --color-texto: var(--color-pedra);
+  --color-texto-suave: var(--color-pedra-suave);
+  --color-texto-inverso: var(--color-pedra);
+  --color-link: var(--color-anil-claro);
+  --color-link-hover: var(--color-anil-claro-forte);
+  --color-borda: var(--color-noite-borda);
+  --color-borda-forte: var(--color-noite-borda-forte);
+  --color-destaque: var(--color-milho);
+  --color-acento: var(--color-barro-claro);
+  --color-marca: var(--color-observatorio-claro);
+  --color-foco: var(--color-milho);
+}
+
+/* =============================================================================
+   5. Base
    ========================================================================== */
 
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    /* Faz o navegador pintar formulários, barras de rolagem e a cor de fundo
+       da própria janela no tema certo. Sem isto, o campo de texto continua
+       branco dentro da página escura. */
+    color-scheme: light;
+  }
+
+  /* O `color-scheme` acompanha o tema pela mesma cascata dos papéis. */
+  @media (prefers-color-scheme: dark) {
+    html:not([data-tema="claro"]) {
+      color-scheme: dark;
+    }
+  }
+
+  html[data-tema="escuro"] {
+    color-scheme: dark;
   }
 
   body {
@@ -99,13 +265,26 @@
   h4 {
     font-family: var(--font-display);
     letter-spacing: var(--tracking-display);
+    line-height: var(--leading-titulo);
     text-wrap: balance;
-    font-weight: 600;
+    font-weight: var(--peso-titulo);
   }
 
   /* Foco visível e nítido em todo elemento interativo. Remover o outline
      sem substituto equivalente é violação de acessibilidade e é rejeitado
-     no review. */
+     no review.
+
+     `--color-foco` troca de cor por tema — anil sobre claro, milho sobre
+     escuro. Sem isso o indicador sumiria justamente onde quem navega por
+     teclado precisa dele: anil sobre a superfície noturna dá 1,60:1.
+
+     O `outline-offset` cria uma faixa da própria superfície entre o elemento
+     e o contorno, e é o que garante o anel de duas tonalidades — o foco não
+     depende de uma cor só para ser percebido.
+
+     Não há `border-radius` aqui de propósito: definir o raio no estado de
+     foco muda a **forma** do elemento ao focá-lo. O `outline` já acompanha
+     sozinho o raio que o elemento tiver. */
   :where(
     a,
     button,
@@ -117,15 +296,23 @@
   ):focus-visible {
     outline: 3px solid var(--color-foco);
     outline-offset: 2px;
-    border-radius: var(--radius-ficha);
   }
 
   ::selection {
     background-color: var(--color-destaque);
-    color: var(--color-carvao);
+    color: var(--color-texto-sobre-destaque);
   }
 
   @media (prefers-reduced-motion: reduce) {
+    /* Os tokens também são zerados, e não só a regra global: assim quem lê
+       `var(--duracao-hover)` recebe a resposta certa em vez de depender de a
+       declaração global alcançá-lo. */
+    :root {
+      --duracao-hover: 0ms;
+      --duracao-revelacao: 0ms;
+      --duracao-painel: 0ms;
+    }
+
     *,
     *::before,
     *::after {
@@ -138,7 +325,7 @@
 }
 
 /* =============================================================================
-   Utilitários do projeto
+   6. Utilitários do projeto
    ========================================================================== */
 
 @layer components {
@@ -156,7 +343,7 @@
   .numeral-ficha {
     font-family: var(--font-display);
     font-size: var(--text-3xl);
-    font-weight: 700;
+    font-weight: var(--peso-numeral);
     font-stretch: 125%;
     line-height: 1;
     color: var(--color-destaque);
@@ -171,7 +358,7 @@
     position: fixed;
     top: 0.5rem;
     left: 0.5rem;
-    z-index: 100;
+    z-index: var(--z-pular);
     padding: 0.75rem 1rem;
     background-color: var(--color-fundo-elevado);
     color: var(--color-texto);
@@ -179,16 +366,55 @@
 }
 
 /* =============================================================================
-   Contraste verificado (WCAG 2.1 AA — mínimo 4.5:1 para texto normal)
+   Contraste verificado (WCAG 2.2 AA — 4.5:1 texto normal, 3:1 texto grande,
+   componentes e fronteiras que identificam um controle sozinhas)
 
-   carvão  sobre pedra-fundo .... 15.2:1   corpo de texto
-   anil    sobre pedra-fundo ....  9.1:1   links
-   barro   sobre pedra-fundo ....  5.3:1   acento textual, use com parcimônia
-   pedra   sobre mata ........... 11.4:1   texto do cabeçalho e rodapé
-   milho   sobre mata ...........  7.4:1   destaque sobre fundo escuro
+   A conferência viva está em /dev/estilos, que calcula as razões a partir
+   destes tokens em tempo de build, nos DOIS temas. Os números abaixo são o
+   registro da decisão; a página é a prova.
 
-   ATENÇÃO — milho sobre pedra atinge apenas 1.5:1.
-   `--color-destaque` NÃO pode ser usado como cor de texto sobre fundo claro.
-   Sobre claro ele serve apenas como preenchimento, borda ou fundo de
-   marcador, com o texto em carvão por cima.
+   LUZ DO DIA — sobre pedra-fundo
+     carvão ................ 15.2:1   corpo de texto
+     anil .................. 9.1:1    links
+     anil-escuro ........... 13.0:1   link em hover
+     barro ................. 5.3:1    acento textual, com parcimônia
+     observatório .......... 5.7:1    assinatura institucional
+     pedra-borda-forte ..... 3.8:1    fronteira de controle (1.4.11)
+     pedra ................. 11.4:1   texto do cabeçalho sobre mata
+     milho ................. 7.4:1    destaque sobre mata
+
+   NOITE — sobre noite (#0e1611)
+     pedra ................. 14.6:1   corpo de texto
+     pedra-suave ........... 8.3:1    metadado de ficha
+     anil-claro ............ 8.8:1    links
+     anil-claro-forte ...... 11.9:1   link em hover
+     milho ................. 9.5:1    destaque e foco
+     barro-claro ........... 5.6:1    acento textual
+     observatório-claro .... 5.6:1    assinatura institucional
+     noite-borda-forte ..... 3.5:1    fronteira de controle (1.4.11)
+
+   A FAIXA DO CABEÇALHO E DO RODAPÉ NÃO INVERTE.
+   No claro ela é mata com texto em pedra; no escuro ela é mata-claro com o
+   mesmo texto em pedra. Fazer `--color-fundo-inverso` virar uma superfície
+   clara no tema escuro colocaria uma barra brilhante no topo de uma página
+   escura e derrubaria o par milho/faixa para 1.5:1. Sobre mata-claro:
+     pedra ................. 8.5:1
+     milho ................. 5.5:1
+   A faixa fica 1.7:1 acima do fundo da página — separação de superfície,
+   que é decorativa, como a de `--color-borda`.
+
+   ATENÇÃO — `--color-destaque` (milho) sobre pedra atinge apenas 1.5:1.
+   NÃO pode ser cor de texto sobre fundo claro. Sobre claro ele serve apenas
+   como preenchimento, borda ou fundo de marcador, com o texto em carvão por
+   cima. No escuro a restrição não se aplica: sobre noite ele dá 9.5:1, e é
+   justamente por isso que ele é o foco do tema escuro.
+
+   ATENÇÃO — `--color-observatorio` sobre mata atinge apenas 2.2:1, e a cor
+   institucional do Coletivo "Tobias, sou Eu!" atinge 2.3:1. Nenhuma das duas
+   marcas pode aparecer em cor institucional sobre superfície escura. Ver
+   docs/frontend/H0_FUNDACAO_VISUAL_TEMA.md §7.
+
+   ATENÇÃO — `--color-borda` é fronteira **decorativa** (1.4:1 no claro,
+   1.5:1 no escuro). Onde a borda for a única identificação de um controle,
+   usar `--color-borda-forte`.
    ========================================================================== */

@@ -80,9 +80,28 @@ export function temHachura(relacoes: readonly RelacaoTerritorial[]): boolean {
  * `cursor:pointer` só aparece quando a ilha marca o SVG com
  * `data-interativo`: sem JavaScript o polígono não é clicável, e um cursor de
  * mão prometeria o que não acontece.
+ *
+ * ## O mapa é invariante de tema — Fase H0
+ *
+ * Todo valor aqui vem da **paleta bruta**, nunca de papel semântico. Não é
+ * detalhe de estilo: os papéis trocam de valor no tema escuro, e o mapa não
+ * pode trocar junto enquanto a camada cartográfica não for redesenhada (H3).
+ *
+ * Três referências foram corrigidas na H0, todas sem efeito nenhum no tema
+ * claro — os valores novos são exatamente os que os papéis já resolviam ali:
+ *
+ * | era | virou | o que aconteceria no escuro |
+ * |---|---|---|
+ * | `--color-texto-suave` | `--color-carvao-suave` | a fronteira dos 75 municípios clarearia sobre o preenchimento pedra e sumiria — desfazendo em silêncio a correção registrada na ADR-010 |
+ * | `--color-fundo-elevado` | `--color-branco` | o contorno do marcador escureceria e deixaria de separar o pino do preenchimento claro |
+ * | herdava `--color-texto` | `--color-texto-sobre-destaque` | o texto do item realçado viraria pedra sobre milho: 1,5:1 |
+ *
+ * O preenchimento da camada base é `--color-pedra`, que é bruto e continua
+ * claro nos dois temas. Enquanto for assim, o traço por cima dele também
+ * precisa ser escuro nos dois temas.
  */
 export const CSS_DO_MAPA = `
-.${CLASSE_RAIZ} .m{fill:var(--color-pedra);stroke:var(--color-texto-suave);stroke-width:.5;transition:fill .15s}
+.${CLASSE_RAIZ} .m{fill:var(--color-pedra);stroke:var(--color-carvao-suave);stroke-width:.5;transition:fill .15s}
 .${CLASSE_RAIZ} .v{fill:var(--color-milho);stroke:var(--color-mata);stroke-width:1.2}
 .${CLASSE_RAIZ} .c{stroke:var(--color-anil);stroke-width:1.2;stroke-dasharray:5 2.5}
 .${CLASSE_RAIZ} .h{fill:url(#${ID_HACHURA});stroke:none;pointer-events:none}
@@ -92,7 +111,7 @@ export const CSS_DO_MAPA = `
 .${CLASSE_RAIZ} .m:focus-visible{stroke:var(--color-destaque);stroke-width:2.4;fill:var(--color-mata-claro)}
 .${CLASSE_RAIZ} .m[aria-selected="true"]{stroke:var(--color-mata);stroke-width:3.5;fill:var(--color-mata-claro)}
 .${CLASSE_RAIZ} .m[aria-selected="true"]:focus-visible{stroke:var(--color-destaque);stroke-width:3.5}
-.${CLASSE_RAIZ} .p{fill:var(--color-barro);stroke:var(--color-fundo-elevado);stroke-width:1.5}
-.${CLASSE_RAIZ} .f[data-selecionado="true"]{background-color:var(--color-destaque);outline:2px solid var(--color-mata)}
+.${CLASSE_RAIZ} .p{fill:var(--color-barro);stroke:var(--color-branco);stroke-width:1.5}
+.${CLASSE_RAIZ} .f[data-selecionado="true"]{background-color:var(--color-destaque);color:var(--color-texto-sobre-destaque);outline:2px solid var(--color-mata)}
 @media (prefers-reduced-motion:reduce){.${CLASSE_RAIZ} .m{transition:none}}
 `.trim();

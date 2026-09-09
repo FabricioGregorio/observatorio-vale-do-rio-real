@@ -112,6 +112,18 @@ Cada público precisa chegar ao seu destino em **no máximo dois cliques a parti
 **Menu principal (6 itens, teto cognitivo):**
 `O Observatório · A Pesquisa · Dados · Diário de Campo · PodObservar · Educação`
 
+> **⚠ SUPERADO QUANTO À COMPOSIÇÃO — ver [ADR-017](./decisoes/ADR-017-navegacao-alvo-do-frontend.md).**
+>
+> Decisão humana de 2026-09-09: o menu alvo do frontend 1.0 é
+> `Observatório · Território · Pesquisa · Dados · PodObservar · Acervo`.
+> O teto de seis itens fixado aqui **continua valendo**; o que muda é quais são.
+>
+> A troca só acontece quando `/territorio` e `/acervo` existirem como rotas —
+> `typedRoutes` reprova link para rota inexistente, e a ADR-017 proíbe rota falsa.
+> Até lá, o menu implementado é o desta linha, e é o correto.
+> `Diário de Campo` e `Educação` saem do menu principal e **continuam existindo**
+> como rotas.
+
 **Rodapé:** Prestação de Contas · Imprensa · Acessibilidade · Privacidade · Contato · **bloco de créditos de fomento**.
 
 ---

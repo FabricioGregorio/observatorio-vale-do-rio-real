@@ -1179,3 +1179,84 @@ A fase de frontend está **em planejamento**. Nenhuma linha de frontend foi
 escrita. A próxima ação correta é humana: responder as questões Q1 (menu) e Q3
 (marca do Coletivo) e autorizar a **Fase H0 — Fundação de tokens e tema**, a
 única que não depende de nenhuma questão aberta.
+
+---
+
+## Prompt Frontend 1.2 — H0: fundação visual e tema implementada
+
+Executado em **2026-09-09**, a partir de
+`b82e3f46f085403deb3038a38a453bc39c7a94d0`, na branch `feat/home-indicadores`.
+
+**Primeira implementação de frontend do projeto.** Sem Hero, sem `home.jpg`, sem
+MapLibre, sem rotas novas, sem menu novo, sem deploy, sem push. Banco, R2, Vercel e
+DNS inalterados.
+
+Registro completo:
+[`docs/frontend/H0_FUNDACAO_VISUAL_TEMA.md`](./docs/frontend/H0_FUNDACAO_VISUAL_TEMA.md).
+
+### Entregue
+
+- **Assinatura institucional `#026A69`** como token, confirmada por **três** fontes
+  independentes: `icon.png` (87,59% dos pixels), `logo-e-texto.png` (68,07%) e os
+  operadores de cor do primeiro post. Não substitui `mata` — os dois papéis coexistem.
+- **Tema claro, escuro e sistema.** Primeira visita segue `prefers-color-scheme`;
+  escolha manual persiste em `localStorage` e vence o sistema. Funciona **sem
+  JavaScript**.
+- **Sem flash de tema**, por script inline de 148 B no `<head>`, com `try/catch`
+  obrigatório. Medido: o atributo já está aplicado quando `readyState` vira
+  `interactive`.
+- **Foco visível nos dois temas** — anil no claro, milho no escuro. Removida a
+  declaração de `border-radius` que mudava a forma do elemento ao focá-lo.
+- **Tokens novos:** 3 papéis (`--color-marca`, `--color-borda-forte`,
+  `--color-link-hover`), 1 invariante (`--color-texto-sobre-destaque`), 9 cores
+  noturnas, 4 de movimento, 3 de easing, 5 de camada, 3 tipográficos.
+- **97 testes novos**, incluindo contraste calculado do próprio `tokens.css` nos dois
+  temas e matriz de 3 larguras × 2 temas × 3 rotas.
+
+### Custo medido
+
+| Item | Impacto |
+|---|---|
+| JavaScript | **+0 B** — nenhum Client Component novo |
+| CSS | 5.013 → **5.369 B** comprimidos |
+| Client Components | 2 → **2** |
+| Dependências | **nenhuma nova** — `next-themes` avaliado e recusado |
+| Warnings de lint | 4 → **4** |
+
+### Decisões humanas registradas
+
+- **Menu alvo aprovado** — `Observatório · Território · Pesquisa · Dados · PodObservar
+  · Acervo`. Registrado na
+  [ADR-017](./docs/decisoes/ADR-017-navegacao-alvo-do-frontend.md); `docs/01-arquitetura-informacao.md`
+  §3 recebeu o apontamento. **Nenhuma rota foi criada e o menu não mudou**: a troca é
+  da H1 e depende de `/territorio` e `/acervo` existirem.
+- **Marca do Coletivo em fundo escuro** — a ausência de versão monocromática oficial
+  **não é bloqueio**. Usa-se a marca oficial colorida sobre superfície neutra/clara de
+  apoio. Proibido redesenhar, recolorir, vetorizar ou inventar versão branca.
+- **`primeiro-post-observatorio.pdf` (D01-08)** — inspecionado internamente, como
+  autorizado. Continua **MANTER_PRIVADO**: não foi copiado, versionado, publicado nem
+  incluído no build. Só conclusões abstratas foram registradas.
+
+### Achados da auditoria
+
+- **Malha de Sergipe: existe.** `src/dados/territorio/municipios-sergipe.geojson`,
+  92.720 B, 75 municípios, SHA-256 confere. **Não baixar de novo.** O que falta é o
+  **contorno externo do estado** (`sergipe.geojson`), arquivo distinto, insumo da
+  espessura do pôster na H3.
+- **Um SHA-256 declarado não confere.** O de `municipios-sergipe-nomes.json` em
+  `fontes.ts` é o hash da resposta compacta da API; o arquivo salvo está formatado. O
+  conteúdo está íntegro — reserializar em forma compacta reproduz o hash declarado —,
+  mas o registro **não é verificável** contra o arquivo do repositório. Não corrigido
+  nesta rodada: procedência documental merece decisão própria.
+- **O mapa precisou ser tornado invariante de tema.** Seu CSS usava três papéis
+  semânticos; no escuro, a fronteira dos 75 municípios sumiria e o item realçado da
+  lista cairia para 1,53:1. As três referências passaram para tokens invariantes, com
+  os mesmos valores do tema claro: **zero mudança visual**. ADR-010 permanece em vigor.
+
+### Estado
+
+Home **não** redesenhada. Mapa **não** alterado. Sala do Avaliador **não** redesenhada
+— apenas passou a existir também no escuro. Build com 19 rotas, todas estáticas.
+
+**Próxima fase: H1 — cabeçalho, navegação e rodapé**, que exige antes a criação das
+rotas `/territorio` e `/acervo`.

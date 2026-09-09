@@ -5,6 +5,7 @@ import { PularConteudo } from "../componentes/layout/PularConteudo";
 import { Rodape } from "../componentes/layout/Rodape";
 import { ID_CONTEUDO } from "../lib/navegacao";
 import { metadadosDaRota, obterSiteUrl } from "../lib/site-url";
+import { SCRIPT_TEMA_INICIAL } from "../lib/tema";
 import "../estilos/tokens.css";
 
 /**
@@ -68,7 +69,40 @@ export default function RootLayout({
     <html
       lang="pt-BR"
       className={`${archivo.variable} ${literata.variable} ${plexMono.variable}`}
+      /*
+        O script abaixo escreve `data-tema` no `<html>` antes da hidratação,
+        e o servidor não tem como prever o que este navegador salvou. Sem
+        `suppressHydrationWarning`, o React reclamaria de um atributo que ele
+        não renderizou. A supressão vale **só para este elemento** e não
+        alcança nada dentro dele.
+      */
+      suppressHydrationWarning
     >
+      <head>
+        {/*
+          Preferência manual de tema, aplicada antes da primeira pintura.
+
+          É o único script inline do projeto, e a exceção é justificada: sem
+          ele, quem escolheu o tema escuro veria um lampejo claro a cada
+          navegação, porque o HTML sai do servidor sem saber da escolha.
+
+          Não faz rede, não grava cookie e não rastreia nada — o que o
+          `AGENTS.md` proíbe é script de terceiro que rastreie. O conteúdo vem
+          de `src/lib/tema.ts`, para que a chave de armazenamento exista em um
+          lugar só.
+
+          Sem escolha manual salva, o script não toca no DOM e o
+          `prefers-color-scheme` do `tokens.css` decide sozinho — que é o
+          comportamento aprovado para a primeira visita.
+        */}
+        {/*
+          `dangerouslySetInnerHTML` é o único jeito de emitir um script inline
+          síncrono aqui. O conteúdo é uma constante do próprio projeto, sem
+          nenhuma entrada externa interpolada — o risco que o nome do atributo
+          adverte não existe neste uso.
+        */}
+        <script dangerouslySetInnerHTML={{ __html: SCRIPT_TEMA_INICIAL }} />
+      </head>
       <body className="flex min-h-screen flex-col">
         <PularConteudo />
         <Cabecalho />

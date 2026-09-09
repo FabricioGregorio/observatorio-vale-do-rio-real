@@ -566,9 +566,19 @@ Coletivo não tem versão monocromática no corpus.**
 
 # 8. Navegação
 
-## 8.1 ⚠ BLOQUEIO — o menu aprovado diverge do doc 01
+## 8.1 ✅ RESOLVIDO — o menu alvo foi decidido
 
-Este é o achado mais consequente da auditoria.
+> **Atualização de 2026-09-09.** O responsável decidiu que o menu da Direção Visual é
+> o alvo, e a decisão é posterior ao doc 01. Está registrada na
+> [ADR-017](../decisoes/ADR-017-navegacao-alvo-do-frontend.md), junto da estratégia
+> incremental que impede link quebrado, e o doc 01 §3 recebeu o apontamento.
+>
+> **O que permanece:** `/territorio` e `/acervo` ainda não existem como rotas, e
+> `typedRoutes` reprova link para rota inexistente. A troca do menu continua sendo da
+> **H1**, e depende de as duas rotas existirem primeiro. A análise abaixo permanece
+> como registro do problema e do porquê da sequência.
+
+Este foi o achado mais consequente da auditoria.
 
 | Fonte | Menu |
 |---|---|
@@ -828,7 +838,7 @@ WCAG 2.2 AA + ABNT NBR 17225:2025 + doc 01 §7.
 - [ ] menu mobile: **verificar** — a solução D precisa degradar (ver §31, Q6)
 
 **Automatizado**
-- [ ] `pnpm a11y` (Playwright + axe) sem violação
+- [ ] `pnpm a11y` (Playwright; **não há axe instalado** — as verificações são escritas à mão) sem violação
 - [ ] `pnpm verificar` inteiro passa
 
 ---
@@ -1997,7 +2007,8 @@ mantém o custo em JS proporcional ao comportamento, não ao conteúdo.
 | **01 — geometria** | 75 municípios IBGE | `municipios-sergipe.geojson`, SHA-256 ✅ | ✅ | licença oficial IBGE a confirmar | NÃO |
 | **01 — nomes** | 75 nomes | `municipios-sergipe-nomes.json`, SHA-256 ✅ | ✅ | — | NÃO |
 | **01 — recorte** | 6 municípios, relações, definição do Vale | `recorte.ts`, aprovado 2026-09-03 | ✅ | — | NÃO |
-| **01 — contorno do estado** | declarado em `fontes.ts` | IBGE | ❌ `obtidoEm: null` | **baixar `sergipe.geojson`** | NÃO — pôster sem espessura |
+| **01 — contorno do estado** | declarado em `fontes.ts` | IBGE | ❌ `obtidoEm: null` | **baixar `sergipe.geojson`** — arquivo distinto da malha municipal, que já existe | NÃO — pôster sem espessura |
+| **01 — SHA dos nomes** | `municipios-sergipe-nomes.json` | `fontes.ts` | ⚠ **hash declarado não confere** | o valor registrado é o da resposta compacta da API; o arquivo salvo está formatado. Conteúdo íntegro; registro não verificável — ver [H0](./H0_FUNDACAO_VISUAL_TEMA.md) §18.3 | NÃO |
 | **01 — coordenadas** | 4 pontos nomeados | `pontos.ts` | ❌ `coordenadas: null` | **conferência em campo** | NÃO — já listados fora do desenho |
 | **01 — municípios órfãos** | Serra dos Macacos, Ilha Grande | `pontos.ts` | ❌ `municipioId: null` | vínculo documental | NÃO |
 | **01 — texto editorial** | definição do Vale | `recorte.ts` | ✅ parcial | introdução do território | NÃO |
@@ -2091,7 +2102,23 @@ o princípio, e o princípio é reimplementado com o vocabulário do Observatór
 
 Adaptadas ao código real. Cada fase é entregável isolada, com `pnpm verificar` verde.
 
-## FASE H0 — Fundação de tokens e tema
+## FASE H0 — Fundação de tokens e tema — ✅ IMPLEMENTADA
+
+> Concluída em 2026-09-09. Registro completo em
+> [`H0_FUNDACAO_VISUAL_TEMA.md`](./H0_FUNDACAO_VISUAL_TEMA.md).
+>
+> Entregue sem nenhum Client Component novo (seguem 2), sem dependência nova e com
+> **+0 B de JavaScript**; o CSS cresceu 356 B comprimidos. 97 testes novos.
+>
+> Três desvios do previsto, todos para melhor:
+> **(a)** o `ProvedorPreferencias` **não foi criado** — sem interface de troca de tema
+> nesta fase, ele não teria o que prover, e a cascata de CSS mais um script de 148 B
+> resolvem o caso inteiro, inclusive sem JavaScript;
+> **(b)** os testes de contraste pegaram dois defeitos na primeira paleta escura — a
+> faixa do cabeçalho invertendo e o texto sobre marcador de milho —, ambos corrigidos
+> antes da entrega;
+> **(c)** o CSS do mapa precisou passar a usar tokens invariantes de tema, para que a
+> H0 **não** alterasse o mapa. Zero mudança visual no tema claro.
 
 **Objetivo.** Ampliar `tokens.css` com teal institucional, equivalentes dark, spacing,
 motion, z-index e breakpoints; instalar o mecanismo de tema. Nada visual muda ainda.
@@ -2308,14 +2335,14 @@ Checklist completo na §9.4. Portões duros:
 
 | # | Questão | Bloqueia | Quem decide |
 |---|---|---|---|
-| **Q1** | **Menu principal:** o doc 01 §3 é atualizado para o menu da Direção Visual? Se sim, `/territorio` e `/acervo` são rotas novas ou renomeações de `/mapa` e `/prestacao-de-contas/anexos`? O que acontece com `/campo` e `/educacao`? | **H1** | humano + ADR-017 |
+| ~~**Q1**~~ | ✅ **RESOLVIDA em 2026-09-09** — menu alvo aprovado e registrado na [ADR-017](../decisoes/ADR-017-navegacao-alvo-do-frontend.md). Permanece aberto apenas **onde** `/territorio` e `/acervo` vivem: rotas novas ou reaproveitamento de `/mapa` e `/prestacao-de-contas/anexos`. | H1 | humano |
 | **Q2** | **Ordem da Home:** o bloco `00 — Observatório e Coletivo` é aceito entre o Hero e o Território? | H5 | humano |
-| **Q3** | **Marca monocromática do Coletivo:** existe versão clara para fundo escuro? Sem ela, a assinatura no Hero/header/rodapé fica sem solução conforme. | **H1, H2** | humano / Coletivo |
+| ~~**Q3**~~ | ✅ **RESOLVIDA em 2026-09-09** — a ausência não é bloqueio. Em composição escura, usa-se a marca oficial **colorida sobre superfície neutra/clara de apoio**; proibido redesenhar, recolorir, vetorizar ou inventar versão branca. Uma versão monocromática oficial, se fornecida, substitui a solução. | — | decidido |
 | **Q4** | **Overlay do Hero:** α = 0,60 (recomendado, 5,76:1) ou α = 0,50 (piso AA, 4,61:1)? | H2 | humano — Direção Visual §30.1 |
 | **Q5** | **Crop do Hero:** o recorte automático de `next/image` preserva pessoas e placas em 375 px, ou é preciso derivado nomeado? | H2 | humano, após ver |
 | **Q6** | **Menu mobile sem JavaScript:** a solução D usa folha com estado. Sem JS, o gatilho não abre. Aceita-se `details`/`:target` como base progressiva, ou a navegação sem JS fica só no rodapé? Isso toca "funcionar sem JavaScript nas páginas de leitura" (doc 01 §7). | **H1** | humano |
 | **Q7** | **Seção 03:** declarar o estado dos indicadores é aceitável, ou a seção deve ser omitida como na 10A? | H7 | humano |
-| **Q8** | **`sergipe.geojson`:** autoriza-se baixar o contorno do estado do IBGE nesta fase, com a mesma disciplina de procedência? | H3 | humano |
+| **Q8** | **`sergipe.geojson`:** autoriza-se baixar o contorno do estado do IBGE, com a mesma disciplina de procedência? Auditado na H0: a **malha municipal existe e está íntegra** (75 municípios, SHA confere); o que falta é só o **contorno externo do estado**, arquivo distinto. | H3 | humano |
 | **Q9** | **Licença do IBGE:** pendência aberta desde a ADR-010. O mapa ganha protagonismo — confirmar antes de ampliar o destaque? | H3 | humano |
 | **Q10** | **Ângulo do pôster:** faixa sugerida 18°–28°. Qual valor? | H3 | humano — Direção Visual §30.10 |
 | **Q11** | **Quantidade de fichas de acervo na Home:** 3, 5 ou outro? | H6 | humano |

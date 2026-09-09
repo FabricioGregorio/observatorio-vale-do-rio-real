@@ -37,14 +37,60 @@ export function exigirAmbienteDeDesenvolvimento(
 
 const CAMINHO_TOKENS = join(process.cwd(), "src", "estilos", "tokens.css");
 
-/** Todas as custom properties declaradas no bloco `@theme`. */
-function lerTokens(): Map<string, string> {
-  const css = readFileSync(CAMINHO_TOKENS, "utf8");
+/**
+ * Recorta um bloco `{ … }` a partir do texto que o abre.
+ *
+ * Existe porque, desde a Fase H0, o `tokens.css` declara os mesmos nomes duas
+ * vezes: uma no `@theme`, com os valores da luz do dia, e outra no bloco do
+ * tema escuro. Uma varredura do arquivo inteiro devolveria sempre a **última**
+ * declaração — e esta página passaria a exibir os valores noturnos sob o
+ * rótulo do tema claro, calculando contraste da combinação errada.
+ *
+ * A contagem de chaves é suficiente aqui: o arquivo é nosso, não tem chave
+ * dentro de string nem de comentário nos blocos de token.
+ */
+function recortarBloco(css: string, abertura: string): string {
+  const inicio = css.indexOf(abertura);
+  if (inicio < 0) return "";
+  let profundidade = 0;
+  for (let i = css.indexOf("{", inicio); i < css.length; i += 1) {
+    if (css[i] === "{") profundidade += 1;
+    else if (css[i] === "}") {
+      profundidade -= 1;
+      if (profundidade === 0) return css.slice(inicio, i);
+    }
+  }
+  return "";
+}
+
+function declaracoes(trecho: string): Map<string, string> {
   const tokens = new Map<string, string>();
-  for (const m of css.matchAll(/^\s*(--[a-z0-9-]+):\s*([^;]+);/gim)) {
+  for (const m of trecho.matchAll(/(--[a-z0-9-]+):\s*([^;]+);/gi)) {
     const nome = m[1]?.trim();
     const valor = m[2]?.trim();
     if (nome && valor) tokens.set(nome, valor);
+  }
+  return tokens;
+}
+
+/** Tokens da luz do dia: tudo o que o bloco `@theme` declara. */
+function lerTokens(): Map<string, string> {
+  const css = readFileSync(CAMINHO_TOKENS, "utf8");
+  return declaracoes(recortarBloco(css, "@theme"));
+}
+
+/**
+ * Tokens do tema escuro: o `@theme` inteiro, com os papéis sobrescritos pelo
+ * bloco `[data-tema="escuro"]`. É exatamente o que a cascata entrega ao
+ * navegador, e por isso o contraste calculado aqui é o contraste real.
+ */
+function lerTokensEscuros(): Map<string, string> {
+  const css = readFileSync(CAMINHO_TOKENS, "utf8");
+  const tokens = declaracoes(recortarBloco(css, "@theme"));
+  for (const [nome, valor] of declaracoes(
+    recortarBloco(css, ':root[data-tema="escuro"]'),
+  )) {
+    tokens.set(nome, valor);
   }
   return tokens;
 }
@@ -128,14 +174,34 @@ const PARES: { frente: string; fundo: string; uso: string }[] = [
     uso: "destaque sobre escuro",
   },
   {
-    frente: "--color-texto",
+    frente: "--color-texto-sobre-destaque",
     fundo: "--color-destaque",
     uso: "texto sobre marcador de destaque",
   },
   {
+    frente: "--color-link-hover",
+    fundo: "--color-fundo",
+    uso: "link em hover",
+  },
+  {
+    frente: "--color-marca",
+    fundo: "--color-fundo",
+    uso: "assinatura do Observatório",
+  },
+  {
+    frente: "--color-borda-forte",
+    fundo: "--color-fundo",
+    uso: "fronteira que identifica um controle (3:1)",
+  },
+  {
+    frente: "--color-foco",
+    fundo: "--color-fundo",
+    uso: "contorno de foco (3:1)",
+  },
+  {
     frente: "--color-destaque",
     fundo: "--color-fundo",
-    uso: "PROIBIDO — destaque como texto sobre claro",
+    uso: "destaque como texto sobre o fundo da página",
   },
 ];
 
@@ -151,10 +217,89 @@ const ESCALA = [
   "--text-5xl",
 ];
 
+/**
+ * Uma tabela de contraste para um tema.
+ *
+ * As amostras usam o **valor literal** resolvido, não `var(--token)`: a
+ * tabela do tema escuro precisa mostrar as cores do escuro mesmo quando a
+ * página está sendo lida no claro, e vice-versa.
+ */
+function TabelaDeContraste({
+  titulo,
+  tokens,
+}: {
+  titulo: string;
+  tokens: Map<string, string>;
+}) {
+  const borda = { borderColor: "var(--color-borda)" };
+
+  return (
+    <div className="flex flex-col gap-2">
+      <h3 className="text-lg">{titulo}</h3>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse text-left">
+          <caption className="sr-only">
+            Razão de contraste de cada par de cores em uso — tema {titulo}
+          </caption>
+          <thead>
+            <tr>
+              {["Par", "Uso", "Razão", "Amostra", "Veredito"].map((h) => (
+                <th
+                  key={h}
+                  scope="col"
+                  className="meta-ficha border-b p-2"
+                  style={borda}
+                >
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {PARES.map(({ frente, fundo, uso }) => {
+              const hexFrente = resolver(tokens, frente);
+              const hexFundo = resolver(tokens, fundo);
+              const razao = razaoDeContraste(hexFrente, hexFundo);
+              const { rotulo, aprovado } = veredito(razao);
+              return (
+                <tr key={`${frente}|${fundo}`}>
+                  <td className="meta-ficha border-b p-2" style={borda}>
+                    {frente.replace("--color-", "")} sobre{" "}
+                    {fundo.replace("--color-", "")}
+                  </td>
+                  <td className="border-b p-2" style={borda}>
+                    {uso}
+                  </td>
+                  <td className="meta-ficha border-b p-2" style={borda}>
+                    {razao.toFixed(2)}:1
+                  </td>
+                  <td className="border-b p-2" style={borda}>
+                    <span
+                      className="inline-block px-2 py-1"
+                      style={{ color: hexFrente, backgroundColor: hexFundo }}
+                    >
+                      Aa texto
+                    </span>
+                  </td>
+                  <td className="border-b p-2" style={borda}>
+                    <strong>{aprovado ? "passa" : "não passa"}</strong> —{" "}
+                    {rotulo}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 export default function ReferenciaVisual() {
   exigirAmbienteDeDesenvolvimento(process.env.NODE_ENV);
 
   const tokens = lerTokens();
+  const tokensEscuros = lerTokensEscuros();
   const cores = [...tokens.keys()].filter((n) => n.startsWith("--color-"));
 
   return (
@@ -205,87 +350,26 @@ export default function ReferenciaVisual() {
       <section className="flex flex-col gap-4">
         <h2>Contraste calculado</h2>
         <p style={{ color: "var(--color-texto-suave)" }}>
-          Razão calculada aqui pela fórmula da WCAG 2.1, a partir dos valores
-          dos tokens — não copiada de comentário.
+          Razão calculada aqui pela fórmula da WCAG, a partir dos valores dos
+          tokens — não copiada de comentário. Os dois temas são calculados
+          separadamente: o modo escuro não é inversão, então cada par precisa
+          passar por conta própria.
         </p>
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-left">
-            <caption className="sr-only">
-              Razão de contraste de cada par de cores em uso
-            </caption>
-            <thead>
-              <tr>
-                {["Par", "Uso", "Razão", "Amostra", "Veredito"].map((h) => (
-                  <th
-                    key={h}
-                    scope="col"
-                    className="meta-ficha border-b p-2"
-                    style={{ borderColor: "var(--color-borda)" }}
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {PARES.map(({ frente, fundo, uso }) => {
-                const hexFrente = resolver(tokens, frente);
-                const hexFundo = resolver(tokens, fundo);
-                const razao = razaoDeContraste(hexFrente, hexFundo);
-                const { rotulo, aprovado } = veredito(razao);
-                return (
-                  <tr key={`${frente}|${fundo}`}>
-                    <td
-                      className="meta-ficha border-b p-2"
-                      style={{ borderColor: "var(--color-borda)" }}
-                    >
-                      {frente.replace("--color-", "")} sobre{" "}
-                      {fundo.replace("--color-", "")}
-                    </td>
-                    <td
-                      className="border-b p-2"
-                      style={{ borderColor: "var(--color-borda)" }}
-                    >
-                      {uso}
-                    </td>
-                    <td
-                      className="meta-ficha border-b p-2"
-                      style={{ borderColor: "var(--color-borda)" }}
-                    >
-                      {razao.toFixed(2)}:1
-                    </td>
-                    <td
-                      className="border-b p-2"
-                      style={{ borderColor: "var(--color-borda)" }}
-                    >
-                      <span
-                        className="inline-block px-2 py-1"
-                        style={{
-                          color: `var(${frente})`,
-                          backgroundColor: `var(${fundo})`,
-                        }}
-                      >
-                        Aa texto
-                      </span>
-                    </td>
-                    <td
-                      className="border-b p-2"
-                      style={{ borderColor: "var(--color-borda)" }}
-                    >
-                      <strong>{aprovado ? "passa" : "não passa"}</strong> —{" "}
-                      {rotulo}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        <p style={{ color: "var(--color-texto-suave)" }}>
+          As amostras usam o valor literal de cada tema, e não a variável — do
+          contrário a tabela do escuro seria pintada com o tema da página.
+        </p>
+
+        <TabelaDeContraste titulo="Luz do dia" tokens={tokens} />
+        <TabelaDeContraste titulo="Noite" tokens={tokensEscuros} />
+
         <p>
           O último par existe para deixar a regra visível:{" "}
           <code>--color-destaque</code> nunca é cor de texto sobre fundo claro.
           Sobre claro ele serve como preenchimento, borda ou marcador, com o
-          texto em <code>--color-texto</code> por cima — que é o penúltimo par.
+          texto em <code>--color-texto</code> por cima — que é o par anterior.
+          No escuro a restrição se inverte e ele passa com folga: é justamente
+          por isso que o milho é o contorno de foco do tema escuro.
         </p>
       </section>
 
