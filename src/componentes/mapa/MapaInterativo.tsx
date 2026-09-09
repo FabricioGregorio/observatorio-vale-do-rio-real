@@ -40,13 +40,19 @@ const RECUA = new Set(["ArrowLeft", "ArrowUp"]);
 export function MapaInterativo({
   idDoSvg,
   idDaLista,
+  idDoPainel,
+  promoverLista = false,
 }: {
   idDoSvg: string;
   idDaLista: string;
+  idDoPainel?: string;
+  promoverLista?: boolean;
 }) {
   useEffect(() => {
     const svg = document.getElementById(idDoSvg);
     const lista = document.getElementById(idDaLista);
+    const painel =
+      idDoPainel === undefined ? null : document.getElementById(idDoPainel);
     if (svg === null) return;
 
     const opcoes = Array.from(
@@ -60,12 +66,37 @@ export function MapaInterativo({
     svg.setAttribute("data-interativo", "true");
 
     let ativo = 0;
+    let ativoNaLista = 0;
     let selecionado: number | null = null;
+
+    const itensDaLista =
+      lista === null
+        ? []
+        : Array.from(
+            lista.querySelectorAll<HTMLElement>(":scope > [data-codigo]"),
+          );
 
     for (const [indice, opcao] of opcoes.entries()) {
       opcao.setAttribute("role", "option");
       opcao.setAttribute("aria-selected", "false");
       opcao.setAttribute("tabindex", indice === 0 ? "0" : "-1");
+      if (idDoPainel !== undefined) {
+        opcao.setAttribute("aria-controls", idDoPainel);
+      }
+    }
+
+    if (promoverLista && lista !== null) {
+      lista.setAttribute("role", "listbox");
+      lista.setAttribute("aria-label", "Índice dos municípios de Sergipe");
+      lista.setAttribute("data-interativo", "true");
+      for (const [indice, item] of itensDaLista.entries()) {
+        item.setAttribute("role", "option");
+        item.setAttribute("aria-selected", "false");
+        item.setAttribute("tabindex", indice === 0 ? "0" : "-1");
+        if (idDoPainel !== undefined) {
+          item.setAttribute("aria-controls", idDoPainel);
+        }
+      }
     }
 
     /** Roving tabindex: só o ativo é alcançável por Tab. */
@@ -85,6 +116,54 @@ export function MapaInterativo({
       return lista.querySelector<HTMLElement>(`[data-codigo="${codigo}"]`);
     }
 
+    function atualizarPainel(item: HTMLElement | null) {
+      if (painel === null) return;
+
+      const vazio = painel.querySelector<HTMLElement>("[data-painel-vazio]");
+      const conteudo = painel.querySelector<HTMLElement>(
+        "[data-painel-conteudo]",
+      );
+      if (item === null) {
+        if (vazio !== null) vazio.hidden = false;
+        if (conteudo !== null) conteudo.hidden = true;
+        return;
+      }
+
+      if (vazio !== null) vazio.hidden = true;
+      if (conteudo !== null) conteudo.hidden = false;
+
+      const nome = painel.querySelector<HTMLElement>("[data-painel-nome]");
+      const classificacao = painel.querySelector<HTMLElement>(
+        "[data-painel-classificacao]",
+      );
+      const evidencias = painel.querySelector<HTMLUListElement>(
+        "[data-painel-evidencias]",
+      );
+
+      if (nome !== null) nome.textContent = item.dataset.nome ?? "";
+      if (classificacao !== null) {
+        classificacao.textContent =
+          item.dataset.classificacao ?? "Sem vínculo declarado";
+      }
+      if (evidencias !== null) {
+        const textos = Array.from(
+          item.querySelectorAll<HTMLElement>("[data-evidencia]"),
+        ).map((evidencia) => evidencia.textContent ?? "");
+        evidencias.replaceChildren();
+        if (textos.length === 0) {
+          const semEvidencia = document.createElement("li");
+          semEvidencia.textContent = "Sem evidência de pesquisa declarada";
+          evidencias.append(semEvidencia);
+        } else {
+          for (const texto of textos) {
+            const evidencia = document.createElement("li");
+            evidencia.textContent = texto;
+            evidencias.append(evidencia);
+          }
+        }
+      }
+    }
+
     function selecionar(indice: number) {
       if (selecionado !== null) {
         opcoes[selecionado]?.setAttribute("aria-selected", "false");
@@ -96,17 +175,22 @@ export function MapaInterativo({
       const item = itemDaLista(indice);
       if (item !== null) {
         item.setAttribute("data-selecionado", "true");
+        if (promoverLista) item.setAttribute("aria-selected", "true");
         // `nearest` e sem animação: rolagem brusca atrapalha, e
         // `prefers-reduced-motion` não deve ser contrariado.
         item.scrollIntoView({ block: "nearest", behavior: "auto" });
       }
+      atualizarPainel(item);
     }
 
     function limparSelecao() {
       if (selecionado === null) return;
       opcoes[selecionado]?.setAttribute("aria-selected", "false");
-      itemDaLista(selecionado)?.removeAttribute("data-selecionado");
+      const item = itemDaLista(selecionado);
+      item?.removeAttribute("data-selecionado");
+      if (promoverLista) item?.setAttribute("aria-selected", "false");
       selecionado = null;
+      atualizarPainel(null);
     }
 
     function aoTeclar(evento: KeyboardEvent) {
@@ -159,22 +243,110 @@ export function MapaInterativo({
       if (indice >= 0) ativo = indice;
     }
 
+    function moverNaLista(destino: number, focar: boolean) {
+      const anterior = itensDaLista[ativoNaLista];
+      const proximo = itensDaLista[destino];
+      if (proximo === undefined) return;
+      if (anterior !== undefined) anterior.setAttribute("tabindex", "-1");
+      proximo.setAttribute("tabindex", "0");
+      ativoNaLista = destino;
+      if (focar) proximo.focus();
+    }
+
+    function selecionarPeloItem(indiceDaLista: number) {
+      const codigo = itensDaLista[indiceDaLista]?.dataset.codigo;
+      if (codigo === undefined) return;
+      const indiceDoMapa = opcoes.findIndex(
+        (opcao) => opcao.dataset.codigo === codigo,
+      );
+      if (indiceDoMapa < 0) return;
+      mover(indiceDoMapa, false);
+      selecionar(indiceDoMapa);
+    }
+
+    function aoTeclarLista(evento: KeyboardEvent) {
+      if (AVANCA.has(evento.key)) {
+        evento.preventDefault();
+        moverNaLista(Math.min(ativoNaLista + 1, itensDaLista.length - 1), true);
+        return;
+      }
+      if (RECUA.has(evento.key)) {
+        evento.preventDefault();
+        moverNaLista(Math.max(ativoNaLista - 1, 0), true);
+        return;
+      }
+      if (evento.key === "Home") {
+        evento.preventDefault();
+        moverNaLista(0, true);
+        return;
+      }
+      if (evento.key === "End") {
+        evento.preventDefault();
+        moverNaLista(itensDaLista.length - 1, true);
+        return;
+      }
+      if (evento.key === "Enter" || evento.key === " ") {
+        evento.preventDefault();
+        selecionarPeloItem(ativoNaLista);
+        return;
+      }
+      if (evento.key === "Escape") limparSelecao();
+    }
+
+    function aoClicarNaLista(evento: Event) {
+      const alvo = evento.target;
+      if (!(alvo instanceof Element)) return;
+      const item = alvo.closest<HTMLElement>("[data-codigo]");
+      if (item === null || !itensDaLista.includes(item)) return;
+      const indice = itensDaLista.indexOf(item);
+      moverNaLista(indice, false);
+      selecionarPeloItem(indice);
+    }
+
+    function aoFocarNaLista(evento: FocusEvent) {
+      const alvo = evento.target;
+      if (!(alvo instanceof HTMLElement)) return;
+      const indice = itensDaLista.indexOf(alvo);
+      if (indice >= 0) ativoNaLista = indice;
+    }
+
     svg.addEventListener("keydown", aoTeclar);
     svg.addEventListener("click", aoClicar);
     svg.addEventListener("focusin", aoFocar);
+    if (promoverLista && lista !== null) {
+      lista.addEventListener("keydown", aoTeclarLista);
+      lista.addEventListener("click", aoClicarNaLista);
+      lista.addEventListener("focusin", aoFocarNaLista);
+    }
 
     return () => {
       svg.removeEventListener("keydown", aoTeclar);
       svg.removeEventListener("click", aoClicar);
       svg.removeEventListener("focusin", aoFocar);
+      if (promoverLista && lista !== null) {
+        lista.removeEventListener("keydown", aoTeclarLista);
+        lista.removeEventListener("click", aoClicarNaLista);
+        lista.removeEventListener("focusin", aoFocarNaLista);
+        lista.removeAttribute("role");
+        lista.removeAttribute("aria-label");
+        lista.removeAttribute("data-interativo");
+      }
       svg.removeAttribute("data-interativo");
       for (const opcao of opcoes) {
         opcao.removeAttribute("role");
         opcao.removeAttribute("aria-selected");
         opcao.removeAttribute("tabindex");
+        opcao.removeAttribute("aria-controls");
+      }
+      for (const item of itensDaLista) {
+        item.removeAttribute("role");
+        item.removeAttribute("aria-selected");
+        item.removeAttribute("tabindex");
+        item.removeAttribute("aria-controls");
+        item.removeAttribute("data-selecionado");
       }
     };
-  }, [idDoSvg, idDaLista]);
+  }, [idDoSvg, idDaLista, idDoPainel, promoverLista]);
 
   return null;
 }

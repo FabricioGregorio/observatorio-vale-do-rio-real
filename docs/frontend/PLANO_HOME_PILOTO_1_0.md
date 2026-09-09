@@ -2458,3 +2458,23 @@ Registro técnico e medições:
 O referencial de 500 kB segue excedido e documentado. Por decisão da tarefa,
 a fotografia aprovada não foi degradada para atingir o número. A implementação
 continua **local, não publicada**, sem push ou alteração de infraestrutura.
+
+## 32.6 Atualização H2 — Território em protótipo
+
+> **Atualização de 2026-09-09.** A numeração operacional mais recente chama a
+> fase cartográfica de **H2 — Território**; ela corresponde ao pôster
+> cartográfico anteriormente planejado como H3. O Hero aprovado não foi
+> reaberto.
+
+Estado: **EM PROTÓTIPO**, exclusivamente em `/dev/territorio`, com 404 em
+produção. Dois presets compartilham a mesma malha oficial, projeção, paleta e
+interação: A com profundidade mínima e B com profundidade moderada. A
+recomendação preliminar é A; a escolha é humana.
+
+A Home continua com a seção cartográfica anterior, sem substituição ou mudança
+de conteúdo. Registro técnico, medições e capturas:
+[`H2_TERRITORIO_PROTOTIPO.md`](./H2_TERRITORIO_PROTOTIPO.md).
+
+Nenhuma dependência, coordenada, rota pública, banco ou infraestrutura foi
+criada. Não houve deploy nem push. A integração H2.1 só pode começar após a
+aprovação explícita da profundidade e da copy proposta.

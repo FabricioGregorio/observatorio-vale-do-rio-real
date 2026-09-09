@@ -1447,3 +1447,29 @@ manual nem overflow horizontal.
 Fotografia, crop, overlay, marcas, cabeçalho, mapa e próxima seção permaneceram
 inalterados. Registro: [`H1_2_REFINAMENTO_LARGURA_TITULO.md`](./docs/frontend/H1_2_REFINAMENTO_LARGURA_TITULO.md).
 Estado local; sem deploy, push ou mudança de infraestrutura.
+
+### H2 — Território em protótipo, 2026-09-09
+
+O laboratório DEV `/dev/territorio` apresenta a seção cartográfica completa em
+dois presets de profundidade. A malha oficial do IBGE, os 75 municípios, o
+recorte de cinco municípios do Vale e São Cristóvão como pesquisa/comparação
+foram preservados. Nenhum pin foi criado: os quatro pontos sem coordenada
+continuam fora do desenho e declarados em texto.
+
+A geometria segue server-side em um único SVG, sem clone ou biblioteca nova.
+CSS produz perspectiva, espessura e sombra; a ilha cliente existente recebeu
+opções desativadas por padrão para sincronizar mapa, índice e painel no
+protótipo. O modo público atual não habilita essas opções.
+
+Preset A usa profundidade mínima; preset B, moderada. A recomendação preliminar
+é **A**, por preservar melhor o contorno em claro, escuro e mobile. A decisão
+final continua humana. Registro completo:
+[`H2_TERRITORIO_PROTOTIPO.md`](./docs/frontend/H2_TERRITORIO_PROTOTIPO.md).
+
+Build local passou e `/dev/territorio` respondeu 404 em produção. Testes
+direcionados cobrem geometria, hover, foco, seleção, teclado, lista
+sincronizada, movimento reduzido, temas e 320/375/768/1440 sem overflow. As
+sete capturas reais ficam fora do Git.
+
+Estado: **EM PROTÓTIPO**. Home ainda não integrada; sem MapLibre, dependência
+nova, deploy, push, banco, R2, Vercel, DNS ou mudança de infraestrutura.
