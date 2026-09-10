@@ -313,8 +313,39 @@ test.describe("Home", () => {
     ).toBeVisible();
 
     const conteudo = await pesquisa.innerText();
-    expect(conteudo).not.toMatch(/sem pessoas identificáveis/i);
     expect(conteudo).not.toMatch(/três (registros|fotografias)/i);
+  });
+
+  /**
+   * A regra de privacidade continua valendo inteira: as três fotografias só
+   * existem porque nenhuma tem pessoa identificável. O que saiu da Home foi a
+   * *linguagem* de gate — dizer ao visitante que o material passou por um
+   * controle é conversa de auditoria, não de seção editorial. O controle
+   * permanece nos bastidores, e é o teste dos derivados que o vigia.
+   */
+  test("a narrativa da pesquisa não usa linguagem de gate de privacidade", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const conteudo = await page.getByTestId("pesquisa-home").innerText();
+
+    expect(conteudo).not.toMatch(/pessoa identificável|identificáveis/i);
+    expect(conteudo).not.toMatch(/privacidade|autoriza[çc]|consentimento/i);
+    expect(conteudo).not.toMatch(/auditori|revis[ãa]o|publicá?vel/i);
+  });
+
+  test("a ficha declara local e ausência de data, sem nomear a fonte restrita", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const ficha = page.getByTestId("pesquisa-home").locator("dl").first();
+
+    await expect(ficha.locator("dt")).toHaveCount(2);
+    await expect(ficha).toContainText("Local");
+    await expect(ficha).toContainText("Ilha Grande");
+    await expect(ficha).toContainText("Data");
+    await expect(ficha).toContainText("Não informada");
+    await expect(ficha).not.toContainText("Fonte");
   });
 
   /**

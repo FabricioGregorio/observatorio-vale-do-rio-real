@@ -24,7 +24,6 @@ export const CSS_DA_PESQUISA = `
 .pesquisa-campo__texto p{margin:0}
 .pesquisa-campo__texto h3{font-size:clamp(var(--text-2xl),3vw,var(--text-3xl));max-width:15ch}
 .pesquisa-campo__metodo{padding-top:1.4rem;border-top:1px solid var(--color-borda)}
-.pesquisa-campo__aviso{padding-left:1rem;border-left:3px solid var(--color-marca);color:var(--color-texto-suave)}
 
 .pesquisa-campo[data-composicao="documental-aberto"] .pesquisa-campo__corpo{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:clamp(1.25rem,3vw,2.5rem);align-items:start}
 .pesquisa-campo[data-composicao="documental-aberto"] .pesquisa-campo__principal{grid-column:1/span 8}

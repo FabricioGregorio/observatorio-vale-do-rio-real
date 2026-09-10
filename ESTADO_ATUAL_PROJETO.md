@@ -1552,3 +1552,40 @@ Gates locais passaram; `pnpm pendencias` não verificou nada por ausência de
 Estado: **IMPLEMENTADA LOCALMENTE, NÃO DEPLOYADA**. Sem MapLibre, dependência
 nova, deploy, push, banco, R2, Vercel, DNS ou mudança de infraestrutura. H4 não
 foi iniciada.
+### H3.2 — acabamento editorial da Pesquisa em Campo, 2026-09-10
+
+A composição do Preset A foi revisada e **aprovada sem redesenho**. Esta rodada
+mexeu só em copy, na camada de metadado e na documentação.
+
+O cabeçalho que aparecia sobre a fotografia nas capturas era **artefato de
+screenshot**, não defeito. Medido em navegador real em 1440, 375 e 320 px, na
+carga, rolando para baixo, rolando para cima, com 45 paradas de Tab e com o
+painel de acessibilidade aberto: rolando para baixo ele recolhe e sai da
+viewport; ao reaparecer não sobrepõe a seção; nenhum focável fora do cabeçalho
+fica obscurecido por ele. Nenhuma linha do cabeçalho foi alterada, e as
+capturas de comprovação passaram a ser de viewport normal.
+
+A introdução perdeu a linguagem de gate de privacidade e agora é "A pesquisa
+foi a campo e fotografou o que encontrou. As imagens desta seção pertencem ao
+acervo do projeto e documentam lugares onde o trabalho aconteceu." O bloco de
+leitura ficou editorial, e a ausência de data virou campo de ficha, com `Local`
+e `Data` na coluna de leitura. O bloco de método foi **aprovado** e reescrito
+em registro menos defensivo. A fonte documental restrita continua fora da Home,
+agora também por construção: a ficha pública tem dois campos e nunca traz
+`Fonte`.
+
+Os três títulos de fotografia não mudaram e continuam sendo legenda descritiva,
+nunca topônimo. As três fotografias são as mesmas, sem alteração de pipeline,
+de dependência ou de peso material. A dívida de performance permanece
+registrada em cerca de 797 kB no cenário de 1440 px.
+
+Decisão humana da mesma data: **H4 é Dados / Indicadores**. A Central de
+Acessibilidade deixa de ser fase própria e passa a camada transversal, com
+fechamento na H7. A sequência vigente é H0 fundação visual, H1 Hero, H2
+Território, H3 Pesquisa em Campo, H4 Dados e Indicadores, H5 Pessoas e Vozes,
+H6 PodObservar, Acervo e Transparência, H7 acessibilidade, movimento,
+performance e polimento final. O plano registra a sequência e mantém o
+histórico.
+
+Estado: **H3 ENCERRADA, IMPLEMENTADA LOCALMENTE, NÃO DEPLOYADA**. Sem deploy,
+push, banco, R2, Vercel, DNS ou mudança de infraestrutura. H4 não foi iniciada.

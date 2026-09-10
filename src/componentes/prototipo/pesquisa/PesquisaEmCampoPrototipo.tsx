@@ -18,7 +18,24 @@ const ROTULOS: Readonly<Record<ComposicaoDaPesquisa, string>> = {
   "caderno-tecnico": "B — Caderno técnico",
 };
 
-function FichaDoRegistro({ registro }: { registro: DerivadoDaPesquisa }) {
+/**
+ * Ficha do registro — a camada de metadado da seção.
+ *
+ * `Local` e `Data` são os dois campos que interessam a quem lê: onde, e a
+ * declaração de que a data não veio junto. A ausência é dita aqui, como campo,
+ * e não explicada no texto corrido.
+ *
+ * `completa` acrescenta tipo e fonte, e existe só para o Preset B do
+ * laboratório. **A fonte nomeia o conjunto documental restrito**, então ela
+ * nunca acompanha a composição publicada na Home.
+ */
+function FichaDoRegistro({
+  registro,
+  completa = false,
+}: {
+  registro: DerivadoDaPesquisa;
+  completa?: boolean;
+}) {
   return (
     <dl className="pesquisa-campo__ficha">
       <div>
@@ -29,14 +46,18 @@ function FichaDoRegistro({ registro }: { registro: DerivadoDaPesquisa }) {
         <dt>Data</dt>
         <dd>Não informada</dd>
       </div>
-      <div>
-        <dt>Tipo de registro</dt>
-        <dd>{registro.tipo}</dd>
-      </div>
-      <div>
-        <dt>Fonte</dt>
-        <dd>{registro.fonte}</dd>
-      </div>
+      {completa ? (
+        <>
+          <div>
+            <dt>Tipo de registro</dt>
+            <dd>{registro.tipo}</dd>
+          </div>
+          <div>
+            <dt>Fonte</dt>
+            <dd>{registro.fonte}</dd>
+          </div>
+        </>
+      ) : null}
     </dl>
   );
 }
@@ -150,9 +171,9 @@ ${CSS_DO_LABORATORIO_DA_PESQUISA}`
         </div>
         <h2 id={`${prefixo}-titulo`}>O campo como documento</h2>
         <p>
-          A pesquisa foi a campo, e o registro fotográfico é parte do que ela
-          produziu. As imagens desta seção vêm do acervo do projeto e são
-          publicadas sem pessoa identificável.
+          A pesquisa foi a campo e fotografou o que encontrou. As imagens desta
+          seção pertencem ao acervo do projeto e documentam lugares onde o
+          trabalho aconteceu.
         </p>
       </div>
 
@@ -163,23 +184,23 @@ ${CSS_DO_LABORATORIO_DA_PESQUISA}`
           <p className="meta-ficha">Leitura do registro</p>
           <h3>Da abstração do mapa à materialidade do território</h3>
           <p>
-            As fotografias deste recorte estão documentadas como Ilha Grande. A
-            data das imagens não está confirmada e, por isso, não é inferida a
-            partir de entrevistas, relatórios ou metadados do arquivo.
+            Os registros desta seção são de Ilha Grande, um dos lugares onde a
+            pesquisa esteve.
           </p>
-          {composicao === "caderno-tecnico" ? (
-            <FichaDoRegistro registro={igreja} />
-          ) : (
-            <p className="pesquisa-campo__aviso">
-              Ilha Grande · registro fotográfico · data não informada
-            </p>
-          )}
+          {/*
+            A ausência de data é dita na ficha, como campo, e não explicada no
+            texto. O visitante precisa saber que a data não veio junto; o
+            porquê de ela não ser inferida é assunto do registro técnico.
+          */}
+          <FichaDoRegistro
+            completa={composicao === "caderno-tecnico"}
+            registro={igreja}
+          />
           <div className="pesquisa-campo__metodo">
             <p className="meta-ficha">Método · síntese transversal</p>
             <p>
-              O corpus do projeto reúne registros fotográficos, entrevistas
-              gravadas e formulários de resposta. Esta síntese não atribui todas
-              as técnicas a todos os locais.
+              A pesquisa reúne fotografia, entrevista gravada e formulário de
+              resposta. Nem todo lugar recebeu as três.
             </p>
           </div>
         </div>

@@ -2118,6 +2118,32 @@ o princípio, e o princípio é reimplementado com o vocabulário do Observatór
 
 # 29. Fases
 
+> **⚠ NUMERAÇÃO SUPERADA — decisão humana de 2026-09-10.**
+>
+> A lista de fases abaixo é a do planejamento original e **não é mais a
+> sequência vigente**. Ela chamava o pôster cartográfico de H3 e a Central de
+> Acessibilidade de H4; a execução seguiu outra ordem, e a divergência já
+> causou confusão de nome. A sequência vigente está na §32.10 e é esta:
+>
+> | Fase | Assunto |
+> |---|---|
+> | H0 | Fundação visual |
+> | H1 | Hero |
+> | H2 | Território |
+> | H3 | Pesquisa em Campo |
+> | H4 | Dados / Indicadores |
+> | H5 | Pessoas / Vozes |
+> | H6 | PodObservar, Acervo e Transparência |
+> | H7 | Acessibilidade, movimento, performance e polimento final |
+>
+> O conteúdo das fases abaixo continua válido como especificação de objetivo,
+> arquivos, critério de aceite e risco. **Só o número mudou de dono.** Nada foi
+> apagado, e o histórico permanece legível.
+>
+> A Central de Acessibilidade **não deixa de existir**: ela sai da condição de
+> fase própria e passa a ser camada transversal do frontend, com fechamento e
+> polimento na H7.
+
 Adaptadas ao código real. Cada fase é entregável isolada, com `pnpm verificar` verde.
 
 ## FASE H0 — Fundação de tokens e tema — ✅ IMPLEMENTADA
@@ -2554,3 +2580,51 @@ Registro completo: [H3_INTEGRACAO_PESQUISA_HOME.md](./H3_INTEGRACAO_PESQUISA_HOM
 
 Nenhuma dependência, MapLibre, rota pública, banco ou infraestrutura foi criada.
 Não houve deploy nem push. H4 não foi iniciada.
+## 32.10 Sequência vigente das fases — decisão humana de 2026-09-10
+
+A numeração do planejamento original divergiu da execução. A decisão humana
+encerra a ambiguidade e fixa a sequência abaixo como **vigente**:
+
+| Fase | Assunto | Estado |
+|---|---|---|
+| H0 | Fundação visual | implementada |
+| H1 | Hero | implementada localmente |
+| H2 | Território | implementada localmente |
+| H3 | Pesquisa em Campo | implementada localmente, encerrada na H3.2 |
+| H4 | Dados / Indicadores | não iniciada |
+| H5 | Pessoas / Vozes | não iniciada |
+| H6 | PodObservar, Acervo e Transparência | não iniciada |
+| H7 | Acessibilidade, movimento, performance e polimento final | não iniciada |
+
+**H4 é Dados / Indicadores.** A Central de Acessibilidade, que a numeração
+antiga chamava de H4, passa a ser tratada como camada transversal do frontend:
+ela já existe e funciona na Home, e seu fechamento acontece na H7. O aviso no
+topo da §29 aponta para cá, e nenhuma fase antiga foi removida do documento.
+
+## 32.11 Atualização H3.2 — acabamento editorial da Pesquisa em Campo
+
+> **Atualização de 2026-09-10.** A composição do Preset A foi revisada
+> visualmente e **aprovada**. Esta rodada não redesenhou nada: mexeu só em copy
+> e investigou o comportamento do cabeçalho.
+
+**Cabeçalho.** O cabeçalho que aparecia sobre a fotografia nas capturas é
+**artefato de screenshot**, não defeito. Ele é `fixed` no topo, e captura
+full-page ou de elemento o congela na posição em que estava na viewport, no
+meio da imagem final. Medido em navegador real em 1440, 375 e 320 px, na carga,
+rolando para baixo, rolando para cima, com foco por teclado e com o painel de
+acessibilidade aberto: rolando para baixo ele recolhe e sai da viewport; ao
+reaparecer não sobrepõe a seção; nenhum focável fora do cabeçalho fica
+obscurecido por ele. **Nenhuma linha do cabeçalho foi alterada.**
+
+**Copy.** A introdução perdeu a linguagem de gate de privacidade. O bloco de
+leitura ficou editorial e a ausência de data migrou para a ficha, como campo. O
+bloco de método foi aprovado e reescrito em registro menos defensivo. Os três
+títulos de fotografia continuam como estavam, e continuam sendo legenda
+descritiva, nunca topônimo.
+
+**Performance.** Nada foi alterado. A dívida permanece registrada: cerca de
+797 kB em 1440 px no cenário medido, contra o referencial de 500 kB. A
+auditoria de performance e Lighthouse acontece na H7.
+
+Registro completo: [H3_INTEGRACAO_PESQUISA_HOME.md](./H3_INTEGRACAO_PESQUISA_HOME.md).
+Sem deploy, push ou mudança de infraestrutura. H4 não foi iniciada.

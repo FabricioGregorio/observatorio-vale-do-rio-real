@@ -1,10 +1,15 @@
-# H3.1 — Integração da Pesquisa em Campo na Home
+# H3 — Integração da Pesquisa em Campo na Home
 
 **Data:** 2026-09-10
 
 **Estado:** implementada e validada localmente; não publicada
 
-**Baseline:** ad86097 — feat: prototipa pesquisa em campo
+**Baselines:** ad86097 — feat: prototipa pesquisa em campo (H3.1);
+9d0f13f — feat: integra pesquisa em campo na home (H3.2)
+
+**Rodadas:** H3.1 integrou o Preset A na Home. H3.2 revisou a composição, que
+foi **aprovada sem redesenho**, e fez o acabamento editorial mais o
+diagnóstico do cabeçalho fixo. As seções abaixo já refletem a H3.2.
 
 ## 1. Decisão aplicada
 
@@ -41,40 +46,92 @@ O cabeçalho da seção usa `div`, e não `header`. Um `header` aninhado em
 criaria um segundo `<header>` visível na Home. O Território já usa `div` pelo
 mesmo motivo.
 
-## 3. A introdução, e o que sustenta cada afirmação
+## 3. A copy, versão por versão, e o que sustenta cada afirmação
 
-A frase do protótipo — "Três registros sem pessoas identificáveis aproximam a
-cartografia da presença física..." — **não foi levada para a Home**. Ela lia
-como nota de auditoria e ficava presa ao número de imagens publicadas.
+Três blocos de texto passaram por duas rodadas. A regra que atravessa as duas é
+a mesma: **a seção é editorial, não é laudo**. O controle de privacidade
+continua inteiro nos bastidores, e é o teste dos derivados que o vigia; o que
+saiu foi a linguagem de gate dentro da narrativa pública.
 
-Texto que entrou no lugar:
+### 3.1 Introdução da seção
 
-> A pesquisa foi a campo, e o registro fotográfico é parte do que ela produziu.
-> As imagens desta seção vêm do acervo do projeto e são publicadas sem pessoa
-> identificável.
+| Rodada | Texto |
+|---|---|
+| protótipo | "Três registros sem pessoas identificáveis aproximam a cartografia da presença física: chegada por água, arquitetura e uma atividade em área coberta." |
+| H3.1 | "A pesquisa foi a campo, e o registro fotográfico é parte do que ela produziu. As imagens desta seção vêm do acervo do projeto e são publicadas sem pessoa identificável." |
+| **H3.2, vigente** | **"A pesquisa foi a campo e fotografou o que encontrou. As imagens desta seção pertencem ao acervo do projeto e documentam lugares onde o trabalho aconteceu."** |
 
-| Afirmação | O que a sustenta |
+A versão do protótipo lia como nota de auditoria e dependia do número de
+imagens. A da H3.1 resolveu isso, mas ainda trazia "sem pessoa identificável"
+para dentro da narrativa: uma política de publicação virava mensagem editorial
+da seção. A versão vigente não menciona quantidade, privacidade, autorização,
+auditoria nem gate de publicação.
+
+| Afirmação vigente | O que a sustenta |
 |---|---|
 | a pesquisa foi a campo | relatórios técnicos de visita, entrevistas gravadas com local declarado e o próprio conjunto fotográfico do acervo |
-| o registro fotográfico é parte do que ela produziu | 56 fotografias auditadas na H3, dentro do corpus canônico |
-| as imagens vêm do acervo do projeto | os três derivados têm original, hash e caminho registrados em `src/dados/pesquisa/derivados.ts` |
-| são publicadas sem pessoa identificável | classificação APTA por inspeção visual individual, registrada na matriz da H3 |
+| e fotografou o que encontrou | o conjunto fotográfico de campo auditado na H3, dentro do corpus canônico |
+| as imagens pertencem ao acervo do projeto | os três derivados têm original, hash e caminho registrados em `src/dados/pesquisa/derivados.ts` |
+| documentam lugares onde o trabalho aconteceu | Ilha Grande tem entrevista e registros fotográficos próprios no corpus |
 
-Nenhuma data, técnica, pessoa, coordenada, município ou visita foi criada. A
-frase não conta imagens, para não voltar a depender de quantas são.
+Nenhuma data, técnica por local, pessoa, coordenada, município ou visita foi
+criada em nenhuma das versões.
 
-O parágrafo de leitura também deixou de contar fotografias: "Este recorte reúne
-três fotografias documentadas como Ilha Grande" virou "As fotografias deste
-recorte estão documentadas como Ilha Grande". Os fatos são os mesmos.
+### 3.2 Bloco "Leitura do registro"
 
-**Pendência de aprovação registrada.** O bloco "Método · síntese transversal" —
-"O corpus do projeto reúne registros fotográficos, entrevistas gravadas e
-formulários de resposta" — estava marcado como *precisa aprovação* na tabela de
-copy da H3 e não foi mencionado nas decisões desta rodada. Ele permanece na
-Home porque é afirmação factual e transversal, sustentada por B01, pelos oito
-pares de entrevista e pelas planilhas de resposta, e porque é o que comunica
-que a pesquisa envolveu mais do que fotografia. **Continua aguardando aprovação
-humana explícita.**
+O rótulo e o título continuam como aprovados: `LEITURA DO REGISTRO` e "Da
+abstração do mapa à materialidade do território".
+
+| Rodada | Parágrafo |
+|---|---|
+| H3.1 | "As fotografias deste recorte estão documentadas como Ilha Grande. A data das imagens não está confirmada e, por isso, não é inferida a partir de entrevistas, relatórios ou metadados do arquivo." |
+| **H3.2, vigente** | **"Os registros desta seção são de Ilha Grande, um dos lugares onde a pesquisa esteve."** |
+
+O que interessa a quem visita é onde e quando. O onde ficou na frase; o quando
+virou campo de ficha. A explicação de por que a data **não é inferida** saiu da
+narrativa e continua aqui, no registro técnico: a data não é deduzida de
+entrevista, relatório ou metadado de arquivo, porque nenhuma dessas fontes
+data a fotografia.
+
+"um dos lugares onde a pesquisa esteve" é sustentado e deliberadamente não
+enumera os demais locais — enumerar traria à Home um relatório que continua
+fora do lote público.
+
+### 3.3 Ficha do registro
+
+A ficha na coluna de leitura passou a ter dois campos, e substituiu a linha
+solta que repetia o mesmo metadado das legendas:
+
+```
+LOCAL   Ilha Grande
+DATA    Não informada
+```
+
+A ausência de data é declarada como campo, que é o lugar dela. `Tipo de
+registro` e `Fonte` continuam existindo apenas no Preset B do laboratório —
+**`Fonte` nomeia o conjunto documental restrito e nunca acompanha a composição
+publicada.** As legendas das três fotografias seguem trazendo local, ausência
+de data e tipo de registro em IBM Plex Mono.
+
+### 3.4 Bloco de método — aprovado
+
+O bloco estava marcado como *precisa aprovação* desde o protótipo. **Foi
+aprovado em 2026-09-10**, com a condição de comunicar a pluralidade das fontes
+em caráter transversal, sem atribuir todas as técnicas a todos os lugares, e em
+registro editorial em vez de defensivo.
+
+| Rodada | Texto |
+|---|---|
+| H3.1 | "O corpus do projeto reúne registros fotográficos, entrevistas gravadas e formulários de resposta. Esta síntese não atribui todas as técnicas a todos os locais." |
+| **H3.2, vigente** | **"A pesquisa reúne fotografia, entrevista gravada e formulário de resposta. Nem todo lugar recebeu as três."** |
+
+O rótulo `MÉTODO · SÍNTESE TRANSVERSAL` permanece em IBM Plex Mono. A segunda
+frase diz o mesmo limite da anterior sem falar sobre si mesma: quem lê entende
+que as técnicas descrevem o conjunto da pesquisa, não cada local.
+
+Sustentação: o corpus reúne fotografias de campo, oito pares de áudio e
+transcrição de entrevista e planilhas de resposta de formulário; e os conjuntos
+por local não são iguais entre si.
 
 ## 4. Situação documental dos três títulos
 
@@ -223,27 +280,80 @@ Testes novos, todos sobre a Home real:
 - ausência de `B01`, `A03`, `A04`, do título interno e do caminho do relatório;
 - Pesquisa em Campo depois do Território, sem `button` nem `listbox` novos;
 - fiação verificada em teste de unidade: a Home importa a entrada pública, não
-  o componente de laboratório, e a entrada pública fixa a composição A.
+  o componente de laboratório, e a entrada pública fixa a composição A;
+- **H3.2** — a narrativa da seção não usa linguagem de gate: nenhuma ocorrência
+  de "pessoa identificável", "privacidade", "autorização", "consentimento",
+  "auditoria", "revisão" ou "publicável";
+- **H3.2** — a ficha tem exatamente dois campos, declara `Local` e a ausência
+  de data, e **não** traz `Fonte`.
 
 Sem overflow horizontal em 320, 375, 768 e 1440 px, nos temas claro e escuro. A
 ordem no mobile é título, fotografia principal, leitura e registros seguintes.
 As rotas `/dev/pesquisa`, `/dev/territorio` e `/dev/hero` respondem 404 no
 servidor de produção.
 
-Capturas reais, fora do Git, em `tmp/h3-screenshots/`:
-`home-pesquisa-1440-light.png`, `home-pesquisa-1440-dark.png`,
-`home-pesquisa-768-light.png`, `home-pesquisa-375-light.png`,
-`home-pesquisa-375-dark.png` e `home-pesquisa-320-light.png`, mais um recorte
-da seção em cada cenário.
+Capturas reais, fora do Git, em `tmp/h3-screenshots/`. Desde a H3.2 elas são
+de **viewport normal**, sem página inteira, justamente para não reproduzir o
+falso positivo do cabeçalho descrito na §9:
 
-## 9. Dívidas e bloqueios
+- `viewport-h3-1440-light.png`, `viewport-h3-1440-dark.png`,
+  `viewport-h3-375-light.png`, `viewport-h3-375-dark.png` e
+  `viewport-h3-320-light.png` — a seção enquadrada como o visitante a vê;
+- `viewport-transicao-h2-h3-1440-light.png` e
+  `viewport-transicao-h2-h3-375-light.png` — o fim do Território e o começo da
+  Pesquisa em Campo na mesma tela;
+- `viewport-h3-ficha-1440-light.png` — a coluna de leitura com a ficha e o
+  bloco de método;
+- `viewport-h3-zoom200.png` — equivalente a zoom de 200 %, sem overflow;
+- as capturas de página inteira da H3.1 continuam disponíveis com o prefixo
+  `home-pesquisa-`, **identificadas como full-page** e sujeitas ao artefato.
 
-- copy do bloco "Método · síntese transversal" aguarda aprovação humana (§3);
+## 9. Cabeçalho fixo: diagnóstico da H3.2
+
+As capturas da H3.1 mostravam o cabeçalho e o menu por cima da fotografia
+principal no desktop e por cima do título do bloco de leitura numa captura
+mobile. A suspeita de defeito foi investigada antes de qualquer mudança.
+
+**É artefato de captura.** O cabeçalho é `position: fixed` no topo. Captura de
+página inteira e captura de elemento congelam o elemento fixo na posição em que
+ele estava na viewport, e essa posição cai no meio da imagem final, que é muito
+mais alta que a viewport. Nada disso acontece para quem usa a página.
+
+Medição em navegador real, na Home servida em produção local, em 1440, 375 e
+320 px:
+
+| Cenário | Resultado |
+|---|---|
+| carga em `scrollY = 0` | cabeçalho em `top 0`, altura 72 px em 1440, 119 px em 375 e 138 px em 320; sem `transform` |
+| rolagem contínua para baixo | recolhe com `translateY(-100%)`, fica em `top -72 / bottom 0` e **sai da viewport** |
+| rolagem para cima | reaparece em `top 0`; o que está sob a borda inferior é a seção Território, e a sobreposição com a seção Pesquisa em Campo é **0 px** |
+| foco por teclado, 45 paradas de Tab | **nenhum focável fora do cabeçalho fica obscurecido por ele** |
+| painel de acessibilidade aberto | o cabeçalho não recolhe, como as travas do `CabecalhoReativo` prometem |
+
+O link "Pular para o conteúdo" ocupa a mesma faixa geométrica do cabeçalho
+quando recebe foco, mas é pintado acima dele — `--z-pular` é 100 e
+`--z-cabecalho` é 50 —, e `elementFromPoint` devolve o próprio link. Não há
+obscurecimento.
+
+Resta o comportamento genérico de qualquer cabeçalho fixo: se o visitante rola
+para cima com a seção encostada no topo, a faixa superior da viewport fica sob
+o cabeçalho até ele continuar rolando. Isso vale para a página inteira, do Hero
+ao rodapé, é anterior à H3 e não é regressão desta seção.
+
+**Conclusão: nenhuma linha do cabeçalho foi alterada.** As capturas de
+comprovação desta rodada são de viewport normal, não de página inteira.
+
+## 10. Dívidas e bloqueios
+
 - as fotografias entram no carregamento inicial em 1440 px por limiar do
   navegador (§7);
 - decidir se a seção deve servir o derivado revisado byte a byte, como o Hero,
   em vez do recorte recodificado pelo `next/image` (§7);
-- orçamento de 500 kB excedido; Lighthouse continua exigido e não executado;
+- orçamento de 500 kB excedido, hoje em cerca de 797 kB no cenário de 1440 px;
+  Lighthouse continua exigido e não executado. Decisão humana de 2026-09-10:
+  auditoria de performance e Lighthouse acontece em etapa própria, na H7, e a
+  H3.2 não degradou fotografia, não trocou o `next/image` e não mexeu no
+  pipeline do Hero;
 - `axe-core` continua fora do `pnpm a11y`, que hoje é só Playwright;
 - B01 segue RESTRITO como conjunto: publicação definitiva ainda depende de
   modelar derivados fotográficos individuais;
