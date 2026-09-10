@@ -2480,3 +2480,21 @@ Nenhuma dependência, coordenada, rota pública, banco ou infraestrutura foi
 criada. Não houve deploy nem push. A integração H2.1 só pode começar após a
 aprovação explícita da copy proposta. A coluna editorial permanece dívida
 visual registrada para a integração H2.1; não foi redesenhada nesta fase.
+
+## 32.7 Atualização H2.1 — Território integrado na Home
+
+> **Atualização de 2026-09-10.** O responsável aprovou o Preset B refinado e
+> autorizou sua integração real local.
+
+Estado: **IMPLEMENTADA LOCALMENTE, NÃO DEPLOYADA**. A Home agora segue Hero,
+01 — Território, caminhos prioritários e acervo. O SVG server-side, os 75
+municípios, Vale, comparação, hachuras, teclado, lista e painel foram
+preservados; nenhum pin ou coordenada foi criado.
+
+A coluna editorial foi integrada à superfície da seção, sem fundo ou sombra de
+card. O índice completo permanece acessível no HTML e inicia recolhido. A copy
+institucional proposta não foi publicada. Registro técnico, medição e capturas:
+[H2_INTEGRACAO_TERRITORIO_HOME.md](./H2_INTEGRACAO_TERRITORIO_HOME.md).
+
+Nenhuma dependência, MapLibre, Leaflet, rota pública, banco ou infraestrutura
+foi criada. Não houve deploy nem push.

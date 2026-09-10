@@ -1475,3 +1475,24 @@ sete capturas reais ficam fora do Git.
 
 Estado: **EM PROTÓTIPO**. Home ainda não integrada; sem MapLibre, dependência
 nova, deploy, push, banco, R2, Vercel, DNS ou mudança de infraestrutura.
+
+### H2.1 — Território integrado localmente, 2026-09-10
+
+O Preset B refinado foi integrado à Home entre o Hero e os caminhos
+prioritários. A seção usa um único SVG server-side, 75 municípios, cinco
+municípios no Vale, São Cristóvão como pesquisa/comparação, zero pins e a ilha
+cliente já existente para sincronizar mapa, índice e painel.
+
+A coluna editorial deixou de ser card: na Home ela compartilha a superfície da
+seção, com eixo milho, espaço negativo e divisores finos. A copy proposta do
+laboratório não foi promovida; somente definição territorial, proveniência
+cartográfica, relações declaradas e autoria já documentadas foram usadas. O
+índice completo permanece no HTML e inicia recolhido.
+
+Build e gates locais passaram. A Home medida em 1440 ficou em aproximadamente
+692.435 B transferidos, ainda acima do referencial de 500 kB; o GeoJSON
+transferido continua em 0 B. Registro:
+[H2_INTEGRACAO_TERRITORIO_HOME.md](./docs/frontend/H2_INTEGRACAO_TERRITORIO_HOME.md).
+
+Estado: **IMPLEMENTADA LOCALMENTE, NÃO DEPLOYADA**. Sem MapLibre, dependência
+nova, deploy, push, banco, R2, Vercel, DNS ou mudança de infraestrutura.

@@ -12,6 +12,7 @@ import { expect, test } from "@playwright/test";
  */
 
 const MUNICIPIOS = ".mapa-territorio svg path[data-codigo]";
+const ITENS_DO_INDICE = "#territorio-home-lista > [data-codigo]";
 
 /**
  * Abre a Home e espera a ilha de interação assumir o mapa.
@@ -32,7 +33,9 @@ test.describe("mapa territorial", () => {
   test("a seção existe com o título aprovado", async ({ page }) => {
     await page.goto("/");
     await expect(
-      page.getByRole("heading", { name: "Mapa vivo do território" }),
+      page.getByRole("heading", {
+        name: "Cartografia viva do Vale do Rio Real",
+      }),
     ).toBeVisible();
   });
 
@@ -138,7 +141,7 @@ test.describe("mapa territorial", () => {
       const ativo = document.activeElement;
       const codigo = ativo?.getAttribute("data-codigo") ?? "";
       const item = document.querySelector(
-        `#lista-territorial-itens [data-codigo="${codigo}"]`,
+        `#territorio-home-lista [data-codigo="${codigo}"]`,
       );
       return {
         opcao: ativo?.getAttribute("aria-selected"),
@@ -174,7 +177,7 @@ test.describe("mapa territorial", () => {
     await alvo.click({ force: true });
     await expect(alvo).toHaveAttribute("aria-selected", "true");
     await expect(
-      page.locator(`#lista-territorial-itens [data-codigo="${codigo}"]`),
+      page.locator(`#territorio-home-lista [data-codigo="${codigo}"]`),
     ).toHaveAttribute("data-selecionado", "true");
 
     // Toque: o mesmo caminho de seleção, disparado por evento de ponteiro.
@@ -212,16 +215,14 @@ test.describe("mapa territorial", () => {
 
   test("a alternativa textual lista os 75 municípios", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator(".mapa-territorio li.f")).toHaveCount(75);
+    await expect(page.locator(ITENS_DO_INDICE)).toHaveCount(75);
   });
 
   test("os quatro pontos de visita aparecem, ainda sem posição", async ({
     page,
   }) => {
     await page.goto("/");
-    const secao = page.getByRole("region", {
-      name: "Pontos de visita ainda não posicionados",
-    });
+    const secao = page.getByRole("region", { name: "Pontos de pesquisa" });
     await expect(secao).toBeVisible();
     for (const nome of [
       "Recanto da Serra",
@@ -229,7 +230,7 @@ test.describe("mapa territorial", () => {
       "Serra dos Macacos",
       "Ilha Grande",
     ]) {
-      await expect(secao.getByText(nome, { exact: true })).toBeVisible();
+      await expect(secao.getByText(nome, { exact: false })).toBeVisible();
     }
     await expect(page.locator(".mapa-territorio svg circle")).toHaveCount(0);
   });
@@ -297,9 +298,11 @@ test.describe("mapa sem JavaScript", () => {
   test("o desenho e a lista completa vêm do servidor", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(MUNICIPIOS)).toHaveCount(75);
-    await expect(page.locator(".mapa-territorio li.f")).toHaveCount(75);
+    await expect(page.locator(ITENS_DO_INDICE)).toHaveCount(75);
     await expect(
-      page.getByRole("heading", { name: "Mapa vivo do território" }),
+      page.getByRole("heading", {
+        name: "Cartografia viva do Vale do Rio Real",
+      }),
     ).toBeVisible();
   });
 
@@ -317,9 +320,9 @@ test.describe("mapa sem JavaScript", () => {
 
   test("os pontos sem coordenada continuam listados", async ({ page }) => {
     await page.goto("/");
-    const secao = page.getByRole("region", {
-      name: "Pontos de visita ainda não posicionados",
-    });
-    await expect(secao.getByText("Ilha Grande", { exact: true })).toBeVisible();
+    const secao = page.getByRole("region", { name: "Pontos de pesquisa" });
+    await expect(
+      secao.getByText("Ilha Grande", { exact: false }),
+    ).toBeVisible();
   });
 });

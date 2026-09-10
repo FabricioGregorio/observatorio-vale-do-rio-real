@@ -12,9 +12,10 @@ import {
 } from "../../mapa/identificacao";
 import { MapaInterativo } from "../../mapa/MapaInterativo";
 import { MarcadorNoMapa } from "../../mapa/MarcadorNoMapa";
-import { CSS_DO_TERRITORIO_PROTOTIPO } from "./estilosDoTerritorio";
+import { CSS_DO_TERRITORIO } from "../../territorio/estilosDoTerritorio";
 
 export type ProfundidadeDoTerritorio = "minima" | "moderada";
+export type ContextoDoTerritorio = "home" | "prototipo";
 
 const ROTULO_DO_PRESET: Readonly<Record<ProfundidadeDoTerritorio, string>> = {
   minima: "A — profundidade mínima",
@@ -53,7 +54,7 @@ function PainelContextual({ id }: { id: string }) {
     <section
       aria-atomic="true"
       aria-live="polite"
-      className="territorio-prototipo__painel"
+      className="territorio-cartografico__painel"
       id={id}
     >
       <p className="meta-ficha">Leitura do território</p>
@@ -75,7 +76,7 @@ function PainelContextual({ id }: { id: string }) {
             <dd data-painel-classificacao="" />
           </div>
           <div>
-            <dt className="meta-ficha">Evidências</dt>
+            <dt className="meta-ficha">Relação com o projeto</dt>
             <dd>
               <ul data-painel-evidencias="" />
             </dd>
@@ -90,13 +91,15 @@ function IndiceTerritorial({
   dados,
   idDaLista,
   idDoTitulo,
+  aberto,
 }: {
   dados: DadosDoMapa;
   idDaLista: string;
   idDoTitulo: string;
+  aberto: boolean;
 }) {
   return (
-    <details className="territorio-prototipo__indice" open>
+    <details className="territorio-cartografico__indice" open={aberto}>
       <summary id={idDoTitulo}>
         Índice acessível — {dados.municipios.length} municípios
       </summary>
@@ -106,7 +109,7 @@ function IndiceTerritorial({
       </p>
       <ul
         aria-labelledby={idDoTitulo}
-        className="territorio-prototipo__lista"
+        className="territorio-cartografico__lista"
         id={idDaLista}
       >
         {dados.municipios.map((municipio) => {
@@ -118,7 +121,7 @@ function IndiceTerritorial({
 
           return (
             <li
-              className="territorio-prototipo__item"
+              className="territorio-cartografico__item"
               data-classificacao={classificacao}
               data-codigo={municipio.codigoIbge}
               data-nome={municipio.nome}
@@ -153,19 +156,23 @@ function IndiceTerritorial({
 export function TerritorioPrototipo({
   dados,
   profundidade,
+  contexto = "prototipo",
 }: {
   dados: DadosDoMapa;
   profundidade: ProfundidadeDoTerritorio;
+  contexto?: ContextoDoTerritorio;
 }) {
   if (dados.municipios.length === 0) return null;
 
-  const prefixo = `territorio-${profundidade}`;
+  const prefixo =
+    contexto === "home" ? "territorio-home" : `territorio-${profundidade}`;
   const idDoTitulo = `${prefixo}-titulo`;
   const idDoSvg = `${prefixo}-svg`;
   const idDaHachura = `${prefixo}-hachura-pesquisa`;
   const idDaLista = `${prefixo}-lista`;
   const idDoTituloDaLista = `${prefixo}-lista-titulo`;
   const idDoPainel = `${prefixo}-painel`;
+  const idDosPontos = `${prefixo}-pontos-titulo`;
   const doVale = dados.municipios.filter((municipio) =>
     municipio.relacoesTerritoriais.includes("vale-rio-real"),
   );
@@ -173,27 +180,32 @@ export function TerritorioPrototipo({
   return (
     <section
       aria-labelledby={idDoTitulo}
-      className={`${CLASSE_RAIZ} territorio-prototipo`}
+      className={`${CLASSE_RAIZ} territorio-cartografico`}
+      data-contexto={contexto}
       data-profundidade={profundidade}
-      data-testid={`preset-${profundidade}`}
+      data-testid={
+        contexto === "prototipo" ? `preset-${profundidade}` : "territorio-home"
+      }
       id={prefixo}
     >
-      <style>{`${CSS_DO_MAPA}\n${CSS_DO_TERRITORIO_PROTOTIPO}`}</style>
+      <style>{`${CSS_DO_MAPA}\n${CSS_DO_TERRITORIO}`}</style>
 
-      <header className="territorio-prototipo__cabecalho">
+      <div className="territorio-cartografico__cabecalho">
         <p className="meta-ficha">01 — TERRITÓRIO</p>
         <h2 className="text-3xl" id={idDoTitulo}>
           Cartografia viva do Vale do Rio Real
         </h2>
-        <p className="meta-ficha">Preset {ROTULO_DO_PRESET[profundidade]}</p>
-      </header>
+        {contexto === "prototipo" ? (
+          <p className="meta-ficha">Preset {ROTULO_DO_PRESET[profundidade]}</p>
+        ) : null}
+      </div>
 
-      <div className="territorio-prototipo__grade">
-        <figure className="territorio-prototipo__mapa">
-          <div className="territorio-prototipo__moldura">
+      <div className="territorio-cartografico__grade">
+        <figure className="territorio-cartografico__mapa">
+          <div className="territorio-cartografico__moldura">
             <svg
               aria-label="Mapa dos 75 municípios de Sergipe"
-              className="territorio-prototipo__svg"
+              className="territorio-cartografico__svg"
               id={idDoSvg}
               role="img"
               viewBox={`0 0 ${dados.projecao.largura} ${Math.round(dados.projecao.altura)}`}
@@ -236,68 +248,85 @@ export function TerritorioPrototipo({
           </div>
 
           <figcaption className="meta-ficha">
-            Fonte: IBGE — Malhas Territoriais, malha municipal. Sergipe inteiro;{" "}
-            {doVale.length} municípios no recorte do Vale.
+            Nota cartográfica — IBGE, Malhas Territoriais, malha municipal.{" "}
+            Sergipe inteiro; {doVale.length} municípios no recorte do Vale.
           </figcaption>
 
           <ul
             aria-label="Legenda do mapa"
-            className="territorio-prototipo__legenda"
+            className="territorio-cartografico__legenda"
           >
             <li>
               <span
                 aria-hidden="true"
-                className="territorio-prototipo__amostra"
+                className="territorio-cartografico__amostra"
               />
               Sergipe
             </li>
             <li>
               <span
                 aria-hidden="true"
-                className="territorio-prototipo__amostra territorio-prototipo__amostra--vale"
+                className="territorio-cartografico__amostra territorio-cartografico__amostra--vale"
               />
               Vale
             </li>
             <li>
               <span
                 aria-hidden="true"
-                className="territorio-prototipo__amostra territorio-prototipo__amostra--pesquisa"
+                className="territorio-cartografico__amostra territorio-cartografico__amostra--pesquisa"
               />
               Pesquisa
             </li>
             <li>
               <span
                 aria-hidden="true"
-                className="territorio-prototipo__amostra territorio-prototipo__amostra--comparacao"
+                className="territorio-cartografico__amostra territorio-cartografico__amostra--comparacao"
               />
               Comparação
             </li>
           </ul>
         </figure>
 
-        <aside className="territorio-prototipo__editorial">
-          <div className="flex flex-col gap-3">
-            <p className="meta-ficha">Proposta editorial</p>
-            <h3 className="text-2xl">Observatório</h3>
-            <p>
-              O Observatório reúne pesquisa, cultura e memória do Vale do Rio
-              Real em um arquivo público. A cartografia parte de Sergipe inteiro
-              e evidencia as relações territoriais já documentadas.
-            </p>
-            <p>{DEFINICAO_VALE_DO_RIO_REAL}</p>
-            <p className="meta-ficha">
-              Uma iniciativa do Coletivo Cultural “Tobias, sou Eu!”
-            </p>
-          </div>
+        <aside className="territorio-cartografico__editorial">
+          {contexto === "prototipo" ? (
+            <div className="territorio-cartografico__introducao">
+              <p className="meta-ficha">Proposta editorial</p>
+              <h3 className="text-2xl">Observatório</h3>
+              <p>
+                O Observatório reúne pesquisa, cultura e memória do Vale do Rio
+                Real em um arquivo público. A cartografia parte de Sergipe
+                inteiro e evidencia as relações territoriais já documentadas.
+              </p>
+              <p>{DEFINICAO_VALE_DO_RIO_REAL}</p>
+              <p className="meta-ficha">
+                Uma iniciativa do Coletivo Cultural “Tobias, sou Eu!”
+              </p>
+            </div>
+          ) : (
+            <div className="territorio-cartografico__introducao">
+              <p className="meta-ficha">Leitura cartográfica</p>
+              <h3 className="text-2xl">Território em camadas</h3>
+              <p>
+                A cartografia apresenta os 75 municípios de Sergipe e distingue
+                as relações territoriais declaradas no projeto.
+              </p>
+              <p>{DEFINICAO_VALE_DO_RIO_REAL}</p>
+              <p className="meta-ficha territorio-cartografico__assinatura">
+                Idealizado e realizado pelo Coletivo Cultural “Tobias, sou Eu!”
+              </p>
+            </div>
+          )}
 
           <PainelContextual id={idDoPainel} />
 
-          <section className="territorio-prototipo__pontos">
-            <h3 className="text-lg">Pontos de pesquisa</h3>
-            <p>
-              Permanecem fora do desenho enquanto não houver coordenada
-              conferida.
-            </p>
+          <section
+            aria-labelledby={idDosPontos}
+            className="territorio-cartografico__pontos"
+          >
+            <h3 className="text-lg" id={idDosPontos}>
+              Pontos de pesquisa
+            </h3>
+            <p>Registros sem posição conferida permanecem fora do desenho.</p>
             <ul>
               {dados.pontosSemPosicao.map((ponto) => (
                 <li key={ponto.id}>
@@ -311,6 +340,7 @@ export function TerritorioPrototipo({
       </div>
 
       <IndiceTerritorial
+        aberto={contexto === "prototipo"}
         dados={dados}
         idDaLista={idDaLista}
         idDoTitulo={idDoTituloDaLista}

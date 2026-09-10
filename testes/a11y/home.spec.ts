@@ -157,6 +157,98 @@ test.describe("Home", () => {
     expect(conteudo).not.toContain("ranking");
   });
 
+  test("integra uma única cartografia B sem rótulos de desenvolvimento", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const territorio = page.getByTestId("territorio-home");
+
+    await expect(territorio).toHaveAttribute("data-profundidade", "moderada");
+    await expect(territorio.locator("svg")).toHaveCount(1);
+    await expect(territorio.locator("svg path[data-codigo]")).toHaveCount(75);
+    await expect(territorio.locator("svg path.h")).toHaveCount(3);
+    await expect(territorio.locator("svg circle.p")).toHaveCount(0);
+    await expect(page.getByText(/Preset B/i)).toHaveCount(0);
+    await expect(page.getByText(/Proposta editorial/i)).toHaveCount(0);
+  });
+
+  test("preserva Vale, comparação e lista territorial progressiva", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const territorio = page.getByTestId("territorio-home");
+    const indice = territorio.locator("details");
+    const itens = territorio.locator("#territorio-home-lista > [data-codigo]");
+
+    await expect(indice).not.toHaveAttribute("open", "");
+    await expect(
+      territorio.getByText("Índice acessível — 75 municípios"),
+    ).toBeVisible();
+    await expect(itens).toHaveCount(75);
+    await expect(itens.filter({ hasText: "Vale do Rio Real" })).toHaveCount(5);
+
+    const saoCristovao = itens.filter({ hasText: /^São Cristóvão/ });
+    await expect(saoCristovao).toContainText(
+      "Comparação de políticas públicas",
+    );
+    await expect(saoCristovao).not.toContainText("Vale do Rio Real");
+  });
+
+  test("mapa e índice selecionam por teclado e atualizam o mesmo painel", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const territorio = page.getByTestId("territorio-home");
+    const mapa = territorio.getByRole("listbox", {
+      name: "Mapa dos 75 municípios de Sergipe",
+    });
+    const tobias = mapa.getByRole("option", { name: /Tobias Barreto/ });
+
+    await tobias.focus();
+    await tobias.press("Enter");
+    await expect(tobias).toHaveAttribute("aria-selected", "true");
+    await expect(territorio.locator("#territorio-home-painel")).toContainText(
+      "Entrevista — Secretaria de Cultura",
+    );
+
+    await territorio.getByText("Índice acessível — 75 municípios").click();
+    const indice = territorio.getByRole("listbox", {
+      name: /Índice acessível — 75 municípios/,
+    });
+    const primeira = indice.getByRole("option").first();
+    await primeira.focus();
+    await primeira.press("ArrowDown");
+    await expect(indice.getByRole("option").nth(1)).toBeFocused();
+    await indice.getByRole("option").nth(1).press("Space");
+    await expect(indice.getByRole("option").nth(1)).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+  });
+
+  test("Território sucede o Hero e respeita movimento reduzido", async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+
+    const ordem = await page.evaluate(() => {
+      const hero = document.querySelector("#hero-home");
+      const territorio = document.querySelector("#territorio-home");
+      if (hero === null || territorio === null) return null;
+      return Boolean(
+        hero.compareDocumentPosition(territorio) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      );
+    });
+    expect(ordem).toBe(true);
+
+    const duracao = await page
+      .locator("#territorio-home svg")
+      .evaluate((elemento) => getComputedStyle(elemento).transitionDuration);
+    expect(["0s", "0.00001s", "1e-05s"]).toContain(duracao);
+  });
+
   for (const largura of [320, 375, 768, 1440]) {
     for (const tema of ["light", "dark"] as const) {
       test(`${largura}px no tema ${tema} não tem overflow horizontal`, async ({
