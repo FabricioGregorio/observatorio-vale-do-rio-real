@@ -1496,3 +1496,24 @@ transferido continua em 0 B. Registro:
 
 Estado: **IMPLEMENTADA LOCALMENTE, NÃO DEPLOYADA**. Sem MapLibre, dependência
 nova, deploy, push, banco, R2, Vercel, DNS ou mudança de infraestrutura.
+
+### H3 — Pesquisa em Campo em protótipo, 2026-09-10
+
+A etapa seguinte foi aberta apenas no laboratório `/dev/pesquisa`, protegido
+por 404 em produção. A Home permanece sem H3. O corpus relevante foi auditado:
+56 fotografias candidatas, das quais 15 foram consideradas APTAS após inspeção
+visual sem pessoa identificável, 41 ficaram PENDENTES e nenhuma foi marcada
+NÃO USAR. O sinal nominal de pessoa identificável continua em 33/56; não houve
+reconhecimento facial nem presunção de consentimento.
+
+Três fotografias de Ilha Grande sem pessoa receberam derivados WebP integrais,
+sem crop, IA ou alteração de cena. Orientação/resize/compressão removeram EXIF,
+XMP, GPS e dispositivo; o conjunto pesa 242.766 B. Os dois presets usam o mesmo
+conteúdo: **A — Documental aberto** dá mais protagonismo e espaço à fotografia;
+**B — Caderno técnico** explicita a ficha documental. Recomendação técnica: A,
+pendente de decisão humana e aprovação da copy.
+
+Estado: **EM PROTÓTIPO**. A Home segue em aproximadamente 692.435 B no cenário
+1440 e recebeu incremento de 0 B. Sem deploy, push, banco, R2, Vercel, DNS ou
+mudança de infraestrutura. Registro:
+[H3_PESQUISA_CAMPO_PROTOTIPO.md](./docs/frontend/H3_PESQUISA_CAMPO_PROTOTIPO.md).

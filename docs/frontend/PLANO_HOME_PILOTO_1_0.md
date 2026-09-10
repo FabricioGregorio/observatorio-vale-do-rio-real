@@ -2498,3 +2498,23 @@ institucional proposta não foi publicada. Registro técnico, medição e captur
 
 Nenhuma dependência, MapLibre, Leaflet, rota pública, banco ou infraestrutura
 foi criada. Não houve deploy nem push.
+
+## 32.8 Atualização H3 — Pesquisa em Campo em protótipo
+
+Em 2026-09-10, a fase chamada **H3 — Pesquisa em Campo** na sequência atual
+entrou em **EM PROTÓTIPO**, exclusivamente em `/dev/pesquisa`, com 404 em
+produção. Esta H3 sucede o Território atual (H2/H2.1); não confundir com a
+numeração histórica deste plano, que chamava o pôster cartográfico de H3.
+
+O corpus relevante foi auditado com regra de privacidade conservadora: 56
+fotografias candidatas, 15 APTAS após inspeção visual sem pessoa identificável,
+41 PENDENTES e 0 NÃO USAR. Somente três derivados WebP sem EXIF/XMP/GPS foram
+versionados, totalizando 242.766 B. `B01` continua RESTRITO como conjunto e
+nenhum consentimento foi presumido.
+
+Os presets **A — Documental aberto** e **B — Caderno técnico** usam o mesmo
+conteúdo. A recomendação técnica é A, mas a escolha e a copy continuam sob
+decisão humana. A Home não foi alterada: seu cenário 1440 permanece em
+aproximadamente 692.435 B e recebe 0 B da H3 nesta fase. Não houve deploy,
+push ou mudança de infraestrutura. Registro completo:
+[H3_PESQUISA_CAMPO_PROTOTIPO.md](./H3_PESQUISA_CAMPO_PROTOTIPO.md).

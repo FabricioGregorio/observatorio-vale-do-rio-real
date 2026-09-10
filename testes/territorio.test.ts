@@ -30,6 +30,7 @@ import {
   MARCA_OBSERVATORIO,
   SIMBOLO_OBSERVATORIO,
 } from "../src/dados/hero/derivados";
+import { DERIVADOS_DA_PESQUISA } from "../src/dados/pesquisa/derivados";
 import { FONTES_TERRITORIAIS } from "../src/dados/territorio/fontes";
 import {
   type MunicipioDoMapa,
@@ -191,6 +192,7 @@ describe("ausência de dado territorial inventado", () => {
 
     const declarados = new Set<string>([
       ...DERIVADOS_DO_HERO.map((d) => d.arquivo),
+      ...DERIVADOS_DA_PESQUISA.map((d) => d.arquivo),
       MARCA_OBSERVATORIO.arquivo,
       SIMBOLO_OBSERVATORIO.arquivo,
       MARCA_COLETIVO.arquivo,
@@ -220,12 +222,19 @@ describe("ausência de dado territorial inventado", () => {
     expect(grandes).toEqual([]);
   });
 
-  test("as cinco pastas de mídia previstas existem", () => {
+  test("as seis pastas de mídia previstas existem", () => {
     const pastas = readdirSync("public/media", { withFileTypes: true })
       .filter((entrada) => entrada.isDirectory())
       .map((entrada) => entrada.name)
       .sort();
-    expect(pastas).toEqual(["campo", "logos", "mapa", "pessoas", "territorio"]);
+    expect(pastas).toEqual([
+      "campo",
+      "logos",
+      "mapa",
+      "pesquisa",
+      "pessoas",
+      "territorio",
+    ]);
   });
 });
 
