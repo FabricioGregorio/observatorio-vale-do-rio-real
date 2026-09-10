@@ -1,16 +1,16 @@
 /**
- * Direção visual dos presets A/B da H3.
+ * Direção visual da seção Pesquisa em Campo.
  *
- * Cores, tipografias e raios vêm exclusivamente de `tokens.css`. As duas
- * composições compartilham conteúdo e linguagem; variam somente a densidade
- * editorial e a distribuição no grid.
+ * Cores, tipografias e raios vêm exclusivamente de `tokens.css`. A Home usa a
+ * composição A — Documental aberto, aprovada na H3.1; o laboratório mantém A e
+ * B para comparação. As duas compartilham conteúdo e linguagem e variam apenas
+ * na densidade editorial e na distribuição no grid.
  */
 export const CSS_DA_PESQUISA = `
 .pesquisa-campo{container-type:inline-size;display:flex;flex-direction:column;gap:clamp(2.5rem,6vw,5rem);padding-block:clamp(4.5rem,9vw,8rem);border-top:1px solid var(--color-borda)}
 .pesquisa-campo__cabecalho{display:grid;gap:1rem;max-width:var(--largura-leitura)}
 .pesquisa-campo__cabecalho h2{font-size:clamp(var(--text-3xl),5vw,var(--text-5xl));max-width:15ch}
 .pesquisa-campo__cabecalho>p:last-child{font-size:var(--text-lg);max-width:58ch}
-.pesquisa-campo__proposta{display:inline-flex;width:fit-content;max-width:100%;flex-wrap:wrap;align-items:center;gap:.5rem;border-bottom:2px solid var(--color-marca);padding-bottom:.25rem}
 .pesquisa-campo figure{margin:0}
 .pesquisa-campo img{display:block;width:100%;height:auto;border-radius:var(--radius-ficha);background:var(--color-borda)}
 .pesquisa-campo__imagem{overflow:hidden;border-radius:var(--radius-ficha);background:var(--color-borda)}
@@ -65,4 +65,15 @@ export const CSS_DA_PESQUISA = `
   .pesquisa-campo[data-composicao="caderno-tecnico"] .pesquisa-campo__cabecalho{display:flex;flex-direction:column;align-items:stretch}
   .pesquisa-campo[data-composicao="caderno-tecnico"] .pesquisa-campo__cabecalho>p:last-child{border-left:0;padding-left:0}
 }
+`.trim();
+
+/**
+ * Regra exclusiva do laboratório: marca o rótulo do preset em avaliação.
+ *
+ * Ela fica fora de `CSS_DA_PESQUISA` de propósito. O rótulo não existe na Home,
+ * e um seletor morto no HTML público ainda é um vestígio de desenvolvimento
+ * que um revisor encontra ao procurar por "proposta" no conteúdo servido.
+ */
+export const CSS_DO_LABORATORIO_DA_PESQUISA = `
+.pesquisa-campo__proposta{display:inline-flex;width:fit-content;max-width:100%;flex-wrap:wrap;align-items:center;gap:.5rem;border-bottom:2px solid var(--color-marca);padding-bottom:.25rem}
 `.trim();

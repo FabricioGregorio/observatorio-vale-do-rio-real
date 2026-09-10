@@ -3,6 +3,7 @@ import { CaminhosPrioritarios } from "../componentes/home/CaminhosPrioritarios";
 import { ChamadaAcervo } from "../componentes/home/ChamadaAcervo";
 import { CAMINHOS_PRIORITARIOS } from "../componentes/home/caminhos";
 import { SecaoMapa } from "../componentes/home/SecaoMapa";
+import { PesquisaEmCampo } from "../componentes/pesquisa/PesquisaEmCampo";
 import { CabecalhoPrototipo } from "../componentes/prototipo/CabecalhoPrototipo";
 import { metadadosDaRota } from "../lib/site-url";
 
@@ -17,7 +18,8 @@ export const metadata = metadadosDaRota({
  *
  * A estrutura planejada da Home tem cinco seções:
  *
- *   Hero Manifesto → Território → Caminhos prioritários → Acervo
+ *   Hero Manifesto → Território → Pesquisa em Campo → Caminhos prioritários →
+ *   Acervo
  *
  * Duas delas **não** são renderizadas nesta fatia, e a ausência é deliberada:
  *
@@ -33,6 +35,11 @@ export const metadata = metadadosDaRota({
  * A seção **Território** usa a composição H2 aprovada: SVG renderizado no
  * servidor, Preset B refinado e uma ilha cliente pequena para sincronizar
  * mapa, índice e painel. Nenhum comparativo numérico é publicado.
+ *
+ * A seção **Pesquisa em Campo** usa a composição H3 aprovada — A, Documental
+ * aberto. São três fotografias derivadas de originais sem pessoa
+ * identificável, servidas abaixo da dobra, sem `preload` e sem `priority`.
+ * Nenhuma delas tem data confirmada, e nenhuma data é inferida.
  *
  * Server Component, sem consulta a banco. O `<main id="conteudo">` vive no
  * layout raiz: aqui vai só o conteúdo.
@@ -50,6 +57,10 @@ export default function Home() {
       <HeroManifesto variante="tipografia" id="hero-home" />
 
       <SecaoMapa />
+
+      <div className="mx-auto w-full max-w-6xl px-4">
+        <PesquisaEmCampo />
+      </div>
 
       <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 pb-12">
         <CaminhosPrioritarios caminhos={CAMINHOS_PRIORITARIOS} />

@@ -5,9 +5,13 @@ import {
   type DerivadoDaPesquisa,
   PASTA_PUBLICA_DA_PESQUISA,
 } from "../../../dados/pesquisa/derivados";
-import { CSS_DA_PESQUISA } from "./estilosDaPesquisa";
+import {
+  CSS_DA_PESQUISA,
+  CSS_DO_LABORATORIO_DA_PESQUISA,
+} from "../../pesquisa/estilosDaPesquisa";
 
 export type ComposicaoDaPesquisa = "documental-aberto" | "caderno-tecnico";
+export type ContextoDaPesquisa = "home" | "prototipo";
 
 const ROTULOS: Readonly<Record<ComposicaoDaPesquisa, string>> = {
   "documental-aberto": "A — Documental aberto",
@@ -37,6 +41,21 @@ function FichaDoRegistro({ registro }: { registro: DerivadoDaPesquisa }) {
   );
 }
 
+/**
+ * Larguras reais do slot, medidas na Home: a principal ocupa 8 de 12 colunas
+ * dentro de um container que trava em 1152 px, e as secundárias ocupam 4 de 10
+ * colunas de uma faixa recuada. Abaixo de 768 px a composição vira uma coluna,
+ * e a secundária fica em `min(88%, 28rem)`.
+ *
+ * `sizes` que declara mais largura do que o layout usa faz o navegador baixar
+ * um recorte maior à toa: com `62vw`, a fotografia principal vinha em 1080 px
+ * para um slot de 733 px. Aqui ele descreve o slot que existe.
+ */
+const SIZES_PRINCIPAL =
+  "(max-width: 768px) 100vw, (max-width: 1152px) 64vw, 736px";
+const SIZES_SECUNDARIA =
+  "(max-width: 768px) min(88vw, 448px), (max-width: 1152px) 34vw, 390px";
+
 function Fotografia({
   registro,
   principal = false,
@@ -51,11 +70,7 @@ function Fotografia({
           alt={registro.alt}
           height={registro.altura}
           loading="lazy"
-          sizes={
-            principal
-              ? "(max-width: 768px) 100vw, 62vw"
-              : "(max-width: 768px) 88vw, 30vw"
-          }
+          sizes={principal ? SIZES_PRINCIPAL : SIZES_SECUNDARIA}
           src={`${PASTA_PUBLICA_DA_PESQUISA}/${registro.arquivo}`}
           width={registro.largura}
         />
@@ -71,47 +86,75 @@ function Fotografia({
 }
 
 /**
- * Dois tratamentos editoriais para o mesmo conteúdo seguro da H3.
+ * Seção Pesquisa em Campo — implementação compartilhada pela Home e pelo
+ * laboratório.
  *
  * Server Component puro. Não há seleção, carrossel ou animação: as fotografias
  * e sua leitura documental não precisam de JavaScript para funcionar.
+ *
+ * O `contexto` decide apenas o que é rótulo de desenvolvimento. Na Home entra
+ * a composição A aprovada, sem marca de preset e sem marca de proposta; o
+ * laboratório continua exibindo A e B lado a lado para comparação.
+ *
+ * A ficha documental — e com ela o identificador do conjunto de origem —
+ * pertence só ao preset B, que é de laboratório. O conjunto continua RESTRITO
+ * e não há regra documental que autorize publicar seus metadados, por isso ele
+ * não chega ao HTML servido na Home.
  */
 export function PesquisaEmCampoPrototipo({
   composicao,
+  contexto = "prototipo",
 }: {
   composicao: ComposicaoDaPesquisa;
+  contexto?: ContextoDaPesquisa;
 }) {
   const igreja = DERIVADOS_DA_PESQUISA[2];
   const chegada = DERIVADOS_DA_PESQUISA[0];
   const forno = DERIVADOS_DA_PESQUISA[1];
-  const prefixo = `pesquisa-${composicao}`;
+  const prefixo =
+    contexto === "home" ? "pesquisa-home" : `pesquisa-${composicao}`;
 
   return (
     <section
       aria-labelledby={`${prefixo}-titulo`}
       className="pesquisa-campo"
       data-composicao={composicao}
-      data-testid={`preset-${composicao}`}
+      data-contexto={contexto}
+      data-testid={
+        contexto === "prototipo" ? `preset-${composicao}` : "pesquisa-home"
+      }
       id={prefixo}
     >
-      <style>{CSS_DA_PESQUISA}</style>
+      <style>
+        {contexto === "prototipo"
+          ? `${CSS_DA_PESQUISA}
+${CSS_DO_LABORATORIO_DA_PESQUISA}`
+          : CSS_DA_PESQUISA}
+      </style>
 
-      <header className="pesquisa-campo__cabecalho">
+      {/*
+        `div`, e não `header`. Um `header` aninhado em `section` não vira
+        landmark de banner, então não acrescenta semântica — mas cria um
+        segundo `<header>` visível na Home, que é exatamente o que o teste do
+        cabeçalho real vigia. A seção Território já usa `div` pelo mesmo
+        motivo; o `h2` com `aria-labelledby` é quem nomeia a seção.
+      */}
+      <div className="pesquisa-campo__cabecalho">
         <div>
           <p className="meta-ficha">02 — PESQUISA EM CAMPO</p>
-          <p className="meta-ficha pesquisa-campo__proposta">
-            Preset {ROTULOS[composicao]} · somente DEV
-          </p>
+          {contexto === "prototipo" ? (
+            <p className="meta-ficha pesquisa-campo__proposta">
+              Preset {ROTULOS[composicao]} · somente DEV
+            </p>
+          ) : null}
         </div>
         <h2 id={`${prefixo}-titulo`}>O campo como documento</h2>
         <p>
-          <span className="meta-ficha">Título editorial · proposta</span>
-          <br />
-          Três registros sem pessoas identificáveis aproximam a cartografia da
-          presença física: chegada por água, arquitetura e uma atividade em área
-          coberta.
+          A pesquisa foi a campo, e o registro fotográfico é parte do que ela
+          produziu. As imagens desta seção vêm do acervo do projeto e são
+          publicadas sem pessoa identificável.
         </p>
-      </header>
+      </div>
 
       <div className="pesquisa-campo__corpo">
         <Fotografia principal registro={igreja} />
@@ -120,7 +163,7 @@ export function PesquisaEmCampoPrototipo({
           <p className="meta-ficha">Leitura do registro</p>
           <h3>Da abstração do mapa à materialidade do território</h3>
           <p>
-            Este recorte reúne três fotografias documentadas como Ilha Grande. A
+            As fotografias deste recorte estão documentadas como Ilha Grande. A
             data das imagens não está confirmada e, por isso, não é inferida a
             partir de entrevistas, relatórios ou metadados do arquivo.
           </p>

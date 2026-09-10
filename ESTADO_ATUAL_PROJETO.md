@@ -1517,3 +1517,38 @@ Estado: **EM PROTÓTIPO**. A Home segue em aproximadamente 692.435 B no cenário
 1440 e recebeu incremento de 0 B. Sem deploy, push, banco, R2, Vercel, DNS ou
 mudança de infraestrutura. Registro:
 [H3_PESQUISA_CAMPO_PROTOTIPO.md](./docs/frontend/H3_PESQUISA_CAMPO_PROTOTIPO.md).
+### H3.1 — Pesquisa em Campo integrada localmente, 2026-09-10
+
+O Preset A — Documental aberto foi escolhido pelo responsável e integrado à
+Home entre o Território e os caminhos prioritários. A seção é Server Component
+puro, não acrescenta ilha cliente e reaproveita a implementação do laboratório;
+a entrada pública fixa a composição e remove todo rótulo de desenvolvimento,
+inclusive do CSS embutido. As três fotografias continuam `lazy`, sem `preload`
+e sem `priority`.
+
+A frase de abertura do protótipo foi recusada por soar como nota de auditoria e
+depender do número de imagens. A abertura publicada tem quatro afirmações, todas
+sustentadas pelo corpus, e não conta fotografias. O bloco "Método · síntese
+transversal" permanece na Home e **continua aguardando aprovação humana**.
+
+Nenhum dos três títulos é topônimo: "Igrejinha" era nome de arquivo do corpus e
+virou "Fachada de igreja" na interface, com o nome original preservado na
+procedência. B01 segue RESTRITO e não aparece na Home — nem identificador, nem
+título interno, nem URL, nem arquivo. A04 continua fora do lote público e não é
+mencionado no HTML servido. Os derivados foram revalidados antes da integração:
+hashes conferem, sem EXIF, XMP, GPS ou vestígio de dispositivo, 242.766 B
+versionados em três arquivos.
+
+A transferência inicial da Home em 1440 px passou de **659.053 B para
+797.392 B**, medida pelo mesmo método antes e depois. As três fotografias somam
+128.920 B e entram no carregamento inicial por limiar do navegador, apesar do
+`lazy`. Corrigir o `sizes` para o slot real da Home economizou 41.783 B. Em
+375 px, o inicial é 609.512 B e duas fotografias só chegam ao entrar na seção.
+
+Gates locais passaram; `pnpm pendencias` não verificou nada por ausência de
+`DATABASE_URL` local. Registro:
+[H3_INTEGRACAO_PESQUISA_HOME.md](./docs/frontend/H3_INTEGRACAO_PESQUISA_HOME.md).
+
+Estado: **IMPLEMENTADA LOCALMENTE, NÃO DEPLOYADA**. Sem MapLibre, dependência
+nova, deploy, push, banco, R2, Vercel, DNS ou mudança de infraestrutura. H4 não
+foi iniciada.

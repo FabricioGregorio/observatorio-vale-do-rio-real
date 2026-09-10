@@ -5,7 +5,7 @@
  * existência real das rotas e a proibição de descrever seção sem conteúdo.
  * O comportamento renderizado é coberto em `testes/a11y/home.spec.ts`.
  */
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, test } from "vitest";
 import { CAMINHOS_PRIORITARIOS } from "../src/componentes/home/caminhos";
 import { MENU_PRINCIPAL, MENU_RODAPE } from "../src/lib/navegacao";
@@ -59,5 +59,32 @@ describe("caminhos prioritários da Home", () => {
         expect(caminho.descricao).not.toBeNull();
       }
     }
+  });
+});
+/**
+ * A Home e o laboratório compartilham a implementação da seção, e é justamente
+ * por isso que a fiação precisa de guarda. Importar o componente do protótipo
+ * direto na Home devolveria os rótulos "Preset" e "somente DEV" ao conteúdo
+ * público sem quebrar tipo, lint ou build — o erro passaria silencioso.
+ */
+describe("fiação da seção Pesquisa em Campo", () => {
+  const home = readFileSync("src/app/page.tsx", "utf8");
+  const entrada = readFileSync(
+    "src/componentes/pesquisa/PesquisaEmCampo.tsx",
+    "utf8",
+  );
+
+  test("a Home usa a entrada pública, nunca o componente de laboratório", () => {
+    expect(home).toContain(
+      'import { PesquisaEmCampo } from "../componentes/pesquisa/PesquisaEmCampo"',
+    );
+    expect(home).toContain("<PesquisaEmCampo />");
+    expect(home).not.toContain("PesquisaEmCampoPrototipo");
+  });
+
+  test("a entrada pública fixa a composição A e o contexto da Home", () => {
+    expect(entrada).toContain('composicao="documental-aberto"');
+    expect(entrada).toContain('contexto="home"');
+    expect(entrada).not.toContain("caderno-tecnico");
   });
 });

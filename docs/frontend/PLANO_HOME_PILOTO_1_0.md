@@ -2518,3 +2518,39 @@ decisão humana. A Home não foi alterada: seu cenário 1440 permanece em
 aproximadamente 692.435 B e recebe 0 B da H3 nesta fase. Não houve deploy,
 push ou mudança de infraestrutura. Registro completo:
 [H3_PESQUISA_CAMPO_PROTOTIPO.md](./H3_PESQUISA_CAMPO_PROTOTIPO.md).
+## 32.9 Atualização H3.1 — Pesquisa em Campo integrada na Home
+
+> **Atualização de 2026-09-10.** O responsável escolheu o **Preset A —
+> Documental aberto**, aprovou os três títulos da seção, recusou a frase de
+> abertura do protótipo e autorizou a integração local.
+
+Estado: **IMPLEMENTADA LOCALMENTE, NÃO DEPLOYADA**. A Home agora segue Hero,
+01 — Território, 02 — Pesquisa em Campo, caminhos prioritários e acervo. A
+seção é Server Component puro e não acrescenta ilha nenhuma; laboratório e Home
+compartilham a implementação, e a entrada pública fixa a composição A e remove
+todo rótulo de desenvolvimento — inclusive do CSS embutido.
+
+A frase recusada saiu. No lugar entrou uma abertura curta cujas quatro
+afirmações estão sustentadas pelo corpus e que não depende do número de
+fotografias publicadas. O bloco "Método · síntese transversal" permanece e
+**continua aguardando aprovação humana**: ele estava marcado como pendente na
+tabela de copy da H3 e não foi decidido nesta rodada.
+
+Nenhum dos três títulos de fotografia é topônimo. "Igrejinha" era nome de
+arquivo do corpus e virou "Fachada de igreja" na interface, para não promover
+legenda editorial a nome de lugar; o nome original continua registrado na
+procedência. Os outros dois já eram descrição e foram mantidos.
+
+B01 segue RESTRITO e não aparece na Home: nem identificador, nem título
+interno, nem URL, nem arquivo. A04 continua fora do lote público, e o HTML
+servido não o menciona. Os três derivados foram revalidados antes da
+integração: hash confere, e não há EXIF, XMP, GPS ou vestígio de dispositivo.
+
+Medição em 1440 px, transferência inicial: **659.053 B antes, 797.392 B
+depois**. As três fotografias custam 128.920 B e, apesar de `lazy`, entram no
+carregamento inicial por limiar do navegador — medição registrada, sem correção
+possível em HTML. Corrigir o `sizes` para o slot real economizou 41.783 B.
+Registro completo: [H3_INTEGRACAO_PESQUISA_HOME.md](./H3_INTEGRACAO_PESQUISA_HOME.md).
+
+Nenhuma dependência, MapLibre, rota pública, banco ou infraestrutura foi criada.
+Não houve deploy nem push. H4 não foi iniciada.

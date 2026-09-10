@@ -4,6 +4,12 @@
  * O corpus e os originais ficam fora do repositório. Somente os três WebP
  * abaixo entram no bundle, depois de revisão visual de privacidade. Nenhuma
  * imagem com pessoa identificável foi selecionada.
+ *
+ * `id` e `original.arquivo` preservam o nome dado no corpus e servem à
+ * procedência. `titulo` é legenda descritiva do que a fotografia mostra, e não
+ * topônimo: nenhum documento lido registra nome oficial de lugar para estas
+ * cenas. Por isso `igrejinha.jpg` continua identificando o original e a Home
+ * exibe "Fachada de igreja".
  */
 
 export const PASTA_PUBLICA_DA_PESQUISA = "/media/pesquisa";
@@ -98,7 +104,7 @@ export const DERIVADOS_DA_PESQUISA = [
     bytes: 168_738,
     sha256: "75d9dcb8291299224953c965c24a04c346373bd7923757cd39c1e45599aa3592",
     qualidade: 0.72,
-    titulo: "Igrejinha",
+    titulo: "Fachada de igreja",
     alt: "Fachada branca e azul de uma igreja, com a inscrição 1933 na parte superior.",
     local: "Ilha Grande",
     data: null,

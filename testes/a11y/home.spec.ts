@@ -249,6 +249,113 @@ test.describe("Home", () => {
     expect(["0s", "0.00001s", "1e-05s"]).toContain(duracao);
   });
 
+  test("integra a composição A da Pesquisa em Campo, sem rótulo de desenvolvimento", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const pesquisa = page.getByTestId("pesquisa-home");
+
+    await expect(pesquisa).toHaveAttribute(
+      "data-composicao",
+      "documental-aberto",
+    );
+    await expect(pesquisa.locator("figure")).toHaveCount(3);
+    await expect(pesquisa.locator("figure img[alt]:not([alt=''])")).toHaveCount(
+      3,
+    );
+    await expect(pesquisa.locator("figure figcaption")).toHaveCount(3);
+    await expect(pesquisa.getByText(/somente DEV/i)).toHaveCount(0);
+    await expect(pesquisa.getByText(/preset/i)).toHaveCount(0);
+    await expect(pesquisa.getByText(/proposta/i)).toHaveCount(0);
+
+    // Nem como classe morta no CSS embutido: quem procurar vestígio de
+    // desenvolvimento no conteúdo servido não pode encontrar nenhum.
+    expect(await page.content()).not.toMatch(/proposta|somente DEV/i);
+  });
+
+  /**
+   * As três fotografias ficam abaixo do Hero e do Território. Carregá-las na
+   * abertura desperdiçaria a banda do público que o doc 01 §7 descreve — rede
+   * de escola e de zona rural — para mostrar imagem que ninguém está vendo.
+   */
+  test("as fotografias da pesquisa não disputam o carregamento inicial", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    await expect(
+      page.locator(
+        "head link[rel='preload'][as='image'][href*='/media/pesquisa']",
+      ),
+    ).toHaveCount(0);
+    await expect(
+      page.getByTestId("pesquisa-home").locator("img[loading='lazy']"),
+    ).toHaveCount(3);
+    await expect(
+      page.getByTestId("pesquisa-home").locator("img[fetchpriority='high']"),
+    ).toHaveCount(0);
+  });
+
+  test("publica a copy aprovada da Pesquisa em Campo e nenhuma nota de auditoria", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const pesquisa = page.getByTestId("pesquisa-home");
+
+    await expect(pesquisa.getByText("02 — PESQUISA EM CAMPO")).toHaveCount(1);
+    await expect(
+      pesquisa.getByRole("heading", { name: "O campo como documento" }),
+    ).toBeVisible();
+    await expect(
+      pesquisa.getByRole("heading", {
+        name: "Da abstração do mapa à materialidade do território",
+      }),
+    ).toBeVisible();
+
+    const conteudo = await pesquisa.innerText();
+    expect(conteudo).not.toMatch(/sem pessoas identificáveis/i);
+    expect(conteudo).not.toMatch(/três (registros|fotografias)/i);
+  });
+
+  /**
+   * A03 e A04 continuam fora do lote público e B01 continua RESTRITO como
+   * conjunto. Publicar os derivados seguros não promove nenhum dos três: o
+   * identificador, o título interno e o caminho do arquivo não podem vazar
+   * para o HTML só porque a seção passou a existir.
+   */
+  test("não expõe conjunto restrito nem relatório fora do lote público", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const html = await page.content();
+
+    expect(html).not.toMatch(/\bB01\b/);
+    expect(html).not.toMatch(/\bA0[34]\b/);
+    expect(html).not.toContain("fotografias de comprovação");
+    expect(html).not.toContain("relatorio-tecnico-serra-dos-macacos");
+  });
+
+  test("Pesquisa em Campo sucede o Território e não cria ilha nova", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    const ordem = await page.evaluate(() => {
+      const territorio = document.querySelector("#territorio-home");
+      const pesquisa = document.querySelector("#pesquisa-home");
+      if (territorio === null || pesquisa === null) return null;
+      return Boolean(
+        territorio.compareDocumentPosition(pesquisa) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      );
+    });
+    expect(ordem).toBe(true);
+
+    await expect(
+      page.getByTestId("pesquisa-home").locator("button, [role='listbox']"),
+    ).toHaveCount(0);
+  });
+
   for (const largura of [320, 375, 768, 1440]) {
     for (const tema of ["light", "dark"] as const) {
       test(`${largura}px no tema ${tema} não tem overflow horizontal`, async ({
