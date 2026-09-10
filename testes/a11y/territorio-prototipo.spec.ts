@@ -29,6 +29,37 @@ test.describe("protótipo territorial H2", () => {
     }
   });
 
+  test("B refinado preserva o ângulo e continua mais profundo que A", async ({
+    page,
+  }) => {
+    const estilos = await page.evaluate(() => {
+      const ler = (seletor: string, propriedade: string) => {
+        const elemento = document.querySelector(seletor);
+        if (elemento === null) return null;
+        return getComputedStyle(elemento).getPropertyValue(propriedade).trim();
+      };
+
+      return {
+        pitchA: ler("[data-profundidade='minima']", "--territorio-pitch"),
+        pitchB: ler("[data-profundidade='moderada']", "--territorio-pitch"),
+        espessuraA: ler(
+          "[data-profundidade='minima']",
+          "--territorio-espessura",
+        ),
+        espessuraB: ler(
+          "[data-profundidade='moderada']",
+          "--territorio-espessura",
+        ),
+      };
+    });
+
+    expect(estilos.pitchA).toBe("3deg");
+    expect(estilos.pitchB).toBe("7deg");
+    expect(Number.parseFloat(estilos.espessuraB ?? "0")).toBeGreaterThan(
+      Number.parseFloat(estilos.espessuraA ?? "0") * 1.5,
+    );
+  });
+
   test("hover e foco preservam feedback visual", async ({ page }) => {
     const mapa = preset(page, "minima").getByRole("listbox", {
       name: "Mapa dos 75 municípios de Sergipe",

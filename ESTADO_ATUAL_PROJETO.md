@@ -1461,9 +1461,11 @@ CSS produz perspectiva, espessura e sombra; a ilha cliente existente recebeu
 opções desativadas por padrão para sincronizar mapa, índice e painel no
 protótipo. O modo público atual não habilita essas opções.
 
-Preset A usa profundidade mínima; preset B, moderada. A recomendação preliminar
-é **A**, por preservar melhor o contorno em claro, escuro e mobile. A decisão
-final continua humana. Registro completo:
+Preset A usa profundidade mínima; preset B, moderada. O responsável escolheu
+**B** como direção. Na H2.0.1, espessura, deslocamento e peso da sombra de B
+foram reduzidos em aproximadamente 20%, mantendo ângulo, escala, geometria,
+cores e interação. A coluna editorial não foi redesenhada e permanece dívida
+visual para H2.1. Registro completo:
 [`H2_TERRITORIO_PROTOTIPO.md`](./docs/frontend/H2_TERRITORIO_PROTOTIPO.md).
 
 Build local passou e `/dev/territorio` respondeu 404 em produção. Testes

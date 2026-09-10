@@ -2468,8 +2468,9 @@ continua **local, não publicada**, sem push ou alteração de infraestrutura.
 
 Estado: **EM PROTÓTIPO**, exclusivamente em `/dev/territorio`, com 404 em
 produção. Dois presets compartilham a mesma malha oficial, projeção, paleta e
-interação: A com profundidade mínima e B com profundidade moderada. A
-recomendação preliminar é A; a escolha é humana.
+interação: A com profundidade mínima e B com profundidade moderada. O
+responsável escolheu **B**; a H2.0.1 reduziu em cerca de 20% sua espessura,
+deslocamento e peso de sombra, preservando o ângulo moderado.
 
 A Home continua com a seção cartográfica anterior, sem substituição ou mudança
 de conteúdo. Registro técnico, medições e capturas:
@@ -2477,4 +2478,5 @@ de conteúdo. Registro técnico, medições e capturas:
 
 Nenhuma dependência, coordenada, rota pública, banco ou infraestrutura foi
 criada. Não houve deploy nem push. A integração H2.1 só pode começar após a
-aprovação explícita da profundidade e da copy proposta.
+aprovação explícita da copy proposta. A coluna editorial permanece dívida
+visual registrada para a integração H2.1; não foi redesenhada nesta fase.

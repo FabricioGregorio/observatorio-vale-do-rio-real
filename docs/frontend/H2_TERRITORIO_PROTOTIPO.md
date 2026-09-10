@@ -81,12 +81,17 @@ há `<use>`, clone da malha ou segunda camada geométrica.
 | Preset | Desktop | Mobile | Leitura |
 |---|---|---|---|
 | **A — mínima** | pitch 3°, giro −1°, espessura 0,22 rem | pitch 1,5°, giro −0,5°, espessura 0,16 rem | volume presente, contorno mais limpo |
-| **B — moderada** | pitch 7°, giro −1,75°, espessura 0,46 rem | pitch 3,5°, giro −0,8°, espessura 0,28 rem | placa mais explícita, borda sul/leste mais pesada |
+| **B — anterior** | pitch 7°, giro −1,75°, espessura 0,46 rem | pitch 3,5°, giro −0,8°, espessura 0,28 rem | placa mais explícita, borda sul/leste mais pesada |
+| **B — refinada** | pitch 7°, giro −1,75°, espessura 0,37 rem | pitch 3,5°, giro −0,8°, espessura 0,22 rem | objeto elevado com borda e sombra mais leves |
 
-**Recomendação técnica e visual: Preset A.** Ele entrega a leitura de objeto
-cartográfico sem transformar a borda em protagonista e preserva melhor o
-reconhecimento de Sergipe em claro, escuro e telas estreitas. A escolha final é
-humana.
+**Decisão humana: Preset B.** O responsável escolheu a profundidade moderada
+porque ela comunica melhor inclinação, espessura e objeto cartográfico. Na
+H2.0.1, seu peso combinado foi reduzido em aproximadamente 20%, sem alterar
+ângulo, escala, geometria, cor ou interação: espessura de 0,46 para 0,37 rem,
+deslocamento de sombra de 1,10 para 0,88 rem e força da sombra de 22% para 17%,
+com desfoque ampliado de 0,70 para 0,95 rem. No mobile, espessura e deslocamento
+caíram cerca de 20% adicionais em relação ao B anterior, preservando pitch de
+3,5° e sensação de objeto.
 
 ## 6. Interação e acessibilidade
 
@@ -153,14 +158,19 @@ entrar depois de conferência documental ou de campo.
   `preset-a-1440-light.png`, `preset-a-1440-dark.png`,
   `preset-a-375-light.png`, `preset-b-1440-light.png`,
   `preset-b-1440-dark.png`, `preset-b-375-light.png` e
-  `preset-a-320-light.png`.
+  `preset-a-320-light.png` (comparação anterior); e
+  `preset-b-refinado-1440-light.png`, `preset-b-refinado-1440-dark.png`,
+  `preset-b-refinado-375-light.png` e `preset-b-refinado-320-light.png`
+  (H2.0.1).
 
 ## 10. Bloqueios e próxima decisão
 
-Antes de H2.1, o responsável precisa escolher A ou B e aprovar/revisar a copy
-marcada como proposta. Fotografia editorial e coordenadas continuam pendentes,
-mas não bloqueiam a composição sem imagem e sem pins. A seção atual da Home
-permanece como está até essa decisão.
+A profundidade escolhida para uma futura H2.1 é **B refinado**. Ainda é preciso
+aprovar/revisar a copy marcada como proposta. A coluna direita permanece dívida
+visual explícita: ainda se aproxima de um bloco institucional/card e deverá ser
+refinada somente na integração H2.1, sem ampliar esta tarefa. Fotografia
+editorial e coordenadas continuam pendentes, mas não bloqueiam a composição sem
+imagem e sem pins. A seção atual da Home permanece como está.
 
 Não houve MapLibre, Leaflet, dependência nova, banco, R2, Vercel, DNS, deploy ou
 push.
