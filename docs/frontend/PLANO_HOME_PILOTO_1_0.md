@@ -2628,3 +2628,37 @@ auditoria de performance e Lighthouse acontece na H7.
 
 Registro completo: [H3_INTEGRACAO_PESQUISA_HOME.md](./H3_INTEGRACAO_PESQUISA_HOME.md).
 Sem deploy, push ou mudança de infraestrutura. H4 não foi iniciada.
+## 32.12 Atualização H4.0 — Dados e indicadores em protótipo
+
+Em 2026-09-10 a fase **H4 — Dados / Indicadores** entrou em **EM PROTÓTIPO**,
+exclusivamente em `/dev/dados`, com 404 em produção. A Home não foi alterada.
+
+A rodada começou pela auditoria, não pelo desenho. Foram auditados 21 arquivos
+candidatos e 20 abas de planilha. Dos 43 indicadores candidatos, **29 são
+APTOS, 11 são PENDENTES e 3 são NÃO PUBLICAR** — dois deles porque o gênero foi
+inferido pelo prenome e a própria fonte manda validar antes de publicar, e um
+porque o numerador está zerado por ausência de valor declarado.
+
+A unidade documental de origem continua **RESTRITA**: ela sustenta a agregação
+internamente, e nem seu identificador, nem seu título interno, nem o nome do
+arquivo ou da aba chegam ao HTML. Dois testes vigiam esse limite. Nenhuma linha
+individual foi copiada, e não há dado pessoal em nada derivado.
+
+O protótipo publica **oito indicadores**, uma série mensal de seis meses e um
+ranking de dezesseis atividades, com base, período, recorte, regra de cálculo e
+regra de arredondamento declarados. O dataset é `const` TypeScript com 12.526 B
+mais 3.413 B de formatação determinística; `Intl.NumberFormat` não é usado
+porque sua saída depende do ICU do runtime.
+
+Dois presets com o mesmo dataset: **A — Declaração editorial** e **B — Painel
+de pesquisa**. Recomendação técnica: **A**, que conversa melhor com a H3 e
+mantém a ficha como elemento assinatura. A escolha é humana.
+
+Um gráfico em SVG no servidor — dot plot de receita e despesa por mês — e um
+ranking em tabela com barra em CSS. **Nenhuma biblioteca de gráficos**, nenhum
+Client Component novo, zero JavaScript acrescentado, nenhuma fotografia.
+Lighthouse continua indisponível e a dívida fica para a H7.
+
+Registro completo: [H4_DADOS_INDICADORES_PROTOTIPO.md](./H4_DADOS_INDICADORES_PROTOTIPO.md).
+Sem banco, deploy, push ou mudança de infraestrutura. A H4.1 depende de decisão
+humana entre A e B.

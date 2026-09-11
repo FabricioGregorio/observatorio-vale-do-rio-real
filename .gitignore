@@ -12,6 +12,7 @@ coverage/
 # Capturas e medições locais de protótipos; nunca versionar.
 /tmp/h3-screenshots/
 /tmp/h3-measure-*.bin
+/tmp/h4-screenshots/
 
 # Artefato derivado de inventario-de-anexos.xlsx.
 # Regenerado por scripts/derivar-inventario.py; nunca editar à mão.

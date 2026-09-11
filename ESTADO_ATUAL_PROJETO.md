@@ -1589,3 +1589,40 @@ histórico.
 
 Estado: **H3 ENCERRADA, IMPLEMENTADA LOCALMENTE, NÃO DEPLOYADA**. Sem deploy,
 push, banco, R2, Vercel, DNS ou mudança de infraestrutura. H4 não foi iniciada.
+### H4.0 — Dados e indicadores em protótipo, 2026-09-10
+
+A fase de dados abriu pela auditoria das fontes, e não pelo desenho. Foram
+auditados 21 arquivos candidatos do corpus e 20 abas de planilha, com hash de
+cada arquivo registrado. Dos **43 indicadores candidatos**, 29 ficaram APTOS,
+11 PENDENTES e 3 NÃO PUBLICAR.
+
+As pendências são metodológicas e estão declaradas na própria fonte: a
+conciliação de uma visita no Borda da Mata trava o número de visitantes e tudo
+que o usa como denominador; a definição sobre autorremuneração do gestor trava
+a contagem de pessoas remuneradas distintas. Os três NÃO PUBLICAR são os dois
+indicadores de participação feminina, cujo gênero foi inferido pelo prenome, e
+o valor comprado de produtor direto, cujo numerador está zerado por ausência de
+valor declarado.
+
+O conjunto documental de origem continua **RESTRITO** e não foi promovido. Ele
+sustenta a agregação internamente; identificador, título interno, nome de
+arquivo e nome de aba não chegam ao HTML, e dois testes vigiam isso. Há dado
+pessoal em cinco abas e em uma planilha de resposta, nenhum deles derivado. O
+detalhamento por localidade ficou PENDENTE por permitir reidentificação: há
+linhas com uma única pessoa e valor exato.
+
+O protótipo `/dev/dados`, 404 em produção, publica oito indicadores, uma série
+mensal de seis meses e um ranking de dezesseis atividades, cada valor com base,
+período, recorte, regra de cálculo e regra de arredondamento. O dataset é
+constante TypeScript de 12.526 B, com formatação determinística própria em
+lugar de `Intl.NumberFormat`. Um gráfico em SVG no servidor e um ranking em
+tabela com barra em CSS: **nenhuma biblioteca de gráficos, nenhum Client
+Component novo e zero JavaScript acrescentado**.
+
+Dois presets com o mesmo dataset, A — Declaração editorial e B — Painel de
+pesquisa; a recomendação técnica é A. Banco: nada foi criado ou carregado, e um
+`SELECT` de verificação confirmou que a tabela `indicador` ainda não existe.
+Registro: [H4_DADOS_INDICADORES_PROTOTIPO.md](./docs/frontend/H4_DADOS_INDICADORES_PROTOTIPO.md).
+
+Estado: **EM PROTÓTIPO, NÃO INTEGRADA**. A Home segue sem a seção. Sem banco,
+R2, Vercel, DNS, deploy ou push. A H4.1 depende de decisão humana entre A e B.
