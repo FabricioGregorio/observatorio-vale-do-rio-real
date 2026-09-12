@@ -1,5 +1,5 @@
-import type { IndicadorDerivado } from "../../../dados/indicadores/derivados";
 import { exibirIndicador } from "../../../dados/indicadores/formato";
+import type { RegistroDeApoio } from "./selecaoEditorial";
 
 /**
  * Indicadores secundários como faixa de registros — H4.5.
@@ -23,25 +23,25 @@ import { exibirIndicador } from "../../../dados/indicadores/formato";
  * sobem uma vez para a ficha de contexto da seção, e cada registro fica com o
  * que só ele tem: a base e a regra de cálculo.
  *
- * ## `variante`, na H4.5.1
+ * ## O rótulo pode não ser o `titulo` do dataset — H4.5.2
  *
- * A faixa é montada duas vezes na mesma página — completa e reduzida — e a
- * alternância é CSS. A versão reduzida existe para medir **quanta faixa a
- * Home aguenta**, e não para eleger indicadores: os quatro que ela mostra são
- * os quatro primeiros do dataset, em ordem de arquivo, sem critério editorial.
- * A ressalva vive no cabeçalho do laboratório, fora da área de pré-visualização.
+ * A faixa recebe registros já resolvidos, com os rótulos editoriais aprovados
+ * para a interface. Corrigir esses nomes no dataset mudaria a H4.0, que é a
+ * autoridade factual e não é editada por uma fase de composição. A separação
+ * fica explícita em `selecaoEditorial.ts`: o ID resolve valor, base e regra no
+ * dataset; a camada editorial fornece somente o rótulo apresentado.
  */
 export function FaixaDeRegistros({
-  indicadores,
+  registros,
   variante,
 }: {
-  readonly indicadores: readonly IndicadorDerivado[];
-  readonly variante: "completa" | "reduzida";
+  readonly registros: readonly RegistroDeApoio[];
+  readonly variante: "candidata" | "reservados";
 }) {
   return (
     <div className="dv-faixa lv-revelar" data-variante={variante}>
       <ol className="dv-faixa__lista">
-        {indicadores.map((indicador) => (
+        {registros.map(({ indicador, rotulo }) => (
           <li className="dv-registro-indicador" key={indicador.id}>
             <span
               aria-hidden="true"
@@ -50,7 +50,7 @@ export function FaixaDeRegistros({
             <p className="dv-registro-indicador__valor">
               {exibirIndicador(indicador)}
             </p>
-            <h3>{indicador.titulo}</h3>
+            <h3>{rotulo}</h3>
             {/*
               Campo sem valor na fonte não vira linha. A regra da H4.0 vale
               igual aqui: metadado vazio só para dar aparência técnica é

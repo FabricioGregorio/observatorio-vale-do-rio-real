@@ -4,16 +4,19 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test, vi } from "vitest";
 import { exigirDesenvolvimentoDosDadosVivos } from "../src/app/dev/dados-vivos/page";
 import { PainelDeDados } from "../src/componentes/prototipo/dados/PainelDeDados";
-import {
-  DadosVivos,
-  POSICOES_DE_APOIO,
-} from "../src/componentes/prototipo/dadosvivos/DadosVivos";
+import { DadosVivos } from "../src/componentes/prototipo/dadosvivos/DadosVivos";
 import {
   ATIVIDADES_ABAIXO_DO_LIMIAR,
   ATIVIDADES_ACIMA_DO_LIMIAR,
   LIMIAR_DE_DIAS,
   RankingEditorial,
 } from "../src/componentes/prototipo/dadosvivos/RankingEditorial";
+import {
+  APOIO_DA_HOME,
+  REGISTROS_DE_APOIO,
+  REGISTROS_RESERVADOS,
+  RESERVADOS_AO_CONJUNTO,
+} from "../src/componentes/prototipo/dadosvivos/selecaoEditorial";
 import {
   ATIVIDADES,
   CONTEXTO_DOS_DADOS,
@@ -63,33 +66,42 @@ describe("H4.5: a rota é laboratório e some em produção", () => {
  * a tentação de "arredondar para caber" ou de escrever um valor à mão no JSX.
  */
 describe("H4.5: os números são os mesmos da H4.0", () => {
+  /**
+   * Os oito continuam idênticos nas duas composições. O que a H4.5.2 mudou foi
+   * quantos deles a Home mostra — e por isso a conferência de valor passou a
+   * ser feita contra a H4.0, que mostra todos, e contra a seleção da Home, que
+   * mostra cinco.
+   */
   test.each(INDICADORES)(
-    "$id aparece com o mesmo valor formatado nas duas composições",
+    "$id continua com o mesmo valor formatado na H4.0",
     (indicador) => {
-      const esperado = exibirIndicador(indicador);
-      expect(h45).toContain(esperado);
-      expect(h40Painel).toContain(esperado);
+      expect(h40Painel).toContain(exibirIndicador(indicador));
     },
   );
 
-  test("os oito indicadores estão na H4.5, e nenhum a mais", () => {
-    const valores = INDICADORES.map((indicador) => exibirIndicador(indicador));
-    expect(valores).toHaveLength(8);
-    for (const valor of valores) expect(h45).toContain(valor);
+  test("a candidata mostra o protagonista e os quatro de apoio, e nada mais", () => {
+    const naHome = ["H4-001", ...REGISTROS_DE_APOIO.map((r) => r.indicador.id)];
+    expect(naHome).toHaveLength(5);
+    for (const indicador of INDICADORES) {
+      const valor = exibirIndicador(indicador);
+      if (naHome.includes(indicador.id)) {
+        expect(h45, `${indicador.id} deveria aparecer`).toContain(valor);
+      }
+    }
   });
 
   test("base, período, recorte e regra não foram reescritos", () => {
     expect(h45).toContain(CONTEXTO_DOS_DADOS.periodo);
     expect(h45).toContain(CONTEXTO_DOS_DADOS.recorte);
     expect(h45).toContain(CONTEXTO_DOS_DADOS.fontePublica);
-    for (const indicador of INDICADORES) {
-      if (indicador.id === "H4-001") {
-        expect(h45).toContain(indicador.base);
-        expect(h45).toContain(indicador.notaMetodologica);
-      }
-      if (indicador.base !== null && indicador.id !== "H4-001") {
-        expect(h45).toContain(indicador.base);
-      }
+
+    const protagonista = INDICADORES[0];
+    expect(h45).toContain(protagonista.base);
+    expect(h45).toContain(protagonista.notaMetodologica);
+    expect(h45).toContain(protagonista.regra);
+
+    for (const { indicador } of REGISTROS_DE_APOIO) {
+      if (indicador.base !== null) expect(h45).toContain(indicador.base);
       expect(h45).toContain(indicador.regra);
     }
   });
@@ -253,6 +265,13 @@ describe("H4.5.1: a composição candidata não fala como laboratório", () => {
     expect(paginaDoLaboratorio).toContain("Fim da composição candidata");
   });
 
+  /** A ressalva sobre a seleção é do laboratório, e não da leitura. */
+  test("a ressalva da seleção fica no cabeçalho, fora da composição", () => {
+    expect(paginaDoLaboratorio).toContain("decisão editorial fechada");
+    expect(h45).not.toContain("decisão editorial fechada");
+    expect(h45).not.toContain("material reservado");
+  });
+
   /** O marcador editorial fica: ele é sobre aprovação de copy, não sobre dev. */
   test("o título editorial continua marcado como proposta", () => {
     expect(h45).toContain("Título editorial · proposta");
@@ -274,9 +293,9 @@ describe("H4.5.1: a passagem de saída não afirma o que a fonte não sustenta",
     expect(saida).not.toMatch(/pessoa|trabalhador|indivíduo|gente/i);
   });
 
-  test("a copy nova fala do conjunto do levantamento, e não de quem trabalhou", () => {
+  test("a copy nova fala do levantamento, e não de quem trabalhou", () => {
     expect(h45).toContain("Medida → Conjunto completo");
-    expect(h45).toContain("pertence ao conjunto completo do levantamento");
+    expect(h45).toContain("O levantamento completo preserva o detalhamento");
   });
 
   /** A cruz saiu e nada tomou o lugar dela: o fio já faz a ligação. */
@@ -289,42 +308,242 @@ describe("H4.5.1: a passagem de saída não afirma o que a fonte não sustenta",
 });
 
 /**
- * H4.5.1 — completa e reduzida.
+ * H4.5.2 — a seleção editorial dos quatro indicadores de apoio.
  *
- * A reduzida é ensaio de composição. A ressalva vive no cabeçalho do
- * laboratório, fora da pré-visualização, e é ela que impede a leitura de que
- * quatro indicadores foram eleitos.
+ * A H4.5.1 montou a comparação entre sete e quatro posições e deixou a escolha
+ * aberta, porque ela era humana. A escolha veio. O que estes testes protegem
+ * não é o gosto: é a promessa de que reduzir a Home não apagou nada.
  */
-describe("H4.5.1: as duas variantes da faixa de apoio", () => {
-  test("as duas existem, e a reduzida mostra quatro posições", () => {
-    expect(POSICOES_DE_APOIO).toBe(4);
-    expect(h45).toContain('data-variante="completa"');
-    expect(h45).toContain('data-variante="reduzida"');
+describe("H4.5.2: a Home mostra quatro indicadores de apoio, na ordem decidida", () => {
+  test("são exatamente quatro, e são os quatro decididos, nesta ordem", () => {
+    expect(REGISTROS_DE_APOIO).toHaveLength(4);
+    expect(REGISTROS_DE_APOIO.map((r) => r.indicador.id)).toEqual([
+      "H4-003",
+      "H4-004",
+      "H4-005",
+      "H4-008",
+    ]);
 
-    const reduzida = h45.slice(h45.indexOf('data-variante="reduzida"'));
-    const itens = reduzida.split("dv-registro-indicador__valor").length - 1;
-    expect(itens).toBe(POSICOES_DE_APOIO);
+    const faixa = h45.slice(h45.indexOf('data-variante="candidata"'));
+    const itens = faixa.split("dv-registro-indicador__valor").length - 1;
+    expect(itens).toBe(4);
   });
 
-  test("a completa mostra os sete secundários, com valores reais", () => {
-    const completa = h45.slice(
-      h45.indexOf('data-variante="completa"'),
-      h45.indexOf('data-variante="reduzida"'),
+  test("a ordem na tela é a ordem decidida, e não a do arquivo", () => {
+    const faixa = h45.slice(h45.indexOf('data-variante="candidata"'));
+    const posicoes = REGISTROS_DE_APOIO.map((r) =>
+      faixa.indexOf(exibirIndicador(r.indicador)),
     );
-    const itens = completa.split("dv-registro-indicador__valor").length - 1;
-    expect(itens).toBe(INDICADORES.length - 1);
-    for (const indicador of INDICADORES.slice(1)) {
-      expect(completa).toContain(exibirIndicador(indicador));
+    for (const posicao of posicoes) expect(posicao).toBeGreaterThan(-1);
+    expect(posicoes).toEqual([...posicoes].sort((a, b) => a - b));
+  });
+
+  test("os valores são os auditados, sem um dígito de diferença", () => {
+    for (const { indicador } of REGISTROS_DE_APOIO) {
+      expect(h45).toContain(exibirIndicador(indicador));
+      expect(h40Painel).toContain(exibirIndicador(indicador));
     }
   });
 
-  test("o laboratório declara que a redução é composição, e não escolha", () => {
-    expect(paginaDoLaboratorio).toContain("ensaio de composição");
-    // Regex, e não string literal: a quebra de linha é do formatador.
-    expect(paginaDoLaboratorio).toMatch(/e não\s+escolha editorial/);
-    expect(paginaDoLaboratorio).toMatch(/decisão continua humana/);
-    // A ressalva fica fora da pré-visualização.
-    expect(h45).not.toContain("ensaio de composição");
+  test("os quatro rótulos editoriais são os aprovados", () => {
+    expect(REGISTROS_DE_APOIO.map((r) => r.rotulo)).toEqual([
+      "Despesa total registrada",
+      "Receita registrada",
+      "Participação do trabalho na despesa",
+      "Localidades de origem registradas",
+    ]);
+    for (const { rotulo } of REGISTROS_DE_APOIO) expect(h45).toContain(rotulo);
+  });
+
+  test("a seleção editorial referencia IDs e não redefine valores", () => {
+    const fonte = readFileSync(
+      "src/componentes/prototipo/dadosvivos/selecaoEditorial.ts",
+      "utf8",
+    );
+    expect(fonte).not.toMatch(/valor(?:Bruto|Exibido)?\s*:/);
+    for (const { indicador } of REGISTROS_DE_APOIO) {
+      expect(INDICADORES.find((item) => item.id === indicador.id)).toBe(
+        indicador,
+      );
+    }
+  });
+
+  /**
+   * Reduzir a Home não pode apagar indicador. Os três que saíram continuam no
+   * dataset, continuam na H4.0 e continuam na página, no material reservado.
+   */
+  test("os três reservados continuam inteiros no dataset e na H4.0", () => {
+    expect(RESERVADOS_AO_CONJUNTO).toEqual(["H4-002", "H4-006", "H4-007"]);
+    expect(INDICADORES).toHaveLength(8);
+    for (const indicador of REGISTROS_RESERVADOS) {
+      expect(INDICADORES).toContainEqual(indicador);
+      expect(h40Painel).toContain(exibirIndicador(indicador));
+    }
+  });
+
+  test("os três reservados saíram da composição candidata", () => {
+    const faixa = h45.slice(h45.indexOf('data-variante="candidata"'));
+    for (const indicador of REGISTROS_RESERVADOS) {
+      expect(faixa).not.toContain(indicador.titulo);
+    }
+  });
+
+  test("os oito continuam somando: quatro na Home, três reservados, um protagonista", () => {
+    const naHome = REGISTROS_DE_APOIO.map((r) => r.indicador.id);
+    const reservados = [...RESERVADOS_AO_CONJUNTO];
+    const todos = new Set([...naHome, ...reservados, "H4-001"]);
+    expect(todos.size).toBe(INDICADORES.length);
+  });
+});
+
+/**
+ * H4.5.2 — o rótulo trocado, e a prova de que ele é mais exato que o original.
+ *
+ * O dataset não foi editado: ele é a autoridade factual da H4.0 e não muda por
+ * uma fase de composição. A troca vive na apresentação, e a regra declarada do
+ * próprio indicador é o que a sustenta.
+ */
+describe("H4.5.2: o rótulo de localidades diz o que a regra diz", () => {
+  const localidades = REGISTROS_DE_APOIO.find(
+    (r) => r.indicador.id === "H4-008",
+  );
+
+  test("a tela mostra o rótulo revisado, e não o título do dataset", () => {
+    expect(localidades?.rotulo).toBe("Localidades de origem registradas");
+    expect(h45).toContain("Localidades de origem registradas");
+    expect(h45).not.toContain("Localidades alcançadas");
+  });
+
+  /**
+   * "Alcançadas" afirmaria que a renda chegou a um território. A regra conta
+   * de onde vem quem foi contratado, que é o contrário da direção.
+   */
+  test("a regra do indicador sustenta o rótulo, e desmente o anterior", () => {
+    expect(localidades?.indicador.regra).toContain("localidades de origem");
+    expect(localidades?.indicador.regra).toContain(
+      "declaradas pelos trabalhadores contratados",
+    );
+    expect(localidades?.indicador.regra).not.toMatch(/alcanç/i);
+  });
+
+  test("o dataset não foi editado: o título original continua lá", () => {
+    const fonte = readFileSync("src/dados/indicadores/derivados.ts", "utf8");
+    expect(fonte).toContain("Localidades alcançadas pela renda do trabalho");
+    expect(fonte).not.toContain("Localidades de origem registradas");
+  });
+
+  test("o rótulo de H4-008 está declarado e justificado", () => {
+    const localidades = APOIO_DA_HOME.find((apoio) => apoio.id === "H4-008");
+    expect(localidades?.rotulo).toBe("Localidades de origem registradas");
+    expect(localidades?.motivoDoRotulo).toMatch(/alcanç/i);
+  });
+});
+
+/**
+ * H4.5.2 — a copy das duas passagens.
+ *
+ * As duas foram reescritas por motivos diferentes. A de entrada sugeria que os
+ * números derivam de observação de campo; a de saída falava como nota interna
+ * de projeto.
+ */
+describe("H4.5.2: a copy das passagens", () => {
+  test("a entrada não afirma que os números vêm de observação", () => {
+    expect(h45).toContain(
+      "Os registros da pesquisa também permitem uma leitura quantitativa",
+    );
+    expect(h45).toContain("Campo → Medida");
+    expect(h45).not.toContain("volta aqui como quantidade declarada");
+  });
+
+  test("a saída fala do recorte, e não de uma decisão de projeto", () => {
+    expect(h45).toContain("Esta leitura apresenta um recorte");
+    expect(h45).toContain(
+      "O levantamento completo preserva o detalhamento das atividades registradas",
+    );
+    expect(h45).toContain("Medida → Conjunto completo");
+    expect(h45).not.toContain("e não a esta leitura");
+  });
+
+  /**
+   * Nenhuma das duas pode escorregar para linguagem de peça publicitária.
+   *
+   * O teste olha só o texto das passagens, de propósito. "Impacto" aparece na
+   * abertura da seção e na leitura do protagonista, nas duas vezes para negar:
+   * o indicador **não** mede impacto. Proibir a palavra na seção inteira
+   * proibiria a ressalva, que é justamente o oposto de publicidade.
+   */
+  test.each([
+    "impacto",
+    "transformação",
+    "extraordinário",
+    "eficiência",
+    "performance",
+    "impressionante",
+  ])("nenhuma passagem usa %s", (termo) => {
+    for (const marca of ['data-passagem="medida"', 'data-passagem="saida"']) {
+      const inicio = h45.indexOf(marca);
+      const passagem = h45.slice(inicio, h45.indexOf("</div>", inicio));
+      expect(passagem.toLowerCase()).not.toContain(termo.toLowerCase());
+    }
+  });
+
+  /** A saída continua sem link: `/dados` ainda é stub. */
+  test("a saída não promete navegação que a rota não cumpre", () => {
+    const saida = h45.slice(h45.indexOf('data-passagem="saida"'));
+    expect(saida).not.toContain("<a ");
+    expect(saida).not.toContain('href="/dados"');
+  });
+});
+
+/**
+ * H4.5.2 — o custo desta rodada é zero, e isso é verificável no repositório.
+ */
+describe("H4.5.2: nenhuma dependência e nenhuma ilha nova", () => {
+  /**
+   * A lista é explícita, e não uma contagem: contagem passa despercebida quando
+   * alguém troca uma dependência por outra.
+   */
+  test("o manifesto não ganhou dependência", () => {
+    const manifesto = JSON.parse(readFileSync("package.json", "utf8"));
+    expect(Object.keys(manifesto.dependencies ?? {})).toEqual([
+      "@aws-sdk/client-s3",
+      "@tailwindcss/postcss",
+      "drizzle-orm",
+      "fflate",
+      "next",
+      "pg",
+      "react",
+      "react-dom",
+      "tailwindcss",
+      "zod",
+    ]);
+    expect(Object.keys(manifesto.devDependencies ?? {})).toEqual([
+      "@biomejs/biome",
+      "@playwright/test",
+      "@types/node",
+      "@types/pg",
+      "@types/react",
+      "@types/react-dom",
+      "drizzle-kit",
+      "tsx",
+      "typescript",
+      "vitest",
+    ]);
+  });
+
+  test('nenhum arquivo da H4.5 declara "use client"', () => {
+    const arquivos = [
+      "src/app/dev/dados-vivos/page.tsx",
+      "src/componentes/prototipo/dadosvivos/DadosVivos.tsx",
+      "src/componentes/prototipo/dadosvivos/FaixaDeRegistros.tsx",
+      "src/componentes/prototipo/dadosvivos/RankingEditorial.tsx",
+      "src/componentes/prototipo/dadosvivos/SerieViva.tsx",
+      "src/componentes/prototipo/dadosvivos/estilos.ts",
+      "src/componentes/prototipo/dadosvivos/selecaoEditorial.ts",
+    ];
+    for (const arquivo of arquivos) {
+      expect(readFileSync(arquivo, "utf8")).not.toContain("use client");
+    }
   });
 });
 

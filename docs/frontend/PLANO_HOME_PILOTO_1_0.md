@@ -2841,3 +2841,28 @@ e a mesma mídia. A composição candidata perdeu 51 nós de DOM, quase 19%.
 Registro completo: [H4_5_1_REFINO_DADOS_HOME.md](./H4_5_1_REFINO_DADOS_HOME.md).
 Sem banco, deploy, push ou mudança de infraestrutura. A H4 continua fora da
 Home e a H5 não foi iniciada.
+
+## 32.17 Atualização H4.5.2 — Fechamento editorial de Dados
+
+Em 2026-09-12 a composição candidata da H4.5.1 teve as decisões editoriais
+pendentes fechadas, sem integração na Home e sem redesenho. A faixa passa de
+sete para quatro indicadores: despesa total registrada, receita registrada,
+participação do trabalho na despesa e localidades de origem registradas.
+
+“Localidades de origem registradas” substitui o rótulo de apresentação
+“Localidades alcançadas” porque a regra factual do H4-008 é uma contagem
+distinta de localidades de origem declaradas. O dataset e a H4.0 não foram
+reescritos. Valor movimentado por dia, registros de funcionamento e
+contratações continuam no conjunto completo, junto com o ranking de atividades,
+reservados à futura página de Dados.
+
+As passagens foram fechadas como `Campo → Medida` — “Os registros da pesquisa
+também permitem uma leitura quantitativa do território” — e `Medida → Conjunto
+completo` — “Esta leitura apresenta um recorte. O levantamento completo
+preserva o detalhamento das atividades registradas.” Não foi criado link para a
+rota pública de Dados.
+
+Registro completo: [H4_5_2_FECHAMENTO_EDITORIAL_DADOS.md](./H4_5_2_FECHAMENTO_EDITORIAL_DADOS.md).
+Sem banco, deploy, push, dependência, Client Component ou JavaScript novo. A H4
+continua fora da Home e está pronta apenas para uma tarefa separada de
+integração H4.1.

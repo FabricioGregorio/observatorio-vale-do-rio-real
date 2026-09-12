@@ -253,10 +253,8 @@ test("H4.5: com movimento reduzido nada anima e nada some", async ({
   for (const seletor of [
     ".dv-abertura",
     ".dv-protagonista__numero",
-    // A reduzida fica oculta por CSS; o estado avaliado é o visível.
-    '.dv-faixa[data-variante="completa"]',
+    '.dv-faixa[data-variante="candidata"]',
     ".dv-serie",
-    ".dv-ranking",
   ]) {
     const bloco = page.locator(seletor);
     await bloco.scrollIntoViewIfNeeded();
@@ -290,7 +288,7 @@ test("H4.5: sem recurso externo, fora do sitemap e bloqueada no robots", async (
   const recursos: string[] = [];
   page.on("request", (requisicao) => recursos.push(requisicao.url()));
   await page.goto(ROTA);
-  await page.locator(".dv-ranking").scrollIntoViewIfNeeded();
+  await page.locator(".dv-serie").scrollIntoViewIfNeeded();
 
   expect(
     recursos.filter((url) => new URL(url).hostname !== "localhost"),
@@ -375,8 +373,8 @@ test("H4.5.1: a candidata não carrega vocabulário de laboratório", async ({
     candidata.getByText("Título editorial · proposta"),
   ).toBeVisible();
 
-  // Os controles existem, e ficam antes da área candidata.
-  await expect(page.locator('input[value="completa"]')).toBeVisible();
+  // A seleção editorial está fechada: não restou controle de variante.
+  await expect(page.locator('input[name="variante"]')).toHaveCount(0);
   await expect(candidata.locator("input")).toHaveCount(0);
 });
 
@@ -399,10 +397,8 @@ test("H4.5.1: a passagem de saída não fala de pessoas e perdeu a cruz", async 
   await expect(page.getByText("Medida → Pessoas")).toHaveCount(0);
 });
 
-/**
- * H4.5.1 — as duas variantes da faixa, e a alternância sem JavaScript.
- */
-test("H4.5.1: completa e reduzida alternam sem JavaScript", async ({
+/** H4.5.2 — a candidata fixa quatro apoios e continua íntegra sem JS. */
+test("H4.5.2: a seleção de quatro funciona sem JavaScript", async ({
   browser,
 }) => {
   const contexto = await browser.newContext({
@@ -412,37 +408,45 @@ test("H4.5.1: completa e reduzida alternam sem JavaScript", async ({
   const pagina = await contexto.newPage();
   await pagina.goto(`http://localhost:3000${ROTA}`);
 
-  const completa = pagina.locator('.dv-faixa[data-variante="completa"]');
-  const reduzida = pagina.locator('.dv-faixa[data-variante="reduzida"]');
-
-  await expect(completa).toBeVisible();
-  await expect(reduzida).toBeHidden();
-  await expect(completa.locator(".dv-registro-indicador")).toHaveCount(7);
-
-  await pagina.locator('input[value="reduzida"]').check();
-  await expect(reduzida).toBeVisible();
-  await expect(completa).toBeHidden();
-  await expect(reduzida.locator(".dv-registro-indicador")).toHaveCount(4);
-
-  // Valores reais, e não rótulos vazios: a redução é de composição.
-  await expect(reduzida.getByText("R$ 469,06")).toBeVisible();
+  const candidata = pagina.locator(
+    '.dv-preview .dv-faixa[data-variante="candidata"]',
+  );
+  await expect(candidata).toBeVisible();
+  await expect(candidata.locator(".dv-registro-indicador")).toHaveCount(4);
+  await expect(
+    candidata.getByText("R$ 18.762,52", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    candidata.getByText("R$ 15.700,00", { exact: true }),
+  ).toBeVisible();
+  await expect(candidata.getByText("40,6%", { exact: true })).toBeVisible();
+  await expect(candidata.getByText("12", { exact: true })).toBeVisible();
+  await expect(
+    candidata.getByText("Localidades de origem registradas"),
+  ).toBeVisible();
+  await expect(candidata.getByText("Despesa total registrada")).toBeVisible();
+  await expect(
+    candidata.getByText("Receita registrada", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    candidata.getByText("Participação do trabalho na despesa"),
+  ).toBeVisible();
 
   await contexto.close();
 });
 
 /**
- * A ressalva sobre a redução vive no cabeçalho, fora da pré-visualização, e
- * precisa estar visível para quem olha os dois estados.
+ * O cabeçalho declara a decisão sem contaminar a pré-visualização.
  */
-test("H4.5.1: a ressalva de que a redução não é escolha editorial está visível", async ({
+test("H4.5.2: a seleção fechada é explicada fora da candidata", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(ROTA);
   const ressalva = page.locator(".lv-recomendado");
   await expect(ressalva).toBeVisible();
-  await expect(ressalva.getByText("ensaio de composição")).toBeVisible();
-  await expect(ressalva).toContainText(/decisão continua humana/);
+  await expect(ressalva).toContainText("decisão editorial fechada");
+  await expect(ressalva).toContainText("Nenhum indicador foi invalidado");
   await expect(page.locator(".dv-preview .lv-recomendado")).toHaveCount(0);
 });
 

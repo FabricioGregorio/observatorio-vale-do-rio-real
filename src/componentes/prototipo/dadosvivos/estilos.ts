@@ -142,14 +142,15 @@ export const CSS_DOS_DADOS_VIVOS = `
 .dv-barra span { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: var(--tracking-mono); font-variant-numeric: tabular-nums; color: var(--color-texto-suave); }
 .dv-ranking { display: grid; gap: calc(var(--spacing) * 4); }
 .dv-ranking__nota { max-width: 62ch; }
-/* ---- alternância de composição, fora da área candidata ------------------ */
-.dados-vivos:has(input[value="completa"]:checked) .dv-faixa[data-variante="reduzida"],
-.dados-vivos:has(input[value="reduzida"]:checked) .dv-faixa[data-variante="completa"] { display: none; }
-
 /* ---- material de laboratório, depois da pré-visualização ---------------- */
 .dv-laboratorio { padding: var(--lv-capitulo) var(--lv-margem); border-top: 1px solid var(--color-borda-forte); display: flex; flex-direction: column; gap: calc(var(--spacing) * 5); }
 .dv-laboratorio h2 { font-size: var(--text-2xl); }
+.dv-laboratorio h3 { font-size: var(--text-xl); }
 .dv-laboratorio > p { max-width: 62ch; }
+.dv-reservados { display: flex; flex-direction: column; gap: calc(var(--spacing) * 5); }
+/* Os reservados são registro, e não vitrine: a faixa deles não compete com a
+   da área candidata, e por isso fica numa fileira de três. */
+.dv-faixa[data-variante="reservados"] .dv-faixa__lista { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .dv-preview { position: relative; }
 .dv-preview__marca { padding: calc(var(--spacing) * 3) var(--lv-margem); border-top: 1px solid var(--color-borda-forte); font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: var(--tracking-mono); text-transform: uppercase; color: var(--color-texto-suave); }
 
@@ -177,7 +178,8 @@ ${REALCE_POR_MES}
 }
 
 @media (max-width: 1023px) {
-  .dv-faixa__lista { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dv-faixa__lista,
+  .dv-faixa[data-variante="reservados"] .dv-faixa__lista { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 767px) {
@@ -186,11 +188,14 @@ ${REALCE_POR_MES}
   .dv-protagonista { grid-template-columns: minmax(0, 1fr); }
   .dv-protagonista__leitura { border-left: none; border-top: 1px solid var(--color-marca); padding-left: 0; padding-top: calc(var(--spacing) * 5); }
   .dv-ficha > div { grid-template-columns: minmax(0, 1fr); gap: calc(var(--spacing)); }
+  /* O equivalente a zoom de 200% numa viewport de 1440 px cai em 720 px.
+     Uma coluna evita que o maior valor monetário force a página para fora. */
+  .dv-faixa__lista,
+  .dv-faixa[data-variante="reservados"] .dv-faixa__lista { grid-template-columns: minmax(0, 1fr); }
   .dv-tabela th, .dv-tabela td { padding: calc(var(--spacing) * 2); }
 }
 
 @media (max-width: 479px) {
-  .dv-faixa__lista { grid-template-columns: minmax(0, 1fr); }
   .dv-barra { min-width: 6rem; }
 }
 

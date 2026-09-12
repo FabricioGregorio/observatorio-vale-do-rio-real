@@ -11,6 +11,7 @@ import {
 import { exibirIndicador } from "../../../dados/indicadores/formato";
 import { FaixaDeRegistros } from "./FaixaDeRegistros";
 import { SerieViva } from "./SerieViva";
+import { REGISTROS_DE_APOIO } from "./selecaoEditorial";
 
 /**
  * Seção Dados no sistema gráfico vivo — H4.5.
@@ -104,22 +105,9 @@ function FichaDoProtagonista({ indicador }: { indicador: IndicadorDerivado }) {
   );
 }
 
-/**
- * Quantos registros a versão reduzida mostra.
- *
- * É posição de composição, não escolha editorial: quatro é o que a faixa
- * comporta numa fileira só em telas grandes, e os quatro exibidos são os
- * quatro primeiros do dataset, em ordem de arquivo. Qual indicador merece a
- * Home continua sendo decisão humana, e ela não foi tomada aqui.
- */
-export const POSICOES_DE_APOIO = 4;
-
 export function DadosVivos() {
   const prefixo = "dados-vivos";
   const protagonista = porId("H4-001");
-  const secundarios = INDICADORES.filter(
-    (indicador) => indicador.id !== protagonista.id,
-  );
 
   return (
     <article className="dv-artigo" data-preset="H4.5">
@@ -127,6 +115,15 @@ export function DadosVivos() {
         Passagem H3 → H4. É a única da página que carrega assinatura de
         identidade, pela regra de frequência da H3.5.1: um carcará em escala
         editorial por página, e só em passagem.
+
+        H4.5.2 — a copy mudou. A anterior dizia que o campo "volta aqui como
+        quantidade declarada", e isso sugeria que os números derivam da
+        observação de campo. Não derivam: eles saem de registros diários de
+        funcionamento e de contratação preenchidos pelos responsáveis dos dois
+        equipamentos. A frase nova diz que os registros **também** permitem uma
+        leitura quantitativa, que é o que de fato acontece — a fotografia e a
+        planilha são dois usos do mesmo trabalho de campo, e não um a
+        consequência do outro.
       */}
       <div
         className="lv-g-transicao dv-passagem"
@@ -141,8 +138,8 @@ export function DadosVivos() {
         <div className="lv-ponte">
           <p className="meta-ficha lv-g-documental">Campo → Medida</p>
           <p>
-            O que a pesquisa observou em campo volta aqui como quantidade
-            declarada
+            Os registros da pesquisa também permitem uma leitura quantitativa do
+            território
           </p>
         </div>
         <div className="lv-g-identidade dv-assinatura" aria-hidden="true">
@@ -210,10 +207,9 @@ export function DadosVivos() {
           <p className="meta-ficha lv-g-documental">
             Demais indicadores do levantamento
           </p>
-          <FaixaDeRegistros indicadores={secundarios} variante="completa" />
           <FaixaDeRegistros
-            indicadores={secundarios.slice(0, POSICOES_DE_APOIO)}
-            variante="reduzida"
+            registros={REGISTROS_DE_APOIO}
+            variante="candidata"
           />
         </div>
 
@@ -239,6 +235,12 @@ export function DadosVivos() {
         da composição. Removida, e não substituída: o fio da família
         cartográfica já faz a ligação, e trocar um ornamento por outro não é
         refino.
+
+        H4.5.2 — a copy foi reescrita de novo, por outro motivo. A anterior
+        estava correta mas falava como nota interna de projeto: ela explicava
+        uma decisão de composição ao leitor, que não participou dela. A nova
+        diz a mesma coisa do ponto de vista de quem lê — esta leitura é um
+        recorte, e o detalhamento existe e está preservado em outro lugar.
       */}
       <div
         className="lv-g-transicao dv-passagem"
@@ -254,8 +256,8 @@ export function DadosVivos() {
             Medida → Conjunto completo
           </p>
           <p>
-            O detalhamento por atividade pertence ao conjunto completo do
-            levantamento, e não a esta leitura
+            Esta leitura apresenta um recorte. O levantamento completo preserva
+            o detalhamento das atividades registradas
           </p>
         </div>
       </div>

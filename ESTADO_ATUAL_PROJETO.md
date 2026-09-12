@@ -1833,3 +1833,31 @@ Registro: [H4_5_1_REFINO_DADOS_HOME.md](./docs/frontend/H4_5_1_REFINO_DADOS_HOME
 Estado: **EM PROTÓTIPO, NÃO INTEGRADA**. Sem banco, R2, Vercel, DNS, deploy ou
 push. A H5 não foi iniciada, e a integração da H4 continua dependendo de
 decisão humana.
+
+### H4.5.2 — Fechamento editorial da seção de dados, 2026-09-12
+
+A candidata da seção “Dados vivos” foi fechada editorialmente, ainda somente
+em `/dev/dados-vivos` e sem integração na Home. A arquitetura visual da H4.5.1
+permanece aprovada e intacta.
+
+Os sete indicadores secundários foram reduzidos a quatro: despesa total
+registrada (R$ 18.762,52), receita registrada (R$ 15.700,00), participação do
+trabalho na despesa (40,6%) e localidades de origem registradas (12). O último
+rótulo é sustentado pela regra factual do H4-008, que conta localidades de
+origem declaradas; evita afirmar alcance territorial não medido.
+
+Valor por dia, registros de funcionamento e contratações saíram somente da
+leitura resumida. Continuam no dataset, na H4.0 e no material reservado ao
+conjunto completo. O ranking também permanece reservado à futura página de
+Dados, sem limiar editorial na candidata.
+
+As passagens agora dizem: “Os registros da pesquisa também permitem uma leitura
+quantitativa do território” e “Esta leitura apresenta um recorte. O levantamento
+completo preserva o detalhamento das atividades registradas.” Não há link para
+`/dados`, que continua sem cumprir essa promessa pública.
+
+Registro: [H4_5_2_FECHAMENTO_EDITORIAL_DADOS.md](./docs/frontend/H4_5_2_FECHAMENTO_EDITORIAL_DADOS.md).
+
+Estado: **FECHAMENTO EDITORIAL CONCLUÍDO, NÃO INTEGRADA**. H4.0, Home, H1, H2 e
+H3 permanecem intactas. Sem banco, R2, Vercel, DNS, deploy ou push. O próximo
+passo é uma tarefa separada de integração H4.1, mediante autorização humana.
