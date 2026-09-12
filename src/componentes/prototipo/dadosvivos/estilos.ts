@@ -19,16 +19,31 @@ import { SERIE_MENSAL } from "../../../dados/indicadores/derivados";
  */
 
 /**
- * Ligação entre desenho e tabela, um par de regras por mês.
+ * Ligação entre desenho e tabela, um trio de regras por mês.
  *
- * Passar o mouse ou o foco sobre um mês — no gráfico **ou** na linha da tabela
- * — atenua os demais registros do desenho e realça o correspondente nos dois
- * lugares. Seis meses, doze regras, zero JavaScript: `:has()` faz a ponte.
+ * Passar o mouse sobre um mês atenua as marcas dos demais, reforça o conector
+ * daquele mês e acende a linha correspondente na tabela. Seis meses, dezoito
+ * regras, zero JavaScript: `:has()` faz a ponte.
+ *
+ * ## Seleção é ênfase, não apagamento — revisão da H4.5.1
+ *
+ * Duas correções, e as duas na mesma direção.
+ *
+ * A primeira é de alcance: a atenuação passou a valer só para **as marcas** —
+ * conector, ponto e losango. O rótulo do mês, que é texto, continua em 100%.
+ * Antes o grupo inteiro caía junto, e baixar a opacidade de texto baixa o
+ * contraste dele: o critério de contraste da WCAG não pode depender de onde o
+ * ponteiro está.
+ *
+ * A segunda é de grau: a atenuação subiu de 0,3 para 0,6. Em 0,3 os cinco
+ * meses não selecionados pareciam desabilitados, como se a seleção tivesse
+ * desligado dado. A dominância do mês escolhido agora vem de somar ênfases —
+ * conector mais grosso, mais escuro, marcas em 100% — e não de apagar o resto.
  */
 const REALCE_POR_MES = SERIE_MENSAL.map(
   (_, indice) => `
-.dv-serie:has([data-mes="${indice}"]:is(:hover, :focus-within)) .dv-grafico .dv-registro:not([data-mes="${indice}"]) { opacity: var(--dv-atenuado); }
-.dv-serie:has([data-mes="${indice}"]:is(:hover, :focus-within)) .dv-registro[data-mes="${indice}"] .dv-conector { stroke-width: 3; }
+.dv-serie:has([data-mes="${indice}"]:is(:hover, :focus-within)) .dv-grafico .dv-registro:not([data-mes="${indice}"]) :is(.dv-conector, .dv-ponto) { opacity: var(--dv-atenuado); }
+.dv-serie:has([data-mes="${indice}"]:is(:hover, :focus-within)) .dv-registro[data-mes="${indice}"] .dv-conector { stroke-width: 3; stroke: var(--color-texto); }
 .dv-serie:has(.dv-grafico [data-mes="${indice}"]:is(:hover, :focus-within)) .dv-tabela tr[data-mes="${indice}"] { background: var(--dv-realce); }`,
 ).join("");
 
@@ -40,10 +55,21 @@ export const CSS_DOS_DADOS_VIVOS = `
 .dv-artigo::before { content: ""; position: absolute; inset-block: 0; left: calc(var(--lv-margem) / 2); border-left: 1px solid var(--lv-linha); pointer-events: none; }
 .dv-passagem { border-left: calc(var(--spacing)) solid var(--color-marca); }
 .dv-passagem .lv-fio { border-color: var(--color-marca); }
-.dv-passagem .lv-g-identidade { width: var(--lv-ave-viva); height: var(--lv-passagem); overflow: clip; align-self: end; }
+/* Sem altura fixa: a caixa abraça a imagem, e a ave passa a se apoiar na
+   régua da legenda em vez de flutuar 42 px acima dela. A altura herdada da
+   H3.5.1 existia para recortar um carcará maior, e aqui ele não é maior. */
+.dv-passagem .lv-g-identidade { width: var(--lv-ave-viva); align-self: end; }
+.dv-passagem { row-gap: calc(var(--spacing) * 4); }
 .dv-passagem[data-passagem="saida"] { min-height: var(--lv-passagem-curta); }
-.dv-cruz { display: block; width: var(--lv-cruz); height: var(--lv-cruz); flex: none; }
-.dv-cruz line { stroke: var(--lv-linha); stroke-width: 1; }
+/* A passagem de saída perdeu a coluna da direita quando a cruz saiu; sem isto
+   a ponte continuaria comprimida contra um vazio. */
+.dv-passagem[data-passagem="saida"] { grid-template-columns: auto minmax(0, 1fr); }
+
+/* Assinatura: a legenda é a régua em que a ave se apoia, e não um rótulo
+   solto ao lado dela. O fio atravessa a ponte e a assinatura, então as duas
+   passam a pertencer à mesma linha da grade. */
+.dv-assinatura { align-self: end; }
+.dv-assinatura__ficha { border-top: 1px solid var(--lv-linha); padding-top: calc(var(--spacing) * 3); margin-top: calc(var(--spacing) * 2); }
 
 .dv-secao { display: flex; flex-direction: column; gap: var(--lv-capitulo); padding: var(--lv-capitulo) var(--lv-margem); background: var(--lv-superficie-ensaio); border-block: 1px solid var(--lv-linha); }
 .dv-abertura { display: flex; flex-direction: column; gap: calc(var(--spacing) * 4); max-width: 62ch; }
@@ -87,8 +113,8 @@ export const CSS_DOS_DADOS_VIVOS = `
 .dv-escala { font-size: 11px; }
 .dv-mes { font-size: 12px; }
 .dv-captura { fill: transparent; }
-.dv-registro { transition: opacity var(--duracao-hover) var(--easing-padrao); }
-.dv-conector { stroke: var(--color-borda-forte); stroke-width: 1.25; transition: stroke-width var(--duracao-hover) var(--easing-padrao); }
+.dv-conector, .dv-ponto { transition: opacity var(--duracao-hover) var(--easing-padrao); }
+.dv-conector { stroke: var(--color-borda-forte); stroke-width: 1.25; transition: opacity var(--duracao-hover) var(--easing-padrao), stroke-width var(--duracao-hover) var(--easing-padrao), stroke var(--duracao-hover) var(--easing-padrao); }
 .dv-ponto { fill: var(--color-marca); }
 .dv-ponto--despesa { fill: var(--color-acento); }
 .dv-legenda { display: none; flex-wrap: wrap; gap: calc(var(--spacing) * 5); margin: 0; padding: 0; list-style: none; }
@@ -116,6 +142,17 @@ export const CSS_DOS_DADOS_VIVOS = `
 .dv-barra span { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: var(--tracking-mono); font-variant-numeric: tabular-nums; color: var(--color-texto-suave); }
 .dv-ranking { display: grid; gap: calc(var(--spacing) * 4); }
 .dv-ranking__nota { max-width: 62ch; }
+/* ---- alternância de composição, fora da área candidata ------------------ */
+.dados-vivos:has(input[value="completa"]:checked) .dv-faixa[data-variante="reduzida"],
+.dados-vivos:has(input[value="reduzida"]:checked) .dv-faixa[data-variante="completa"] { display: none; }
+
+/* ---- material de laboratório, depois da pré-visualização ---------------- */
+.dv-laboratorio { padding: var(--lv-capitulo) var(--lv-margem); border-top: 1px solid var(--color-borda-forte); display: flex; flex-direction: column; gap: calc(var(--spacing) * 5); }
+.dv-laboratorio h2 { font-size: var(--text-2xl); }
+.dv-laboratorio > p { max-width: 62ch; }
+.dv-preview { position: relative; }
+.dv-preview__marca { padding: calc(var(--spacing) * 3) var(--lv-margem); border-top: 1px solid var(--color-borda-forte); font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: var(--tracking-mono); text-transform: uppercase; color: var(--color-texto-suave); }
+
 ${REALCE_POR_MES}
 
 @keyframes dv-entrada { from { transform: translateY(var(--lv-revelar-distancia)); opacity: .65; } to { transform: none; opacity: 1; } }
@@ -124,9 +161,14 @@ ${REALCE_POR_MES}
 
 @media (prefers-reduced-motion: no-preference) {
   .dados-vivos .lv-revelar[data-revelado] { animation: dv-entrada var(--duracao-revelacao) var(--easing-entrada) both; }
-  /* O conector desenha primeiro; os pontos chegam depois dele. */
-  .dados-vivos .lv-revelar[data-revelado] .dv-conector { stroke-dasharray: 1; animation: dv-tracar var(--dv-duracao-linha) var(--easing-entrada) both; }
-  .dados-vivos .lv-revelar[data-revelado] .dv-ponto { animation: dv-surgir var(--dv-duracao-ponto) var(--easing-entrada) var(--dv-atraso-ponto) both; }
+  /* O conector desenha primeiro; os pontos chegam depois dele.
+
+     O modo de preenchimento é backwards, e não both. Com both o último quadro
+     fica retido, e opacidade 1 retida vence a cascata: a atenuação do realce
+     deixava de alcançar os pontos. Com backwards o estado inicial vale só
+     durante o atraso, e depois a marca volta a obedecer ao CSS. */
+  .dados-vivos .lv-revelar[data-revelado] .dv-conector { stroke-dasharray: 1; animation: dv-tracar var(--dv-duracao-linha) var(--easing-entrada) backwards; }
+  .dados-vivos .lv-revelar[data-revelado] .dv-ponto { animation: dv-surgir var(--dv-duracao-ponto) var(--easing-entrada) var(--dv-atraso-ponto) backwards; }
 }
 
 @container (min-width: 40rem) {

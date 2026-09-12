@@ -1780,3 +1780,56 @@ Registro: [H4_5_DADOS_VIVOS.md](./docs/frontend/H4_5_DADOS_VIVOS.md).
 
 Estado: **EM PROTÓTIPO, NÃO INTEGRADA**. Sem banco, R2, Vercel, DNS, deploy ou
 push. A H5 não foi iniciada, e a escolha de integração da H4 continua humana.
+
+### H4.5.1 — Refino editorial da seção de dados, 2026-09-12
+
+Rodada curta de calibragem sobre a H4.5, que estava aprovada com ajustes. Sem
+conceito novo, sem reconstrução e sem alteração de dado: valores, cálculos,
+bases, recortes, arredondamentos e classificação de publicação continuam os da
+H4.0. A Home não foi tocada, e `/dev/dados` continua intacta.
+
+**O ranking de atividades saiu da composição candidata à Home** e continua
+inteiro no laboratório, depois da marca de fim da área candidata, como material
+reservado para a futura página de dados. A separação vale mais do que o recorte
+visual: a Home interpreta e convida, a página de dados aprofunda e consulta.
+O limiar editorial de dez dias saiu junto da candidata, sem substituto.
+
+**Seleção virou ênfase, e não apagamento.** A atenuação dos meses não
+escolhidos subiu de 0,3 para 0,6 e passou a alcançar só as marcas; o rótulo do
+mês continua em opacidade cheia, porque contraste de texto não pode depender de
+onde está o ponteiro. Ao medir isso apareceu um defeito real: o modo de
+preenchimento `both` das animações de entrada retinha `opacity: 1` nos pontos e
+vencia a cascata, de modo que a regra de realce era ignorada neles. Corrigido
+com `backwards`.
+
+**A passagem de saída perdeu a afirmação sobre pessoas.** As 84 contratações
+não são 84 pessoas — a mesma pessoa pode aparecer em dias diferentes, e a
+contagem de pessoas distintas continua pendente na fonte. A copy nova fala do
+conjunto do levantamento, e não de quem trabalhou. A **cruz de registro foi
+removida** sem substituto.
+
+**O carcará ficou ancorado na grade**: mesmo tamanho, um por página, mesma
+legenda, mas agora a legenda é a régua em que ele se apoia.
+
+**Os indicadores secundários ganharam variantes completa e reduzida**, com
+alternância sem JavaScript. A reduzida é ensaio de composição, mostra os quatro
+primeiros do dataset em ordem de arquivo e **não é escolha editorial** — a
+ressalva fica no cabeçalho do laboratório. Qual indicador merece a Home segue
+sendo decisão humana em aberto.
+
+A área candidata deixou de carregar vocabulário de protótipo: controles e
+ressalvas ficam antes dela.
+
+Zero dependência nova, zero Client Component novo, zero JavaScript
+acrescentado, mesma mídia. A composição candidata perdeu 51 nós de DOM, quase
+19%. O CSS da camada cresceu 2.835 bytes, num `<style>` da própria rota.
+
+Gates: tipos, lint, 495 testes unitários, 262 de navegador e `pnpm build` com
+25 rotas estáticas. O `pendencias` **não atestou nada** — esta máquina não tem
+`DATABASE_URL`. O Lighthouse **não foi executado**: continua indisponível.
+
+Registro: [H4_5_1_REFINO_DADOS_HOME.md](./docs/frontend/H4_5_1_REFINO_DADOS_HOME.md).
+
+Estado: **EM PROTÓTIPO, NÃO INTEGRADA**. Sem banco, R2, Vercel, DNS, deploy ou
+push. A H5 não foi iniciada, e a integração da H4 continua dependendo de
+decisão humana.

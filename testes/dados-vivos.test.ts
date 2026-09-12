@@ -4,11 +4,15 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test, vi } from "vitest";
 import { exigirDesenvolvimentoDosDadosVivos } from "../src/app/dev/dados-vivos/page";
 import { PainelDeDados } from "../src/componentes/prototipo/dados/PainelDeDados";
-import { DadosVivos } from "../src/componentes/prototipo/dadosvivos/DadosVivos";
+import {
+  DadosVivos,
+  POSICOES_DE_APOIO,
+} from "../src/componentes/prototipo/dadosvivos/DadosVivos";
 import {
   ATIVIDADES_ABAIXO_DO_LIMIAR,
   ATIVIDADES_ACIMA_DO_LIMIAR,
   LIMIAR_DE_DIAS,
+  RankingEditorial,
 } from "../src/componentes/prototipo/dadosvivos/RankingEditorial";
 import {
   ATIVIDADES,
@@ -27,6 +31,11 @@ const h40Painel = renderToStaticMarkup(
 );
 const h40Declaracao = renderToStaticMarkup(
   createElement(PainelDeDados, { composicao: "declaracao" as const }),
+);
+const ranking = renderToStaticMarkup(createElement(RankingEditorial));
+const paginaDoLaboratorio = readFileSync(
+  "src/app/dev/dados-vivos/page.tsx",
+  "utf8",
 );
 
 function ocorrencias(html: string, trecho: string): number {
@@ -138,7 +147,7 @@ describe("H4.5: nada de fonte restrita e nada de dado pessoal", () => {
 
 /**
  * O corte do ranking precisa ser reproduzível por quem lê, e não confortável
- * para quem escreve.
+ * para quem escreve. Ele continua valendo — só deixou de valer na Home.
  */
 describe("H4.5: o recorte do ranking é um limiar declarado", () => {
   test("o limiar seleciona o que promete, e o total continua dito", () => {
@@ -148,10 +157,10 @@ describe("H4.5: o recorte do ranking é um limiar declarado", () => {
     );
     for (const atividade of ATIVIDADES_ACIMA_DO_LIMIAR) {
       expect(atividade.diasComAtividade).toBeGreaterThanOrEqual(LIMIAR_DE_DIAS);
-      expect(h45).toContain(atividade.nome);
+      expect(ranking).toContain(atividade.nome);
     }
-    expect(h45).toContain(`${LIMIAR_DE_DIAS} ou mais`);
-    expect(h45).toContain(`${ATIVIDADES.length} atividades`);
+    expect(ranking).toContain(`${LIMIAR_DE_DIAS} ou mais`);
+    expect(ranking).toContain(`${ATIVIDADES.length} atividades`);
   });
 
   /**
@@ -171,10 +180,151 @@ describe("H4.5: o recorte do ranking é um limiar declarado", () => {
   });
 
   test("nenhuma atividade some sem ser contada", () => {
-    expect(h45).toContain("ranking completo");
+    expect(ranking).toContain("ranking completo");
     expect(
       ATIVIDADES_ACIMA_DO_LIMIAR.length + ATIVIDADES_ABAIXO_DO_LIMIAR,
     ).toBe(ATIVIDADES.length);
+  });
+});
+
+/**
+ * H4.5.1 — o ranking saiu da composição candidata à Home.
+ *
+ * Ele não foi apagado nem alterado: continua renderizando, com o mesmo
+ * recorte, no laboratório. O que mudou é de que lado da fronteira ele fica.
+ * Home interpreta e convida; página de dados aprofunda e consulta.
+ */
+describe("H4.5.1: o ranking está fora da candidata e dentro do laboratório", () => {
+  test("nenhuma atividade e nenhum limiar aparecem na composição candidata", () => {
+    for (const atividade of ATIVIDADES) {
+      expect(h45).not.toContain(atividade.nome);
+    }
+    expect(h45).not.toContain(`${LIMIAR_DE_DIAS} ou mais`);
+    expect(h45).not.toContain("Atividades acionadas");
+    expect(h45).not.toContain("dv-ranking");
+  });
+
+  test("o componente do ranking continua existindo, inteiro", () => {
+    expect(ranking).toContain("dv-ranking");
+    expect(ranking).toContain(`${LIMIAR_DE_DIAS} ou mais`);
+    expect(ATIVIDADES_ACIMA_DO_LIMIAR.length).toBe(8);
+  });
+
+  /**
+   * A ordem no arquivo é o contrato: o ranking vem **depois** da marca de fim
+   * da área candidata. Se alguém o mover para dentro, isto reprova.
+   */
+  test("o laboratório exibe o ranking depois da área candidata", () => {
+    const fim = paginaDoLaboratorio.indexOf(
+      "Fim da composição candidata à Home",
+    );
+    const chamadaDoRanking = paginaDoLaboratorio.indexOf(
+      "<RankingEditorial />",
+    );
+    const chamadaDaComposicao = paginaDoLaboratorio.indexOf("<DadosVivos />");
+    expect(fim).toBeGreaterThan(0);
+    expect(chamadaDaComposicao).toBeGreaterThan(0);
+    expect(chamadaDaComposicao).toBeLessThan(fim);
+    expect(chamadaDoRanking).toBeGreaterThan(fim);
+  });
+});
+
+/**
+ * H4.5.1 — a área candidata não pode se explicar.
+ *
+ * Vocabulário de protótipo dentro do trecho que iria para a Home falseia a
+ * pré-visualização: quem olha precisa ver o que o leitor veria.
+ */
+describe("H4.5.1: a composição candidata não fala como laboratório", () => {
+  test.each([
+    "somente DEV",
+    "Preset",
+    "laboratório",
+    "Comparação",
+    "H4.0",
+    "H3.5.1",
+  ])("a candidata não contém %s", (termo) => {
+    expect(h45).not.toContain(termo);
+  });
+
+  test("as marcas de início e fim ficam fora da composição", () => {
+    expect(h45).not.toContain("candidata à Home");
+    expect(paginaDoLaboratorio).toContain("Início da composição candidata");
+    expect(paginaDoLaboratorio).toContain("Fim da composição candidata");
+  });
+
+  /** O marcador editorial fica: ele é sobre aprovação de copy, não sobre dev. */
+  test("o título editorial continua marcado como proposta", () => {
+    expect(h45).toContain("Título editorial · proposta");
+  });
+});
+
+/**
+ * H4.5.1 — a passagem de saída não fala de pessoas.
+ *
+ * As 84 contratações não são 84 pessoas: o próprio indicador declara que a
+ * mesma pessoa pode aparecer em dias diferentes, e a contagem de pessoas
+ * distintas continua PENDENTE na fonte.
+ */
+describe("H4.5.1: a passagem de saída não afirma o que a fonte não sustenta", () => {
+  test("a frase sobre pessoas saiu, e nenhuma equivalência tomou o lugar", () => {
+    expect(h45).not.toContain("existe alguém");
+    expect(h45).not.toContain("Medida → Pessoas");
+    const saida = h45.slice(h45.indexOf('data-passagem="saida"'));
+    expect(saida).not.toMatch(/pessoa|trabalhador|indivíduo|gente/i);
+  });
+
+  test("a copy nova fala do conjunto do levantamento, e não de quem trabalhou", () => {
+    expect(h45).toContain("Medida → Conjunto completo");
+    expect(h45).toContain("pertence ao conjunto completo do levantamento");
+  });
+
+  /** A cruz saiu e nada tomou o lugar dela: o fio já faz a ligação. */
+  test("a cruz de registro foi removida, sem substituto", () => {
+    expect(h45).not.toContain("dv-cruz");
+    const saida = h45.slice(h45.indexOf('data-passagem="saida"'));
+    expect(saida).not.toContain("<svg");
+    expect(saida).toContain("lv-fio");
+  });
+});
+
+/**
+ * H4.5.1 — completa e reduzida.
+ *
+ * A reduzida é ensaio de composição. A ressalva vive no cabeçalho do
+ * laboratório, fora da pré-visualização, e é ela que impede a leitura de que
+ * quatro indicadores foram eleitos.
+ */
+describe("H4.5.1: as duas variantes da faixa de apoio", () => {
+  test("as duas existem, e a reduzida mostra quatro posições", () => {
+    expect(POSICOES_DE_APOIO).toBe(4);
+    expect(h45).toContain('data-variante="completa"');
+    expect(h45).toContain('data-variante="reduzida"');
+
+    const reduzida = h45.slice(h45.indexOf('data-variante="reduzida"'));
+    const itens = reduzida.split("dv-registro-indicador__valor").length - 1;
+    expect(itens).toBe(POSICOES_DE_APOIO);
+  });
+
+  test("a completa mostra os sete secundários, com valores reais", () => {
+    const completa = h45.slice(
+      h45.indexOf('data-variante="completa"'),
+      h45.indexOf('data-variante="reduzida"'),
+    );
+    const itens = completa.split("dv-registro-indicador__valor").length - 1;
+    expect(itens).toBe(INDICADORES.length - 1);
+    for (const indicador of INDICADORES.slice(1)) {
+      expect(completa).toContain(exibirIndicador(indicador));
+    }
+  });
+
+  test("o laboratório declara que a redução é composição, e não escolha", () => {
+    expect(paginaDoLaboratorio).toContain("ensaio de composição");
+    // Regex, e não string literal: a quebra de linha é do formatador.
+    expect(paginaDoLaboratorio).toMatch(/e não\s+escolha editorial/);
+    expect(paginaDoLaboratorio).toMatch(/decisão continua humana/);
+    // A ressalva fica fora da pré-visualização.
+    expect(h45).not.toContain("ensaio de composição");
   });
 });
 

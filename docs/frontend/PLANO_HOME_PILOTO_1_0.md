@@ -2787,3 +2787,57 @@ biblioteca de gráfico ou de animação: a rota nova carrega exatamente os mesmo
 Registro completo: [H4_5_DADOS_VIVOS.md](./H4_5_DADOS_VIVOS.md).
 Sem banco, deploy, push ou mudança de infraestrutura. A H5 não foi iniciada e a
 H4 continua fora da Home.
+## 32.16 Atualização H4.5.1 — Refino editorial da seção de dados
+
+Em 2026-09-12 a composição de Dados foi calibrada para reduzir os últimos
+resíduos de aparência de painel. Não houve conceito novo, reconstrução nem
+alteração de dado: valores, cálculos, bases, recortes, arredondamentos e
+classificação de publicação continuam os da H4.0, e a rota `/dev/dados`
+continua intacta.
+
+**O ranking de atividades saiu da composição candidata à Home.** Ele não foi
+apagado nem alterado: continua inteiro no laboratório, depois da marca de fim
+da área candidata, num bloco de material reservado para a futura página de
+dados. A separação estabelece os dois papéis que o projeto vinha precisando
+distinguir — a Home interpreta e convida, a página de dados aprofunda e
+consulta. Com isso o limiar editorial de dez dias também deixou de aparecer na
+candidata, e nenhum limiar novo foi inventado para substituí-lo.
+
+**Seleção passou a significar ênfase, e não apagamento.** No gráfico mensal, a
+atenuação dos meses não escolhidos subiu de 0,3 para 0,6 e passou a alcançar só
+as marcas: o rótulo do mês, que é texto, continua em opacidade cheia, porque
+contraste de texto não pode depender de onde está o ponteiro. A dominância do
+mês selecionado vem de somar ênfases — conector mais grosso, mais escuro,
+marcas em opacidade cheia.
+
+**A passagem de saída perdeu a afirmação sobre pessoas.** "Por trás de cada
+contratação registrada existe alguém" sugeria que 84 contratações são 84
+pessoas, e não são: a mesma pessoa pode aparecer em dias diferentes, e a
+contagem de pessoas distintas continua pendente na fonte. A nova copy,
+`Medida → Conjunto completo`, explica por que o detalhamento não está ali sem
+prometer navegação para uma página que ainda é stub.
+
+**A cruz de registro foi removida**, sem substituto: o fio cartográfico já faz
+a ligação, e trocar um ornamento por outro não é refino.
+
+**O carcará ficou ancorado na grade.** Mesmo tamanho, um por página, mesma
+legenda — mas a legenda virou a régua em que ele se apoia, com um fio que
+atravessa a ponte e a assinatura. Ele deixou de parecer adesivo no canto.
+
+**Os indicadores secundários ganharam duas variantes**, completa e reduzida,
+com alternância sem JavaScript. A reduzida é ensaio de composição e não escolha
+editorial: mostra os quatro primeiros do dataset, em ordem de arquivo, só para
+medir quanta faixa a Home aguenta. A ressalva vive no cabeçalho do laboratório,
+fora da pré-visualização. **Qual indicador merece a Home continua sendo decisão
+humana, e ela segue aberta.**
+
+A área candidata deixou de se explicar: controles, ressalvas e vocabulário de
+protótipo saíram de dentro dela. Quem olha a pré-visualização vê o que o leitor
+veria.
+
+Zero dependência nova, zero Client Component novo, zero JavaScript acrescentado
+e a mesma mídia. A composição candidata perdeu 51 nós de DOM, quase 19%.
+
+Registro completo: [H4_5_1_REFINO_DADOS_HOME.md](./H4_5_1_REFINO_DADOS_HOME.md).
+Sem banco, deploy, push ou mudança de infraestrutura. A H4 continua fora da
+Home e a H5 não foi iniciada.

@@ -560,9 +560,14 @@
    ========================================================================== */
 
 .dados-vivos {
-  /* Série não enfatizada. Não é "desligada": ela continua legível, e o
-     realce é de atenção, não de disponibilidade. */
-  --dv-atenuado: 0.3;
+  /* Marca de série não enfatizada. Não é "desligada": ela continua legível, e
+     o realce é de atenção, não de disponibilidade.
+
+     H4.5.1 — subiu de 0,3 para 0,6. Em 0,3 os meses não selecionados pareciam
+     desabilitados, e seleção que apaga o resto deixa de ser ênfase. O valor
+     alcança só as marcas: o rótulo do mês é texto e fica em 100%, porque
+     contraste de texto não pode depender de onde está o ponteiro. */
+  --dv-atenuado: 0.6;
   --dv-realce: color-mix(in srgb, var(--color-fundo) 88%, var(--color-marca));
   --dv-eixo: color-mix(
     in srgb,

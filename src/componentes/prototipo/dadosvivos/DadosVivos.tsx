@@ -10,7 +10,6 @@ import {
 } from "../../../dados/indicadores/derivados";
 import { exibirIndicador } from "../../../dados/indicadores/formato";
 import { FaixaDeRegistros } from "./FaixaDeRegistros";
-import { RankingEditorial } from "./RankingEditorial";
 import { SerieViva } from "./SerieViva";
 
 /**
@@ -33,6 +32,19 @@ import { SerieViva } from "./SerieViva";
  * continua sendo o registro do que a H4.0 decidiu, e esta rota é a proposta de
  * como aquilo se parece dentro da linguagem. Os dois leem o mesmo módulo de
  * dados, então divergir de número é impossível por construção.
+ *
+ * ## O que a H4.5.1 tirou daqui
+ *
+ * O ranking de atividades saiu desta composição. Ele não foi apagado nem
+ * alterado: continua existindo em `RankingEditorial`, e o laboratório o exibe
+ * **fora** da área candidata à Home, como material reservado para a futura
+ * página de dados. A separação é conceitual antes de ser visual: a Home
+ * interpreta e convida, a página de dados aprofunda e consulta. Dezesseis
+ * linhas de atividade com barra são consulta.
+ *
+ * Com isso, o limiar editorial de dez dias — que era o critério do recorte —
+ * também deixou de aparecer na composição candidata. Nenhum limiar novo foi
+ * inventado para substituí-lo.
  */
 
 function porId(id: string): IndicadorDerivado {
@@ -92,6 +104,16 @@ function FichaDoProtagonista({ indicador }: { indicador: IndicadorDerivado }) {
   );
 }
 
+/**
+ * Quantos registros a versão reduzida mostra.
+ *
+ * É posição de composição, não escolha editorial: quatro é o que a faixa
+ * comporta numa fileira só em telas grandes, e os quatro exibidos são os
+ * quatro primeiros do dataset, em ordem de arquivo. Qual indicador merece a
+ * Home continua sendo decisão humana, e ela não foi tomada aqui.
+ */
+export const POSICOES_DE_APOIO = 4;
+
 export function DadosVivos() {
   const prefixo = "dados-vivos";
   const protagonista = porId("H4-001");
@@ -123,7 +145,7 @@ export function DadosVivos() {
             declarada
           </p>
         </div>
-        <div className="lv-g-identidade" aria-hidden="true">
+        <div className="lv-g-identidade dv-assinatura" aria-hidden="true">
           <Image
             alt={CARCARA_DA_IDENTIDADE.alt}
             src={`${PASTA_PUBLICA_DOS_GRAFISMOS}/${CARCARA_DA_IDENTIDADE.arquivo}`}
@@ -133,7 +155,12 @@ export function DadosVivos() {
             loading="lazy"
           />
         </div>
-        <p className="lv-origem meta-ficha lv-g-documental">
+        {/*
+          A legenda atravessa a ponte e a assinatura, e o fio que a encima é a
+          linha em que a ave se apoia. Sem isso o carcará flutuava no canto
+          como adesivo; com isso ele fica dentro da mesma grade que o texto.
+        */}
+        <p className="lv-origem meta-ficha lv-g-documental dv-assinatura__ficha">
           {CARCARA_DA_IDENTIDADE.legenda}
         </p>
       </div>
@@ -183,16 +210,15 @@ export function DadosVivos() {
           <p className="meta-ficha lv-g-documental">
             Demais indicadores do levantamento
           </p>
-          <FaixaDeRegistros indicadores={secundarios} />
+          <FaixaDeRegistros indicadores={secundarios} variante="completa" />
+          <FaixaDeRegistros
+            indicadores={secundarios.slice(0, POSICOES_DE_APOIO)}
+            variante="reduzida"
+          />
         </div>
 
         <div className="dv-bloco">
           <SerieViva prefixo={prefixo} />
-        </div>
-
-        <div className="dv-bloco">
-          <p className="meta-ficha lv-g-documental">Atividades acionadas</p>
-          <RankingEditorial />
         </div>
       </section>
 
@@ -200,28 +226,38 @@ export function DadosVivos() {
         Passagem de saída, sem assinatura: a continuidade entre capítulos é
         feita pelo sistema cartográfico, e o teto de identidade da página já
         foi gasto na entrada.
+
+        A H4.5.1 trocou a copy. A anterior dizia "por trás de cada contratação
+        registrada existe alguém", e isso sugeria que as 84 contratações são 84
+        pessoas. Não são: o próprio indicador declara que a mesma pessoa pode
+        aparecer em dias diferentes, e a contagem de pessoas distintas continua
+        PENDENTE na fonte. A frase nova não fala de pessoas — ela explica por
+        que o detalhamento não está aqui.
+
+        A cruz de registro saiu junto. Ela marcava um encontro sem carregar
+        informação, e a H4.5 já a tinha registrado como o grafismo mais frágil
+        da composição. Removida, e não substituída: o fio da família
+        cartográfica já faz a ligação, e trocar um ornamento por outro não é
+        refino.
       */}
       <div
         className="lv-g-transicao dv-passagem"
         data-passagem="saida"
-        data-testid="passagem-medida-pessoas"
+        data-testid="passagem-saida"
       >
         <div className="lv-fio lv-g-cartografico" aria-hidden="true">
           <span />
           <span />
         </div>
         <div className="lv-ponte">
-          <p className="meta-ficha lv-g-documental">Medida → Pessoas</p>
-          <p>Por trás de cada contratação registrada existe alguém</p>
+          <p className="meta-ficha lv-g-documental">
+            Medida → Conjunto completo
+          </p>
+          <p>
+            O detalhamento por atividade pertence ao conjunto completo do
+            levantamento, e não a esta leitura
+          </p>
         </div>
-        <svg
-          aria-hidden="true"
-          className="dv-cruz lv-g-cartografico"
-          viewBox="0 0 12 12"
-        >
-          <line x1="6" y1="0" x2="6" y2="12" />
-          <line x1="0" y1="6" x2="12" y2="6" />
-        </svg>
       </div>
     </article>
   );

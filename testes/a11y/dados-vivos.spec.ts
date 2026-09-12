@@ -77,10 +77,14 @@ test("H4.5: o gráfico tem alternativa textual real, não rótulo genérico", as
 });
 
 /**
- * O realce é ênfase de leitura, nunca informação. Ele atenua os demais meses e
- * acende a linha correspondente da tabela, que é onde o valor exato vive.
+ * O realce é ênfase de leitura, nunca informação. Ele reforça o mês escolhido
+ * e acende a linha correspondente da tabela, que é onde o valor exato vive.
+ *
+ * A H4.5.1 acrescentou duas garantias: o rótulo do mês não perde opacidade, e
+ * a atenuação das marcas não passa de um limite que as deixaria com cara de
+ * desabilitadas.
  */
-test("H4.5: o realce de um mês liga desenho e tabela, sem esconder dado", async ({
+test("H4.5.1: o realce enfatiza o mês escolhido sem apagar os outros", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -93,15 +97,32 @@ test("H4.5: o realce de um mês liga desenho e tabela, sem esconder dado", async
   const fundoEmRepouso = await linha.evaluate(
     (e) => getComputedStyle(e).backgroundColor,
   );
+  const opacidade = (alvo: typeof vizinho, seletor: string) =>
+    alvo
+      .locator(seletor)
+      .first()
+      .evaluate((e) => Number(getComputedStyle(e).opacity));
 
   await alvo.locator(".dv-captura").hover();
 
+  // As marcas do vizinho atenuam, mas continuam bem acima do limiar em que
+  // uma série passa a parecer desligada.
+  await expect.poll(() => opacidade(vizinho, ".dv-conector")).toBeLessThan(1);
   await expect
-    .poll(() => vizinho.evaluate((e) => Number(getComputedStyle(e).opacity)))
-    .toBeLessThan(1);
-  expect(await alvo.evaluate((e) => Number(getComputedStyle(e).opacity))).toBe(
-    1,
-  );
+    .poll(() => opacidade(vizinho, ".dv-conector"))
+    .toBeGreaterThanOrEqual(0.5);
+  await expect
+    .poll(() => opacidade(vizinho, ".dv-ponto"))
+    .toBeGreaterThanOrEqual(0.5);
+
+  // O rótulo do mês é texto: ele não perde contraste em nenhum estado.
+  expect(await opacidade(vizinho, ".dv-mes")).toBe(1);
+  expect(
+    await vizinho.evaluate((e) => Number(getComputedStyle(e).opacity)),
+  ).toBe(1);
+
+  // A dominância do escolhido vem de somar ênfases, e não de apagar o resto.
+  expect(await opacidade(alvo, ".dv-conector")).toBe(1);
   // `strokeWidth` volta com unidade ("3px"), então a leitura é por parseFloat.
   expect(
     await alvo
@@ -112,7 +133,6 @@ test("H4.5: o realce de um mês liga desenho e tabela, sem esconder dado", async
     .poll(() => linha.evaluate((e) => getComputedStyle(e).backgroundColor))
     .not.toBe(fundoEmRepouso);
 
-  // Atenuar não é esconder: o mês vizinho continua legível e no DOM.
   await expect(vizinho).toBeVisible();
   await expect(page.locator('.dv-tabela tr[data-mes="4"]')).toBeVisible();
 });
@@ -140,7 +160,7 @@ test("H4.5: teclado alcança o conteúdo, o foco aparece e os decorativos não i
     "3px",
   );
 
-  for (const seletor of [".lv-g-identidade", ".lv-fio", ".dv-cruz"]) {
+  for (const seletor of [".lv-g-identidade", ".lv-fio"]) {
     const decorativos = page.locator(seletor);
     await expect(decorativos.first()).toBeAttached();
     for (const decorativo of await decorativos.all()) {
@@ -233,7 +253,8 @@ test("H4.5: com movimento reduzido nada anima e nada some", async ({
   for (const seletor of [
     ".dv-abertura",
     ".dv-protagonista__numero",
-    ".dv-faixa",
+    // A reduzida fica oculta por CSS; o estado avaliado é o visível.
+    '.dv-faixa[data-variante="completa"]',
     ".dv-serie",
     ".dv-ranking",
   ]) {
@@ -295,4 +316,170 @@ test("H4.5: a Home e a H4.0 continuam como estavam", async ({ page }) => {
   await expect(page.locator(".dados-vivos")).toHaveCount(0);
   await expect(page.getByTestId("preset-declaracao")).toBeVisible();
   await expect(page.getByTestId("preset-painel")).toBeVisible();
+});
+
+/**
+ * H4.5.1 — a área candidata à Home termina antes do ranking.
+ *
+ * O componente não sumiu: ele está na mesma página, depois da marca de fim, no
+ * bloco reservado à futura página de dados.
+ */
+test("H4.5.1: o ranking está fora da candidata e continua no laboratório", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(ROTA);
+
+  const candidata = page.locator(".dv-preview");
+  await expect(candidata.locator(".dv-ranking")).toHaveCount(0);
+  await expect(candidata.getByText("Atividades acionadas")).toHaveCount(0);
+  await expect(candidata.getByText(/10 ou mais/)).toHaveCount(0);
+  await expect(candidata.getByText("Museus")).toHaveCount(0);
+
+  const reservado = page.locator(".dv-laboratorio");
+  await expect(reservado.locator(".dv-ranking")).toHaveCount(1);
+  await expect(reservado.getByText(/10 ou mais/)).toBeVisible();
+  await expect(
+    reservado.getByRole("heading", { name: /Material reservado/ }),
+  ).toBeVisible();
+
+  // A ordem no DOM é o contrato: fim da candidata, depois material reservado.
+  const ordem = await page.evaluate(() => {
+    const preview = document.querySelector(".dv-preview");
+    const laboratorio = document.querySelector(".dv-laboratorio");
+    if (preview === null || laboratorio === null) return null;
+    return (
+      preview.compareDocumentPosition(laboratorio) &
+      Node.DOCUMENT_POSITION_FOLLOWING
+    );
+  });
+  expect(ordem).toBeTruthy();
+});
+
+/**
+ * H4.5.1 — a pré-visualização não fala como protótipo.
+ *
+ * O marcador editorial de proposta fica, porque ele é sobre aprovação de copy.
+ * O vocabulário de laboratório sai, porque ele falseia a pré-visualização.
+ */
+test("H4.5.1: a candidata não carrega vocabulário de laboratório", async ({
+  page,
+}) => {
+  await page.goto(ROTA);
+  const candidata = page.locator(".dv-preview");
+
+  for (const termo of ["somente DEV", "Preset", "H4.0", "H3.5.1"]) {
+    await expect(candidata.getByText(termo, { exact: false })).toHaveCount(0);
+  }
+  await expect(
+    candidata.getByText("Título editorial · proposta"),
+  ).toBeVisible();
+
+  // Os controles existem, e ficam antes da área candidata.
+  await expect(page.locator('input[value="completa"]')).toBeVisible();
+  await expect(candidata.locator("input")).toHaveCount(0);
+});
+
+/**
+ * H4.5.1 — a passagem de saída não afirma o que a fonte não sustenta.
+ *
+ * As 84 contratações não são 84 pessoas. A copy anterior sugeria isso.
+ */
+test("H4.5.1: a passagem de saída não fala de pessoas e perdeu a cruz", async ({
+  page,
+}) => {
+  await page.goto(ROTA);
+  const saida = page.getByTestId("passagem-saida");
+
+  await expect(saida).toBeVisible();
+  await expect(saida.getByText("Medida → Conjunto completo")).toBeVisible();
+  await expect(saida.locator("svg")).toHaveCount(0);
+  await expect(saida.locator(".lv-fio")).toHaveCount(1);
+  await expect(page.getByText("existe alguém")).toHaveCount(0);
+  await expect(page.getByText("Medida → Pessoas")).toHaveCount(0);
+});
+
+/**
+ * H4.5.1 — as duas variantes da faixa, e a alternância sem JavaScript.
+ */
+test("H4.5.1: completa e reduzida alternam sem JavaScript", async ({
+  browser,
+}) => {
+  const contexto = await browser.newContext({
+    javaScriptEnabled: false,
+    viewport: { width: 1440, height: 900 },
+  });
+  const pagina = await contexto.newPage();
+  await pagina.goto(`http://localhost:3000${ROTA}`);
+
+  const completa = pagina.locator('.dv-faixa[data-variante="completa"]');
+  const reduzida = pagina.locator('.dv-faixa[data-variante="reduzida"]');
+
+  await expect(completa).toBeVisible();
+  await expect(reduzida).toBeHidden();
+  await expect(completa.locator(".dv-registro-indicador")).toHaveCount(7);
+
+  await pagina.locator('input[value="reduzida"]').check();
+  await expect(reduzida).toBeVisible();
+  await expect(completa).toBeHidden();
+  await expect(reduzida.locator(".dv-registro-indicador")).toHaveCount(4);
+
+  // Valores reais, e não rótulos vazios: a redução é de composição.
+  await expect(reduzida.getByText("R$ 469,06")).toBeVisible();
+
+  await contexto.close();
+});
+
+/**
+ * A ressalva sobre a redução vive no cabeçalho, fora da pré-visualização, e
+ * precisa estar visível para quem olha os dois estados.
+ */
+test("H4.5.1: a ressalva de que a redução não é escolha editorial está visível", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(ROTA);
+  const ressalva = page.locator(".lv-recomendado");
+  await expect(ressalva).toBeVisible();
+  await expect(ressalva.getByText("ensaio de composição")).toBeVisible();
+  await expect(ressalva).toContainText(/decisão continua humana/);
+  await expect(page.locator(".dv-preview .lv-recomendado")).toHaveCount(0);
+});
+
+/**
+ * A assinatura ficou ancorada na grade: a legenda é a régua em que ela se
+ * apoia, e não um rótulo solto ao lado.
+ */
+test("H4.5.1: a assinatura se apoia na régua da própria legenda", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(ROTA);
+
+  const assinatura = page.locator(".dv-assinatura");
+  const ficha = page.locator(".dv-assinatura__ficha");
+  await assinatura.scrollIntoViewIfNeeded();
+
+  await expect(assinatura).toHaveCount(1);
+  await expect(ficha).toBeVisible();
+
+  const caixaDaAve = await assinatura.boundingBox();
+  const caixaDaFicha = await ficha.boundingBox();
+  expect(caixaDaAve).not.toBeNull();
+  expect(caixaDaFicha).not.toBeNull();
+
+  // A ficha vem logo abaixo da ave, e a distância é curta o bastante para as
+  // duas lerem como um registro só.
+  const folga =
+    (caixaDaFicha?.y ?? 0) - ((caixaDaAve?.y ?? 0) + (caixaDaAve?.height ?? 0));
+  expect(folga).toBeGreaterThanOrEqual(0);
+  expect(folga).toBeLessThan(40);
+
+  // A régua atravessa a ponte e a assinatura: ela é mais larga que a ave.
+  expect(caixaDaFicha?.width ?? 0).toBeGreaterThan(caixaDaAve?.width ?? 0);
+
+  // Continua uma por página, decorativa e com a legenda que a identifica.
+  await expect(page.locator(".lv-g-identidade")).toHaveCount(1);
+  await expect(assinatura).toHaveAttribute("aria-hidden", "true");
+  await expect(ficha).toContainText("grafismo da identidade");
 });

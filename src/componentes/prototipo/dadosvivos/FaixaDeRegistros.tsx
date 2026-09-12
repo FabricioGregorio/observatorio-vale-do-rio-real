@@ -22,14 +22,24 @@ import { exibirIndicador } from "../../../dados/indicadores/formato";
  * dataset. Repeti-los em cada registro seria ruído com aparência de rigor. Eles
  * sobem uma vez para a ficha de contexto da seção, e cada registro fica com o
  * que só ele tem: a base e a regra de cálculo.
+ *
+ * ## `variante`, na H4.5.1
+ *
+ * A faixa é montada duas vezes na mesma página — completa e reduzida — e a
+ * alternância é CSS. A versão reduzida existe para medir **quanta faixa a
+ * Home aguenta**, e não para eleger indicadores: os quatro que ela mostra são
+ * os quatro primeiros do dataset, em ordem de arquivo, sem critério editorial.
+ * A ressalva vive no cabeçalho do laboratório, fora da área de pré-visualização.
  */
 export function FaixaDeRegistros({
   indicadores,
+  variante,
 }: {
   readonly indicadores: readonly IndicadorDerivado[];
+  readonly variante: "completa" | "reduzida";
 }) {
   return (
-    <div className="dv-faixa lv-revelar">
+    <div className="dv-faixa lv-revelar" data-variante={variante}>
       <ol className="dv-faixa__lista">
         {indicadores.map((indicador) => (
           <li className="dv-registro-indicador" key={indicador.id}>
