@@ -56,12 +56,20 @@ test("H3.5: teclado, disclosure, foco e decorativos sem interceptação", async 
   expect(await link.evaluate((e) => getComputedStyle(e).outlineWidth)).toBe(
     "3px",
   );
-  for (const seletor of [".lv-assinatura", ".lv-fio", ".lv-eixos"]) {
-    const decorativo = artigo.locator(seletor);
-    await expect(decorativo).toHaveAttribute("aria-hidden", "true");
-    expect(
-      await decorativo.evaluate((e) => getComputedStyle(e).pointerEvents),
-    ).toBe("none");
+  for (const seletor of [
+    ".lv-g-identidade",
+    ".lv-fio",
+    ".lv-eixos",
+    ".lv-cruz",
+  ]) {
+    const decorativos = artigo.locator(seletor);
+    await expect(decorativos.first()).toBeAttached();
+    for (const decorativo of await decorativos.all()) {
+      await expect(decorativo).toHaveAttribute("aria-hidden", "true");
+      expect(
+        await decorativo.evaluate((e) => getComputedStyle(e).pointerEvents),
+      ).toBe("none");
+    }
   }
   const foto = artigo.locator(".lv-foto-link");
   await foto.focus();
@@ -215,3 +223,184 @@ for (const tema of ["light", "dark"] as const) {
     expect(razao as number).toBeGreaterThanOrEqual(4.5);
   });
 }
+
+/**
+ * H3.5.1 — o carcará perdeu 28% de largura. O número sozinho não prova nada:
+ * o que importa é que ele deixou de disputar hierarquia. O teste compara a
+ * assinatura com a fotografia da mesma página, que é o elemento visual que
+ * deve dominar.
+ */
+test("H3.5.1: a assinatura é secundária em relação à fotografia", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(ROTA);
+  await page.locator('input[value="B"]').check();
+
+  const assinatura = page.locator('[data-preset="B"] .lv-g-identidade');
+  const fotografia = page.locator('[data-preset="B"] .lv-fotografia');
+  await assinatura.scrollIntoViewIfNeeded();
+
+  const larguraDaAssinatura = (await assinatura.boundingBox())?.width ?? 0;
+  const larguraDaFotografia = (await fotografia.boundingBox())?.width ?? 0;
+
+  expect(larguraDaAssinatura).toBeGreaterThan(0);
+  expect(larguraDaAssinatura).toBeLessThan(larguraDaFotografia / 2);
+
+  // Continua claramente visível: reduzir não é esconder.
+  expect(larguraDaAssinatura).toBeGreaterThanOrEqual(80);
+});
+
+/**
+ * A regra de frequência da H3.5.1 vale no navegador, e não só no HTML: uma
+ * assinatura em escala editorial por página, e ela mora numa passagem.
+ */
+test("H3.5.1: há uma assinatura por página, dentro de uma passagem", async ({
+  page,
+}) => {
+  await page.goto(ROTA);
+  for (const preset of ["A", "B"]) {
+    await page.locator(`input[value="${preset}"]`).check();
+    const artigo = page.locator(`[data-preset="${preset}"]`);
+    await expect(artigo.locator(".lv-g-identidade")).toHaveCount(1);
+    await expect(artigo.locator(".lv-g-transicao")).toHaveCount(2);
+    await expect(
+      artigo.locator('.lv-g-transicao[data-passagem="campo"] .lv-g-identidade'),
+    ).toHaveCount(1);
+    await expect(
+      artigo.locator(
+        '.lv-g-transicao[data-passagem="leitura"] .lv-g-identidade',
+      ),
+    ).toHaveCount(0);
+  }
+});
+
+/**
+ * Movimento curto e reversível. A revisão de 3–4/10 para 4–5/10 mudou a
+ * quantidade de resposta, não a natureza dela: nenhuma duração passa de
+ * 300 ms, e nada aqui roda em laço.
+ */
+test("H3.5.1: durações ficam curtas e nada anima em laço", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto(ROTA);
+  await page.locator('input[value="B"]').check();
+
+  const bloco = page.locator('[data-preset="B"] .lv-fotografia');
+  await bloco.scrollIntoViewIfNeeded();
+  await expect(bloco).toHaveAttribute("data-revelado", "true");
+
+  const animacao = await bloco.evaluate((elemento) => {
+    const estilo = getComputedStyle(elemento);
+    return {
+      duracao: estilo.animationDuration,
+      repeticoes: estilo.animationIterationCount,
+      direcao: estilo.animationDirection,
+    };
+  });
+  expect(Number.parseFloat(animacao.duracao)).toBeLessThanOrEqual(0.3);
+  expect(animacao.repeticoes).toBe("1");
+  expect(animacao.direcao).toBe("normal");
+
+  /*
+    `transition-property` vale `all` por padrão em todo elemento, e ler isso
+    como defeito daria falso positivo em página inteira. O que interessa é o
+    elemento que realmente transiciona: duração acima de zero.
+  */
+  const transicoes = await page.evaluate(() => {
+    const valores: string[] = [];
+    for (const elemento of document.querySelectorAll('[data-preset="B"] *')) {
+      const estilo = getComputedStyle(elemento);
+      const duracoes = estilo.transitionDuration
+        .split(",")
+        .map((parcela) => Number.parseFloat(parcela));
+      if (duracoes.every((duracao) => !(duracao > 0))) continue;
+      valores.push(`${estilo.transitionProperty}|${estilo.transitionDuration}`);
+    }
+    return valores;
+  });
+
+  expect(transicoes.length).toBeGreaterThan(0);
+  for (const valor of transicoes) {
+    const [propriedade, duracao] = valor.split("|");
+    // A propriedade animada tem de ser dita: `transition: all` é proibido.
+    expect(propriedade).not.toBe("all");
+    for (const parcela of (duracao ?? "").split(",")) {
+      expect(Number.parseFloat(parcela)).toBeLessThanOrEqual(0.3);
+    }
+  }
+});
+
+/**
+ * Com movimento reduzido nada se move, e nada desaparece. O segundo é o que
+ * costuma falhar em sistemas de reveal: a animação é desligada, o estado
+ * inicial de opacidade fica, e o conteúdo some para quem mais precisa dele.
+ */
+test("H3.5.1: com movimento reduzido nada anima e nada some", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto(ROTA);
+
+  for (const preset of ["A", "B"]) {
+    await page.locator(`input[value="${preset}"]`).check();
+    const artigo = page.locator(`[data-preset="${preset}"]`);
+
+    for (const seletor of [".lv-heading", ".lv-fotografia", ".lv-registro"]) {
+      const bloco = artigo.locator(seletor);
+      await bloco.scrollIntoViewIfNeeded();
+      await expect(bloco).toBeVisible();
+      const estado = await bloco.evaluate((elemento) => {
+        const estilo = getComputedStyle(elemento);
+        return {
+          animacao: estilo.animationName,
+          opacidade: estilo.opacity,
+          transformacao: estilo.transform,
+        };
+      });
+      expect(estado.animacao).toBe("none");
+      expect(estado.opacidade).toBe("1");
+      expect(estado.transformacao).toBe("none");
+    }
+
+    // O conteúdo textual continua inteiro: nada foi condicionado à animação.
+    await expect(artigo.getByText("Não informada")).toBeVisible();
+    await expect(
+      artigo.getByRole("link", { name: /Explorar o mapa/ }),
+    ).toBeVisible();
+  }
+});
+
+/**
+ * A H3.5.1 é laboratório. A Home não pode ter mudado, e o painel da H4.0
+ * também não: os dois são verificados pelo que chega ao navegador, e não pelo
+ * diff.
+ */
+test("H3.5.1: a Home não recebe nada do laboratório", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator(".linguagem-visual")).toHaveCount(0);
+  for (const familia of [
+    "lv-g-identidade",
+    "lv-g-cartografico",
+    "lv-g-documental",
+    "lv-g-transicao",
+  ]) {
+    await expect(page.locator(`.${familia}`)).toHaveCount(0);
+  }
+  const usaPapeis = await page.evaluate(() =>
+    getComputedStyle(document.body).getPropertyValue("--lv-ave-viva").trim(),
+  );
+  expect(usaPapeis).toBe("");
+  expect(await page.content()).not.toContain("/media/grafismos/");
+});
+
+test("H3.5.1: o painel da H4.0 continua fora do alcance do laboratório", async ({
+  page,
+}) => {
+  await page.goto("/dev/dados");
+  await expect(page.locator(".linguagem-visual")).toHaveCount(0);
+  await expect(page.locator('[class*="lv-g-"]')).toHaveCount(0);
+  const papel = await page.evaluate(() =>
+    getComputedStyle(document.body).getPropertyValue("--lv-ave-viva").trim(),
+  );
+  expect(papel).toBe("");
+});

@@ -2700,3 +2700,44 @@ adotá-lo é revisar a direção.
 
 Registro completo: [H3_5_SISTEMA_GRAFICO_PROTOTIPO.md](./H3_5_SISTEMA_GRAFICO_PROTOTIPO.md).
 Sem banco, deploy, push ou mudança de infraestrutura. A H4.5 não foi iniciada.
+## 32.14 Atualização H3.5.1 — Consolidação do sistema gráfico vivo
+
+Em 2026-09-11 o laboratório `/dev/linguagem-visual` passou de exploração a
+sistema. A Home não foi alterada, e a H4.0 não foi tocada.
+
+Duas decisões humanas chegaram fechadas e foram executadas. O **carcará está
+aprovado como grafismo da identidade**, explicitamente não documental: seu uso
+não constitui evidência de ocorrência da espécie no território pesquisado. E a
+**intensidade de movimento da Direção Visual §12.1 passou de 3–4/10 para
+4–5/10**, com o preset B adotado como direção. As duas alterações estão
+registradas na Direção Visual §11.1, §12.1 e §31.1.
+
+O alvo agora é **B refinado**, e não o B da H3.5. O carcará perdeu **27,8%** de
+largura em telas grandes — de 144 px para 104 px — e 26,7% no celular. Ele
+continua claramente visível e mede menos de um quarto da largura da fotografia
+da mesma página; há teste que trava as duas pontas dessa relação.
+
+A H3.5.1 formaliza uma **gramática de grafismos** em quatro famílias —
+identidade, cartográfico, documental e de transição — com regra de frequência
+por família. A identidade é a única com teto: **um carcará em escala editorial
+por página, e só em passagem entre capítulos**. É o que separa assinatura de
+mascote. O laboratório ganhou uma segunda passagem, `CAMPO → LEITURA`, feita só
+com grafismo cartográfico, que prova que a continuidade não depende do animal.
+
+O vazio entre seções foi resolvido sem card, sombra, canto arredondado ou
+textura falsa: um fio único de 1 px desce a coluna inteira do artigo e as
+passagens o engrossam. A página lê como sistema editorial contínuo.
+
+Também entra um **guia de densidade visual** em três faixas, para impedir que
+fases futuras apliquem o mesmo tratamento a tudo. A gramática e o guia vivem em
+`src/componentes/prototipo/linguagem/gramatica.ts`, em forma executável, e são
+verificados por teste.
+
+Microinterações com propriedade declarada — `transition: all` é proibido e há
+teste varrendo a página. Scroll reveal em 240 ms e 10 px, numa única ilha
+cliente, com o conteúdo nascendo visível. **Zero JavaScript acrescentado** e
+nenhuma dependência nova: a varredura dos 17 `chunks` do build de produção não
+encontra nada do sistema gráfico.
+
+Registro completo: [H3_5_1_CONSOLIDACAO_SISTEMA_GRAFICO.md](./H3_5_1_CONSOLIDACAO_SISTEMA_GRAFICO.md).
+Sem banco, deploy, push ou mudança de infraestrutura. A H4.5 não foi iniciada.

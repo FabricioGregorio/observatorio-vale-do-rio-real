@@ -8,6 +8,16 @@
 
 **Baseline:** `979ecb3` — feat: prototipa dados e indicadores
 
+> **Nota de 2026-09-11.** As duas decisões que esta fase deixou em aberto foram
+> tomadas pelo responsável humano e estão fechadas: o carcará foi **aprovado**
+> como grafismo da identidade, explicitamente não documental, e a intensidade
+> de movimento da Direção Visual §12.1 foi **revisada de 3–4/10 para 4–5/10**,
+> com o preset B adotado como direção. A consolidação que executa essas
+> decisões é a H3.5.1, registrada em
+> [H3_5_1_CONSOLIDACAO_SISTEMA_GRAFICO.md](./H3_5_1_CONSOLIDACAO_SISTEMA_GRAFICO.md).
+> Este documento fica como está, como registro do estado em que a decisão foi
+> tomada; onde ele diz "decisão humana pendente", leia "decidido, ver H3.5.1".
+
 ## 0. Ordem cronológica: a H3.5 veio depois da H4.0
 
 Esta fase foi executada **depois** da H4.0, e não antes. A H4.0 rodou fora de

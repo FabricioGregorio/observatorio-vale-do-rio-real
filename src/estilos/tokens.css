@@ -467,10 +467,11 @@
    precisa continuar sendo a do tema, que é a que vale para o site.
    ========================================================================== */
 
-/* H3.5 — somente laboratório. Novos papéis não alteram consumidores H1–H4.0.
-   O preset A fica nos 3–4/10 de movimento que a Direção Visual §12.1 fixa. O
-   preset B propõe 5/10, e adotá-lo seria revisar a direção: fica em aberto,
-   para decisão humana. Ver docs/frontend/H3_5_SISTEMA_GRAFICO_PROTOTIPO.md. */
+/* H3.5 / H3.5.1 — somente laboratório. Novos papéis não alteram consumidores
+   H1–H4.0. A decisão humana de 2026-09-11 revisou a Direção Visual §12.1 de
+   3–4/10 para 4–5/10 e adotou o preset B refinado como direção; o preset A
+   permanece como controle contido, não como candidato equivalente.
+   Ver docs/frontend/H3_5_1_CONSOLIDACAO_SISTEMA_GRAFICO.md. */
 .linguagem-visual {
   --lv-superficie-territorio: color-mix(
     in srgb,
@@ -496,9 +497,21 @@
   --lv-respiro: clamp(1.5rem, 4vw, 3rem);
   --lv-margem: clamp(1rem, 4vw, 4rem);
   --lv-foto-largura: 26.25rem;
+
+  /* H3.5.1 — o carcará perdeu 28% de largura em relação à H3.5. Ele continua
+     claramente visível, e deixou de disputar hierarquia com o título e com a
+     fotografia. Assinatura, não mascote. */
   --lv-ave-contida: 2.75rem;
-  --lv-ave-viva: 9rem;
+  --lv-ave-viva: 6.5rem;
+
   --lv-passagem: 15rem;
+  --lv-passagem-curta: 9rem;
+  --lv-cruz: 0.75rem;
+  --lv-realce-ficha: color-mix(
+    in srgb,
+    var(--color-fundo) 94%,
+    var(--color-marca)
+  );
   --lv-revelar-distancia: 10px;
   --lv-escala-a: 1.015;
   --lv-escala-b: 1.025;
@@ -514,8 +527,9 @@
 
 @media (max-width: 767px) {
   .linguagem-visual {
-    --lv-ave-viva: 3.75rem;
+    --lv-ave-viva: 2.75rem;
     --lv-passagem: 11rem;
+    --lv-passagem-curta: 7rem;
     --lv-revelar-distancia: 8px;
   }
 }

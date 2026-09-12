@@ -664,15 +664,75 @@ Exemplos:
 - cacto → ecologia/território quando houver contexto real;
 - linhas topográficas → textura de apoio extremamente sutil.
 
+## 11.1 Carcará — uso como grafismo da identidade
+
+**Revisão de 2026-09-11, decisão humana. Ver §31.**
+
+O carcará pode ser usado como **grafismo da identidade do Observatório**. Seu
+uso não constitui evidência de ocorrência da espécie no território pesquisado e
+não deve ser apresentado como dado ambiental ou de campo.
+
+Isto abre um segundo caminho ao lado do mapeamento `carcará → fauna/território
+quando houver contexto real`, que permanece válido para o dia em que houver
+registro documentado. Os dois não se misturam: ou o elemento é assinatura de
+marca, ou é evidência, e a diferença aparece no texto que o acompanha.
+
+**Permitido:**
+
+- elemento gráfico e assinatura visual;
+- presença na linguagem editorial;
+- identificação textual do tipo `CARCARÁ · GRAFISMO DA IDENTIDADE`, ou
+  formulação equivalente, claramente não documental.
+
+**Proibido**, porque afirmaria fato que nenhum documento do projeto sustenta:
+
+- sugerir avistamento ou presença confirmada da espécie;
+- apresentar o elemento como dado ambiental, ocorrência territorial ou
+  informação científica;
+- formulações do tipo "fauna do território", "espécie encontrada" ou
+  "carcará do Vale".
+
+**Frequência.** Um carcará em escala editorial por página, e só em passagem
+entre capítulos. Versões pequenas de assinatura são aceitáveis fora disso. A
+regra existe para separar assinatura de mascote: repetir o animal a cada seção
+transforma identidade em personagem.
+
+**Preservação da arte.** Não redesenhar, recolorir, alterar anatomia, aplicar
+filtro, acrescentar sombra caricata nem reduzir a ícone genérico. Tamanho novo
+sai de derivação documentada, com procedência registrada.
+
 ---
 
 # 12. Movimento
 
 ## 12.1 Intensidade
 
-Site geral: **3–4/10**.
+Site geral: **4–5/10**.
 
-Mapa: **10/10 em capacidade de interação**, não em animação autônoma.
+**Revisão de 2026-09-11, decisão humana.** A referência anterior era 3–4/10.
+Ver §31.
+
+A revisão **não** autoriza estética cinematográfica. Ela responde a uma
+necessidade medida no laboratório da H3.5: com 3–4/10 a interface dá pouca
+resposta, e a página lê como documento impresso em vez de sistema vivo. O que
+muda é a **quantidade de resposta**, não a natureza dela.
+
+Continua proibido, e a revisão não afrouxa nada disto:
+
+- animação teatral e loader cinematográfico;
+- parallax contínuo;
+- elemento flutuando sem função;
+- looping decorativo;
+- movimento em todo objeto;
+- cursor customizado;
+- transição lenta.
+
+A regra que governa tudo continua sendo: **o movimento reage ao conteúdo ou à
+ação de quem lê**.
+
+Mapa: **10/10 em capacidade de interação**, não em animação autônoma. Ele
+continua sendo o único lugar onde intensidade superior pode existir, e só
+quando justificada.
 
 ## 12.2 Timing orientativo
 
@@ -1298,9 +1358,43 @@ Estes pontos **não bloqueiam** o início do protótipo, mas devem ser avaliados
 
 ---
 
+# 31. Revisões posteriores à 1.0
+
+A versão 1.0 continua valendo. Esta seção registra as alterações feitas no
+próprio documento depois da sua publicação, com data, origem e motivo, para que
+ninguém precise comparar versões para saber o que mudou.
+
+## 31.1 — 2026-09-11, consolidação H3.5.1
+
+Origem: laboratório `/dev/linguagem-visual` das fases H3.5 e H3.5.1. Registro
+completo em
+[H3_5_1_CONSOLIDACAO_SISTEMA_GRAFICO.md](./H3_5_1_CONSOLIDACAO_SISTEMA_GRAFICO.md).
+Decisão humana.
+
+| Seção | De | Para | Motivo |
+|---|---|---|---|
+| §12.1 Intensidade | 3–4/10 | **4–5/10** | com 3–4/10 a interface dá pouca resposta e a página lê como impresso; a revisão aumenta a quantidade de resposta, não muda a natureza dela |
+| §11 Biblioteca iconográfica | carcará condicionado a contexto real de fauna | **§11.1**: também permitido como grafismo da identidade, explicitamente não documental | não há registro de avistamento no recorte, e o elemento tem valor de assinatura independente disso |
+
+O que a revisão **não** mudou: as proibições de §12 seguem inteiras, o mapa
+continua sendo a única exceção de intensidade, e a paleta, a tipografia e o
+sistema de superfícies não foram tocados.
+
+Acrescentados pela mesma consolidação, sem revogar nada:
+
+- **gramática de grafismos** em quatro famílias — identidade, cartográfico,
+  documental e de transição — com regra de frequência por família;
+- **guia de densidade visual** em três faixas — baixa, média e alta — para
+  impedir que fases futuras apliquem o mesmo tratamento a tudo.
+
+Os dois vivem em `src/componentes/prototipo/linguagem/gramatica.ts`, em forma
+executável, e são verificados por teste.
+
+---
+
 ## Encerramento
 
-Este documento é a fonte de verdade para a fase de direção visual até que uma versão posterior o substitua explicitamente.
+Este documento é a fonte de verdade para a fase de direção visual até que uma versão posterior o substitua explicitamente. Revisões pontuais posteriores à 1.0 ficam registradas em §31.
 
 A próxima etapa correta é **Home Piloto 1.0**, não um redesenho total do site.
 

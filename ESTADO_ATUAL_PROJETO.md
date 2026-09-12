@@ -1676,3 +1676,52 @@ Registro: [H3_5_SISTEMA_GRAFICO_PROTOTIPO.md](./docs/frontend/H3_5_SISTEMA_GRAFI
 Estado: **EM PROTÓTIPO, NÃO INTEGRADA**. A Home segue sem a linguagem nova, e a
 H4.0 segue como estava. Sem banco, R2, Vercel, DNS, deploy ou push. A H4.5 não
 foi iniciada.
+
+### H3.5.1 — Consolidação do sistema gráfico vivo, 2026-09-11
+
+O laboratório `/dev/linguagem-visual` deixou de ser exploração e virou sistema.
+A Home continua sem a linguagem nova, e a H4.0 segue intacta: nenhum arquivo
+dela entrou no diff, e testes conferem o acoplamento nos dois sentidos.
+
+Duas decisões humanas chegaram fechadas e foram executadas. O **carcará está
+aprovado como grafismo da identidade**, explicitamente não documental — seu uso
+não constitui evidência de ocorrência da espécie no território pesquisado. E a
+**intensidade de movimento passou de 3–4/10 para 4–5/10**, com o preset B
+adotado como direção. As duas estão formalizadas na Direção Visual §11.1,
+§12.1 e §31.1, que passou a ter uma seção de revisões posteriores à 1.0.
+
+O alvo é **B refinado**. O carcará perdeu 27,8% de largura em telas grandes —
+de 144 px para 104 px — e 26,7% no celular. Ele mede menos de um quarto da
+largura da fotografia da mesma página, e um teste trava as duas pontas: nem
+protagonista, nem invisível.
+
+A fase formaliza uma **gramática de grafismos** em quatro famílias, com regra
+de frequência, e um **guia de densidade visual** em três faixas. Os dois vivem
+em `src/componentes/prototipo/linguagem/gramatica.ts`, em forma executável. A
+identidade é a única família com teto — uma por página, só em passagem — e o
+laboratório ganhou uma segunda passagem, feita só com grafismo cartográfico,
+que prova que a continuidade entre capítulos não depende do animal.
+
+O vazio entre seções foi resolvido por um fio único de 1 px que desce a coluna
+inteira do artigo, sem card, sombra ou textura falsa. As microinterações
+declaram a propriedade animada, nenhuma duração passa de 300 ms, nada roda em
+laço, e com movimento reduzido nada anima e nada some.
+
+**Zero JavaScript acrescentado** e nenhuma dependência nova: a gramática, o guia
+e o CSS são módulos de servidor, e a varredura dos 17 `chunks` do build de
+produção não encontra nenhum deles. O CSS do laboratório passou de 7.061 para
+9.372 bytes, num `<style>` da própria rota.
+
+Gates: tipos, lint, 449 testes unitários, 239 de navegador e `pnpm build` com
+24 rotas estáticas. O `pendencias` **não atestou nada** — esta máquina não tem
+`DATABASE_URL`, e o código zero do script não é prova de banco.
+
+Também foi atualizado o `public/media/LEIA-ME.md`, defasado desde a H1: ele
+agora descreve a árvore real de sete pastas, a diferença entre original e
+derivado, a política de EXIF/XMP/GPS, a de consentimento e os três módulos de
+procedência que existem de fato.
+
+Registro: [H3_5_1_CONSOLIDACAO_SISTEMA_GRAFICO.md](./docs/frontend/H3_5_1_CONSOLIDACAO_SISTEMA_GRAFICO.md).
+
+Estado: **EM PROTÓTIPO, NÃO INTEGRADA**. Sem banco, R2, Vercel, DNS, deploy ou
+push. A H4.5 não foi iniciada, e é ela que deve herdar este sistema.
