@@ -2662,3 +2662,41 @@ Lighthouse continua indisponível e a dívida fica para a H7.
 Registro completo: [H4_DADOS_INDICADORES_PROTOTIPO.md](./H4_DADOS_INDICADORES_PROTOTIPO.md).
 Sem banco, deploy, push ou mudança de infraestrutura. A H4.1 depende de decisão
 humana entre A e B.
+## 32.13 Atualização H3.5 — Sistema gráfico e motion transversal em protótipo
+
+Em 2026-09-11 a fase **H3.5 — sistema gráfico e motion transversal** entrou em
+**EM PROTÓTIPO**, exclusivamente em `/dev/linguagem-visual`, com 404 em
+produção. A Home não foi alterada, e a H4.0 não foi tocada.
+
+A H3.5 foi executada **depois** da H4.0, e não antes. A H4.0 rodou fora de
+ordem, e a decisão do responsável foi preservá-la por inteiro. Conceitualmente
+a H3.5 continua sendo a camada anterior: é dela que a H4.5 herdará o tratamento
+visual dos indicadores.
+
+A rodada começou pela auditoria dos grafismos da identidade, que nunca tinham
+sido medidos como candidatos a uso real. A medição **confirma o Achado Crítico
+1 do §4.3** deste plano, arquivo por arquivo e hash por hash: cinco dos seis
+"SVG" são PNG em base64 dentro de invólucro SVG. Não escalam, não são
+recoloráveis por token, e dois deles custam 704 KB cada.
+
+Um único derivado entrou no bundle: `media/grafismos/carcara-identidade-368.webp`,
+29.954 B, rasterizado no tamanho intrínseco declarado pelo próprio arquivo —
+sem recorte, recoloração ou redesenho. Cacto e igreja ficaram de fora por falta
+de conteúdo que os convoque; a Direção Visual §11 condiciona o uso à função
+editorial.
+
+Os papéis transversais — três superfícies de capítulo, uma linha, respiro em
+`clamp()` e teto de tamanho para o grafismo — vivem sob `.linguagem-visual` e
+não alcançam nenhum consumidor de H1 a H4.0. Dois presets comparam o mesmo
+conteúdo: **A — Contido** e **B — Vivo**. A alternância usa `:has()` sobre
+rádio e funciona sem JavaScript; a única ilha cliente acrescenta a entrada de
+240 ms do preset B, e o conteúdo nasce visível sem ela.
+
+Duas decisões ficam com o humano. O **carcará** entra como assinatura da
+identidade, e não como fauna avistada: não há registro de avistamento no
+recorte, e a Direção Visual §11 condiciona o uso de fauna a contexto real. E o
+preset **B propõe intensidade 5/10**, acima dos 3–4/10 da Direção Visual §12.1;
+adotá-lo é revisar a direção.
+
+Registro completo: [H3_5_SISTEMA_GRAFICO_PROTOTIPO.md](./H3_5_SISTEMA_GRAFICO_PROTOTIPO.md).
+Sem banco, deploy, push ou mudança de infraestrutura. A H4.5 não foi iniciada.

@@ -456,3 +456,72 @@
    1.5:1 no escuro). Onde a borda for a única identificação de um controle,
    usar `--color-borda-forte`.
    ========================================================================== */
+
+/* =============================================================================
+   7. Laboratório da H3.5 — sistema gráfico transversal
+
+   Papéis exclusivos de `/dev/linguagem-visual`. Nenhum consumidor de H1 a
+   H4.0 lê estes nomes: o seletor de classe `.linguagem-visual` fecha o
+   alcance na raiz do laboratório. O bloco fica no fim do arquivo de
+   propósito — a primeira ocorrência de cada media query do documento
+   precisa continuar sendo a do tema, que é a que vale para o site.
+   ========================================================================== */
+
+/* H3.5 — somente laboratório. Novos papéis não alteram consumidores H1–H4.0.
+   O preset A fica nos 3–4/10 de movimento que a Direção Visual §12.1 fixa. O
+   preset B propõe 5/10, e adotá-lo seria revisar a direção: fica em aberto,
+   para decisão humana. Ver docs/frontend/H3_5_SISTEMA_GRAFICO_PROTOTIPO.md. */
+.linguagem-visual {
+  --lv-superficie-territorio: color-mix(
+    in srgb,
+    var(--color-fundo) 96%,
+    var(--color-marca)
+  );
+  --lv-superficie-campo: color-mix(
+    in srgb,
+    var(--color-fundo) 97%,
+    var(--color-acento)
+  );
+  --lv-superficie-ensaio: color-mix(
+    in srgb,
+    var(--color-fundo) 96%,
+    var(--color-link)
+  );
+  --lv-linha: color-mix(
+    in srgb,
+    var(--color-borda-forte) 60%,
+    var(--color-fundo)
+  );
+  --lv-capitulo: clamp(2rem, 5vw, 4rem);
+  --lv-respiro: clamp(1.5rem, 4vw, 3rem);
+  --lv-margem: clamp(1rem, 4vw, 4rem);
+  --lv-foto-largura: 26.25rem;
+  --lv-ave-contida: 2.75rem;
+  --lv-ave-viva: 9rem;
+  --lv-passagem: 15rem;
+  --lv-revelar-distancia: 10px;
+  --lv-escala-a: 1.015;
+  --lv-escala-b: 1.025;
+
+  /* A Central de Acessibilidade nasceu dentro do cabeçalho escuro e pinta o
+     gatilho com `--hero-texto` por estilo inline. Aqui ela fica sobre
+     superfície clara, e o gatilho sumia: pedra sobre papel dá 1,1:1.
+     Redefinir o papel na raiz do laboratório é o caminho disponível:
+     estilo inline só cede a declaração forçada, e as quatro exceções de
+     prioridade deste projeto pertencem ao bloco de movimento reduzido. */
+  --hero-texto: var(--color-texto);
+}
+
+@media (max-width: 767px) {
+  .linguagem-visual {
+    --lv-ave-viva: 3.75rem;
+    --lv-passagem: 11rem;
+    --lv-revelar-distancia: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .linguagem-visual {
+    --lv-revelar-distancia: 0px;
+  }
+}

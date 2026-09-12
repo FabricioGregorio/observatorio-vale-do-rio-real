@@ -1626,3 +1626,53 @@ Registro: [H4_DADOS_INDICADORES_PROTOTIPO.md](./docs/frontend/H4_DADOS_INDICADOR
 
 Estado: **EM PROTÓTIPO, NÃO INTEGRADA**. A Home segue sem a seção. Sem banco,
 R2, Vercel, DNS, deploy ou push. A H4.1 depende de decisão humana entre A e B.
+
+### H3.5 — Sistema gráfico e motion transversal em protótipo, 2026-09-11
+
+A H3.5 foi executada **depois** da H4.0, e não antes. A H4.0 rodou fora de
+ordem; a decisão do responsável foi preservar aquele trabalho por inteiro em
+vez de refazê-lo. Conceitualmente a H3.5 continua sendo a camada anterior: é o
+sistema gráfico transversal que atravessa H1, H2 e H3 e do qual a H4.5 vai
+herdar o tratamento visual dos indicadores. A H4.0 foi apenas lida, para
+conferir compatibilidade futura: nenhum arquivo dela foi alterado, e ela
+continua fora da Home.
+
+A fase abriu pela auditoria dos grafismos da identidade, que nunca tinham sido
+medidos como candidatos a uso real. A medição confirmou o Achado Crítico 1 do
+plano da Home: cinco dos seis "SVG" são **PNG em base64 dentro de invólucro
+SVG**. Eles não escalam, não são recoloráveis por token e não podem ir ao
+bundle na forma original — dois deles custam 704 KB cada.
+
+Um único derivado entrou: `media/grafismos/carcara-identidade-368.webp`,
+29.954 B, rasterizado no tamanho intrínseco que o próprio arquivo declara, sem
+recorte, recoloração ou redesenho. A procedência está em
+`src/dados/grafismos/derivados.ts`, no mesmo contrato do Hero e da Pesquisa em
+Campo, e `pnpm derivar-grafismos` regenera o arquivo conferindo o hash do
+original. Cacto e igreja não entraram, por falta de conteúdo que os convoque.
+
+O protótipo `/dev/linguagem-visual`, 404 em produção, compara dois tratamentos
+do mesmo conteúdo aprovado: **A — Contido** e **B — Vivo**. A alternância é
+`:has()` sobre rádio e funciona sem JavaScript. A única ilha cliente, de 39
+linhas, acrescenta a entrada de 240 ms do preset B; o conteúdo nasce visível
+sem ela. O mapa segue montado no servidor com os mesmos 75 caminhos do IBGE.
+
+Duas correções em arquivo compartilhado, ambas neutras para H1–H4.0: o bloco de
+papéis da H3.5 foi movido para o fim de `tokens.css`, porque no topo ele fazia
+os testes de tema recortarem a media query errada; e `--hero-texto` foi
+redefinido na raiz do laboratório, porque o gatilho da Central de
+Acessibilidade pinta por estilo inline e media **1,1:1** sobre superfície
+clara — o controle de acessibilidade da página estava invisível. Passou a medir
+15,5:1, com teste de regressão nos dois temas.
+
+Duas decisões ficam explicitamente com o humano. O **carcará** entra como
+assinatura da identidade, e não como avistamento: nenhum documento do projeto
+registra a ave no recorte, e a Direção Visual §11 condiciona o uso de fauna a
+contexto real. E o preset **B propõe intensidade 5/10**, acima dos 3–4/10 que a
+Direção Visual §12.1 fixa; adotá-lo é revisar a direção, o que não é atribuição
+do agente.
+
+Registro: [H3_5_SISTEMA_GRAFICO_PROTOTIPO.md](./docs/frontend/H3_5_SISTEMA_GRAFICO_PROTOTIPO.md).
+
+Estado: **EM PROTÓTIPO, NÃO INTEGRADA**. A Home segue sem a linguagem nova, e a
+H4.0 segue como estava. Sem banco, R2, Vercel, DNS, deploy ou push. A H4.5 não
+foi iniciada.
