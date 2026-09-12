@@ -2741,3 +2741,49 @@ encontra nada do sistema gráfico.
 
 Registro completo: [H3_5_1_CONSOLIDACAO_SISTEMA_GRAFICO.md](./H3_5_1_CONSOLIDACAO_SISTEMA_GRAFICO.md).
 Sem banco, deploy, push ou mudança de infraestrutura. A H4.5 não foi iniciada.
+## 32.15 Atualização H4.5 — Dados vivos
+
+Em 2026-09-12 a seção de Dados ganhou uma composição dentro do sistema gráfico
+consolidado na H3.5.1, em `/dev/dados-vivos`, com 404 em produção. A Home não
+foi alterada. A **H4.0 não foi tocada**: `/dev/dados` continua exatamente como
+o commit `979ecb3` a deixou, e é isso que permite comparar composição sem
+comparar números.
+
+A hierarquia de autoridade ficou declarada: **H4.0 é a autoridade factual**,
+**H3.5.1 é a autoridade visual**, e a H4.5 é o encontro das duas. Nenhum valor,
+cálculo, base, recorte ou arredondamento mudou; o dataset é o mesmo arquivo de
+12.526 bytes. As duas rotas leem o mesmo módulo, então divergir de número é
+impossível por construção, e um teste confere que os oito valores formatados
+aparecem nas duas.
+
+O que mudou é composição. Período e recorte, que são constantes do dataset,
+subiram uma vez para uma ficha de contexto da seção em vez de se repetirem em
+cada indicador. O número protagonista ganhou uma amarra de hairline no lugar da
+caixa que um cartão desenharia. Os sete indicadores secundários deixaram a
+grade de células com borda e viraram **faixa de registros**: cada valor pende
+de um eixo com seu próprio tique, como marca numa régua cartográfica.
+
+O dot plot mensal foi preservado na lógica e refinado no desenho: tiques curtos
+no lugar de linhas de grade, conector mais fino, e cada mês virou registro
+endereçável. Passar o mouse sobre um mês atenua os demais e **acende a linha
+correspondente da tabela** — ligação feita com `:has()` e `data-mes`, doze
+regras geradas no servidor, zero JavaScript. Atenuar não é esconder: nenhuma
+informação existe só no gráfico, e o caminho de teclado continua sendo a
+tabela, que tem todos os valores exatos.
+
+O ranking entrou com **limiar declarado**: atividades registradas em dez ou
+mais dos quarenta dias, oito das dezesseis, com o critério na legenda e o total
+dito no texto. O limiar não corta um empate, e um teste conserva essa folga.
+
+Uma assinatura de carcará na página, na passagem de entrada `CAMPO → MEDIDA`. A
+passagem de saída usa só grafismo cartográfico. Nenhum carcará no meio dos
+dados.
+
+Reveal reutiliza a mesma ilha cliente da H3.5.1, generalizada para aceitar
+outra raiz. **Zero JavaScript acrescentado**, nenhuma dependência nova, nenhuma
+biblioteca de gráfico ou de animação: a rota nova carrega exatamente os mesmos
+552.767 bytes de JavaScript compartilhado que a original.
+
+Registro completo: [H4_5_DADOS_VIVOS.md](./H4_5_DADOS_VIVOS.md).
+Sem banco, deploy, push ou mudança de infraestrutura. A H5 não foi iniciada e a
+H4 continua fora da Home.

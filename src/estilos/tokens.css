@@ -460,11 +460,15 @@
 /* =============================================================================
    7. Laboratório da H3.5 — sistema gráfico transversal
 
-   Papéis exclusivos de `/dev/linguagem-visual`. Nenhum consumidor de H1 a
-   H4.0 lê estes nomes: o seletor de classe `.linguagem-visual` fecha o
-   alcance na raiz do laboratório. O bloco fica no fim do arquivo de
-   propósito — a primeira ocorrência de cada media query do documento
-   precisa continuar sendo a do tema, que é a que vale para o site.
+   Papéis exclusivos dos laboratórios `/dev/linguagem-visual` e
+   `/dev/dados-vivos`. Nenhum consumidor de H1 a H4.0 lê estes nomes: os
+   seletores de classe `.linguagem-visual` e `.dados-vivos` fecham o alcance
+   na raiz de cada laboratório. O bloco fica no fim do arquivo de propósito —
+   a primeira ocorrência de cada media query do documento precisa continuar
+   sendo a do tema, que é a que vale para o site.
+
+   A H4.5 herda esta tabela em vez de copiá-la: a lista de seletores é o lugar
+   onde a herança fica literal, e onde ela pode ser conferida por teste.
    ========================================================================== */
 
 /* H3.5 / H3.5.1 — somente laboratório. Novos papéis não alteram consumidores
@@ -472,7 +476,8 @@
    3–4/10 para 4–5/10 e adotou o preset B refinado como direção; o preset A
    permanece como controle contido, não como candidato equivalente.
    Ver docs/frontend/H3_5_1_CONSOLIDACAO_SISTEMA_GRAFICO.md. */
-.linguagem-visual {
+.linguagem-visual,
+.dados-vivos {
   --lv-superficie-territorio: color-mix(
     in srgb,
     var(--color-fundo) 96%,
@@ -526,7 +531,8 @@
 }
 
 @media (max-width: 767px) {
-  .linguagem-visual {
+  .linguagem-visual,
+  .dados-vivos {
     --lv-ave-viva: 2.75rem;
     --lv-passagem: 11rem;
     --lv-passagem-curta: 7rem;
@@ -535,7 +541,39 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .linguagem-visual {
+  .linguagem-visual,
+  .dados-vivos {
     --lv-revelar-distancia: 0px;
+    --dv-duracao-linha: 0ms;
+    --dv-duracao-ponto: 0ms;
+    --dv-atraso-ponto: 0ms;
   }
+}
+
+/* =============================================================================
+   8. Laboratório da H4.5 — dados vivos
+
+   Papéis próprios de `/dev/dados-vivos`, acrescidos aos da seção 7, que este
+   laboratório herda inteiros. Só entra aqui o que a linguagem transversal não
+   previa porque não tinha número para tratar: atenuação de série, realce de
+   linha de registro e o tempo de entrada do gráfico.
+   ========================================================================== */
+
+.dados-vivos {
+  /* Série não enfatizada. Não é "desligada": ela continua legível, e o
+     realce é de atenção, não de disponibilidade. */
+  --dv-atenuado: 0.3;
+  --dv-realce: color-mix(in srgb, var(--color-fundo) 88%, var(--color-marca));
+  --dv-eixo: color-mix(
+    in srgb,
+    var(--color-borda-forte) 45%,
+    var(--color-fundo)
+  );
+
+  /* Entrada do gráfico: o conector desenha, e os pontos chegam depois dele.
+     200 ms mais 100 ms de atraso mais 160 ms fecham em 360 ms, dentro do teto
+     de 400 ms que a revisão de movimento admite. */
+  --dv-duracao-linha: 200ms;
+  --dv-atraso-ponto: 100ms;
+  --dv-duracao-ponto: 160ms;
 }

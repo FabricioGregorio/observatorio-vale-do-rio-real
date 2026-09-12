@@ -1725,3 +1725,58 @@ Registro: [H3_5_1_CONSOLIDACAO_SISTEMA_GRAFICO.md](./docs/frontend/H3_5_1_CONSOL
 
 Estado: **EM PROTÓTIPO, NÃO INTEGRADA**. Sem banco, R2, Vercel, DNS, deploy ou
 push. A H4.5 não foi iniciada, e é ela que deve herdar este sistema.
+
+### H4.5 — Dados vivos, 2026-09-12
+
+A seção de Dados ganhou uma composição dentro do sistema gráfico consolidado na
+H3.5.1, em `/dev/dados-vivos`, com 404 em produção. A Home continua sem a seção.
+
+**A H4.0 não foi tocada.** `/dev/dados` continua exatamente como o commit
+`979ecb3` a deixou, com seus dois presets, e é isso que permite comparar
+composição sem comparar números. A alternativa — um terceiro preset dentro da
+rota original — teria exigido editar arquivos da H4.0, justamente o que esta
+fase não podia fazer.
+
+A hierarquia de autoridade ficou declarada: a **H4.0 é a autoridade factual** e
+a **H3.5.1 é a autoridade visual**. Nenhum valor, cálculo, base, período,
+recorte ou arredondamento mudou. O dataset é o mesmo arquivo de 12.526 bytes,
+sem uma linha alterada, e as duas rotas o leem — divergir de número é
+impossível por construção. Nenhuma fonte restrita e nenhum dado pessoal
+chegaram ao HTML.
+
+O que mudou é composição. Período e recorte, constantes do dataset, subiram uma
+vez para uma ficha de contexto em vez de se repetirem em cada indicador. O
+número protagonista ganhou uma amarra de hairline no lugar da caixa de um
+cartão. Os sete secundários deixaram a grade de células e viraram **faixa de
+registros**, pendurados num eixo com tiques, como marcas numa régua
+cartográfica.
+
+O dot plot mensal foi preservado na lógica e refinado no desenho. Cada mês
+virou registro endereçável: passar o mouse sobre um atenua os demais e acende a
+linha correspondente da tabela, por `:has()` e `data-mes`, com doze regras
+geradas no servidor e **zero JavaScript**. Atenuar não é esconder, e o caminho
+de teclado continua sendo a tabela, que carrega os valores exatos e está sempre
+no DOM.
+
+O ranking entrou com **limiar declarado** — atividades registradas em dez ou
+mais dos quarenta dias, oito das dezesseis — com o critério na legenda, o total
+dito no texto e um teste que garante que o corte não cai sobre um empate.
+
+Uma assinatura de carcará na página, na passagem de entrada `CAMPO → MEDIDA`.
+A passagem de saída usa só grafismo cartográfico.
+
+O reveal reutiliza a mesma ilha cliente da H3.5.1, generalizada para aceitar
+outra raiz; os testes daquela fase passaram sem alteração. **Zero JavaScript
+acrescentado** e nenhuma dependência nova: a rota carrega os mesmos 552.767
+bytes de JavaScript compartilhado que a original, e a varredura dos chunks do
+build não encontra nada da composição nova.
+
+Gates: tipos, lint, 478 testes unitários, 256 de navegador e `pnpm build` com
+25 rotas estáticas. O `pendencias` **não atestou nada** — esta máquina não tem
+`DATABASE_URL`. O Lighthouse **não foi executado**: continua indisponível, e
+nada foi instalado para simulá-lo.
+
+Registro: [H4_5_DADOS_VIVOS.md](./docs/frontend/H4_5_DADOS_VIVOS.md).
+
+Estado: **EM PROTÓTIPO, NÃO INTEGRADA**. Sem banco, R2, Vercel, DNS, deploy ou
+push. A H5 não foi iniciada, e a escolha de integração da H4 continua humana.

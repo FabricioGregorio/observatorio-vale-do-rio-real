@@ -8,6 +8,14 @@
 
 **Baseline:** c2c0afc — refactor: refina narrativa da pesquisa em campo
 
+> **Nota cronológica de 2026-09-12.** Esta fase foi prototipada **antes** da
+> H3.5 e da H3.5.1, que consolidaram a linguagem visual depois dela. A H4.5
+> aplica aquela linguagem a estes mesmos indicadores, numa rota própria, e
+> **não alterou nenhum arquivo desta fase**: `/dev/dados` continua exatamente
+> como este documento descreve. A auditoria, os valores e a classificação de
+> publicação registrados aqui continuam sendo a autoridade factual. Ver
+> [H4_5_DADOS_VIVOS.md](./H4_5_DADOS_VIVOS.md).
+
 ## 1. O que esta fase respondeu primeiro
 
 Antes de desenhar qualquer gráfico: **quais números o Observatório pode
