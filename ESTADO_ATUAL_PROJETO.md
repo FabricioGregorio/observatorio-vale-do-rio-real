@@ -33,7 +33,7 @@ Como o projeto deve ser conduzido é assunto de
 |---|---|
 | Prompt 1 | **concluído** |
 | PostgreSQL | 18.6 |
-| Migrations aplicadas | `0001`–`0007` — a última é `0007_publicacao_multiarquivo`, aplicada no Prompt 3.8 |
+| Migrations aplicadas | `0001`–`0008` — a última é `0008_gate_pendencia_multiarquivo`, aplicada na Tarefa 11 |
 | Roles | `app_observatorio` (leitura), `manutencao_observatorio` (DML sem DDL), role real das migrations (DDL) |
 | Isolamento provado | 15/15 conformes; operações negadas falharam com SQLSTATE 42501 pelo privilégio esperado |
 | Sequences | não aplicáveis ao schema — chaves em UUID |
@@ -1861,3 +1861,132 @@ Registro: [H4_5_2_FECHAMENTO_EDITORIAL_DADOS.md](./docs/frontend/H4_5_2_FECHAMEN
 Estado: **FECHAMENTO EDITORIAL CONCLUÍDO, NÃO INTEGRADA**. H4.0, Home, H1, H2 e
 H3 permanecem intactas. Sem banco, R2, Vercel, DNS, deploy ou push. O próximo
 passo é uma tarefa separada de integração H4.1, mediante autorização humana.
+
+---
+
+## Tarefa 11 — gate de pendências alinhado ao modelo multiarquivo
+
+Executada em **2026-09-12**, a partir do checkpoint `98f5999`, sem deploy, push,
+publicação, upload, dependência nova, alteração de R2, Vercel, DNS ou de
+qualquer dado do acervo.
+
+### O defeito e a correção
+
+`vw_pendencia_publicacao`, recriada na 0004 e nunca tocada depois, perguntava
+nos dois ramos de existência de arquivo *"existe o vínculo marcado `principal`,
+e o arquivo dele está espelhado?"*, por `LEFT JOIN documento_arquivo da ON
+da.documento_id = d.id AND da.principal` com `a.id IS NULL`. Desde a 0007 e a
+ADR-016 a publicação é multiarquivo, e `identidade-visual` tem sete arquivos
+públicos válidos, todos `principal = false`: o join não encontrava nada e o
+documento era denunciado como se não tivesse arquivo nenhum. **O gate e a
+publicação estavam em contratos divergentes.**
+
+A **migração 0008_gate_pendencia_multiarquivo** substituiu o anti-join por
+`NOT EXISTS`, que é pergunta sobre o documento inteiro. Remover apenas a
+condição `da.principal` teria trocado um falso positivo por outro: o anti-join
+só devolve uma linha por documento porque o índice parcial
+`idx_doc_arquivo_principal` garante no máximo um principal — sem essa condição
+ele passaria a emitir uma linha por vínculo não espelhado.
+
+`CREATE OR REPLACE VIEW` bastou; não houve `DROP VIEW`. A forma do resultado —
+`slug`, `titulo`, `pendencia` — é contrato e permaneceu idêntica. Nenhuma
+tabela, coluna, índice, constraint, enum, função, trigger ou linha foi criada,
+alterada ou removida, e o snapshot 0008 é campo a campo idêntico ao 0007.
+`0001`–`0007` seguem imutáveis.
+
+### O que deliberadamente não mudou
+
+O requisito destes ramos continua sendo `espelhado_em IS NOT NULL` —
+espelhamento, não visibilidade pública. Eles denunciam ausência de espelho
+local; elegibilidade pública é contrato de `vw_anexo_publico`, que **não foi
+tocada**: `principal` nela segue como coluna projetada, nunca como filtro, e os
+gates da 0007 estão todos presentes.
+
+Fica registrada, sem decisão nesta rodada, a pergunta arquitetural que a
+correção deixou em aberto: **um documento `PUBLICAVEL` e publicado deve gerar
+pendência quando possui somente espelhos privados?** Hoje não gera. Responder
+isso é criar um ramo novo, com semântica nova, e depende de decisão humana
+separada.
+
+### Estado verificado contra o banco real
+
+| | Antes da 0008 | Depois |
+|---|---|---|
+| `pnpm pendencias` | **1 pendência**, código 1 | **0 pendências**, código 0 |
+| Linha falsa | `identidade-visual` — "estado PUBLICAVEL sem arquivo espelhado" | **eliminada** |
+| `vw_anexo_publico` | 8 | **8** — `identidade-visual`=7, `relatorio-tecnico-recanto-da-serra`=1 |
+| `documento` / `arquivo` / `documento_arquivo` | 33 / 18 / 18 | **33 / 18 / 18** |
+| `PUBLICAVEL` | 2 | **2** |
+
+O falso positivo caiu **pela regra, não pelos dados**: contra o mesmo conjunto,
+o predicado antigo continua devolvendo `identidade-visual` e o novo devolve
+vazio. Nenhum arquivo foi marcado como principal, nenhuma linha foi alterada e
+não restou resíduo de fixture no banco. A definição aplicada no PostgreSQL foi
+conferida com `pg_get_viewdef` e corresponde ao arquivo versionado.
+
+### Mensagem do gate
+
+O texto de falha afirmava que "cada linha é um documento publicado que o edital
+exige" — falso justamente para `identidade-visual`, que tem
+`exigido_pelo_edital = false` e entra pelo ramo do estado documental. A
+mensagem passou a dizer qual é a anomalia e a declarar que nem toda linha é
+item do edital; a de sucesso deixou de atestar só o ramo do edital. A lógica de
+decisão continua na view: o script apenas imprime o que ela disser.
+
+### Regressões
+
+Seis casos novos em `testes/pendencias.test.ts`, todos contra o PostgreSQL real
+e **cada um dentro de transação desfeita**, como nas validações da 0007:
+arquivo público elegível com `principal = false` não gera pendência; documento
+publicável sem nenhum arquivo espelhado continua pendente; `principal = true`
+inelegível não limpa a pendência e um vínculo não principal elegível limpa;
+`status publicado divergente` sobrevive mesmo com arquivo elegível; o ramo do
+anexo exigido não foi relaxado; e `vw_anexo_publico` publica o vínculo não
+principal e exclui o objeto privado. Mais uma regressão unitária, sem banco,
+trava a mensagem corrigida.
+
+O isolamento transacional não é preferência de estilo. A primeira versão desses
+testes gravava fixtures comitados e derrubou
+`testes/espelhamento-privado.test.ts`, que afere contagens globais do acervo
+enquanto o Vitest roda arquivos em paralelo. A falha foi diagnosticada e
+corrigida antes do fechamento.
+
+### Gates
+
+`pnpm verificar` sai com **código 0**: tipos e lint passaram — com os quatro
+avisos CSS preexistentes —, **523 testes passaram e 3 foram omitidos**, e a
+acessibilidade passou em **262**. Os três omitidos são os de escrita real no
+R2, desativados por `TESTE_R2_ESCRITA`; omitido não é aprovado.
+
+**Ressalva que vale como regra:** o passo `pendencias` dentro de
+`pnpm verificar` **não atestou nada**. O script não carrega `.env.local` e
+declarou "DATABASE_URL ausente... este resultado não atesta nada". O verde do
+`verificar` nesta máquina **não é prova do gate** — a prova é a execução
+separada, com a credencial carregada explicitamente, registrada acima.
+
+### Dívidas registradas, não resolvidas nesta tarefa
+
+- **CI pula os blocos de integração.** `.github/workflows/ci.yml` define
+  `DATABASE_URL` e `DATABASE_URL_MIGRACAO`, mas não `DATABASE_URL_MANUTENCAO`;
+  os dois blocos que exigem as duas credenciais são pulados lá.
+- **Seed vazio.** `pnpm seed` é um no-op, então o gate em CI passa contra base
+  sem dados — verde vacuamente. Somado ao item anterior, o CI hoje não exercita
+  o caso multiarquivo.
+- **Corrida em teste preexistente.** O bloco de integração da Tarefa 09 comita
+  um documento no banco real enquanto outro arquivo de teste afere contagens
+  globais em paralelo. É a mesma corrida descrita acima e explica
+  provavelmente a falha intermitente não reproduzida registrada no Prompt 4.8.
+  Não foi corrigida: está fora do escopo da Tarefa 11.
+- **Drift da arquitetura canônica.** `docs/02-arquitetura-banco.md` §13 ainda
+  exibe as versões anteriores das duas views, ambas com `da.principal`. A
+  implementação vigente segue a decisão humana de 12/09/2026 e a ADR-016;
+  atualizar o documento canônico é decisão humana separada, nunca alteração
+  silenciosa feita pelo agente.
+
+Registro da tarefa:
+[`docs/tarefas/11-gate-pendencias-multiarquivo.md`](./docs/tarefas/11-gate-pendencias-multiarquivo.md).
+
+Estado: **CONCLUÍDA E VALIDADA CONTRA O BANCO REAL**. O bloqueio técnico que
+impedia a abertura da H4.1 foi removido. Sem deploy, push, publicação ou
+alteração de dados; a integração da H4 continua dependendo de autorização
+humana e de tarefa própria.

@@ -69,8 +69,9 @@ export function resultado(linhas: Pendencia[]): Diagnostico {
     return {
       codigo: 0,
       mensagem:
-        "Nenhuma pendência de publicação: todo anexo exigido pelo edital e " +
-        "publicado tem arquivo espelhado.",
+        "Nenhuma pendência de publicação: nenhum documento apresentado como " +
+        "publicável está sem arquivo espelhado, e status e estado documental " +
+        "concordam.",
     };
   }
 
@@ -80,8 +81,11 @@ export function resultado(linhas: Pendencia[]): Diagnostico {
     mensagem:
       `${linhas.length} ${plural} de publicação — o build está bloqueado.\n\n` +
       `${formatarTabela(linhas)}\n\n` +
-      "Cada linha é um documento publicado que o edital exige e que não tem " +
-      "arquivo espelhado. Rode o espelhamento ou despublique o documento.",
+      "Cada linha é uma anomalia entre os documentos que o banco apresenta " +
+      "como publicáveis; a coluna `pendencia` diz qual. Nem toda linha é " +
+      "item exigido pelo edital — a view também denuncia estado PUBLICAVEL " +
+      "sem arquivo espelhado e divergência entre status e estado documental. " +
+      "Trate a causa apontada; não altere dados para calar o gate.",
   };
 }
 

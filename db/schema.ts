@@ -632,9 +632,12 @@ export const vwAnexoPublico = pgView("vw_anexo_publico", {
  * Criada pela migração 0003, em SQL bruto. `.existing()` apenas a declara para
  * consulta tipada: não gera DDL e não entra em migração.
  *
- * Denuncia documento exigido pelo edital, publicado e sem arquivo principal
- * espelhado. A view usa LEFT JOIN de propósito para que a ausência do vínculo
- * preferencial continue observável pelo gate de pendências.
+ * Denuncia documento exigido pelo edital e publicado sem nenhum arquivo
+ * espelhado, documento em estado PUBLICAVEL na mesma condição e divergência
+ * entre `status` e `estado_documental`. A migração 0008 trocou o anti-join por
+ * `NOT EXISTS`: a pergunta é se o documento tem algum arquivo espelhado, não se
+ * tem o arquivo marcado `principal` — que desde a 0007 é apenas o arquivo
+ * representativo, nunca autorização de publicação.
  *
  * Nesta fatia a view tem só o ramo do anexo. O ramo do áudio público sem
  * consentimento depende da tabela `entrevista`, que ainda não existe, e entra

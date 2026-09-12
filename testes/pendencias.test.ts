@@ -80,6 +80,24 @@ describe("decisão do gate após consultar", () => {
       "2 pendências",
     );
   });
+
+  /**
+   * A view tem três ramos e só o primeiro filtra `exigido_pelo_edital`. Dizer
+   * que toda linha é item do edital descreve errado as outras duas — foi o que
+   * aconteceu com `identidade-visual`, que não é exigido e caiu pelo ramo do
+   * estado documental (Tarefa 11).
+   */
+  test("não afirma que toda linha é item exigido pelo edital", () => {
+    const { mensagem } = resultado([
+      pendencia({
+        slug: "identidade-visual",
+        pendencia: "estado PUBLICAVEL sem arquivo espelhado",
+      }),
+    ]);
+
+    expect(mensagem).not.toMatch(/documento publicado que o edital exige/);
+    expect(mensagem).toContain("Nem toda linha é item exigido pelo edital");
+  });
 });
 
 describe("decisão do gate sem credencial", () => {
@@ -184,3 +202,302 @@ describe.skipIf(
     expect(linhas.some((p) => p.slug === SLUG)).toBe(false);
   });
 });
+
+/**
+ * Gate existencial multiarquivo (Tarefa 11, migração 0008).
+ *
+ * A pendência de arquivo passou a perguntar "existe algum arquivo espelhado
+ * vinculado a este documento?" em vez de "existe o vínculo marcado
+ * `principal`, e o arquivo dele está espelhado?". Desde a ADR-016 e a migração
+ * 0007, `principal` é só o arquivo representativo do documento — não é
+ * autorização pública nem requisito de elegibilidade.
+ *
+ * Cada caso roda dentro de uma transação desfeita ao final, como nas validações
+ * da 0007. O banco é o real e a view é a real — nenhum mock —, mas nada é
+ * comitado: `testes/espelhamento-privado.test.ts` afere contagens globais do
+ * acervo e o Vitest roda arquivos em paralelo, então fixture comitada aqui
+ * apareceria lá como divergência. Consequência do isolamento: as consultas
+ * passam pela conexão de manutenção da própria transação, e não por
+ * `listarPendenciasDePublicacao()` — que já é exercida pelo bloco acima.
+ */
+describe.skipIf(
+  !process.env.DATABASE_URL || !process.env.DATABASE_URL_MANUTENCAO,
+)(
+  "gate existencial multiarquivo (requer credenciais de leitura e manutenção)",
+  () => {
+    const PREFIXO = "teste-gate-11";
+
+    let db: Awaited<
+      typeof import("../src/dados/clienteManutencao")
+    >["dbManutencao"];
+    let documento: typeof import("../db/schema")["documento"];
+    let arquivo: typeof import("../db/schema")["arquivo"];
+    let documentoArquivo: typeof import("../db/schema")["documentoArquivo"];
+    let vwAnexoPublico: typeof import("../db/schema")["vwAnexoPublico"];
+    let vwPendenciaPublicacao: typeof import("../db/schema")["vwPendenciaPublicacao"];
+    let eq: typeof import("drizzle-orm")["eq"];
+
+    type Transacao = Parameters<Parameters<typeof db.transaction>[0]>[0];
+
+    type ValoresDocumento = {
+      exigidoPeloEdital?: boolean;
+      natureza?: "item_exigido" | "evidencia_complementar" | "item_nao_exigido";
+      estadoDocumental?:
+        | "PUBLICAVEL"
+        | "RESTRITO"
+        | "ESPELHAVEL"
+        | "IMPEDIDO"
+        | "PENDENTE";
+      revisaoPrivacidade?: "pendente" | "concluida" | "bloqueada";
+      status?: "rascunho" | "em_revisao" | "publicado" | "arquivado";
+      publicadoEm?: Date;
+    };
+
+    /** Desfaz a transação sem que o erro sentinela escape do teste. */
+    class RollbackDeTeste extends Error {}
+
+    async function emTransacaoDesfeita<T>(
+      corpo: (tx: Transacao) => Promise<T>,
+    ): Promise<T> {
+      let valor: T | undefined;
+      try {
+        await db.transaction(async (tx) => {
+          valor = await corpo(tx);
+          throw new RollbackDeTeste();
+        });
+      } catch (erro) {
+        if (!(erro instanceof RollbackDeTeste)) throw erro;
+      }
+      return valor as T;
+    }
+
+    const slugDe = (sufixo: string) => `${PREFIXO}-${sufixo}`;
+    const urlDe = (sufixo: string) =>
+      `https://exemplo.invalid/${PREFIXO}/${sufixo}`;
+
+    /** Hex de 64 caracteres: `sha256` é `char(64)` e não é único. */
+    let contador = 0;
+    const hashDe = () => String(++contador).padStart(64, "0");
+
+    async function criarDocumento(
+      tx: Transacao,
+      sufixo: string,
+      valores: ValoresDocumento,
+    ): Promise<string> {
+      const [linha] = await tx
+        .insert(documento)
+        .values({
+          slug: slugDe(sufixo),
+          titulo: `Gate 11 — ${sufixo}`,
+          tipo: "identidade_visual",
+          ...valores,
+        })
+        .returning({ id: documento.id });
+
+      if (!linha) throw new Error(`documento ${sufixo} não foi criado`);
+      return linha.id;
+    }
+
+    async function criarArquivo(
+      tx: Transacao,
+      sufixo: string,
+      { publico, espelhado }: { publico: boolean; espelhado: boolean },
+    ): Promise<string> {
+      const [linha] = await tx
+        .insert(arquivo)
+        .values({
+          chaveStorage: `${PREFIXO}/${sufixo}`,
+          bucket: PREFIXO,
+          visibilidade: publico ? "publico" : "privado",
+          urlPublica: publico ? urlDe(sufixo) : null,
+          tipoMidia: "imagem",
+          mimeType: "image/png",
+          bytes: 1,
+          sha256: hashDe(),
+          espelhadoEm: espelhado ? new Date() : null,
+        })
+        .returning({ id: arquivo.id });
+
+      if (!linha) throw new Error(`arquivo ${sufixo} não foi criado`);
+      return linha.id;
+    }
+
+    async function vincular(
+      tx: Transacao,
+      documentoId: string,
+      arquivoId: string,
+      principal: boolean,
+    ): Promise<void> {
+      await tx
+        .insert(documentoArquivo)
+        .values({ documentoId, arquivoId, principal });
+    }
+
+    /** Só as pendências do documento deste caso, pelo texto. */
+    async function pendenciasDe(
+      tx: Transacao,
+      sufixo: string,
+    ): Promise<(string | null)[]> {
+      const linhas = await tx
+        .select()
+        .from(vwPendenciaPublicacao)
+        .where(eq(vwPendenciaPublicacao.slug, slugDe(sufixo)));
+      return linhas.map((l) => l.pendencia);
+    }
+
+    beforeAll(async () => {
+      ({ dbManutencao: db } = await import("../src/dados/clienteManutencao"));
+      ({
+        documento,
+        arquivo,
+        documentoArquivo,
+        vwAnexoPublico,
+        vwPendenciaPublicacao,
+      } = await import("../db/schema"));
+      ({ eq } = await import("drizzle-orm"));
+    });
+
+    test("Caso A — arquivo público elegível com principal=false não gera pendência", async () => {
+      const pendencias = await emTransacaoDesfeita(async (tx) => {
+        const doc = await criarDocumento(tx, "caso-a", {
+          exigidoPeloEdital: false,
+          natureza: "item_nao_exigido",
+          estadoDocumental: "PUBLICAVEL",
+          revisaoPrivacidade: "concluida",
+          status: "publicado",
+          publicadoEm: new Date(),
+        });
+        const arq = await criarArquivo(tx, "caso-a", {
+          publico: true,
+          espelhado: true,
+        });
+        await vincular(tx, doc, arq, false);
+
+        return pendenciasDe(tx, "caso-a");
+      });
+
+      expect(pendencias).toEqual([]);
+    });
+
+    test("Caso B — documento publicável sem nenhum arquivo espelhado continua pendente", async () => {
+      const pendencias = await emTransacaoDesfeita(async (tx) => {
+        const doc = await criarDocumento(tx, "caso-b", {
+          estadoDocumental: "PUBLICAVEL",
+          revisaoPrivacidade: "concluida",
+        });
+        const arq = await criarArquivo(tx, "caso-b", {
+          publico: false,
+          espelhado: false,
+        });
+        await vincular(tx, doc, arq, false);
+
+        return pendenciasDe(tx, "caso-b");
+      });
+
+      expect(pendencias).toEqual(["estado PUBLICAVEL sem arquivo espelhado"]);
+    });
+
+    test("Caso C — principal=true não limpa a pendência, e não principal elegível limpa", async () => {
+      const { comPrincipal, comNaoPrincipal } = await emTransacaoDesfeita(
+        async (tx) => {
+          const doc = await criarDocumento(tx, "caso-c", {
+            estadoDocumental: "PUBLICAVEL",
+            revisaoPrivacidade: "concluida",
+          });
+          const inelegivel = await criarArquivo(tx, "caso-c-nao-espelhado", {
+            publico: false,
+            espelhado: false,
+          });
+          await vincular(tx, doc, inelegivel, true);
+
+          const comPrincipal = await pendenciasDe(tx, "caso-c");
+
+          const elegivel = await criarArquivo(tx, "caso-c-espelhado", {
+            publico: true,
+            espelhado: true,
+          });
+          await vincular(tx, doc, elegivel, false);
+
+          return {
+            comPrincipal,
+            comNaoPrincipal: await pendenciasDe(tx, "caso-c"),
+          };
+        },
+      );
+
+      expect(comPrincipal).toEqual(["estado PUBLICAVEL sem arquivo espelhado"]);
+      expect(comNaoPrincipal).toEqual([]);
+    });
+
+    test("Caso D — pendência de outra natureza sobrevive à correção", async () => {
+      const pendencias = await emTransacaoDesfeita(async (tx) => {
+        const doc = await criarDocumento(tx, "caso-d", {
+          estadoDocumental: "ESPELHAVEL",
+          status: "publicado",
+          publicadoEm: new Date(),
+        });
+        const arq = await criarArquivo(tx, "caso-d", {
+          publico: true,
+          espelhado: true,
+        });
+        await vincular(tx, doc, arq, false);
+
+        return pendenciasDe(tx, "caso-d");
+      });
+
+      expect(pendencias).toEqual([
+        "status publicado divergente do estado documental",
+      ]);
+    });
+
+    test("Caso D — o ramo do anexo exigido não foi relaxado", async () => {
+      const pendencias = await emTransacaoDesfeita(async (tx) => {
+        const doc = await criarDocumento(tx, "caso-d2", {
+          exigidoPeloEdital: true,
+          natureza: "item_exigido",
+          status: "publicado",
+          publicadoEm: new Date(),
+        });
+        const arq = await criarArquivo(tx, "caso-d2", {
+          publico: false,
+          espelhado: false,
+        });
+        await vincular(tx, doc, arq, false);
+
+        return pendenciasDe(tx, "caso-d2");
+      });
+
+      expect(pendencias).toContain("anexo obrigatório sem arquivo espelhado");
+    });
+
+    test("Caso E — vw_anexo_publico publica o vínculo não principal e exclui o objeto privado", async () => {
+      const linhas = await emTransacaoDesfeita(async (tx) => {
+        const doc = await criarDocumento(tx, "caso-e", {
+          estadoDocumental: "PUBLICAVEL",
+          revisaoPrivacidade: "concluida",
+          status: "publicado",
+          publicadoEm: new Date(),
+        });
+        const publico = await criarArquivo(tx, "caso-e-publico", {
+          publico: true,
+          espelhado: true,
+        });
+        const privado = await criarArquivo(tx, "caso-e-privado", {
+          publico: false,
+          espelhado: true,
+        });
+        await vincular(tx, doc, publico, false);
+        await vincular(tx, doc, privado, true);
+
+        return tx
+          .select()
+          .from(vwAnexoPublico)
+          .where(eq(vwAnexoPublico.slug, slugDe("caso-e")));
+      });
+
+      expect(linhas).toHaveLength(1);
+      expect(linhas[0]?.linkPermanente).toBe(urlDe("caso-e-publico"));
+      expect(linhas[0]?.principal).toBe(false);
+    });
+  },
+);

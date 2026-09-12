@@ -50,6 +50,13 @@
       "when": 1788816127021,
       "tag": "0007_publicacao_multiarquivo",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1789223380289,
+      "tag": "0008_gate_pendencia_multiarquivo",
+      "breakpoints": true
     }
   ]
 }
