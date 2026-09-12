@@ -371,26 +371,104 @@ test("H3.5.1: com movimento reduzido nada anima e nada some", async ({
 });
 
 /**
- * A H3.5.1 é laboratório. A Home não pode ter mudado, e o painel da H4.0
- * também não: os dois são verificados pelo que chega ao navegador, e não pelo
- * diff.
+ * Invariante trocada na H4.1, por instrução humana de 2026-09-12.
+ *
+ * Até aqui este teste afirmava "a Home não recebe nada do laboratório", e
+ * provava isso proibindo a gramática na página inteira. A H4.1 é a primeira
+ * entrada deliberada da gramática H3.5.1 na Home, pela composição pública da
+ * seção de Dados — a proibição global deixou de descrever o contrato.
+ *
+ * O contrato novo é **confinamento**, e ele é mais forte que a proibição
+ * anterior: a gramática pode existir na Home, mas apenas dentro de
+ * `#secao-dados-home`; H1, H2 e H3 não a adquirem; e a casca do laboratório
+ * não atravessa.
  */
-test("H3.5.1: a Home não recebe nada do laboratório", async ({ page }) => {
+const FAMILIAS = [
+  "lv-g-identidade",
+  "lv-g-cartografico",
+  "lv-g-documental",
+  "lv-g-transicao",
+] as const;
+
+/** As raízes das seções que existiam antes da H4.1. */
+const SECOES_ANTERIORES = ["#hero-home", "#territorio-home", "#pesquisa-home"];
+
+test("H4.1: a gramática entra na Home confinada à seção de Dados", async ({
+  page,
+}) => {
   await page.goto("/");
-  await expect(page.locator(".linguagem-visual")).toHaveCount(0);
-  for (const familia of [
-    "lv-g-identidade",
-    "lv-g-cartografico",
-    "lv-g-documental",
-    "lv-g-transicao",
-  ]) {
-    await expect(page.locator(`.${familia}`)).toHaveCount(0);
+
+  // A seção existe e é a raiz declarada.
+  const raiz = page.locator("#secao-dados-home");
+  await expect(raiz).toHaveCount(1);
+
+  // Cada família só aparece dentro dela: o total da página é igual ao total
+  // dentro da seção. Se uma única ocorrência escapar, os números divergem.
+  for (const familia of FAMILIAS) {
+    const naPagina = await page.locator(`.${familia}`).count();
+    const naSecao = await raiz.locator(`.${familia}`).count();
+    expect(naPagina, `${familia} fora da seção de Dados`).toBe(naSecao);
   }
-  const usaPapeis = await page.evaluate(() =>
+  // E a gramática é de fato usada pela composição, senão o teste acima
+  // passaria com zero dos dois lados e não provaria nada.
+  expect(await raiz.locator(`.${FAMILIAS[0]}`).count()).toBeGreaterThan(0);
+
+  // O mesmo para o grafismo: a assinatura é da H4, e é uma só.
+  const grafismos = page.locator('img[src*="/media/grafismos/"]');
+  await expect(grafismos).toHaveCount(1);
+  await expect(raiz.locator('img[src*="/media/grafismos/"]')).toHaveCount(1);
+});
+
+test("H4.1: H1, H2 e H3 não adquirem a gramática da H4", async ({ page }) => {
+  await page.goto("/");
+
+  for (const secao of SECOES_ANTERIORES) {
+    const escopo = page.locator(secao);
+    await expect(escopo, `${secao} deveria existir`).toHaveCount(1);
+
+    for (const familia of FAMILIAS) {
+      await expect(
+        escopo.locator(`.${familia}`),
+        `${familia} vazou para ${secao}`,
+      ).toHaveCount(0);
+    }
+    await expect(escopo.locator('[class*="dv-"]')).toHaveCount(0);
+    await expect(escopo.locator(".lv-revelar")).toHaveCount(0);
+  }
+});
+
+test("H4.1: a casca e os estados do laboratório não chegam à Home", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  // Casca de comparação do laboratório.
+  await expect(page.locator(".linguagem-visual")).toHaveCount(0);
+  await expect(page.locator(".lv-abertura")).toHaveCount(0);
+  await expect(page.locator(".lv-controles")).toHaveCount(0);
+  await expect(page.locator('input[name="preset"]')).toHaveCount(0);
+
+  // O preset do laboratório não pode vestir a Home nem as seções anteriores;
+  // a composição pública conserva o seu, que é outro.
+  await expect(page.locator('[data-preset="B"]')).toHaveCount(0);
+  await expect(page.locator('[data-preset="A"]')).toHaveCount(0);
+  await expect(page.locator('[data-preset="H4.5"]')).toHaveCount(1);
+
+  // Os papéis da gramática são variáveis de `.dados-vivos`, e não do documento:
+  // se subissem para o `body`, alcançariam H1–H3 por herança.
+  const noBody = await page.evaluate(() =>
     getComputedStyle(document.body).getPropertyValue("--lv-ave-viva").trim(),
   );
-  expect(usaPapeis).toBe("");
-  expect(await page.content()).not.toContain("/media/grafismos/");
+  expect(noBody).toBe("");
+  const naSecao = await page.evaluate(() => {
+    const raiz = document.querySelector("#secao-dados-home");
+    if (raiz === null) return null;
+    return getComputedStyle(raiz).getPropertyValue("--lv-ave-viva").trim();
+  });
+  expect(naSecao).not.toBe("");
+
+  // Vocabulário de desenvolvimento, inclusive como regra morta no CSS.
+  expect(await page.content()).not.toMatch(/proposta|somente DEV/i);
 });
 
 test("H3.5.1: o painel da H4.0 continua fora do alcance do laboratório", async ({

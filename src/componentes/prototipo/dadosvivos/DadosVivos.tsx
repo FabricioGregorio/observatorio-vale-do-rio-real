@@ -105,12 +105,31 @@ function FichaDoProtagonista({ indicador }: { indicador: IndicadorDerivado }) {
   );
 }
 
-export function DadosVivos() {
+/**
+ * Onde a composição está sendo consumida.
+ *
+ * Decide **apenas** o que é rótulo de desenvolvimento, como `contexto` já faz
+ * na Pesquisa em Campo. Conteúdo, números, ordem e copy são idênticos nos dois:
+ * a Home não recebe uma versão reduzida da seção, recebe a mesma seção sem o
+ * vocabulário do laboratório.
+ */
+export type ContextoDosDados = "prototipo" | "home";
+
+export function DadosVivos({
+  contexto = "prototipo",
+}: {
+  readonly contexto?: ContextoDosDados;
+}) {
   const prefixo = "dados-vivos";
   const protagonista = porId("H4-001");
 
   return (
-    <article className="dv-artigo" data-preset="H4.5">
+    <article
+      className="dv-artigo"
+      data-contexto={contexto}
+      data-preset="H4.5"
+      data-testid={contexto === "home" ? "dados-home" : "dados-prototipo"}
+    >
       {/*
         Passagem H3 → H4. É a única da página que carrega assinatura de
         identidade, pela regra de frequência da H3.5.1: um carcará em escala
@@ -169,9 +188,18 @@ export function DadosVivos() {
       >
         <div className="dv-abertura lv-revelar">
           <p className="meta-ficha lv-g-documental">03 — Dados</p>
-          <p className="meta-ficha dv-proposta lv-g-documental">
-            Título editorial · proposta
-          </p>
+          {/*
+            O marcador de proposta é vocabulário de laboratório. O responsável
+            aprovou "Onde o recurso circula" em 12/09/2026, e desde então
+            chamá-lo de proposta na saída pública seria descrever errado o
+            estado da decisão. Ele continua no laboratório, onde a etiqueta
+            ainda diz algo sobre o fluxo de aprovação da copy.
+          */}
+          {contexto === "prototipo" ? (
+            <p className="meta-ficha dv-proposta lv-g-documental">
+              Título editorial · proposta
+            </p>
+          ) : null}
           <h2 id={`${prefixo}-titulo`}>Onde o recurso circula</h2>
           <p className="dv-abertura__texto">
             Os números desta seção vêm do levantamento próprio do Observatório

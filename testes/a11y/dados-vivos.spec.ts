@@ -300,12 +300,28 @@ test("H4.5: sem recurso externo, fora do sitemap e bloqueada no robots", async (
   );
 });
 
-test("H4.5: a Home e a H4.0 continuam como estavam", async ({ page }) => {
+/**
+ * A H4.1 integrou a composição na Home, e a asserção "a Home não tem nada
+ * disto" caducou por decisão aprovada, não por acaso. O que continua sendo
+ * verdade — e é o que importa vigiar — é que o **material reservado** e a
+ * moldura do laboratório não atravessaram junto. A H4.0 segue intocada.
+ */
+test("H4.5: a Home recebeu só a candidata; a H4.0 continua como estava", async ({
+  page,
+}) => {
   await page.goto("/");
-  await expect(page.locator(".dados-vivos")).toHaveCount(0);
-  await expect(page.locator('[class*="dv-"]')).toHaveCount(0);
-  await expect(page.getByText("03 — Dados")).toHaveCount(0);
-  await expect(page.getByText("Onde o recurso circula")).toHaveCount(0);
+  await expect(page.locator(".dados-vivos")).toHaveCount(1);
+  await expect(page.getByText("Onde o recurso circula")).toHaveCount(1);
+
+  // Moldura e material reservado do laboratório não acompanham.
+  await expect(page.locator(".dv-preview")).toHaveCount(0);
+  await expect(page.locator(".dv-laboratorio")).toHaveCount(0);
+  await expect(page.locator(".dv-reservados")).toHaveCount(0);
+  await expect(page.locator(".dv-ranking")).toHaveCount(0);
+  await expect(page.locator(".dv-proposta")).toHaveCount(0);
+  await expect(
+    page.locator('.dv-faixa[data-variante="reservados"]'),
+  ).toHaveCount(0);
 
   await page.goto(ORIGINAL);
   // A composição original continua sendo ela mesma, e não recebeu a camada nova.

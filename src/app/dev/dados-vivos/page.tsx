@@ -3,7 +3,10 @@ import { notFound } from "next/navigation";
 
 import { CentralAcessibilidade } from "../../../componentes/prototipo/CentralAcessibilidade";
 import { DadosVivos } from "../../../componentes/prototipo/dadosvivos/DadosVivos";
-import { CSS_DOS_DADOS_VIVOS } from "../../../componentes/prototipo/dadosvivos/estilos";
+import {
+  CSS_DO_LABORATORIO_DOS_DADOS_VIVOS,
+  CSS_DOS_DADOS_VIVOS,
+} from "../../../componentes/prototipo/dadosvivos/estilos";
 import { FaixaDeRegistros } from "../../../componentes/prototipo/dadosvivos/FaixaDeRegistros";
 import { RankingEditorial } from "../../../componentes/prototipo/dadosvivos/RankingEditorial";
 import { REGISTROS_RESERVADOS } from "../../../componentes/prototipo/dadosvivos/selecaoEditorial";
@@ -29,14 +32,16 @@ export default function LaboratorioDosDadosVivos() {
   return (
     <div className="dados-vivos" id="laboratorio-dados-vivos">
       {/*
-        Dois blocos: a gramática da H3.5.1 tal como ela existe, e a camada da
-        H4.5. Importar o primeiro em vez de reimplementá-lo é o que mantém uma
-        definição só para as quatro famílias de grafismo — mudar a passagem num
-        lugar muda nos dois laboratórios. Regras que não encontram elemento
-        nesta rota simplesmente não se aplicam.
+        Três blocos: a gramática da H3.5.1 tal como ela existe, a camada da
+        H4.5 — a mesma que a Home recebe — e o que só o laboratório usa.
+        Importar o primeiro em vez de reimplementá-lo é o que mantém uma
+        definição só para as quatro famílias de grafismo. O terceiro existe
+        porque a H4.1 levou a composição para a Home: `.dv-proposta`, o ranking
+        e a moldura da pré-visualização ficam deste lado.
       */}
       <style>{CSS_DA_LINGUAGEM}</style>
       <style>{CSS_DOS_DADOS_VIVOS}</style>
+      <style>{CSS_DO_LABORATORIO_DOS_DADOS_VIVOS}</style>
 
       {/*
         Cabeçalho, controles e ressalvas vivem aqui, **antes** da área

@@ -3,8 +3,13 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test, vi } from "vitest";
 import { exigirDesenvolvimentoDosDadosVivos } from "../src/app/dev/dados-vivos/page";
+import { SecaoDados } from "../src/componentes/dados/SecaoDados";
 import { PainelDeDados } from "../src/componentes/prototipo/dados/PainelDeDados";
 import { DadosVivos } from "../src/componentes/prototipo/dadosvivos/DadosVivos";
+import {
+  CSS_DO_LABORATORIO_DOS_DADOS_VIVOS,
+  CSS_DOS_DADOS_VIVOS,
+} from "../src/componentes/prototipo/dadosvivos/estilos";
 import {
   ATIVIDADES_ABAIXO_DO_LIMIAR,
   ATIVIDADES_ACIMA_DO_LIMIAR,
@@ -28,7 +33,7 @@ import {
   formatarReais,
 } from "../src/dados/indicadores/formato";
 
-const h45 = renderToStaticMarkup(createElement(DadosVivos));
+const h45 = renderToStaticMarkup(createElement(DadosVivos, {}));
 const h40Painel = renderToStaticMarkup(
   createElement(PainelDeDados, { composicao: "painel" as const }),
 );
@@ -615,5 +620,116 @@ describe("H4.5: a H4.0 continua intacta e desacoplada", () => {
     // Nenhum número escrito à mão no componente: os dígitos que aparecem no
     // JSX vêm do dataset ou de nada.
     expect(fonteH45).not.toMatch(/>\s*\d[\d.,]*\s*%?\s*</);
+  });
+});
+
+/**
+ * H4.1 — a mesma composição, agora consumida pela Home.
+ *
+ * `naHome` é o que a Home serve; `h45` (acima) é o que o laboratório serve. A
+ * diferença entre os dois precisa ser exatamente o vocabulário de
+ * desenvolvimento, e nada mais.
+ */
+describe("H4.1: a composição entra na Home sem virar outra coisa", () => {
+  const naHome = renderToStaticMarkup(
+    createElement(DadosVivos, { contexto: "home" as const }),
+  );
+  const secao = renderToStaticMarkup(createElement(SecaoDados));
+
+  test("o conteúdo editorial é idêntico ao aprovado", () => {
+    expect(naHome).toContain("Onde o recurso circula");
+    expect(naHome).toContain("03 — Dados");
+    expect(naHome).toContain("Campo → Medida");
+    expect(naHome).toContain(
+      "Os registros da pesquisa também permitem uma leitura quantitativa do território",
+    );
+    expect(naHome).toContain("Medida → Conjunto completo");
+    expect(naHome).toContain(
+      "Esta leitura apresenta um recorte. O levantamento completo preserva o detalhamento das atividades registradas",
+    );
+  });
+
+  test("o protagonista e os quatro apoios são os do dataset", () => {
+    const protagonista = INDICADORES.find((i) => i.id === "H4-001");
+    if (protagonista === undefined) throw new Error("H4-001 ausente");
+    expect(naHome).toContain(exibirIndicador(protagonista));
+
+    for (const { indicador, rotulo } of REGISTROS_DE_APOIO) {
+      expect(naHome).toContain(exibirIndicador(indicador));
+      expect(naHome).toContain(rotulo);
+    }
+
+    const faixa = naHome.slice(naHome.indexOf('data-variante="candidata"'));
+    expect(faixa.split("dv-registro-indicador__valor").length - 1).toBe(4);
+  });
+
+  /**
+   * A conferência é pelo título, e não pelo valor formatado: "40" e "10" são
+   * dígitos que aparecem legitimamente dentro de outros números da seção —
+   * 40,6% é um deles —, e asserção sobre eles falharia por colisão em vez de
+   * por regressão.
+   */
+  test("os três reservados não chegam à Home", () => {
+    expect(REGISTROS_RESERVADOS.map((i) => i.id)).toEqual([
+      "H4-002",
+      "H4-006",
+      "H4-007",
+    ]);
+    for (const indicador of REGISTROS_RESERVADOS) {
+      expect(naHome).not.toContain(indicador.titulo);
+    }
+  });
+
+  test("o ranking não chega à Home, nem o limiar que o recortava", () => {
+    for (const atividade of ATIVIDADES)
+      expect(naHome).not.toContain(atividade.nome);
+    expect(naHome).not.toContain("dv-ranking");
+    expect(naHome).not.toContain(`${LIMIAR_DE_DIAS} ou mais`);
+  });
+
+  /**
+   * A promessa editorial da saída é textual de propósito: `/dados` ainda não
+   * cumpre o que um link prometeria (H4.5.2).
+   */
+  test("a saída não vira CTA nem link para /dados", () => {
+    expect(naHome).not.toMatch(/<a[\s>]/);
+    expect(naHome).not.toContain("/dados");
+    expect(naHome).not.toMatch(/ver todos os dados|base completa|explorar/i);
+  });
+
+  test("nenhum vocabulário de laboratório sobra na Home", () => {
+    expect(naHome).not.toMatch(/proposta|somente DEV/i);
+    expect(secao).not.toMatch(/proposta|somente DEV/i);
+  });
+
+  /**
+   * O teste da Home rejeita `proposta` **também dentro do CSS embutido**. Por
+   * isso a divisão não é organização de arquivo: é requisito.
+   */
+  test("o CSS público não carrega regra de laboratório; o do laboratório sim", () => {
+    expect(CSS_DOS_DADOS_VIVOS).not.toMatch(/proposta|somente DEV/i);
+    expect(CSS_DOS_DADOS_VIVOS).not.toContain(".dv-ranking");
+    expect(CSS_DOS_DADOS_VIVOS).not.toContain(".dv-preview");
+    expect(CSS_DOS_DADOS_VIVOS).not.toContain(".dv-laboratorio");
+
+    expect(CSS_DO_LABORATORIO_DOS_DADOS_VIVOS).toContain(".dv-proposta");
+    expect(CSS_DO_LABORATORIO_DOS_DADOS_VIVOS).toContain(".dv-ranking");
+    expect(CSS_DO_LABORATORIO_DOS_DADOS_VIVOS).toContain(".dv-preview__marca");
+  });
+
+  /**
+   * As regras de revelação e de movimento reduzido são escopadas em
+   * `.dados-vivos …`. Sem a classe na raiz, a seção perderia as duas.
+   */
+  test("a entrada pública traz a raiz, o CSS e a ilha de revelação", () => {
+    expect(secao).toContain('class="dados-vivos"');
+    expect(secao).toContain('id="secao-dados-home"');
+    expect(secao).toContain("dv-artigo");
+  });
+
+  test("o laboratório continua com o que é dele", () => {
+    expect(h45).toContain("Título editorial · proposta");
+    expect(paginaDoLaboratorio).toContain("CSS_DO_LABORATORIO_DOS_DADOS_VIVOS");
+    expect(paginaDoLaboratorio).toContain("RankingEditorial");
   });
 });

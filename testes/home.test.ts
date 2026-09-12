@@ -88,3 +88,47 @@ describe("fiação da seção Pesquisa em Campo", () => {
     expect(entrada).not.toContain("caderno-tecnico");
   });
 });
+
+describe("fiação da seção Dados — H4.1", () => {
+  const home = readFileSync("src/app/page.tsx", "utf8");
+  const entrada = readFileSync("src/componentes/dados/SecaoDados.tsx", "utf8");
+
+  test("a Home usa a entrada pública, nunca o componente de laboratório", () => {
+    expect(home).toContain(
+      'import { SecaoDados } from "../componentes/dados/SecaoDados"',
+    );
+    expect(home).toContain("<SecaoDados />");
+    expect(home).not.toContain("DadosVivos");
+  });
+
+  test("a entrada pública fixa o contexto da Home", () => {
+    expect(entrada).toContain('contexto="home"');
+  });
+
+  /**
+   * O plano da Home (§6.1) numera as seções: 01 Território, 02 Pesquisa em
+   * campo, 03 Dados. A ordem é editorial antes de ser visual, e um teste de
+   * posição é o que impede que uma inserção futura a desfaça sem querer.
+   */
+  test("Dados entra depois da Pesquisa em Campo e antes dos caminhos", () => {
+    const pesquisa = home.indexOf("<PesquisaEmCampo />");
+    const dados = home.indexOf("<SecaoDados />");
+    const caminhos = home.indexOf("<CaminhosPrioritarios");
+
+    for (const posicao of [pesquisa, dados, caminhos])
+      expect(posicao).toBeGreaterThan(-1);
+    expect(dados).toBeGreaterThan(pesquisa);
+    expect(dados).toBeLessThan(caminhos);
+  });
+
+  /**
+   * `.dados-vivos` já define `max-width` e centraliza. O invólucro das outras
+   * seções restringiria a largura duas vezes e comeria a sangria das passagens.
+   */
+  test("a seção não é envolvida pelo contêiner de largura das outras", () => {
+    // Filha direta da raiz, na mesma indentação de `<SecaoMapa />`: se alguém
+    // a embrulhar num contêiner, a indentação muda e este teste cai.
+    expect(home).toMatch(/\n {6}<SecaoDados \/>\n/);
+    expect(home).toMatch(/\n {6}<SecaoMapa \/>\n/);
+  });
+});

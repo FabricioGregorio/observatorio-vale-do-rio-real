@@ -144,17 +144,37 @@ test.describe("Home", () => {
    * pesquisa e linguagem de comparação entre municípios. É isso que o teste
    * verifica agora, sem confundir "nomear" com "comparar".
    */
-  test("não publica indicador nem comparativo municipal", async ({ page }) => {
+  /**
+   * A proibição de "indicador" caiu com a H4.1, e não por conveniência: ela
+   * dizia "só depois da tabela `indicador` (Tarefa 13)", e essa premissa foi
+   * superada. A H4.0 auditou os oito indicadores como agregado em TypeScript
+   * versionado, a H4.5.2 fechou quais entram na Home e o responsável autorizou
+   * a integração. **Nenhuma tabela `indicador` foi criada** — o que o teste
+   * protegia contra era número provisório, e isso continua protegido pelos
+   * testes de valor em `testes/dados-vivos.test.ts`.
+   *
+   * O resto do teste segue intacto, e ganhou o que passou a ser possível
+   * errar: os três indicadores reservados não podem vazar para a Home.
+   */
+  test("não compara município nem publica o que ficou reservado", async ({
+    page,
+  }) => {
     await page.goto("/");
     const conteudo = (await page.locator("main").innerText()).toLowerCase();
 
-    // Painel de indicadores: só depois da tabela `indicador` (Tarefa 13).
-    expect(conteudo).not.toContain("indicador");
     // Vocabulário de comparativo, que depende de fonte oficial comparável.
     expect(conteudo).not.toContain("habitantes");
     expect(conteudo).not.toContain("população");
     expect(conteudo).not.toContain("comparativo");
     expect(conteudo).not.toContain("ranking");
+
+    // Os dois reservados cujo título não colide com o texto das regras
+    // (H4.5.2). "Contratações de trabalho" não entra nesta lista: a expressão
+    // aparece legitimamente dentro da regra declarada do H4-005, e proibi-la
+    // aqui seria falhar por colisão em vez de por vazamento. Os três títulos
+    // completos são conferidos em `testes/dados-vivos.test.ts`.
+    expect(conteudo).not.toContain("valor movimentado por dia");
+    expect(conteudo).not.toContain("registros de operação");
   });
 
   test("integra uma única cartografia B sem rótulos de desenvolvimento", async ({
@@ -387,6 +407,92 @@ test.describe("Home", () => {
     ).toHaveCount(0);
   });
 
+  /**
+   * H4.1 — a seção de Dados na Home.
+   *
+   * O conteúdo editorial já é conferido em `testes/dados-vivos.test.ts`, contra
+   * o dataset. Aqui se verifica o que só o navegador sabe: posição, quantidade
+   * de assinaturas, teclado e movimento.
+   */
+  test("Dados sucede a Pesquisa em Campo e traz a composição aprovada", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const dados = page.getByTestId("dados-home");
+
+    await expect(dados).toBeVisible();
+    await expect(
+      dados.getByRole("heading", { name: "Onde o recurso circula" }),
+    ).toBeVisible();
+
+    const ordem = await page.evaluate(() => {
+      const pesquisa = document.querySelector("#pesquisa-home");
+      const secao = document.querySelector('[data-testid="dados-home"]');
+      const caminhos = document.querySelector("#caminhos-prioritarios");
+      if (pesquisa === null || secao === null || caminhos === null) return null;
+      const depoisDaPesquisa = Boolean(
+        pesquisa.compareDocumentPosition(secao) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      );
+      const antesDosCaminhos = Boolean(
+        secao.compareDocumentPosition(caminhos) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      );
+      return depoisDaPesquisa && antesDosCaminhos;
+    });
+    expect(ordem).toBe(true);
+  });
+
+  /**
+   * A regra transversal da H3.5.1: um carcará em escala editorial por página,
+   * e só em passagem. A Home inteira, não a seção.
+   */
+  test("a Home tem exatamente uma assinatura de identidade", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await expect(page.locator(".lv-g-identidade")).toHaveCount(1);
+    await expect(page.locator('img[src*="carcara-identidade"]')).toHaveCount(1);
+  });
+
+  /**
+   * A série é evidência, não ornamento: a tabela com os valores exatos é o
+   * caminho de teclado e não depende de largura nem de JavaScript.
+   */
+  test("a série mensal mantém a tabela de valores exatos no DOM", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const tabela = page.getByTestId("dados-home").locator("table.dv-tabela");
+    await expect(tabela).toHaveCount(1);
+    await expect(tabela.locator("tbody tr")).toHaveCount(6);
+
+    await page.setViewportSize({ width: 375, height: 800 });
+    await expect(tabela.locator("tbody tr")).toHaveCount(6);
+  });
+
+  test("com movimento reduzido a seção não anima e nada some", async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+
+    const dados = page.getByTestId("dados-home");
+    await expect(dados).toBeVisible();
+
+    const animado = await page.evaluate(() => {
+      const raiz = document.querySelector('[data-testid="dados-home"]');
+      if (raiz === null) return null;
+      return [...raiz.querySelectorAll(".lv-revelar, .dv-conector, .dv-ponto")]
+        .map((elemento) => getComputedStyle(elemento))
+        .some(
+          (estilo) =>
+            estilo.animationName !== "none" || Number(estilo.opacity) < 1,
+        );
+    });
+    expect(animado).toBe(false);
+  });
+
   for (const largura of [320, 375, 768, 1440]) {
     for (const tema of ["light", "dark"] as const) {
       test(`${largura}px no tema ${tema} não tem overflow horizontal`, async ({
@@ -417,5 +523,37 @@ test.describe("Home", () => {
     await expect(
       page.getByRole("navigation", { name: "Caminhos prioritários" }),
     ).toBeVisible();
+  });
+});
+
+/**
+ * A H4.1 é a primeira seção da Home a usar `RevelacaoVisual`. A ilha
+ * **acrescenta** a entrada aprovada; ela não é condição de leitura. Sem
+ * JavaScript nenhum atributo `data-revelado` é posto, nenhuma animação se
+ * aplica, e a seção precisa continuar inteira.
+ */
+test.describe("Home sem JavaScript", () => {
+  test.use({ javaScriptEnabled: false });
+
+  test("a seção de Dados continua completa e legível", async ({ page }) => {
+    await page.goto("/");
+    const dados = page.getByTestId("dados-home");
+
+    await expect(
+      dados.getByRole("heading", { name: "Onde o recurso circula" }),
+    ).toBeVisible();
+    await expect(dados.locator(".dv-numero")).toBeVisible();
+    await expect(dados.locator(".dv-registro-indicador")).toHaveCount(4);
+    await expect(dados.locator("table.dv-tabela tbody tr")).toHaveCount(6);
+    await expect(dados.locator("[data-revelado]")).toHaveCount(0);
+
+    const visivel = await page.evaluate(() => {
+      const raiz = document.querySelector('[data-testid="dados-home"]');
+      if (raiz === null) return null;
+      return [...raiz.querySelectorAll(".lv-revelar")].every(
+        (elemento) => Number(getComputedStyle(elemento).opacity) === 1,
+      );
+    });
+    expect(visivel).toBe(true);
   });
 });

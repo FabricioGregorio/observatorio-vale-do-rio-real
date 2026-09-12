@@ -1990,3 +1990,132 @@ Estado: **CONCLUÍDA E VALIDADA CONTRA O BANCO REAL**. O bloqueio técnico que
 impedia a abertura da H4.1 foi removido. Sem deploy, push, publicação ou
 alteração de dados; a integração da H4 continua dependendo de autorização
 humana e de tarefa própria.
+
+---
+
+## Tarefa 12 — H4.1: "Onde o recurso circula" integrada à Home
+
+Executada em **2026-09-12**, a partir do checkpoint `f5da7c6`, sem deploy,
+push, publicação, upload, dependência nova, migração, alteração de banco, R2,
+Vercel, DNS ou CI.
+
+### Integração
+
+A seção de Dados entrou na Home **depois de Pesquisa em Campo e antes dos
+caminhos prioritários**, que é a posição `03 — Dados` da ordem canônica do
+plano da Home §6.1. H1, H2 e H3 não foram reordenadas nem alteradas.
+
+O título é **"Onde o recurso circula"**, aprovado pelo responsável em
+12/09/2026. A composição não foi reescrita: a Home consome o mesmo
+`<DadosVivos />` do laboratório, por uma entrada pública fina em
+`src/componentes/dados/SecaoDados.tsx`, no molde que a H3 já usava. Não existe
+segunda implementação da seção.
+
+`/dev/dados-vivos` continua sendo laboratório e **404 em produção**, com o
+material reservado e o marcador de proposta que não vão para o público.
+`/dev/dados` (H4.0) não teve uma linha alterada.
+
+### Conteúdo
+
+Protagonista **H4-001**. Apoios, nesta ordem: **H4-003**, **H4-004**,
+**H4-005** e **H4-008**. Os reservados **H4-002**, **H4-006** e **H4-007**
+continuam inteiros no dataset e fora da Home, junto com o ranking de
+atividades. A copy de saída permanece textual: **não há link para `/dados`**,
+porque a rota ainda não cumpre essa promessa.
+
+Nenhum valor foi escrito à mão. Tudo resolve de
+`src/dados/indicadores/derivados.ts` pela seleção editorial — o dataset da
+H4.0 não foi tocado.
+
+### Arquitetura
+
+- `DadosVivos` continua **Server Component**; ganhou apenas um parâmetro
+  `contexto`, que decide só o que é rótulo de desenvolvimento.
+- `RevelacaoVisual` foi **reutilizada**, sem implementação nova, pelas
+  propriedades `raiz` e `escopo` que já existiam. É a primeira ilha cliente
+  desse tipo na Home, e ela acrescenta a entrada aprovada sem ser condição de
+  leitura.
+- O CSS foi dividido: `CSS_DOS_DADOS_VIVOS` é o público e
+  `CSS_DO_LABORATORIO_DOS_DADOS_VIVOS` fica na rota DEV. A divisão não é
+  organização — `testes/a11y/home.spec.ts` rejeita `proposta` e `somente DEV`
+  no conteúdo servido **inclusive dentro do CSS embutido**, e `.dv-proposta`
+  casaria.
+- A gramática da H3.5.1 entra na Home pela primeira vez, **confinada a
+  `#secao-dados-home`**. Testes provam o confinamento por igualdade de
+  contagem, provam que H1–H3 não adquirem classe alguma da H4 e provam que os
+  papéis `--lv-*` não sobem para o `body`.
+
+Duas invariantes históricas foram substituídas, com autorização humana da
+mesma data, por afirmarem explicitamente o estado anterior à integração:
+"a Home continua sem a seção de dados" e "a Home não recebe nada do
+laboratório". Nada foi removido — as duas viraram quatro, mais específicas.
+
+### Conferência e testes
+
+Conferência estrutural em **320, 375, 768 e 1440 px**, nos temas claro e
+escuro, mais movimento reduzido e JavaScript desabilitado: **zero falhas**.
+Ordem, título, protagonista, quatro apoios, série, tabela de seis meses,
+copies, um único carcará na passagem de entrada, ausência de ranking,
+reservados, vocabulário de laboratório, presets e links na seção, e nenhum
+transbordo horizontal.
+
+| Gate | Resultado |
+|---|---|
+| `pnpm tipos` | verde |
+| `pnpm lint` | verde, com os quatro avisos CSS preexistentes |
+| `pnpm teste` | **536 passaram, 3 pulados** |
+| `pnpm a11y` | **269 passaram, zero falhas** |
+| `pnpm verificar` | **exit 0** |
+
+Os três pulados são os de escrita real no R2, desativados por
+`TESTE_R2_ESCRITA`; **pulado não é aprovado**. O subpasso `pendencias` dentro
+de `pnpm verificar` **continua sem atestar o banco** quando a variável não é
+carregada — dívida separada, não resultado desta tarefa. Executado à parte com
+a credencial, o gate real devolve **zero pendências**.
+
+Banco antes e depois, por leitura: `documento=33`, `arquivo=18`,
+`documento_arquivo=18`, `vw_anexo_publico=8`. **Nenhuma escrita.**
+
+### Performance
+
+| Métrica | Antes | Depois | Delta |
+|---|---:|---:|---:|
+| Home 1440 px | 797.968 | **812.945** | +14.977 |
+| Home 375 px | 610.084 | **625.065** | +14.981 |
+| JavaScript | 150.279 | **150.498** | +219 |
+| Chunks JS | 8 | 8 | 0 |
+| Requisições | 20 | 20 | 0 |
+
+Medição pelo método da H3 §7 — servidor de produção local, tema claro, sem
+throttling, corpo e cabeçalho de cada resposta, transferência inicial sem
+rolar. O aumento é quase todo HTML: a marcação da seção e os dois `<style>`
+embutidos. O carcará é `lazy` e fica abaixo da dobra, então não entra na
+transferência inicial e o número de requisições não mudou.
+
+**O orçamento de referência de 500 kB continua excedido.** Ele já estava antes
+da H4.1 e não foi resolvido aqui; a H4.1 acrescentou cerca de 1,9%, medido e
+declarado, sem compensações em H1–H3.
+
+### Dívidas registradas, não resolvidas
+
+- **Orçamento de performance da Home** — excedido desde a H3; tratamento
+  pertence à H7, com medição em ambiente representativo.
+- **CI e gate de banco** — `DATABASE_URL_MANUTENCAO` ausente no workflow faz
+  blocos de integração serem pulados, e `pnpm seed` vazio permite gate
+  vacuamente verde. Também segue a corrida entre teste que grava fixtures e
+  teste que afere contagens globais.
+- **Testes de escrita no R2** — três continuam desativados por
+  `TESTE_R2_ESCRITA`.
+- **Comentário de `src/estilos/tokens.css`** (linhas 463–465) — ainda descreve
+  `.linguagem-visual` e `.dados-vivos` como papéis exclusivos de laboratório.
+  Desde a H4.1, `.dados-vivos` também serve a Home. Não muda comportamento;
+  fica para manutenção documental posterior.
+- **Drift de `docs/02-arquitetura-banco.md` §13** e demais dívidas anteriores
+  permanecem como registradas.
+
+Registro da tarefa:
+[`docs/tarefas/12-home-dados-vivos.md`](./docs/tarefas/12-home-dados-vivos.md).
+
+Estado: **H4.1 CONCLUÍDA E INTEGRADA LOCALMENTE, NÃO DEPLOYADA**. A produção
+continua anterior à reconstrução visual. Sem deploy, push, publicação ou
+alteração de dados; H5 não foi iniciada.

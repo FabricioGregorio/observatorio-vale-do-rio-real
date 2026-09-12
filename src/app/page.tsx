@@ -1,3 +1,4 @@
+import { SecaoDados } from "../componentes/dados/SecaoDados";
 import { HeroManifesto } from "../componentes/hero/HeroManifesto";
 import { CaminhosPrioritarios } from "../componentes/home/CaminhosPrioritarios";
 import { ChamadaAcervo } from "../componentes/home/ChamadaAcervo";
@@ -16,12 +17,12 @@ export const metadata = metadadosDaRota({
 /**
  * Home — fatia estrutural (Tarefa 10A) com Hero Manifesto integrado (H1/H2).
  *
- * A estrutura planejada da Home tem cinco seções:
+ * A estrutura planejada da Home tem seis seções:
  *
- *   Hero Manifesto → Território → Pesquisa em Campo → Caminhos prioritários →
- *   Acervo
+ *   Hero Manifesto → Território → Pesquisa em Campo → Dados → Caminhos
+ *   prioritários → Acervo
  *
- * Duas delas **não** são renderizadas nesta fatia, e a ausência é deliberada:
+ * Uma delas **não** é renderizada nesta fatia, e a ausência é deliberada:
  *
  * - **Apresentação** do Observatório e do Coletivo "Tobias, sou Eu!" depende
  *   de texto humano aprovado. Não existe fonte para escrevê-la, e converter os
@@ -29,8 +30,7 @@ export const metadata = metadadosDaRota({
  *   institucional.
  * A regra da fatia é explícita: seção que depende integralmente de conteúdo
  * bloqueado é omitida, não preenchida com texto plausível nem renderizada
- * vazia. O painel de indicadores segue igualmente ausente — a tabela
- * `indicador` só chega na Tarefa 13, e número provisório é proibido.
+ * vazia.
  *
  * A seção **Território** usa a composição H2 aprovada: SVG renderizado no
  * servidor, Preset B refinado e uma ilha cliente pequena para sincronizar
@@ -40,6 +40,11 @@ export const metadata = metadadosDaRota({
  * aberto. São três fotografias derivadas de originais sem pessoa
  * identificável, servidas abaixo da dobra, sem `preload` e sem `priority`.
  * Nenhuma delas tem data confirmada, e nenhuma data é inferida.
+ *
+ * A seção **Dados** usa a composição H4.5.2 aprovada, "Onde o recurso
+ * circula". Os valores vêm do agregado auditado na H4.0, em TypeScript
+ * versionado: nenhuma tabela `indicador` existe no banco, nenhum número é
+ * provisório e nenhum é escrito à mão aqui.
  *
  * Server Component, sem consulta a banco. O `<main id="conteudo">` vive no
  * layout raiz: aqui vai só o conteúdo.
@@ -61,6 +66,8 @@ export default function Home() {
       <div className="mx-auto w-full max-w-6xl px-4">
         <PesquisaEmCampo />
       </div>
+
+      <SecaoDados />
 
       <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 pb-12">
         <CaminhosPrioritarios caminhos={CAMINHOS_PRIORITARIOS} />

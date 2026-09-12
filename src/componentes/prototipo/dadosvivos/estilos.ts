@@ -3,12 +3,22 @@ import { SERIE_MENSAL } from "../../../dados/indicadores/derivados";
 /**
  * Direção visual da H4.5 — camada sobre a gramática da H3.5.1.
  *
- * A rota carrega **dois** blocos de estilo: `CSS_DA_LINGUAGEM`, que traz as
- * quatro famílias de grafismo tal como a H3.5.1 as definiu, e este, que
+ * A composição carrega `CSS_DA_LINGUAGEM`, que traz as quatro famílias de
+ * grafismo tal como a H3.5.1 as definiu, e `CSS_DOS_DADOS_VIVOS`, que
  * acrescenta só o que a linguagem transversal não tinha porque não tinha
  * número para tratar. Nenhuma família foi reimplementada aqui: mudar o desenho
  * de uma passagem continua sendo mudança em um arquivo só, e os dois
  * laboratórios acompanham.
+ *
+ * ## Por que existe um terceiro bloco
+ *
+ * A H4.1 levou a composição para a Home, e o que é vocabulário de laboratório
+ * não pode ir junto — nem como regra morta. `testes/a11y/home.spec.ts` exige
+ * que o conteúdo servido da Home não contenha `proposta` nem `somente DEV`,
+ * **inclusive dentro do CSS embutido**, e `.dv-proposta` casaria com isso.
+ * Por isso `CSS_DO_LABORATORIO_DOS_DADOS_VIVOS` existe: ele fica na rota DEV, e
+ * a Home recebe só a composição. É a mesma divisão que `estilosDaPesquisa.ts`
+ * já fazia na H3.
  *
  * Cor, tipografia e espessura saem de `tokens.css`. Nenhum hexadecimal aqui.
  *
@@ -75,7 +85,6 @@ export const CSS_DOS_DADOS_VIVOS = `
 .dv-abertura { display: flex; flex-direction: column; gap: calc(var(--spacing) * 4); max-width: 62ch; }
 .dv-abertura h2 { font-size: clamp(var(--text-3xl), 5cqi, var(--text-5xl)); max-width: 15ch; }
 .dv-abertura__texto { font-size: var(--text-lg); }
-.dv-proposta { display: inline-flex; width: fit-content; max-width: 100%; border-bottom: 2px solid var(--color-marca); padding-bottom: calc(var(--spacing)); }
 
 .dv-ficha { display: grid; gap: calc(var(--spacing)); margin: 0; max-width: 58ch; }
 .dv-ficha > div { display: grid; grid-template-columns: minmax(6rem, 0.4fr) 1fr; gap: calc(var(--spacing) * 4); border-top: 1px solid var(--lv-linha); border-left: 1px solid transparent; padding-block: calc(var(--spacing) * 2); padding-left: calc(var(--spacing) * 3); margin-left: calc(var(--spacing) * -3); transition: border-left-color var(--duracao-hover) var(--easing-padrao), background-color var(--duracao-hover) var(--easing-padrao); }
@@ -134,26 +143,6 @@ export const CSS_DOS_DADOS_VIVOS = `
 .dv-tabela tbody tr { transition: background-color var(--duracao-hover) var(--easing-padrao); }
 .dv-tabela tbody tr[data-mes]:hover { background: var(--dv-realce); }
 
-.dv-qualificador { display: block; font-weight: 400; color: var(--color-texto-suave); padding-top: calc(var(--spacing) * 0.5); }
-.dv-barra { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: calc(var(--spacing) * 3); min-width: 9rem; }
-.dv-trilho { position: relative; height: 0.5rem; background: var(--color-borda); }
-.dv-preenchimento { position: absolute; inset-block: 0; left: 0; background: var(--color-marca); }
-.dv-preenchimento[data-receita="direta"] { background: var(--color-acento); }
-.dv-barra span { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: var(--tracking-mono); font-variant-numeric: tabular-nums; color: var(--color-texto-suave); }
-.dv-ranking { display: grid; gap: calc(var(--spacing) * 4); }
-.dv-ranking__nota { max-width: 62ch; }
-/* ---- material de laboratório, depois da pré-visualização ---------------- */
-.dv-laboratorio { padding: var(--lv-capitulo) var(--lv-margem); border-top: 1px solid var(--color-borda-forte); display: flex; flex-direction: column; gap: calc(var(--spacing) * 5); }
-.dv-laboratorio h2 { font-size: var(--text-2xl); }
-.dv-laboratorio h3 { font-size: var(--text-xl); }
-.dv-laboratorio > p { max-width: 62ch; }
-.dv-reservados { display: flex; flex-direction: column; gap: calc(var(--spacing) * 5); }
-/* Os reservados são registro, e não vitrine: a faixa deles não compete com a
-   da área candidata, e por isso fica numa fileira de três. */
-.dv-faixa[data-variante="reservados"] .dv-faixa__lista { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.dv-preview { position: relative; }
-.dv-preview__marca { padding: calc(var(--spacing) * 3) var(--lv-margem); border-top: 1px solid var(--color-borda-forte); font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: var(--tracking-mono); text-transform: uppercase; color: var(--color-texto-suave); }
-
 ${REALCE_POR_MES}
 
 @keyframes dv-entrada { from { transform: translateY(var(--lv-revelar-distancia)); opacity: .65; } to { transform: none; opacity: 1; } }
@@ -178,8 +167,7 @@ ${REALCE_POR_MES}
 }
 
 @media (max-width: 1023px) {
-  .dv-faixa__lista,
-  .dv-faixa[data-variante="reservados"] .dv-faixa__lista { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dv-faixa__lista { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 767px) {
@@ -190,17 +178,57 @@ ${REALCE_POR_MES}
   .dv-ficha > div { grid-template-columns: minmax(0, 1fr); gap: calc(var(--spacing)); }
   /* O equivalente a zoom de 200% numa viewport de 1440 px cai em 720 px.
      Uma coluna evita que o maior valor monetário force a página para fora. */
-  .dv-faixa__lista,
-  .dv-faixa[data-variante="reservados"] .dv-faixa__lista { grid-template-columns: minmax(0, 1fr); }
+  .dv-faixa__lista { grid-template-columns: minmax(0, 1fr); }
   .dv-tabela th, .dv-tabela td { padding: calc(var(--spacing) * 2); }
-}
-
-@media (max-width: 479px) {
-  .dv-barra { min-width: 6rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .dados-vivos .lv-revelar, .dados-vivos .dv-conector, .dados-vivos .dv-ponto { animation: none; transform: none; opacity: 1; }
   .dados-vivos .dv-conector { stroke-dasharray: none; }
+}
+`;
+
+/**
+ * O que existe apenas em `/dev/dados-vivos` e nunca é servido pela Home.
+ *
+ * Três grupos: o marcador editorial de proposta, que a aprovação do título em
+ * 12/09/2026 tornou obsoleto no público; o ranking de atividades, que a H4.5.1
+ * tirou da candidata e manteve reservado à futura página de Dados; e a moldura
+ * do próprio laboratório — pré-visualização, marcas de início e fim e o bloco
+ * de material reservado.
+ */
+export const CSS_DO_LABORATORIO_DOS_DADOS_VIVOS = `
+.dv-proposta { display: inline-flex; width: fit-content; max-width: 100%; border-bottom: 2px solid var(--color-marca); padding-bottom: calc(var(--spacing)); }
+
+.dv-qualificador { display: block; font-weight: 400; color: var(--color-texto-suave); padding-top: calc(var(--spacing) * 0.5); }
+.dv-barra { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: calc(var(--spacing) * 3); min-width: 9rem; }
+.dv-trilho { position: relative; height: 0.5rem; background: var(--color-borda); }
+.dv-preenchimento { position: absolute; inset-block: 0; left: 0; background: var(--color-marca); }
+.dv-preenchimento[data-receita="direta"] { background: var(--color-acento); }
+.dv-barra span { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: var(--tracking-mono); font-variant-numeric: tabular-nums; color: var(--color-texto-suave); }
+.dv-ranking { display: grid; gap: calc(var(--spacing) * 4); }
+.dv-ranking__nota { max-width: 62ch; }
+
+.dv-laboratorio { padding: var(--lv-capitulo) var(--lv-margem); border-top: 1px solid var(--color-borda-forte); display: flex; flex-direction: column; gap: calc(var(--spacing) * 5); }
+.dv-laboratorio h2 { font-size: var(--text-2xl); }
+.dv-laboratorio h3 { font-size: var(--text-xl); }
+.dv-laboratorio > p { max-width: 62ch; }
+.dv-reservados { display: flex; flex-direction: column; gap: calc(var(--spacing) * 5); }
+/* Os reservados são registro, e não vitrine: a faixa deles não compete com a
+   da área candidata, e por isso fica numa fileira de três. */
+.dv-faixa[data-variante="reservados"] .dv-faixa__lista { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.dv-preview { position: relative; }
+.dv-preview__marca { padding: calc(var(--spacing) * 3) var(--lv-margem); border-top: 1px solid var(--color-borda-forte); font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: var(--tracking-mono); text-transform: uppercase; color: var(--color-texto-suave); }
+
+@media (max-width: 1023px) {
+  .dv-faixa[data-variante="reservados"] .dv-faixa__lista { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 767px) {
+  .dv-faixa[data-variante="reservados"] .dv-faixa__lista { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 479px) {
+  .dv-barra { min-width: 6rem; }
 }
 `;

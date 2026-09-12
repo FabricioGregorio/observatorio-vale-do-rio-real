@@ -201,9 +201,53 @@ test.describe("protótipo Dados e indicadores H4", () => {
     expect(robots).toContain("Disallow: /dev/");
   });
 
-  test("a Home continua sem a seção de dados", async ({ page }) => {
+  /**
+   * Invariante trocada na H4.1, por instrução humana de 2026-09-12.
+   *
+   * Até aqui este teste afirmava "a Home continua sem a seção de dados", o que
+   * era verdade enquanto H4 vivia só no laboratório. A H4.1 integrou a
+   * composição aprovada, e a proposição caducou por decisão, não por acidente.
+   *
+   * O que ela protegia continua protegido, e de forma mais exata: a fronteira
+   * entre **laboratório** e **seção pública** não é a ausência da H4 na Home —
+   * é a Home receber a candidata aprovada, uma vez, e nada da casca de DEV nem
+   * do painel da H4.0.
+   */
+  test("a Home recebe a seção pública uma única vez, e nada do laboratório", async ({
+    page,
+  }) => {
     await page.goto("/");
-    await expect(page.getByTestId("dados-home")).toHaveCount(0);
-    await expect(page.getByText("03 — DADOS")).toHaveCount(0);
+
+    // 1. Exatamente uma seção pública de dados.
+    await expect(page.getByTestId("dados-home")).toHaveCount(1);
+    await expect(page.locator("#secao-dados-home")).toHaveCount(1);
+
+    // 2. É a composição pública aprovada, e não a do laboratório.
+    await expect(page.getByTestId("dados-home")).toHaveAttribute(
+      "data-contexto",
+      "home",
+    );
+    await expect(page.getByTestId("dados-prototipo")).toHaveCount(0);
+
+    // 3. O painel da H4.0 não veio junto: ele é outra composição, e continua
+    //    sendo só de `/dev/dados`.
+    await expect(page.locator(".painel-dados")).toHaveCount(0);
+    await expect(page.getByTestId("preset-declaracao")).toHaveCount(0);
+    await expect(page.getByTestId("preset-painel")).toHaveCount(0);
+
+    // 4. Nada do que é reservado ao laboratório.
+    for (const seletor of [
+      ".dv-preview",
+      ".dv-laboratorio",
+      ".dv-reservados",
+      ".dv-ranking",
+      ".dv-proposta",
+    ]) {
+      await expect(page.locator(seletor)).toHaveCount(0);
+    }
+
+    // 5. O laboratório segue separado: 404 em produção é coberto acima, e
+    //    aqui basta que a Home não o referencie.
+    await expect(page.locator('a[href^="/dev/"]')).toHaveCount(0);
   });
 });
