@@ -458,23 +458,27 @@
    ========================================================================== */
 
 /* =============================================================================
-   7. Laboratório da H3.5 — sistema gráfico transversal
+   7. Sistema gráfico transversal da H3.5
 
-   Papéis exclusivos dos laboratórios `/dev/linguagem-visual` e
-   `/dev/dados-vivos`. Nenhum consumidor de H1 a H4.0 lê estes nomes: os
-   seletores de classe `.linguagem-visual` e `.dados-vivos` fecham o alcance
-   na raiz de cada laboratório. O bloco fica no fim do arquivo de propósito —
-   a primeira ocorrência de cada media query do documento precisa continuar
-   sendo a do tema, que é a que vale para o site.
+   Papéis escopados por classe de raiz: `.linguagem-visual`, que só existe no
+   laboratório `/dev/linguagem-visual`, e `.dados-vivos`, que existe no
+   laboratório `/dev/dados-vivos` **e, desde a H4.1, na composição pública da
+   seção de Dados da Home**. O escopo é o que importa e não mudou: os nomes
+   vivem na raiz de cada consumidor, nunca no documento, e por isso H1, H2 e H3
+   continuam sem alcançá-los por herança.
+
+   O bloco fica no fim do arquivo de propósito — a primeira ocorrência de cada
+   media query do documento precisa continuar sendo a do tema, que é a que vale
+   para o site.
 
    A H4.5 herda esta tabela em vez de copiá-la: a lista de seletores é o lugar
    onde a herança fica literal, e onde ela pode ser conferida por teste.
    ========================================================================== */
 
-/* H3.5 / H3.5.1 — somente laboratório. Novos papéis não alteram consumidores
-   H1–H4.0. A decisão humana de 2026-09-11 revisou a Direção Visual §12.1 de
-   3–4/10 para 4–5/10 e adotou o preset B refinado como direção; o preset A
-   permanece como controle contido, não como candidato equivalente.
+/* H3.5 / H3.5.1 — papéis do sistema gráfico. Eles não alteram os consumidores
+   H1–H3 nem a H4.0. A decisão humana de 2026-09-11 revisou a Direção Visual
+   §12.1 de 3–4/10 para 4–5/10 e adotou o preset B refinado como direção; o
+   preset A permanece como controle contido, não como candidato equivalente.
    Ver docs/frontend/H3_5_1_CONSOLIDACAO_SISTEMA_GRAFICO.md. */
 .linguagem-visual,
 .dados-vivos {

@@ -121,6 +121,31 @@ CREATE TYPE status_moderacao AS ENUM
   ('pendente', 'aprovado', 'rejeitado', 'spam');
 ```
 
+Os tipos abaixo sustentam o modelo documental e a publicação de arquivos. Eles
+entraram depois da primeira redação deste documento, pelas migrações indicadas.
+
+```sql
+-- migração 0004 — modelo documental
+CREATE TYPE natureza_documento AS ENUM
+  ('item_exigido', 'evidencia_complementar', 'item_nao_exigido');
+
+CREATE TYPE estado_documental AS ENUM
+  ('PUBLICAVEL', 'RESTRITO', 'ESPELHAVEL', 'IMPEDIDO', 'PENDENTE');
+
+CREATE TYPE revisao_privacidade AS ENUM
+  ('pendente', 'concluida', 'bloqueada');
+
+-- migração 0004, ampliado pela 0007: tarjamento e sanitização são métodos de
+-- derivação; cópia byte a byte **não** é derivação e usa `replica_de_id`.
+CREATE TYPE metodo_derivacao AS ENUM
+  ('transcricao_leitura_visual', 'ocr_estatistico', 'redacao_versao_publica',
+   'tarjamento_privacidade', 'sanitizacao_metadados', 'extracao_secao',
+   'conversao_formato');
+
+-- migração 0006 — objeto privado não tem URL pública
+CREATE TYPE visibilidade_arquivo AS ENUM ('privado', 'publico');
+```
+
 ---
 
 ## 4. Infraestrutura comum
@@ -158,29 +183,60 @@ FOR EACH ROW EXECUTE FUNCTION set_atualizado_em();
 
 Separar **`documento`** (a obra intelectual) de **`arquivo`** (o binário) é o que permite versionar um relatório, publicar o mesmo conteúdo em PDF e HTML, e trocar um anexo sem perder o histórico da URL.
 
+**`arquivo` representa um objeto físico armazenado**, e não um conteúdo lógico.
+O mesmo conteúdo pode existir em duas localizações — uma privada e uma pública
+— e isso é duas linhas, não uma. A decisão está na ADR-016 e foi materializada
+pela migração 0007.
+
 ```sql
 CREATE TABLE arquivo (
   id             uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  chave_storage  text NOT NULL UNIQUE,      -- ex: arquivos/analise-de-dados/relatorio-tecnico-recanto-da-serra-v1.pdf
-  url_publica    text NOT NULL UNIQUE,      -- URL estável do domínio próprio
+  chave_storage  text NOT NULL,             -- ex: arquivos/analise-de-dados/relatorio-tecnico-recanto-da-serra-v1.pdf
+  bucket         text NOT NULL,             -- migração 0006; sem default, o bucket é declarado e nunca presumido
+  visibilidade   visibilidade_arquivo NOT NULL DEFAULT 'privado',
+  url_publica    text UNIQUE,               -- migração 0006: objeto privado não tem URL pública
   nome_original  text,
   tipo_midia     tipo_midia NOT NULL,
   mime_type      text NOT NULL,
   bytes          bigint NOT NULL CHECK (bytes > 0),
-  sha256         char(64) NOT NULL,         -- integridade para auditoria
+  sha256         char(64) NOT NULL,         -- integridade para auditoria; deliberadamente NÃO único
   duracao_seg    integer,                   -- áudio/vídeo
   largura_px     integer,
   altura_px      integer,
   origem_url     text,                      -- Drive/Figma de onde veio (redundância)
   origem_sistema text,                      -- google_drive | google_docs | google_forms | figma | instagram | upload
   espelhado_em   timestamptz,               -- quando saiu do Drive para storage próprio
+  derivado_de_id uuid REFERENCES arquivo(id),  -- migração 0004
+  replica_de_id  uuid REFERENCES arquivo(id) ON DELETE RESTRICT,  -- migração 0007
+  derivacao_metodo metodo_derivacao,
+  derivacao_em   timestamptz,
   criado_em      timestamptz NOT NULL DEFAULT now(),
-  atualizado_em  timestamptz NOT NULL DEFAULT now()
+  atualizado_em  timestamptz NOT NULL DEFAULT now(),
+
+  -- A identidade de localização é o par, não a chave sozinha: há dois buckets,
+  -- e a mesma chave pode existir em ambos (migração 0007).
+  CONSTRAINT arquivo_bucket_chave_key UNIQUE (bucket, chave_storage),
+  -- Público exige URL; privado exige a ausência dela (migração 0006).
+  CONSTRAINT arquivo_visibilidade_coerente
+    CHECK ((visibilidade = 'publico') = (url_publica IS NOT NULL)),
+  -- Derivado e réplica são relações distintas e mutuamente exclusivas.
+  CONSTRAINT arquivo_proveniencia_unica
+    CHECK (num_nonnulls(derivado_de_id, replica_de_id) <= 1),
+  CONSTRAINT arquivo_replica_nao_reflexiva
+    CHECK (replica_de_id IS NULL OR replica_de_id <> id)
 );
 
 CREATE INDEX idx_arquivo_sha256 ON arquivo (sha256);
 CREATE INDEX idx_arquivo_tipo   ON arquivo (tipo_midia);
+CREATE INDEX idx_arquivo_replica_de ON arquivo (replica_de_id)
+  WHERE replica_de_id IS NOT NULL;
 ```
+
+> **`sha256` não é único, e isso é deliberado.** Ele identifica *conteúdo*;
+> `(bucket, chave_storage)` identifica *localização*. Tornar o hash único
+> impediria registrar honestamente o mesmo objeto nos buckets privado e público
+> — que é exatamente o caso de D01-04 e D01-06. Réplica byte a byte preserva o
+> SHA-256 e se declara por `replica_de_id`; **cópia não é derivação**.
 
 ```sql
 CREATE TABLE documento (
@@ -195,6 +251,13 @@ CREATE TABLE documento (
   municipio_id      uuid REFERENCES municipio(id) ON DELETE SET NULL,
   licenca           text NOT NULL DEFAULT 'CC BY-SA 4.0',
   exigido_pelo_edital boolean NOT NULL DEFAULT false,
+  -- migração 0004 — classificação humana; defaults conservadores
+  natureza          natureza_documento NOT NULL DEFAULT 'item_nao_exigido',
+  estado_documental estado_documental  NOT NULL DEFAULT 'PENDENTE',
+  revisao_privacidade revisao_privacidade NOT NULL DEFAULT 'pendente',
+  derivado_de_id    uuid REFERENCES documento(id),
+  derivacao_metodo  metodo_derivacao,
+  derivacao_em      timestamptz,
   ordem_anexo       integer,                      -- ordem na Sala do Avaliador
   status            status_publicacao NOT NULL DEFAULT 'rascunho',
   publicado_em      timestamptz,
@@ -206,7 +269,14 @@ CREATE TABLE documento (
                         sem_acento(coalesce(titulo,'') || ' ' || coalesce(resumo,'')))
                     ) STORED,
   CONSTRAINT publicado_exige_data
-    CHECK (status <> 'publicado' OR publicado_em IS NOT NULL)
+    CHECK (status <> 'publicado' OR publicado_em IS NOT NULL),
+  -- Fail-closed no banco (migração 0004): PUBLICAVEL sem revisão concluída é
+  -- impossível de gravar. A regra do plano §4 deixa de depender de disciplina
+  -- de aplicação.
+  CONSTRAINT documento_publicavel_exige_revisao
+    CHECK (estado_documental <> 'PUBLICAVEL' OR revisao_privacidade = 'concluida'),
+  CONSTRAINT documento_natureza_coerente
+    CHECK ((natureza = 'item_exigido') = exigido_pelo_edital)
 );
 
 CREATE INDEX idx_documento_busca  ON documento USING gin (busca);
@@ -225,12 +295,24 @@ CREATE TABLE documento_arquivo (
   PRIMARY KEY (documento_id, arquivo_id)
 );
 
--- garante no máximo um arquivo principal por documento
+-- garante no máximo um arquivo **representativo** por documento
 CREATE UNIQUE INDEX idx_doc_arquivo_principal
   ON documento_arquivo (documento_id) WHERE principal;
 ```
 
-> **Regra de negócio inegociável:** nenhum registro com `exigido_pelo_edital = true` pode ser publicado sem ao menos um `documento_arquivo` cujo `arquivo.espelhado_em IS NOT NULL`. Isso impede que um anexo obrigatório dependa exclusivamente de um link do Drive. Implementar como teste no CI e como *check* na view de publicação (§9).
+> **O que `principal` é, e o que ele não é.** `principal` indica o arquivo
+> **representativo ou preferencial** do documento — o que se mostra primeiro
+> quando é preciso escolher um. Ele **não é autorização pública**, **não é
+> requisito para publicação** e **não limita o documento a um único arquivo
+> público**. Um documento pode ter vários arquivos públicos, todos com
+> `principal = false`, e isso é o caso real de D01, que publica sete.
+>
+> O índice parcial continua existindo e continua garantindo no máximo um
+> representativo por documento; o que mudou foi o peso que se dá a ele. Decisão
+> na ADR-016, materializada pela migração 0007 em `vw_anexo_publico` e pela
+> 0008 em `vw_pendencia_publicacao`.
+
+> **Regra de negócio inegociável:** nenhum registro com `exigido_pelo_edital = true` pode ser publicado sem **ao menos um** `documento_arquivo` cujo `arquivo.espelhado_em IS NOT NULL`. Isso impede que um anexo obrigatório dependa exclusivamente de um link do Drive. A regra sempre foi existencial — "ao menos um" —, e é assim que a `vw_pendencia_publicacao` a implementa desde a migração 0008 (§13).
 
 ---
 
@@ -744,9 +826,16 @@ CREATE TABLE redirecionamento (
 
 ## 13. Views de consumo
 
+**Publicação é multiarquivo.** As duas views abaixo deixaram de tratar
+`documento_arquivo.principal` como condição: um documento publica **todos** os
+seus arquivos elegíveis. Ver ADR-016, migração 0007 (`vw_anexo_publico`) e
+migração 0008 (`vw_pendencia_publicacao`).
+
 ```sql
--- Alimenta /prestacao-de-contas e /anexos.json
-CREATE VIEW vw_anexo_publico AS
+-- Alimenta /prestacao-de-contas e /anexos.json.
+-- Uma linha por objeto físico público: o JOIN percorre todos os vínculos, e
+-- `principal` é exposto como informação, nunca usado como filtro.
+CREATE OR REPLACE VIEW vw_anexo_publico AS
 SELECT d.ordem_anexo,
        d.slug,
        d.titulo,
@@ -760,29 +849,104 @@ SELECT d.ordem_anexo,
        a.bytes,
        a.sha256,
        d.publicado_em,
-       (a.espelhado_em IS NOT NULL) AS espelhado
+       (a.espelhado_em IS NOT NULL) AS espelhado,
+       d.natureza,
+       d.exigido_pelo_edital AS obrigatorio,
+       d.estado_documental,
+       d.revisao_privacidade,
+       o.slug           AS derivado_de_slug,
+       da.principal,
+       da.rotulo        AS rotulo_arquivo,
+       COALESCE(a.derivado_de_id, a.replica_de_id) AS arquivo_origem_id,
+       CASE
+         WHEN a.derivado_de_id IS NOT NULL THEN 'derivado'::text
+         WHEN a.replica_de_id  IS NOT NULL THEN 'replica'::text
+         ELSE NULL::text
+       END AS arquivo_relacao,
+       a.derivacao_metodo AS arquivo_derivacao_metodo
 FROM documento d
-JOIN documento_arquivo da ON da.documento_id = d.id AND da.principal
+JOIN documento_arquivo da ON da.documento_id = d.id
 JOIN arquivo a            ON a.id = da.arquivo_id
-WHERE d.status = 'publicado' AND d.arquivado_em IS NULL
-ORDER BY d.ordem_anexo NULLS LAST, d.titulo;
-
--- Trava de publicação: anexo obrigatório sem espelho local
-CREATE VIEW vw_pendencia_publicacao AS
-SELECT d.slug, d.titulo, 'anexo obrigatório sem arquivo espelhado' AS pendencia
-FROM documento d
-LEFT JOIN documento_arquivo da ON da.documento_id = d.id AND da.principal
-LEFT JOIN arquivo a            ON a.id = da.arquivo_id AND a.espelhado_em IS NOT NULL
-WHERE d.exigido_pelo_edital AND d.status = 'publicado' AND a.id IS NULL
-UNION ALL
-SELECT e.slug, e.titulo, 'áudio público sem consentimento válido'
-FROM entrevista e
-LEFT JOIN consentimento c
-  ON c.pessoa_id = e.entrevistado_id
- AND c.tipo = 'publicacao_entrevista'
- AND c.revogado_em IS NULL
-WHERE e.audio_publico AND e.status = 'publicado' AND c.id IS NULL;
+LEFT JOIN documento o     ON o.id = d.derivado_de_id
+WHERE d.estado_documental = 'PUBLICAVEL'
+  AND d.revisao_privacidade = 'concluida'
+  AND d.status = 'publicado'
+  AND d.arquivado_em IS NULL
+  AND a.espelhado_em IS NOT NULL
+  AND a.visibilidade = 'publico'
+  AND a.url_publica IS NOT NULL
+ORDER BY d.ordem_anexo NULLS LAST,
+         d.titulo,
+         da.principal DESC,
+         da.versao DESC,
+         a.chave_storage;
 ```
+
+O gate público tem **sete** condições, e nenhuma delas é dispensável: estado
+documental, revisão de privacidade, status, não arquivado, espelhamento,
+visibilidade e URL presente. Nada se torna público por omissão.
+
+```sql
+-- Trava de publicação. Detector de anomalia entre itens já apresentados como
+-- publicáveis — não é inventário de trabalho restante.
+CREATE OR REPLACE VIEW vw_pendencia_publicacao AS
+SELECT d.slug, d.titulo, 'anexo obrigatório sem arquivo espelhado'::text AS pendencia
+FROM documento d
+WHERE d.exigido_pelo_edital
+  AND d.status = 'publicado'
+  AND NOT EXISTS (
+    SELECT 1 FROM documento_arquivo da
+    JOIN arquivo a ON a.id = da.arquivo_id
+    WHERE da.documento_id = d.id AND a.espelhado_em IS NOT NULL
+  )
+UNION ALL
+SELECT d.slug, d.titulo, 'estado PUBLICAVEL sem arquivo espelhado'::text
+FROM documento d
+WHERE d.estado_documental = 'PUBLICAVEL'
+  AND NOT EXISTS (
+    SELECT 1 FROM documento_arquivo da
+    JOIN arquivo a ON a.id = da.arquivo_id
+    WHERE da.documento_id = d.id AND a.espelhado_em IS NOT NULL
+  )
+UNION ALL
+SELECT d.slug, d.titulo, 'status publicado divergente do estado documental'::text
+FROM documento d
+WHERE d.status = 'publicado' AND d.estado_documental <> 'PUBLICAVEL'
+ORDER BY 1;
+
+-- Ramo reservado: entra por CREATE OR REPLACE quando `entrevista` existir.
+-- SELECT e.slug, e.titulo, 'áudio público sem consentimento válido'
+-- FROM entrevista e
+-- LEFT JOIN consentimento c
+--   ON c.pessoa_id = e.entrevistado_id
+--  AND c.tipo = 'publicacao_entrevista'
+--  AND c.revogado_em IS NULL
+-- WHERE e.audio_publico AND e.status = 'publicado' AND c.id IS NULL;
+```
+
+Três pontos que um agente futuro precisa entender antes de mexer nesta view:
+
+1. **A pergunta dos dois primeiros ramos é existencial sobre o documento:**
+   *existe ao menos um arquivo associado cujo `espelhado_em IS NOT NULL`?* Ela
+   **não** é *existe vínculo `principal`?*. Essa era a formulação anterior, e
+   ela produzia falso positivo para todo documento multiarquivo — o caso real
+   foi `identidade-visual`, com sete arquivos públicos válidos e nenhum
+   principal.
+2. **O requisito destes ramos é espelhamento, e não visibilidade pública.** É
+   diferença deliberada: eles denunciam ausência de espelho local, enquanto a
+   elegibilidade pública é contrato de `vw_anexo_publico`. Endurecer estes
+   ramos com o predicado público completo criaria falso positivo novo para o
+   estado legítimo "PUBLICAVEL com espelho ainda privado" — e seria decisão
+   arquitetural nova, não coberta pela ADR-016.
+3. **`NOT EXISTS`, e não anti-join.** O `LEFT JOIN ... AND da.principal` com
+   `a.id IS NULL` só devolvia uma linha por documento porque o índice parcial
+   garante no máximo um principal. Sem essa condição, o mesmo anti-join passaria
+   a emitir uma linha por vínculo não espelhado — trocaria um falso positivo por
+   outro.
+
+A forma do resultado — `slug`, `titulo`, `pendencia` — é contrato: é o que
+permite acrescentar ramos por `CREATE OR REPLACE VIEW` sem quebrar o consumidor
+nem perder permissões.
 
 `vw_pendencia_publicacao` **deve quebrar o build do CI se retornar qualquer linha.** É a tradução em código dos dois riscos de maior impacto do documento anterior.
 

@@ -2119,3 +2119,32 @@ Registro da tarefa:
 Estado: **H4.1 CONCLUÍDA E INTEGRADA LOCALMENTE, NÃO DEPLOYADA**. A produção
 continua anterior à reconstrução visual. Sem deploy, push, publicação ou
 alteração de dados; H5 não foi iniciada.
+
+---
+
+## Reconciliação documental — arquitetura canônica de banco, 2026-09-12
+
+Por decisão humana da mesma data, `docs/02-arquitetura-banco.md` foi alinhado
+ao modelo multiarquivo que já vigorava. **O drift do §13 está resolvido.**
+
+Não é decisão nova: é transcrição do que a ADR-016 aprovou e as migrações
+`0007_publicacao_multiarquivo` e `0008_gate_pendencia_multiarquivo` aplicaram.
+O documento passou a registrar `arquivo` como objeto físico com identidade
+`(bucket, chave_storage)`, `sha256` deliberadamente não único, `replica_de_id`
+ao lado de `derivado_de_id`, os enums do modelo documental, o gate de sete
+condições de `vw_anexo_publico` e a semântica existencial de
+`vw_pendencia_publicacao` — incluindo a diferença deliberada de que os ramos de
+espelhamento verificam `espelhado_em`, e não o predicado público completo.
+
+Também ficou explícito o que `documento_arquivo.principal` é: o arquivo
+representativo do documento. **Não é autorização pública, não é requisito de
+publicação e não limita o documento a um arquivo público.**
+
+Correção acessória na mesma rodada: o comentário de `src/estilos/tokens.css`
+deixou de chamar `.dados-vivos` de exclusivo de laboratório, já que a H4.1 o
+usa na composição pública da Home. O escopo por classe de raiz não mudou, e
+H1–H3 seguem sem alcançar esses papéis por herança.
+
+**Nenhuma migration, view, schema, código executável, banco, R2 ou dado foi
+alterado.** O CSS funcional foi conferido idêntico byte a byte após remoção dos
+comentários. Sem deploy e sem PR.
