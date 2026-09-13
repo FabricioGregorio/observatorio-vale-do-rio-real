@@ -204,6 +204,93 @@ desde que a árvore e o commit permaneçam os mesmos.
 operação. A partir daí, executar o checklist pré-deploy, a operação e o
 checklist pós-deploy exatamente como registrados neste documento.
 
+## Operação concluída em 2026-09-13 — reconstrução publicada
+
+A interrupção acima foi resolvida pelo responsável, que autenticou a CLI na
+própria máquina e executou a publicação. A trilha fica registrada inteira: a
+tentativa bloqueada por autenticação faz parte da operação, não é ruído.
+
+### Deployment
+
+| | |
+|---|---|
+| ID | `dpl_Ej9aVP4JH4dq5NyT8gGyR8dnbH6T` |
+| Projeto · team | `observatorio-vale-rio-real` · `fabricios-projects-e8743b90` |
+| Target · status | production · **● Ready** |
+| URL imutável | `https://observatorio-vale-rio-real-fnozrwq9h.vercel.app` |
+| Criado em | 2026-09-13, 00:37:47 (GMT-03:00) |
+| Aliases | `observatoriotobiassoueu.com.br`, `www.observatoriotobiassoueu.com.br`, `observatorio-vale-rio-real.vercel.app` e o alias do team |
+| Comando | `pnpm dlx vercel@latest deploy --prod --yes --logs` |
+| Build remoto | Next.js 16.3.4, 25/25 páginas estáticas; único aviso é o TLS já documentado |
+
+**Produto publicado: commit `3519bc014251e02c21e0dceed63d0714de012e67`.** O
+commit `48da8723ccffe94a64c5e7dfc9246ba52eb47865`, posterior, é exclusivamente
+documental e não altera o artefato da aplicação.
+
+Identificação obtida por `vercel inspect`, somente leitura. Nenhum redeploy,
+alias, domínio, variável ou configuração foi alterado.
+
+### Smoke executado pelo responsável
+
+Home, `/prestacao-de-contas` e `/anexos.json` em 200; `/dev/dados-vivos` em
+404. "Onde o recurso circula" presente; `somente DEV` e
+`Título editorial · proposta` ausentes; `id="secao-dados-home"` com exatamente
+uma ocorrência. `/anexos.json` com `total = 8` e oito entradas, e os oito
+`link_permanente` conferidos individualmente — **8/8 em 200**. Sala em 200 com
+A02, D01-01 e D01-07 e os links permanentes do acervo. `www` redirecionando
+para o apex com 200; `robots.txt` e `sitemap.xml` em 200.
+
+A raiz de `acervo.observatoriotobiassoueu.com.br` responde 404, e isso **não é
+falha**: o domínio serve objetos e não tem índice de raiz.
+
+### Smoke complementar desta rodada
+
+Contra o domínio público real, no navegador:
+
+- **Home em 375 px e 1440 px, temas claro e escuro — zero falhas.** Ordem
+  H1→H2→H3→H4→caminhos; uma única seção H4; título; protagonista **93,4%**;
+  quatro apoios; tabela de seis meses; copies de entrada e saída; um carcará na
+  passagem; sem transbordo horizontal; H1–H3 sem a gramática da H4.
+- **Ausências confirmadas** em todas as combinações: ranking, indicadores
+  reservados, vocabulário de laboratório, controles e presets A/B, e nenhum
+  link dentro da seção H4 — portanto nenhum CTA para `/dados`.
+- **Movimento reduzido:** nada anima e nada fica com opacidade menor que 1.
+- **Sem JavaScript:** título, protagonista, os quatro apoios e a tabela
+  presentes; nenhum elemento com `data-revelado`. Nenhum conteúdo crítico preso
+  em opacidade zero.
+- **Console:** zero erro, zero `pageerror` e zero sub-recurso 4xx/5xx em `/`,
+  `/prestacao-de-contas`, `/dados`, `/pesquisa` e `/observatorio`.
+- **Rotas:** 16 públicas em 200; as sete `/dev/*` em **404**; `/territorio` e
+  `/acervo` em 404, sem link público; `anexos.zip` em 404.
+- **Acervo:** `/anexos.json` com 8 entradas e `total = 8`, distribuídas em
+  `identidade-visual`=7 e `relatorio-tecnico-recanto-da-serra`=1 — idêntico à
+  view; **8/8 objetos em HTTP 200**.
+- **Sala:** oito links permanentes do acervo; sem CTA de ZIP; sem vocabulário
+  de laboratório.
+- **SEO:** canonical no apex; `www` terminando no apex com 200; nenhuma
+  referência a `/dev/` no sitemap.
+- **Privacidade:** varredura de 1.125.943 B — treze rotas, `anexos.json`,
+  `robots.txt`, `sitemap.xml` e os oito bundles JavaScript — com **zero**
+  ocorrências de `DATABASE_URL`, URL de conexão PostgreSQL, credencial,
+  `r2.cloudflarestorage`, `r2.dev`, `STORAGE_PRIVATE`, `ACCESS_KEY`, `AKIA`,
+  bucket privado, `OBSERVATORIO_FONTES_DIR`, caminho absoluto local,
+  `localhost`, CPF, telefone, e-mail, chave privada e vocabulário de
+  laboratório.
+
+### Rollback
+
+**Não foi necessário.** O deployment anterior
+`dpl_9uudmMsKygEowzpSkt6Gpt73BUiE` permanece identificado como alvo de retorno,
+com o procedimento inalterado acima. Banco, R2 e o domínio do acervo **não
+foram alterados** pelo deploy do frontend.
+
+### Desvios conhecidos, ainda abertos
+
+1. Home acima da meta canônica de 500 KB (doc 01 §7) — P1, para a H7.
+2. O CI não prova o gate real; esta liberação apoiou-se na execução manual do
+   gate, registrada nesta tarefa. **Este deploy não foi validado pelo CI.**
+3. Três testes de escrita real no R2 permanecem desabilitados por decisão.
+
 ## Regra de parada da operação
 
 Parar e devolver a decisão ao humano se, no momento do deploy: a árvore contiver

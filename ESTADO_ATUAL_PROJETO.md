@@ -2148,3 +2148,74 @@ H1–H3 seguem sem alcançar esses papéis por herança.
 **Nenhuma migration, view, schema, código executável, banco, R2 ou dado foi
 alterado.** O CSS funcional foi conferido idêntico byte a byte após remoção dos
 comentários. Sem deploy e sem PR.
+
+---
+
+## Produção — reconstrução H0–H4.1 publicada, 2026-09-13
+
+**A produção deixou de ser anterior à reconstrução visual.** O site público
+passou a servir Hero H1, Território H2, Pesquisa em Campo H3 e a seção de Dados
+H4.1, "Onde o recurso circula".
+
+| | |
+|---|---|
+| Commit de produto | `3519bc014251e02c21e0dceed63d0714de012e67` |
+| Commit documental posterior | `48da8723ccffe94a64c5e7dfc9246ba52eb47865` — não altera o artefato |
+| Deployment | `dpl_Ej9aVP4JH4dq5NyT8gGyR8dnbH6T`, target production, **Ready** |
+| URL imutável | `https://observatorio-vale-rio-real-fnozrwq9h.vercel.app` |
+| Domínio principal | `https://observatoriotobiassoueu.com.br`, com `www` redirecionando |
+| Criado em | 2026-09-13, 00:37:47 (GMT-03:00) |
+| Build remoto | Next.js 16.3.4, 25/25 páginas; único aviso é o TLS documentado |
+
+A operação foi manual, com a integração Git da Vercel **desconectada**, como
+nos deploys anteriores. Houve uma primeira tentativa interrompida antes de
+qualquer comando de publicação, porque a CLI estava sem sessão autenticada; o
+responsável autenticou e executou. A trilha está registrada na tarefa.
+
+### Smoke pós-deploy — aprovado
+
+Contra o domínio público real: Home em 375 px e 1440 px, temas claro e escuro,
+**zero falhas** — ordem das seções, título, protagonista 93,4%, os quatro
+apoios, tabela de seis meses, copies aprovadas, um único carcará, sem
+transbordo. Movimento reduzido sem animação. **Sem JavaScript a seção continua
+completa.** Zero erro de console, `pageerror` ou sub-recurso 4xx/5xx.
+
+Dezesseis rotas públicas em 200; as sete `/dev/*` em **404**; `/territorio`,
+`/acervo` e `anexos.zip` em 404, todos estados deliberados. Ausentes do HTML
+público: ranking, indicadores reservados, vocabulário de laboratório, presets
+e qualquer link dentro da seção H4.
+
+**Sala íntegra:** 200, com os oito links permanentes do acervo e sem CTA de ZIP.
+**Acervo 8/8:** `/anexos.json` com oito entradas — `identidade-visual`=7 e
+`relatorio-tecnico-recanto-da-serra`=1, idêntico a `vw_anexo_publico` —, e os
+oito objetos em HTTP 200.
+
+Varredura de privacidade de 1.125.943 B, incluindo os oito bundles
+JavaScript: **zero** credencial, URL de banco, bucket privado, caminho local,
+`localhost`, PII ou vocabulário de desenvolvimento.
+
+### O que não mudou
+
+**Gate real pré-deploy: zero pendências.** Banco intocado pela operação em
+`documento=33`, `arquivo=18`, `documento_arquivo=18`, `vw_anexo_publico=8`;
+R2 e o domínio do acervo inalterados. `main` **não** recebeu merge e continua em
+`5a2ede8`; nenhum PR foi aberto.
+
+**Rollback não foi necessário.** O deployment `dpl_9uudmMsKygEowzpSkt6Gpt73BUiE`
+permanece identificado como alvo de retorno.
+
+### Desvios conhecidos, ainda abertos
+
+1. **Home acima da meta canônica de 500 KB** (doc 01 §7) — 812.949 B em 1440 px
+   e 625.069 B em 375 px. Desvio anterior à H4.1, medido e declarado; tratamento
+   pertence à H7.
+2. **O CI não prova o gate real** — roda contra base sem dados e pula os blocos
+   de integração. **Este deploy não foi validado pelo CI**; a liberação apoiou-se
+   na execução manual do gate com credencial.
+3. **Três testes de escrita real no R2** permanecem desabilitados por decisão.
+
+Registro da operação:
+[`docs/tarefas/14-liberacao-deploy-h4-1.md`](./docs/tarefas/14-liberacao-deploy-h4-1.md).
+
+Estado: **H0–H4.1 EM PRODUÇÃO E ESTÁVEL**. Sem merge, PR, alteração de banco,
+R2, DNS, Cloudflare ou configuração da Vercel. H5 não foi iniciada.
