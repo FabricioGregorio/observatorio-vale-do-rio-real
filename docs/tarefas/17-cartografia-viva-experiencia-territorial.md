@@ -9,6 +9,11 @@
 **Rota:** `/dev/territorio-vivo` — somente desenvolvimento; responde 404 em
 produção (conferido em build de produção local).
 
+> **Continuidade:** aprovada como base do experimento, não para publicação. A
+> evolução segue na [Tarefa 18](./18-camada-geografica-local.md). Nela, as
+> etiquetas de lugar dentro do município (§9.1) foram retiradas e substituídas
+> por uma contagem, e entrou a camada geográfica local do Recanto da Serra.
+
 **Esta tarefa NÃO autoriza:**
 
 - criar a rota pública `/territorio`;
@@ -276,7 +281,10 @@ após rolar a página. A cópia foi apagada.
 - [ ] Decisão humana sobre a localização pública de Serra dos Macacos e de
       Ilha Grande, e sobre publicar A04.
 - [ ] Coordenadas confirmadas em campo ou por documento, com decisão de
-      publicar — ou manutenção honesta do nível município.
+      publicar — ou manutenção honesta do nível município. *(Confirmadas por
+      instrução humana em 2026-09-14, só para DEV — ver Tarefa 19.)*
+- [x] **Responsável autorizou a exposição pública das quatro coordenadas
+      exatas?** — sim, 2026-09-14 (Tarefa 19, §1).
 - [ ] Camada geográfica local derivada (vias, localidades, rio Real) com
       procedência, licença e teste, se a experiência local for mantida.
 - [ ] Decisão sobre a atribuição formal da fotografia do Recanto.

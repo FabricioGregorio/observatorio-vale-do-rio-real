@@ -86,12 +86,14 @@ describe("limites de dado dos lugares", () => {
     ]);
   });
 
-  test("município vem de pontos.ts, e nenhuma coordenada é afirmada", () => {
+  test("município vem de pontos.ts; o modelo versionado não carrega coordenada", () => {
     for (const lugar of LUGARES_DE_CAMPO) {
       const ponto = PONTOS_DE_VISITA_PREVISTOS.find((p) => p.id === lugar.id);
       expect(lugar.municipioId).toBe(ponto?.municipioId ?? null);
       expect(ponto?.coordenadas ?? null).toBeNull();
-      expect(lugar.comoChegar?.coordenadas ?? null).toBeNull();
+      // A posição confirmada é anexada em build, de arquivo local fora do Git.
+      expect(Object.keys(lugar)).not.toContain("posicao");
+      expect(Object.keys(lugar.comoChegar ?? {})).not.toContain("coordenadas");
     }
   });
 
