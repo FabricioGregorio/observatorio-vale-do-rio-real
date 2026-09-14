@@ -30,7 +30,7 @@ const LUGARES = [
     id: "serra-dos-macacos",
     aba: /Serra dos Macacos/,
     ficha: "Serra dos Macacos",
-    localidade: "Povoado Samambaia, Tobias Barreto (SE)",
+    localidade: "Comunidade próxima à Vila de Samambaia, Tobias Barreto (SE)",
     latitude: "-10.8811",
     longitude: "-37.9867",
   },
@@ -228,6 +228,37 @@ test("mapa local: pin do lugar, localidade IBGE distinta, atribuição do OSM vi
       "© contribuidores do OpenStreetMap — ODbL 1.0",
     );
   }
+});
+
+test("Serra: comunidade visitada e Vila Samambaia permanecem territorialmente distintas", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const raiz = await abrir(page);
+  await selecionar(page, /Serra dos Macacos/);
+  await expect(raiz).toHaveAttribute("data-escala", "local");
+
+  const escopo = '[data-tv-camada-local="serra-dos-macacos"]';
+  const pin = page.locator(
+    `${escopo} [data-tipo="lugar"][data-pin="serra-dos-macacos"]`,
+  );
+  const referencia = page.locator(
+    `${escopo} [data-tipo="referencia-cartografica"][data-codigo-ibge="280740210"]`,
+  );
+  await expect(pin).toHaveAttribute("data-selecionado", "true");
+  await expect(referencia).toHaveCount(1);
+  await expect(referencia).toContainText("Vila Samambaia · IBGE");
+  await expect(
+    page.locator(`${escopo} [data-tipo="localidade-do-lugar"]`),
+  ).toHaveCount(0);
+
+  const ficha = page.getByRole("tabpanel", { name: "Serra dos Macacos" });
+  await expect(ficha).toContainText(
+    "Comunidade próxima à Vila de Samambaia, Tobias Barreto (SE)",
+  );
+  await expect(ficha).toContainText(
+    "Vila Samambaia · IBGE — referência territorial próxima; não representa o lugar visitado.",
+  );
 });
 
 test("cada seleção centraliza o pin e o mapa local pertence ao lugar", async ({

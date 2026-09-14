@@ -8,6 +8,7 @@ import {
 } from "./entorno";
 import {
   CODIGO_DA_LOCALIDADE_JACARE,
+  CODIGO_DA_VILA_SAMAMBAIA,
   CODIGO_DO_POVOADO_BORDA_DA_MATA,
   type IdDoLugar,
   type PosicaoConfirmada,
@@ -90,7 +91,7 @@ export const ENTORNOS: readonly DefinicaoDeEntorno[] = [
     caminho: caminhoDoEntorno("serra-dos-macacos"),
     versionavel: true,
     enquadramentoFixo: null,
-    localidadesObrigatorias: [],
+    localidadesObrigatorias: [CODIGO_DA_VILA_SAMAMBAIA],
   },
   {
     id: "ilha-grande",

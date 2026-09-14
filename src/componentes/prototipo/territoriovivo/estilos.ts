@@ -19,6 +19,8 @@
  * - **Lugar da pesquisa:** pin em gota. Selecionado: maior, milho, contorno
  *   grosso e etiqueta com "▸" — forma, contorno e texto, não só cor.
  * - **Localidade do lugar (IBGE):** quadrado em anel tracejado, sem milho.
+ * - **Referência cartográfica próxima (IBGE):** quadrado vazado e rótulo
+ *   explícito; nunca substitui o pin.
  * - **Sede:** quadrado cheio. **Outras localidades:** quadrado vazado.
  * - **Rodovia:** traço grosso com casco; estrada vicinal, traço fino e claro,
  *   para não competir com o pin.
@@ -148,6 +150,7 @@ export const CSS_DO_TERRITORIO_VIVO = `
 .tv-local .loc text{font-family:var(--font-display);font-weight:500;fill:var(--tv-rotulo);paint-order:stroke;stroke:var(--tv-plano);stroke-width:.32em;stroke-linejoin:round}
 .tv-local .loc.sede text{font-weight:700}
 .tv-local .loc.outra text{font-weight:400}
+.tv-local .loc.referencia-cartografica text{font-style:italic;font-weight:500}
 .tv-local .ref .anel-ref{fill:none;stroke:var(--tv-contorno-foco);stroke-width:1.6;stroke-dasharray:4 3;vector-effect:non-scaling-stroke}
 .tv-local .ref .nucleo-ref{fill:var(--tv-plano);stroke:var(--tv-localidade);stroke-width:1.4;vector-effect:non-scaling-stroke}
 .tv-local .ref-rotulo{font-family:var(--font-display);font-style:italic;font-weight:500;fill:var(--tv-rotulo);paint-order:stroke;stroke:var(--tv-plano);stroke-width:.32em;stroke-linejoin:round}
@@ -249,6 +252,8 @@ export const CSS_DO_TERRITORIO_VIVO = `
     povoados e códigos de rodovia sobem, porque são o que orienta a chegada.
   */
   .tv-local .loc.outra{display:none}
+  .tv-local .loc.referencia-cartografica{display:initial}
+  .tv-local .loc.referencia-cartografica text{font-size:11px}
   .tv-local .loc.povoado text{font-size:11px}
   .tv-local .escudo text{font-size:8px}
 }

@@ -494,6 +494,13 @@ export function TerritorioVivo() {
               Localidade (IBGE 2022)
             </li>
             <li>
+              <span
+                aria-hidden="true"
+                className="tv__amostra tv__amostra--localidade"
+              />
+              Referência cartográfica próxima (IBGE; não é o lugar)
+            </li>
+            <li>
               <span aria-hidden="true" className="tv__traco" />
               Rodovia
             </li>
@@ -548,9 +555,13 @@ export function TerritorioVivo() {
               const rotuloLocal =
                 p === null || p.local === null
                   ? undefined
-                  : lugar.localidade !== null && municipio !== null
+                  : lugar.camadaLocal?.localidadeIbge !== null &&
+                      lugar.localidade !== null &&
+                      municipio !== null
                     ? `Mapa detalhado do entorno do ${lugar.localidade.texto}, em ${municipio}: pin de ${lugar.nome} na posição confirmada e, com outro símbolo, a localidade segundo o IBGE. Vias e cursos d'água do OpenStreetMap; localidades do IBGE.`
-                    : `Mapa detalhado do entorno de ${lugar.nome}, com o pin na posição confirmada. Vias e cursos d'água do OpenStreetMap; localidades do IBGE.`;
+                    : lugar.camadaLocal?.referenciaCartografica != null
+                      ? `Mapa detalhado do entorno de ${lugar.nome}: pin na posição confirmada da comunidade visitada. ${lugar.camadaLocal.referenciaCartografica.rotulo} aparece apenas como referência cartográfica próxima e não representa o lugar visitado. Vias e cursos d'água do OpenStreetMap; localidades do IBGE.`
+                      : `Mapa detalhado do entorno de ${lugar.nome}, com o pin na posição confirmada. Vias e cursos d'água do OpenStreetMap; localidades do IBGE.`;
               const anuncio =
                 p === null
                   ? `${lugar.nome} selecionado. Este lugar não está posicionado no mapa.`
@@ -785,10 +796,24 @@ function FichaDoLugar({
             <dl className="chegar">
               {lugar.localidade !== null ? (
                 <div>
-                  <dt className="fonte">Localidade</dt>
+                  <dt className="fonte">
+                    {lugar.camadaLocal?.referenciaCartografica != null
+                      ? "Localização"
+                      : "Localidade"}
+                  </dt>
                   <dd>
                     {lugar.localidade.texto}
                     {municipio !== null ? `, ${municipio} (SE)` : ""}
+                  </dd>
+                </div>
+              ) : null}
+              {lugar.camadaLocal?.referenciaCartografica != null ? (
+                <div>
+                  <dt className="fonte">Referência cartográfica</dt>
+                  <dd>
+                    {lugar.camadaLocal.referenciaCartografica.rotulo} —
+                    referência territorial próxima; não representa o lugar
+                    visitado.
                   </dd>
                 </div>
               ) : null}

@@ -18,6 +18,7 @@ import type { CamadaLocal } from "./camada";
  * |---|---|
  * | lugar da pesquisa (posição confirmada) | pin em gota; selecionado: maior, milho, contorno grosso, etiqueta "▸" |
  * | localidade do lugar (IBGE) | quadrado pequeno dentro de anel tracejado, sem milho |
+ * | referência cartográfica próxima (IBGE) | quadrado vazado e rótulo explícito “· IBGE” |
  * | sede municipal | quadrado cheio |
  * | outras localidades | quadrado vazado |
  * | rodovia | placa com o código, em fonte mono |
@@ -87,8 +88,10 @@ export function svgDaCamadaLocal(
   }
 
   for (const l of camada.localidades) {
+    const classeDaReferencia =
+      l.tipo === "referencia-cartografica" ? " referencia-cartografica" : "";
     s.push(
-      `<g class="loc ${l.classe}" data-tipo="${l.classe === "sede" ? "sede" : "localidade"}" data-codigo-ibge="${l.codigoIbge}"><rect x="${n(l.x - l.marca)}" y="${n(l.y - l.marca)}" width="${n(l.marca * 2)}" height="${n(l.marca * 2)}"/><text x="${n(l.tx)}" y="${n(l.y + l.fonte * 0.34)}" font-size="${n(l.fonte)}" text-anchor="${l.lado === "direita" ? "start" : "end"}">${escapar(l.texto)}</text></g>`,
+      `<g class="loc ${l.classe}${classeDaReferencia}" data-tipo="${l.tipo}" data-codigo-ibge="${l.codigoIbge}"><rect x="${n(l.x - l.marca)}" y="${n(l.y - l.marca)}" width="${n(l.marca * 2)}" height="${n(l.marca * 2)}"/><text x="${n(l.tx)}" y="${n(l.y + l.fonte * 0.34)}" font-size="${n(l.fonte)}" text-anchor="${l.lado === "direita" ? "start" : "end"}">${escapar(l.texto)}</text></g>`,
     );
   }
 

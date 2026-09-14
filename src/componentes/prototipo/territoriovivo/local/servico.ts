@@ -42,6 +42,8 @@ export function svgDoEntornoDoLugar(id: string): string | null {
       posicao: [l.posicao.longitude, l.posicao.latitude] as const,
     })),
     localidadeDoLugar: lugar.camadaLocal?.localidadeIbge ?? null,
+    referenciaCartograficaDoLugar:
+      lugar.camadaLocal?.referenciaCartografica ?? null,
   });
   return svgDaCamadaLocal(camada, base.vista, lugar.id);
 }
