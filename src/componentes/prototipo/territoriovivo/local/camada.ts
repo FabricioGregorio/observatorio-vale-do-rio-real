@@ -51,6 +51,7 @@ export type RotuloDeLocalidade = {
   readonly tx: number;
   readonly fonte: number;
   readonly marca: number;
+  readonly tipo: "sede" | "localidade" | "referencia-cartografica";
 };
 
 export type EscudoDeRodovia = Caixa & {
@@ -129,6 +130,10 @@ export function montarCamadaLocal(opcoes: {
     readonly posicao: Posicao;
   }[];
   readonly localidadeDoLugar: string | null;
+  readonly referenciaCartograficaDoLugar: {
+    readonly codigoIbge: string;
+    readonly rotulo: string;
+  } | null;
 }): CamadaLocal {
   const { projecao, vista, fs, raio, entorno, geografico: g } = opcoes;
   const vw = vista.x1 - vista.x0;
@@ -339,6 +344,12 @@ export function montarCamadaLocal(opcoes: {
     .filter((l) => l.codigoIbge !== localDoLugar?.codigoIbge)
     .sort(
       (a, b) =>
+        Number(
+          b.codigoIbge === opcoes.referenciaCartograficaDoLugar?.codigoIbge,
+        ) -
+          Number(
+            a.codigoIbge === opcoes.referenciaCartograficaDoLugar?.codigoIbge,
+          ) ||
         ordem(a.categoria) - ordem(b.categoria) ||
         a.codigoIbge.localeCompare(b.codigoIbge),
     );
@@ -352,10 +363,16 @@ export function montarCamadaLocal(opcoes: {
       continue;
     }
     const nivel = ordem(l.categoria);
+    const ehReferenciaCartografica =
+      l.codigoIbge === opcoes.referenciaCartograficaDoLugar?.codigoIbge;
     const classe: ClasseDeLocalidade =
       nivel === 0 ? "sede" : nivel === 1 ? "povoado" : "outra";
     const fonte = nivel === 0 ? fs * 0.92 : nivel === 1 ? fs * 0.76 : fs * 0.7;
-    const texto = nivel === 0 ? `${l.nome} · sede` : l.nome;
+    const texto = ehReferenciaCartografica
+      ? (opcoes.referenciaCartograficaDoLugar?.rotulo ?? l.nome)
+      : nivel === 0
+        ? `${l.nome} · sede`
+        : l.nome;
     const [x, y] = p(l.posicao);
     const marca = raio * (nivel === 0 ? 0.62 : 0.42);
     const caixaMarca: Caixa = {
@@ -392,6 +409,11 @@ export function montarCamadaLocal(opcoes: {
       tx: lado === direita ? lado.x0 : lado.x1,
       fonte,
       marca,
+      tipo: ehReferenciaCartografica
+        ? "referencia-cartografica"
+        : classe === "sede"
+          ? "sede"
+          : "localidade",
     });
   }
 

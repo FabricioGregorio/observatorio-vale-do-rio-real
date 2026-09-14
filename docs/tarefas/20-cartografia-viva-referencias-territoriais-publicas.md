@@ -10,6 +10,14 @@ territoriais publicáveis**.
 **Base:** `ec8dc0f feat: evolui cartografia viva com camadas sob demanda`
 (Tarefas 18 e 19).
 
+> **Atualização de continuidade — 2026-09-14:** nova instrução humana refinou
+> a identificação territorial da Serra dos Macacos. O trabalho de campo
+> ocorreu em uma pequena comunidade próxima à Vila de Samambaia, e não
+> propriamente na Vila nem em um “Povoado Samambaia” de nome oficial
+> confirmado. A coordenada humana `-10.8811, -37.9867` permanece inalterada.
+> As menções ao estado anterior são preservadas abaixo como trilha histórica;
+> o modelo vigente está nos §§3–4 e 20.
+
 **Rotas:** `/dev/territorio-vivo` e `/dev/territorio-vivo/camada-local/[lugar]`
 — somente desenvolvimento; 404 em produção (conferido em build).
 
@@ -42,7 +50,7 @@ documental restrito.
 | Coordenadas | `coordenadas-confirmadas.local.json`, fora do Git | `local/referencias.ts`, fonte versionada única |
 | `publicacaoPublicaAutorizada` | `false` | `true` |
 | Fonte do ponto | “confirmação humana direta — 2026-09-14” | “confirmação humana direta do responsável — 2026-09-14” |
-| Município e localidade de Serra e Ilha | não publicados | Tobias Barreto / Povoado Samambaia; São Cristóvão / Povoado Ilha Grande |
+| Município e localização de Serra e Ilha | não publicados | Tobias Barreto / comunidade próxima à Vila de Samambaia; São Cristóvão / Povoado Ilha Grande |
 | Entornos de Borda, Serra e Ilha | `entornos/*.local.json`, fora do Git | `entornos/*.json`, versionados |
 | Procedência desses entornos | `*.procedencia.local.json`, fora do Git | `local/procedencia.ts` |
 | Teste com valores literais | local, fora do Git | `testes/territorio-vivo-coordenadas.test.ts` |
@@ -58,8 +66,9 @@ fonte versionada do território dos lugares. Cada registro tem:
 | `id`, `nome` | identificador e nome do lugar |
 | `latitude`, `longitude` | coordenada confirmada, exata |
 | `municipio`, `municipioIbge` | nome e código IBGE do município |
-| `localidade` | localidade confirmada pelo responsável |
+| `localidade` | identificação editorial da localização confirmada pelo responsável |
 | `localidadeIbge` | código da localidade IBGE correspondente, só quando há correspondente seguro (§6) |
+| `referenciaCartografica` | entidade cartográfica próxima que não representa o lugar; na Serra, Vila Samambaia · IBGE |
 | `referenciaTerritorial` | texto territorial autorizado, quando existe |
 | `coordenadaConfirmada` | `true` |
 | `fonteDaCoordenada` | “confirmação humana direta do responsável — 2026-09-14” |
@@ -78,7 +87,7 @@ fonte versionada do território dos lugares. Cada registro tem:
 |---|---:|---:|---|---|---|
 | Recanto da Serra | -11.015393101706083 | -38.048667603935414 | Tobias Barreto | Povoado Jacaré | Jacaré (280740200039) |
 | Museu Borda da Mata | -11.127754407274919 | -37.88642982557546 | Tobias Barreto | Povoado Borda da Mata | Borda da Mata, povoado (280740200023) |
-| Serra dos Macacos | -10.8811 | -37.9867 | Tobias Barreto | Povoado Samambaia | — |
+| Serra dos Macacos | -10.8811 | -37.9867 | Tobias Barreto | Comunidade próxima à Vila de Samambaia | Vila Samambaia · IBGE — referência próxima, não o lugar |
 | Ilha Grande | -11.0639 | -37.2086 | São Cristóvão | Povoado Ilha Grande | — |
 
 **Referência territorial autorizada (Serra dos Macacos):** a Serra dos Macacos
@@ -115,7 +124,8 @@ atual, mas protege entornos futuros.
     “Borda da Mata I” (outra localidade, a ~0,3 km) **não** substitui o nome
     confirmado e fica fora do mapa pelo filtro de nomes.
   - **Serra dos Macacos**: o IBGE tem “Samambaia” como **Vila** (sede de
-    distrito), a ~9 km. Não é correspondente seguro; aparece só como contexto.
+    distrito), a ~9 km. Não é correspondente seguro nem o lugar visitado;
+    aparece só como referência cartográfica, rotulada “Vila Samambaia · IBGE”.
   - **Ilha Grande**: não há localidade com esse nome na base IBGE de Sergipe.
     Localidades vizinhas (ex.: Pedreiras) aparecem só como contexto, e Ilha
     Grande não é identificada como nenhuma delas.
@@ -167,7 +177,7 @@ Para os quatro lugares, só com o que existe:
 
 | Seção | Recanto | Borda | Serra | Ilha |
 |---|---|---|---|---|
-| Localidade | Povoado Jacaré, Tobias Barreto (SE) | Povoado Borda da Mata, Tobias Barreto (SE) | Povoado Samambaia, Tobias Barreto (SE) | Povoado Ilha Grande, São Cristóvão (SE) |
+| Localização | Povoado Jacaré, Tobias Barreto (SE) | Povoado Borda da Mata, Tobias Barreto (SE) | Comunidade próxima à Vila de Samambaia, Tobias Barreto (SE) | Povoado Ilha Grande, São Cristóvão (SE) |
 | Referência | texto do A02 sobre transporte | — | divisa com Simão Dias e Poço Verde; marco e mirante | — |
 | Abrir rota | OSM e Google Maps | OSM e Google Maps | OSM e Google Maps | OSM e Google Maps |
 
@@ -261,6 +271,8 @@ depender do mapa. Os testes cobrem os quatro lugares.
 - três pins de Tobias em cada aproximação do município;
 - mapa local do lugar certo, com o pin na projeção exata;
 - localidade IBGE distinta do pin.
+- Vila Samambaia tratada como referência cartográfica próxima, nunca como o
+  lugar visitado nem como substituta da coordenada humana.
 
 **Rotas:** URLs exatas nos quatro.
 
@@ -359,8 +371,8 @@ pré-renderizada no build e servida sem passar pela compressão aplicada ao HTML
 - Servidor dev: um derivado novo só é servido depois de recompilar a rota
   (cache de `generateStaticParams`); em build de produção não acontece.
 - A correspondência “localidade confirmada ↔ localidade IBGE” foi feita por nome
-  e categoria; Samambaia ficou só como contexto por falta de correspondente
-  seguro.
+  e categoria; Vila Samambaia ficou só como referência cartográfica próxima,
+  explicitamente distinta da comunidade visitada.
 
 ## 19. Checklist antes de publicar `/territorio`
 
@@ -372,3 +384,25 @@ pré-renderizada no build e servida sem passar pela compressão aplicada ao HTML
 - [ ] Compressão das camadas locais (§ Performance).
 - [ ] Revisão humana dos nomes de contexto exibidos nos quatro mapas locais.
 - [ ] Atribuição formal da fotografia do Recanto.
+
+## 20. Correção da identificação da Serra dos Macacos
+
+Em 2026-09-14, nova instrução humana refinou a identificação territorial: o
+trabalho de campo ocorreu em uma pequena comunidade próxima à Vila de
+Samambaia, e não propriamente na Vila/Povoado Samambaia. A coordenada humana
+confirmada permanece inalterada em `-10.8811, -37.9867`.
+
+O estado anterior — “Povoado Samambaia” — não foi apagado da trilha: ele está
+registrado na versão original desta tarefa e no quadro histórico do §2. A fonte
+versionada agora diferencia três coisas:
+
+- **lugar visitado:** Serra dos Macacos / comunidade visitada;
+- **localização editorial:** Comunidade próxima à Vila de Samambaia, Tobias
+  Barreto (SE);
+- **referência cartográfica:** Vila Samambaia · IBGE, entidade próxima que não
+  representa o lugar.
+
+O pin e os links de rota continuam usando exclusivamente a confirmação humana
+`-10.8811, -37.9867`. O ponto IBGE da Vila Samambaia não substitui, corrige nem
+desloca essa coordenada. A correção territorial também não reclassifica A04,
+entrevistas, formulários, transcrições ou qualquer outro documento restrito.

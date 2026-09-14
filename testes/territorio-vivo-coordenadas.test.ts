@@ -14,6 +14,7 @@ import { carregarEntorno } from "../src/componentes/prototipo/territoriovivo/loc
 import { ENTORNOS } from "../src/componentes/prototipo/territoriovivo/local/entornos";
 import {
   FONTE_DA_COORDENADA,
+  FONTE_DA_REFERENCIA_CARTOGRAFICA,
   REFERENCIAS_TERRITORIAIS,
   referenciaDe,
 } from "../src/componentes/prototipo/territoriovivo/local/referencias";
@@ -51,7 +52,7 @@ const ESPERADO = {
     longitude: -37.9867,
     municipio: "Tobias Barreto",
     municipioIbge: "2807402",
-    localidade: "Povoado Samambaia",
+    localidade: "Comunidade próxima à Vila de Samambaia",
   },
   "ilha-grande": {
     latitude: -11.0639,
@@ -127,6 +128,18 @@ describe("dados territoriais públicos", () => {
       "divisa com os municípios de Simão Dias e Poço Verde",
     );
     expect(serra?.comoChegar?.referencia?.fonte).toBe(FONTE_DA_COORDENADA);
+  });
+
+  test("a Vila Samambaia é referência cartográfica, não o lugar visitado", () => {
+    const serra = referenciaDe("serra-dos-macacos");
+    expect(serra.localidade).toBe("Comunidade próxima à Vila de Samambaia");
+    expect(serra.localidadeIbge).toBeNull();
+    expect(serra.referenciaCartografica).toEqual({
+      nome: "Vila Samambaia",
+      rotulo: "Vila Samambaia · IBGE",
+      codigoIbge: "280740210",
+      fonte: FONTE_DA_REFERENCIA_CARTOGRAFICA,
+    });
   });
 
   test("os valores vivem numa fonte só dentro do laboratório", () => {
@@ -281,6 +294,33 @@ describe("geografia", () => {
         'data-tipo="localidade-do-lugar"',
       );
     }
+  });
+
+  test("Vila Samambaia aparece só como referência cartográfica e não move o pin da Serra", () => {
+    const svg = svgDoEntornoDoLugar("serra-dos-macacos") ?? "";
+    expect(svg).toContain(
+      '<g class="loc outra referencia-cartografica" data-tipo="referencia-cartografica" data-codigo-ibge="280740210">',
+    );
+    expect(svg).toContain("Vila Samambaia · IBGE");
+    expect(svg).not.toContain(
+      'data-tipo="localidade-do-lugar" data-codigo-ibge="280740210"',
+    );
+
+    const pin =
+      /data-pin="serra-dos-macacos" data-selecionado="true" transform="translate\((-?[\d.]+) (-?[\d.]+)\)"/.exec(
+        svg,
+      );
+    expect(pin).not.toBeNull();
+    const serra = porId("serra-dos-macacos");
+    if (serra.local === null) throw new Error("Serra sem entorno local.");
+    const [mx, my] = projetarContinuo(
+      serra.posicao.longitude,
+      serra.posicao.latitude,
+      base.dados.projecao,
+    );
+    const [x, y] = aplicar(serra.local.enquadramento, mx, my);
+    expect(Number(pin?.[1])).toBeCloseTo(x, 1);
+    expect(Number(pin?.[2])).toBeCloseTo(y, 1);
   });
 });
 

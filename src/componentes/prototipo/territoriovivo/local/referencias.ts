@@ -11,6 +11,9 @@
  *   laboratório, em arquivo local fora do Git (Tarefa 19).
  * - 2026-09-14, decisão posterior: publicação pública e versionamento
  *   autorizados, com município, localidade e Como chegar (Tarefa 20).
+ * - 2026-09-14, refinamento posterior: o lugar visitado na Serra dos Macacos
+ *   é uma comunidade próxima à Vila de Samambaia, não a própria Vila nem um
+ *   povoado de nome oficial confirmado. A coordenada permaneceu inalterada.
  *
  * ## O ponto × o contexto
  *
@@ -34,11 +37,25 @@ export type IdDoLugar = (typeof IDS_DOS_LUGARES)[number];
 export const FONTE_DA_COORDENADA =
   "confirmação humana direta do responsável — 2026-09-14";
 
+export const FONTE_DA_REFERENCIA_CARTOGRAFICA =
+  "IBGE — Localidades do Brasil, Censo 2022";
+
 /** Código IBGE da localidade Jacaré, Tobias Barreto (Localidades 2022). */
 export const CODIGO_DA_LOCALIDADE_JACARE = "280740200039";
 
 /** Código IBGE do povoado Borda da Mata, Tobias Barreto (Localidades 2022). */
 export const CODIGO_DO_POVOADO_BORDA_DA_MATA = "280740200023";
+
+/** Código IBGE da Vila Samambaia, sede de distrito em Tobias Barreto. */
+export const CODIGO_DA_VILA_SAMAMBAIA = "280740210";
+
+export type ReferenciaCartografica = {
+  /** Nome editorial da entidade cartográfica, sem confundi-la com o lugar. */
+  readonly nome: string;
+  readonly rotulo: string;
+  readonly codigoIbge: string;
+  readonly fonte: typeof FONTE_DA_REFERENCIA_CARTOGRAFICA;
+};
 
 export type ReferenciaTerritorial = {
   readonly id: IdDoLugar;
@@ -48,7 +65,7 @@ export type ReferenciaTerritorial = {
   readonly municipio: string;
   /** Código IBGE do município. */
   readonly municipioIbge: string;
-  /** Localidade confirmada pelo responsável. */
+  /** Identificação editorial da localização confirmada pelo responsável. */
   readonly localidade: string;
   /**
    * Localidade do IBGE que corresponde à localidade confirmada — mesmo nome e
@@ -57,6 +74,8 @@ export type ReferenciaTerritorial = {
    * não tem correspondente seguro.
    */
   readonly localidadeIbge: string | null;
+  /** Entidade cartográfica próxima que não representa o lugar visitado. */
+  readonly referenciaCartografica: ReferenciaCartografica | null;
   /** Texto territorial autorizado pelo responsável, quando existe. */
   readonly referenciaTerritorial: string | null;
   readonly coordenadaConfirmada: true;
@@ -82,6 +101,7 @@ export const REFERENCIAS_TERRITORIAIS: readonly ReferenciaTerritorial[] = [
     municipioIbge: "2807402",
     localidade: "Povoado Jacaré",
     localidadeIbge: CODIGO_DA_LOCALIDADE_JACARE,
+    referenciaCartografica: null,
     referenciaTerritorial: null,
     ...AUTORIZACAO,
   },
@@ -94,6 +114,7 @@ export const REFERENCIAS_TERRITORIAIS: readonly ReferenciaTerritorial[] = [
     municipioIbge: "2807402",
     localidade: "Povoado Borda da Mata",
     localidadeIbge: CODIGO_DO_POVOADO_BORDA_DA_MATA,
+    referenciaCartografica: null,
     referenciaTerritorial: null,
     ...AUTORIZACAO,
   },
@@ -104,10 +125,16 @@ export const REFERENCIAS_TERRITORIAIS: readonly ReferenciaTerritorial[] = [
     longitude: -37.9867,
     municipio: "Tobias Barreto",
     municipioIbge: "2807402",
-    localidade: "Povoado Samambaia",
-    // No IBGE, "Samambaia" é Vila (sede de distrito) a ~9 km do ponto: não é
-    // correspondente seguro. Aparece no mapa só como contexto.
+    localidade: "Comunidade próxima à Vila de Samambaia",
+    // A Vila Samambaia do IBGE é apenas uma referência territorial próxima.
+    // Não é a comunidade visitada e nunca substitui a coordenada humana.
     localidadeIbge: null,
+    referenciaCartografica: {
+      nome: "Vila Samambaia",
+      rotulo: "Vila Samambaia · IBGE",
+      codigoIbge: CODIGO_DA_VILA_SAMAMBAIA,
+      fonte: FONTE_DA_REFERENCIA_CARTOGRAFICA,
+    },
     referenciaTerritorial:
       "A Serra dos Macacos está situada especificamente na divisa com os municípios de Simão Dias e Poço Verde, servindo como marco geográfico e mirante natural entre essas cidades.",
     ...AUTORIZACAO,
@@ -123,6 +150,7 @@ export const REFERENCIAS_TERRITORIAIS: readonly ReferenciaTerritorial[] = [
     // tem localidade com esse nome; vizinhas aparecem só como contexto.
     localidade: "Povoado Ilha Grande",
     localidadeIbge: null,
+    referenciaCartografica: null,
     referenciaTerritorial: null,
     ...AUTORIZACAO,
   },

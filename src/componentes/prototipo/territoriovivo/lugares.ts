@@ -13,6 +13,7 @@ import type { IdDoEntorno } from "./local/entornos";
 import {
   FONTE_DA_COORDENADA,
   type IdDoLugar,
+  type ReferenciaCartografica,
   referenciaDe,
 } from "./local/referencias";
 
@@ -79,6 +80,8 @@ export type CamadaLocalDoLugar = {
    * **contexto**, desenhada com símbolo próprio; nunca a posição do lugar.
    */
   readonly localidadeIbge: string | null;
+  /** Entidade cartográfica próxima; não é a localização do lugar. */
+  readonly referenciaCartografica: ReferenciaCartografica | null;
 };
 
 export type LugarDeCampo = {
@@ -117,7 +120,11 @@ function territorio(id: IdDoLugar, entorno: IdDoEntorno) {
     nome: r.nome,
     municipioId: r.municipioIbge,
     localidade: { texto: r.localidade, fonte: FONTE_DA_COORDENADA },
-    camadaLocal: { entorno, localidadeIbge: r.localidadeIbge },
+    camadaLocal: {
+      entorno,
+      localidadeIbge: r.localidadeIbge,
+      referenciaCartografica: r.referenciaCartografica,
+    },
   } as const;
 }
 

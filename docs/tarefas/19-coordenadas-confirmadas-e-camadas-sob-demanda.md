@@ -55,6 +55,13 @@
 > arquivo local, o teste local e as exclusões desta experiência em
 > `.git/info/exclude` foram removidos. As seções abaixo descrevem o estado
 > **anterior** e ficam como registro.
+>
+> **Refinamento territorial posterior — 2026-09-14:** nova instrução humana
+> corrigiu a identificação da Serra dos Macacos: o trabalho de campo ocorreu
+> em uma pequena comunidade próxima à Vila de Samambaia, e não propriamente na
+> Vila nem em um “Povoado Samambaia” de nome oficial confirmado. A coordenada
+> humana `-10.8811, -37.9867` permaneceu inalterada. A Tarefa 20 registra o
+> modelo versionado corrigido; este documento preserva o estado anterior.
 
 **Este documento não contém as coordenadas.** Elas vivem no arquivo local
 `src/componentes/prototipo/territoriovivo/local/coordenadas-confirmadas.local.json`,
