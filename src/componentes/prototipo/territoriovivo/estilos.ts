@@ -6,16 +6,25 @@
  * Os papéis globais de `tokens.css` não mudam. Aqui nascem **nomes locais**
  * (`--tv-*`), escopados em `.tv`, todos derivados de papéis existentes por
  * `color-mix` — nenhuma cor literal. O bloco escuro repete a cascata do
- * `tokens.css` (sistema, `data-tema="escuro"`), porque o mapa atual perde
- * definição justamente onde o tema troca: a placa clara com sombra carvão some
- * sobre a noite.
+ * `tokens.css` (sistema, `data-tema="escuro"`), porque o mapa perde definição
+ * justamente onde o tema troca: a placa clara com sombra carvão some sobre a
+ * noite.
  *
  * No escuro, a separação entre mapa e fundo **não depende de preto**: a placa
  * ganha borda mais clara e um filete interno claro; os limites municipais
- * sobem de contraste.
+ * sobem de contraste (melhoria aprovada na Tarefa 17).
+ *
+ * ## Símbolos (Tarefas 18 e 19)
+ *
+ * - **Lugar da pesquisa:** pin em gota. Selecionado: maior, milho, contorno
+ *   grosso e etiqueta com "▸" — forma, contorno e texto, não só cor.
+ * - **Localidade do lugar (IBGE):** quadrado em anel tracejado, sem milho.
+ * - **Sede:** quadrado cheio. **Outras localidades:** quadrado vazado.
+ * - **Rodovia:** traço grosso com casco; estrada vicinal, traço fino e claro,
+ *   para não competir com o pin.
  *
  * Nenhuma informação só por cor: Vale é preenchimento, pesquisa de campo é
- * hachura, foco é espessura, selecionado é anel tracejado mais marca textual.
+ * hachura, foco é espessura, selecionado é forma mais marca textual.
  */
 export const CSS_DO_TERRITORIO_VIVO = `
 .tv{
@@ -36,7 +45,15 @@ export const CSS_DO_TERRITORIO_VIVO = `
   --tv-pin-selecionado-texto:var(--color-texto-sobre-destaque);
   --tv-contorno-foco:var(--color-texto);
   --tv-hover:color-mix(in srgb,var(--color-marca) 14%,var(--color-fundo-elevado));
+  --tv-local-municipio:color-mix(in srgb,var(--color-marca) 9%,var(--color-fundo-elevado));
+  --tv-via-rodovia:color-mix(in srgb,var(--color-texto) 84%,var(--color-fundo-elevado));
+  --tv-via-casco:var(--tv-plano);
+  --tv-via-estrada:color-mix(in srgb,var(--color-texto) 36%,var(--color-fundo-elevado));
+  --tv-via-urbana:color-mix(in srgb,var(--color-texto) 24%,var(--color-fundo-elevado));
+  --tv-agua:color-mix(in srgb,var(--color-link) 62%,var(--color-fundo-elevado));
+  --tv-localidade:var(--color-texto);
   --tv-duracao:calc(var(--duracao-painel) * 2.75);
+  --tv-duracao-local:calc(var(--duracao-painel) * 4.5);
   max-width:var(--largura-conteudo);margin-inline:auto;padding:clamp(1.5rem,4vw,3rem) clamp(1rem,4vw,3rem) clamp(3rem,7vw,6rem);
 }
 @media (prefers-color-scheme:dark){
@@ -51,6 +68,11 @@ export const CSS_DO_TERRITORIO_VIVO = `
     --tv-limite-externo:color-mix(in srgb,var(--color-texto) 40%,var(--color-fundo-elevado));
     --tv-stroke-interno:color-mix(in srgb,var(--color-texto) 30%,var(--color-fundo-elevado));
     --tv-hover:color-mix(in srgb,var(--color-marca) 24%,var(--color-fundo-elevado));
+    --tv-local-municipio:color-mix(in srgb,var(--color-marca) 14%,var(--color-fundo-elevado));
+    --tv-via-rodovia:color-mix(in srgb,var(--color-texto) 88%,var(--color-fundo-elevado));
+    --tv-via-estrada:color-mix(in srgb,var(--color-texto) 42%,var(--color-fundo-elevado));
+    --tv-via-urbana:color-mix(in srgb,var(--color-texto) 30%,var(--color-fundo-elevado));
+    --tv-agua:color-mix(in srgb,var(--color-link) 70%,var(--color-fundo-elevado));
   }
 }
 :root[data-tema="escuro"] .tv{
@@ -64,6 +86,11 @@ export const CSS_DO_TERRITORIO_VIVO = `
   --tv-limite-externo:color-mix(in srgb,var(--color-texto) 40%,var(--color-fundo-elevado));
   --tv-stroke-interno:color-mix(in srgb,var(--color-texto) 30%,var(--color-fundo-elevado));
   --tv-hover:color-mix(in srgb,var(--color-marca) 24%,var(--color-fundo-elevado));
+  --tv-local-municipio:color-mix(in srgb,var(--color-marca) 14%,var(--color-fundo-elevado));
+  --tv-via-rodovia:color-mix(in srgb,var(--color-texto) 88%,var(--color-fundo-elevado));
+  --tv-via-estrada:color-mix(in srgb,var(--color-texto) 42%,var(--color-fundo-elevado));
+  --tv-via-urbana:color-mix(in srgb,var(--color-texto) 30%,var(--color-fundo-elevado));
+  --tv-agua:color-mix(in srgb,var(--color-link) 70%,var(--color-fundo-elevado));
 }
 
 .tv-dev{margin:0;padding:.45rem clamp(1rem,4vw,3rem);background:var(--color-destaque);color:var(--color-texto-sobre-destaque);font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);text-transform:uppercase}
@@ -76,36 +103,80 @@ export const CSS_DO_TERRITORIO_VIVO = `
 .tv__mapa{margin:0;display:grid;gap:.6rem;min-width:0}
 .tv__plano{position:relative;overflow:hidden;background:var(--tv-plano);border:1px solid var(--tv-borda-plano);border-radius:var(--radius-ficha);box-shadow:inset 0 1px 0 var(--tv-filete),0 1.25rem 2.5rem -1.5rem var(--tv-sombra)}
 .tv__plano svg{display:block;width:100%;height:auto;max-height:min(70svh,40rem)}
-.tv-mundo{transform-box:view-box;transform-origin:0 0;transform:translate(var(--tv-tx),var(--tv-ty)) scale(var(--tv-s));transition:transform var(--tv-duracao) var(--easing-padrao)}
+.tv-mundo{transform-box:view-box;transform-origin:0 0;transform:translate(var(--tv-tx),var(--tv-ty)) scale(var(--tv-s));transition-property:transform,opacity;transition-duration:var(--tv-duracao);transition-timing-function:var(--easing-padrao),linear}
 .tv .m{fill:var(--tv-terra);stroke:var(--tv-stroke-interno);stroke-width:1;vector-effect:non-scaling-stroke;transition:opacity var(--tv-duracao) var(--easing-padrao)}
 .tv .m.v{fill:var(--tv-vale);stroke:var(--tv-limite);stroke-width:1.4}
 .tv .h{fill:url(#tv-hachura);stroke:none;pointer-events:none;transition:opacity var(--tv-duracao) var(--easing-padrao)}
 .tv #tv-hachura line{stroke:var(--tv-hachura)}
 .tv .anel{fill:none;stroke:var(--tv-contorno-foco);stroke-width:3;stroke-dasharray:7 4;vector-effect:non-scaling-stroke;opacity:0;transition:opacity var(--tv-duracao) var(--easing-padrao)}
-.tv-escala{transform-box:view-box;transform-origin:0 0}
 .tv-rot{opacity:0;transition:opacity var(--tv-duracao) var(--easing-padrao);pointer-events:none}
-.tv-rot text,.tv-fixo text,.tv-marca text{font-family:var(--font-display)}
+.tv-rot text,.tv-fixo text,.tv-pin text{font-family:var(--font-display)}
 .tv-rot text{fill:var(--tv-rotulo);font-weight:600;paint-order:stroke;stroke:var(--tv-plano);stroke-linejoin:round}
-.tv-marca circle.base{fill:var(--tv-pin);stroke:var(--tv-plano)}
-.tv-marca text.n{fill:var(--tv-pin-texto);font-weight:700}
-.tv-marca circle.anel-marca{fill:none;stroke:var(--tv-contorno-foco);stroke-dasharray:3 2;opacity:0;transition:opacity var(--tv-duracao)}
-.tv-chips{opacity:0;pointer-events:none;transition:opacity var(--tv-duracao) var(--easing-padrao)}
-.tv-chip rect{fill:var(--tv-plano);stroke:var(--tv-limite)}
-.tv-chip text{fill:var(--tv-rotulo);font-weight:600}
-.tv[data-interativo] .tv-chip{cursor:pointer}
-.tv[data-interativo] .tv-chip:hover rect{fill:var(--tv-hover)}
-.tv-chips text.nota{font-family:var(--font-mono);font-weight:400;fill:var(--tv-rotulo);paint-order:stroke;stroke:var(--tv-plano);stroke-width:.3em;stroke-linejoin:round}
+.tv-contagem text{font-family:var(--font-mono);font-weight:400}
 .tv-fixo text{fill:var(--tv-rotulo)}
 .tv-fixo line,.tv-fixo path{stroke:var(--tv-rotulo);fill:none}
 .tv-fixo .escala{opacity:0}
 .tv-semlocal{opacity:0;transition:opacity var(--tv-duracao) var(--easing-padrao)}
 .tv-semlocal rect{fill:var(--tv-plano);stroke:var(--tv-borda-plano)}
+
+/* Pins na malha: ponta exatamente na coordenada confirmada */
+.tv-pin{pointer-events:none}
+.tv-pin .forma{fill:var(--tv-pin);stroke:var(--tv-plano);stroke-width:1.5px;vector-effect:non-scaling-stroke}
+.tv-pin .miolo{fill:var(--tv-plano)}
+.tv-pin .nome{opacity:0;font-weight:600;fill:var(--tv-rotulo);paint-order:stroke;stroke:var(--tv-plano);stroke-linejoin:round;transition:opacity var(--tv-duracao) var(--easing-padrao)}
+.tv-pin .sel{display:none}
+
+/* Camada local: outra representação, carregada sob demanda */
+.tv-local{opacity:0;pointer-events:none;transform-box:view-box;transform-origin:0 0;transition-property:transform,opacity;transition-duration:var(--tv-duracao-local),calc(var(--tv-duracao-local) * .3);transition-timing-function:var(--easing-padrao),linear}
+.tv-local .fundo{fill:var(--tv-terra)}
+.tv-local .mun{fill:var(--tv-terra);stroke:none}
+.tv-local .mun.v{fill:var(--tv-local-municipio)}
+.tv-local .mun-h{fill:url(#tv-hachura);stroke:none;opacity:.2}
+.tv-local .lim{fill:none;stroke:var(--tv-limite);stroke-width:2.4;stroke-dasharray:10 3 2 3;vector-effect:non-scaling-stroke}
+.tv-local path.l{fill:none;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.tv-local .agua{stroke:var(--tv-agua);stroke-width:1.1}
+.tv-local .agua.rio{stroke-width:2.4}
+.tv-local .urbana{stroke:var(--tv-via-urbana);stroke-width:.8}
+.tv-local .estrada{stroke:var(--tv-via-estrada);stroke-width:1}
+.tv-local .casco{stroke:var(--tv-via-casco);stroke-width:6}
+.tv-local .rodovia{stroke:var(--tv-via-rodovia);stroke-width:2.8}
+.tv-local .rodovia.terra{stroke-dasharray:7 4}
+.tv-local .escudo rect{fill:var(--tv-plano);stroke:var(--tv-via-rodovia);stroke-width:1.2;vector-effect:non-scaling-stroke}
+.tv-local .escudo text{font-family:var(--font-mono);font-weight:500;fill:var(--tv-rotulo)}
+.tv-local .loc rect{fill:var(--tv-plano);stroke:var(--tv-localidade);stroke-width:1.4;vector-effect:non-scaling-stroke}
+.tv-local .loc.sede rect{fill:var(--tv-localidade)}
+.tv-local .loc text{font-family:var(--font-display);font-weight:500;fill:var(--tv-rotulo);paint-order:stroke;stroke:var(--tv-plano);stroke-width:.32em;stroke-linejoin:round}
+.tv-local .loc.sede text{font-weight:700}
+.tv-local .loc.outra text{font-weight:400}
+.tv-local .ref .anel-ref{fill:none;stroke:var(--tv-contorno-foco);stroke-width:1.6;stroke-dasharray:4 3;vector-effect:non-scaling-stroke}
+.tv-local .ref .nucleo-ref{fill:var(--tv-plano);stroke:var(--tv-localidade);stroke-width:1.4;vector-effect:non-scaling-stroke}
+.tv-local .ref-rotulo{font-family:var(--font-display);font-style:italic;font-weight:500;fill:var(--tv-rotulo);paint-order:stroke;stroke:var(--tv-plano);stroke-width:.32em;stroke-linejoin:round}
+.tv-local .pin .forma{fill:var(--tv-pin);stroke:var(--tv-plano);stroke-width:1.5;vector-effect:non-scaling-stroke}
+.tv-local .pin .miolo{fill:var(--tv-plano)}
+.tv-local .pin[data-selecionado="true"] .forma{fill:var(--tv-pin-selecionado);stroke:var(--tv-contorno-foco);stroke-width:2.5}
+.tv-local .pin[data-selecionado="true"] .miolo{fill:var(--tv-contorno-foco)}
+.tv-local text.pin-rotulo{font-family:var(--font-display);font-weight:600;fill:var(--tv-rotulo);paint-order:stroke;stroke:var(--tv-plano);stroke-width:.3em;stroke-linejoin:round}
+.tv-local .pin-rotulo.selecionado rect{fill:var(--tv-pin-selecionado);stroke:var(--tv-contorno-foco);stroke-width:1.5;vector-effect:non-scaling-stroke}
+.tv-local .pin-rotulo.selecionado text{font-family:var(--font-display);font-weight:700;fill:var(--tv-pin-selecionado-texto)}
+
 .tv__legenda{display:flex;flex-wrap:wrap;gap:.4rem 1.1rem;font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);color:var(--color-texto-suave)}
 .tv__legenda li{display:flex;align-items:center;gap:.45rem}
 .tv__amostra{display:inline-block;width:1.1rem;height:.8rem;border:1px solid var(--tv-limite);background:var(--tv-vale)}
 .tv__amostra--campo{background:repeating-linear-gradient(45deg,var(--tv-vale),var(--tv-vale) .15rem,var(--tv-hachura) .15rem,var(--tv-hachura) .25rem)}
-.tv__amostra--marca{width:.9rem;height:.9rem;border-radius:50%;background:var(--tv-pin);border-color:var(--tv-pin)}
+.tv__amostra--pin{display:inline-block;width:.7rem;height:.7rem;margin-inline:.2rem;background:var(--tv-pin);border-radius:50% 50% 50% 0;transform:rotate(-45deg)}
+.tv__amostra--referencia{width:.6rem;height:.6rem;background:var(--tv-plano);border:1.5px solid var(--tv-localidade);outline:1.5px dashed var(--tv-contorno-foco);outline-offset:2px}
+.tv__amostra--sede{width:.6rem;height:.6rem;background:var(--tv-localidade);border-color:var(--tv-localidade)}
+.tv__amostra--localidade{width:.6rem;height:.6rem;background:var(--tv-plano);border:1.5px solid var(--tv-localidade)}
+.tv__traco{display:inline-block;width:1.5rem;height:0;border-top:3px solid var(--tv-via-rodovia)}
+.tv__traco--terra{border-top-style:dashed}
+.tv__traco--estrada{border-top:1px solid var(--tv-via-estrada)}
+.tv__traco--agua{border-top:2px solid var(--tv-agua)}
+.tv__traco--limite{border-top:2px dashed var(--tv-limite)}
 .tv__nota{font-size:var(--text-sm);color:var(--color-texto-suave)}
+.tv__legenda--local,.tv__nota--local{display:none}
+.tv[data-escala="local"] .tv__legenda--local{display:flex}
+.tv[data-escala="local"] .tv__nota--local{display:block}
+.tv[data-escala="local"] .tv__legenda--geral,.tv[data-escala="local"] .tv__nota--geral{display:none}
 
 /* Lista de lugares */
 .tv__lista{display:grid;gap:.5rem;align-content:start;min-width:0}
@@ -140,6 +211,21 @@ export const CSS_DO_TERRITORIO_VIVO = `
 .tv .lacuna{padding:.75rem;border:1px dashed var(--color-borda-forte);border-radius:var(--radius-ficha);font-size:var(--text-sm)}
 .tv .chegar dd{margin:0}
 .tv .chegar div{display:grid;gap:.1rem;padding:.35rem 0;border-bottom:1px solid var(--color-borda);font-size:var(--text-sm)}
+.tv .rota{display:grid;gap:.45rem}
+.tv .rota ul{display:flex;flex-wrap:wrap;gap:.5rem}
+.tv .rota__link{display:inline-block;padding:.5rem .8rem;border:1px solid var(--tv-contorno-foco);border-radius:var(--radius-ficha);font-family:var(--font-display);font-weight:600;text-decoration:none}
+.tv .rota__link:hover{background:var(--tv-hover)}
+
+/*
+  Movimento reduzido: troca instantânea de verdade. A regra global de
+  tokens.css encurta a duração para 0,01 ms, mas uma transição de 10 µs ainda
+  existe — no quadro da troca o mapa segue no estado anterior. Aqui a
+  propriedade de transição é anulada; as regras de estado só mexem em duração
+  e atraso, então não a reativam.
+*/
+@media (prefers-reduced-motion:reduce){
+  .tv.tv[data-foco] :is(.tv-mundo,.tv-local,.m,.h,.anel,.tv-rot,.tv-contra,.tv-semlocal,.escala,.tv-pin .nome){transition-property:none}
+}
 
 @media (min-width:960px){
   .tv__grade{grid-template-columns:minmax(0,7fr) minmax(0,5fr);grid-template-areas:"mapa lista" "mapa paineis";align-items:start;column-gap:clamp(1.5rem,3vw,2.5rem)}
@@ -147,8 +233,23 @@ export const CSS_DO_TERRITORIO_VIVO = `
   .tv__lista{grid-area:lista}
   .tv__paineis{grid-area:paineis}
 }
+/* Celular: mapa grande → faixa compacta de lugares → ficha */
 @media (max-width:767px){
-  .tv__lista ul{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tv__grade{gap:1rem}
   .tv__plano svg{max-height:none}
+  .tv__lista h2{font-size:var(--text-sm);font-family:var(--font-mono);font-weight:500;letter-spacing:var(--tracking-mono);text-transform:uppercase;color:var(--color-texto-suave)}
+  .tv__lista ul{display:flex;gap:.4rem;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;padding-bottom:.4rem}
+  .tv__lista li{flex:0 0 auto;max-width:15rem;scroll-snap-align:start}
+  .tv [data-tv-aba]{padding:.45rem .7rem}
+  .tv [data-tv-aba] .nome{font-size:var(--text-sm);white-space:nowrap}
+  .tv [data-tv-aba] .meta{white-space:nowrap}
+  /*
+    Na placa estreita cada unidade do SVG vale ~0,6 do que vale no desktop:
+    os nomes de "outras localidades" cairiam para ~7 px. Eles saem, e os
+    povoados e códigos de rodovia sobem, porque são o que orienta a chegada.
+  */
+  .tv-local .loc.outra{display:none}
+  .tv-local .loc.povoado text{font-size:11px}
+  .tv-local .escudo text{font-size:8px}
 }
 `.trim();

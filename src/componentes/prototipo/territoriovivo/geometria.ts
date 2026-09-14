@@ -119,6 +119,70 @@ export function kmPorUnidade(projecao: Projecao): number {
   );
 }
 
+/**
+ * Mesma projeção de `projecao.ts`, **sem arredondar**.
+ *
+ * A camada local é ampliada ~4× sobre a vista do Vale; o arredondamento de
+ * uma casa (≈ 20 m) da malha municipal viraria degrau visível. O
+ * arredondamento acontece depois, já na escala local (`caminhoRelativo`).
+ */
+export function projetarContinuo(
+  lon: number,
+  lat: number,
+  projecao: Projecao,
+): readonly [number, number] {
+  const { envelope, largura, altura } = projecao;
+  return [
+    ((lon - envelope.lonMin) / (envelope.lonMax - envelope.lonMin)) * largura,
+    ((envelope.latMax - lat) / (envelope.latMax - envelope.latMin)) * altura,
+  ];
+}
+
+/**
+ * Transformação que leva conteúdo desenhado sob `origem` para a posição que
+ * ele ocuparia sob `destino`: `destino ∘ origem⁻¹`.
+ *
+ * É o que faz a camada local "nascer" exatamente sobre o pedaço do município
+ * que ela detalha, qualquer que seja o estado anterior do mapa.
+ */
+export function compor(
+  destino: Enquadramento,
+  origem: Enquadramento,
+): Enquadramento {
+  const s = destino.s / origem.s;
+  return { s, tx: destino.tx - s * origem.tx, ty: destino.ty - s * origem.ty };
+}
+
+/**
+ * Atributo `d` com comandos relativos (`l`), arredondados sobre a posição
+ * absoluta — o erro não acumula. Comandos relativos custam cerca de um terço
+ * menos bytes que absolutos numa malha densa de vias.
+ */
+export function caminhoRelativo(
+  pontos: readonly (readonly [number, number])[],
+  casas = 1,
+): string {
+  const fator = 10 ** casas;
+  const r = (n: number) => Math.round(n * fator);
+  const fmt = (n: number) => String(n / fator);
+  let anteriorX = 0;
+  let anteriorY = 0;
+  let d = "";
+  for (const [i, [x, y]] of pontos.entries()) {
+    const ax = r(x);
+    const ay = r(y);
+    if (i === 0) {
+      d += `M${fmt(ax)} ${fmt(ay)}`;
+    } else if (ax !== anteriorX || ay !== anteriorY) {
+      const dy = ay - anteriorY;
+      d += `l${fmt(ax - anteriorX)}${dy < 0 ? "" : " "}${fmt(dy)}`;
+    }
+    anteriorX = ax;
+    anteriorY = ay;
+  }
+  return d;
+}
+
 const PASSOS_KM = [1, 2, 5, 10, 20, 50] as const;
 
 /**

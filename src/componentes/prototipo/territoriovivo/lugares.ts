@@ -9,6 +9,8 @@ import {
   PASTA_PUBLICA_DA_PESQUISA,
 } from "../../../dados/pesquisa/derivados";
 import { PONTOS_DE_VISITA_PREVISTOS } from "../../../dados/territorio/pontos";
+import { CODIGO_DA_LOCALIDADE_JACARE } from "./local/entorno";
+import type { IdDoEntorno } from "./local/entornos";
 
 /**
  * Lugares de campo do laboratório territorial.
@@ -22,10 +24,22 @@ import { PONTOS_DE_VISITA_PREVISTOS } from "../../../dados/territorio/pontos";
  * pública não existe, o campo é `null` e a ficha simplesmente não mostra a
  * seção.
  *
- * Os quatro lugares são os confirmados pelo responsável como visitados em
- * campo (2026-09-13). Os identificadores e os municípios vêm de `pontos.ts`.
- * **Nenhuma coordenada**: o mapa marca municípios, não pontos.
+ * ## Posição
+ *
+ * As coordenadas confirmadas (Tarefa 19) **não** estão aqui: vivem num
+ * arquivo local fora do Git (`local/coordenadas.ts`) e são anexadas em tempo de
+ * build. Geografia confirmada não autoriza conteúdo: as fichas continuam
+ * restritas ao que é publicável.
  */
+
+export const IDS_DOS_LUGARES = [
+  "recanto-da-serra",
+  "borda-da-mata",
+  "serra-dos-macacos",
+  "ilha-grande",
+] as const;
+
+export type IdDoLugar = (typeof IDS_DOS_LUGARES)[number];
 
 export type EstadoDoMaterial = "publico" | "restrito" | "pendente";
 
@@ -63,12 +77,18 @@ export type FotoDoLugar = {
   readonly pendencia: string | null;
 };
 
+/** Segundo nível de mapa: o entorno geográfico do lugar. */
+export type CamadaLocalDoLugar = {
+  readonly entorno: IdDoEntorno;
+  /**
+   * Localidade do IBGE citada em documento público como a do lugar. É
+   * **referência**, desenhada com símbolo próprio; nunca a posição do lugar.
+   */
+  readonly localidadeIbge: string | null;
+};
+
 export type LugarDeCampo = {
-  readonly id:
-    | "recanto-da-serra"
-    | "borda-da-mata"
-    | "serra-dos-macacos"
-    | "ilha-grande";
+  readonly id: IdDoLugar;
   readonly nome: string;
   readonly nomeCompleto: string | null;
   readonly tipo: ComFonte | null;
@@ -79,12 +99,10 @@ export type LugarDeCampo = {
   readonly materiais: readonly Material[];
   readonly dados: readonly DadoDoLugar[];
   readonly fotos: readonly FotoDoLugar[];
-  readonly comoChegar: {
-    readonly referencia: ComFonte | null;
-    /** Sempre `null` até haver coordenada confirmada e decisão de publicá-la. */
-    readonly coordenadas: null;
-  } | null;
-  /** Por que o mapa não aproxima este lugar. `null` quando aproxima. */
+  /** Referência de acesso publicada. A rota externa depende da posição. */
+  readonly comoChegar: { readonly referencia: ComFonte | null } | null;
+  readonly camadaLocal: CamadaLocalDoLugar | null;
+  /** Lacuna editorial de localização (município/localidade não publicados). */
   readonly lacunaDeLocalizacao: string | null;
 };
 
@@ -93,13 +111,13 @@ const A02 = {
   url: "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a02-relatorio-tecnico-recanto-da-serra-publico-v1.pdf",
 } as const;
 
-function municipioDoPonto(id: LugarDeCampo["id"]): string | null {
+function municipioDoPonto(id: IdDoLugar): string | null {
   return (
     PONTOS_DE_VISITA_PREVISTOS.find((p) => p.id === id)?.municipioId ?? null
   );
 }
 
-function nomeDoPonto(id: LugarDeCampo["id"]): string | null {
+function nomeDoPonto(id: IdDoLugar): string | null {
   return PONTOS_DE_VISITA_PREVISTOS.find((p) => p.id === id)?.nome ?? null;
 }
 
@@ -161,7 +179,10 @@ export const LUGARES_DE_CAMPO: readonly LugarDeCampo[] = [
           "O relatório registra que não há alternativa de transporte do centro de Tobias Barreto até o Recanto da Serra.",
         fonte: A02.titulo,
       },
-      coordenadas: null,
+    },
+    camadaLocal: {
+      entorno: "jacare",
+      localidadeIbge: CODIGO_DA_LOCALIDADE_JACARE,
     },
     lacunaDeLocalizacao: null,
   },
@@ -189,6 +210,7 @@ export const LUGARES_DE_CAMPO: readonly LugarDeCampo[] = [
     dados: [],
     fotos: [],
     comoChegar: null,
+    camadaLocal: { entorno: "borda-da-mata", localidadeIbge: null },
     lacunaDeLocalizacao: null,
   },
   {
@@ -205,8 +227,9 @@ export const LUGARES_DE_CAMPO: readonly LugarDeCampo[] = [
     dados: [],
     fotos: [],
     comoChegar: null,
+    camadaLocal: { entorno: "serra-dos-macacos", localidadeIbge: null },
     lacunaDeLocalizacao:
-      "O município e a localidade deste lugar ainda não foram publicados. O mapa não o posiciona.",
+      "O município e a localidade deste lugar ainda não foram publicados. A posição no mapa não é usada para deduzi-los.",
   },
   {
     id: "ilha-grande",
@@ -230,7 +253,8 @@ export const LUGARES_DE_CAMPO: readonly LugarDeCampo[] = [
       pendencia: null,
     })),
     comoChegar: null,
+    camadaLocal: { entorno: "ilha-grande", localidadeIbge: null },
     lacunaDeLocalizacao:
-      "O município deste lugar ainda não está consolidado em documento público. O mapa não o posiciona.",
+      "O município deste lugar ainda não está consolidado em documento público. A posição no mapa não é usada para deduzi-lo.",
   },
 ];
