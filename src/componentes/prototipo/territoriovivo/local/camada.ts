@@ -272,6 +272,23 @@ export function montarCamadaLocal(opcoes: {
           ? direita
           : null;
     if (lado !== null) ocupadas.push(lado);
+    if (selecionado) {
+      /*
+        Folga em volta do pin selecionado e da sua etiqueta, reservada depois
+        de posicionar a etiqueta. No celular, o CSS aumenta os nomes de povoado
+        e os códigos de rodovia (estilos.ts); sem a folga, um vizinho calculado
+        com a fonte do desktop podia encostar na etiqueta.
+      */
+      const folga = fs * 0.5;
+      const comFolga = (c: Caixa): Caixa => ({
+        x0: c.x0 - folga,
+        y0: c.y0 - folga,
+        x1: c.x1 + folga,
+        y1: c.y1 + folga,
+      });
+      ocupadas.push(comFolga({ x0: x - r, y0: y - r * 3, x1: x + r, y1: y }));
+      if (lado !== null) ocupadas.push(comFolga(lado));
+    }
     pins.push({
       id: pin.id,
       nome: pin.nome,

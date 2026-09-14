@@ -3,6 +3,12 @@ import { join } from "node:path";
 import { z } from "zod";
 
 import { PONTOS_DE_VISITA_PREVISTOS } from "../../../../dados/territorio/pontos";
+import {
+  CODIGO_DA_LOCALIDADE_JACARE,
+  REFERENCIAS_TERRITORIAIS,
+} from "./referencias";
+
+export { CODIGO_DA_LOCALIDADE_JACARE };
 
 /**
  * Camada geográfica local do laboratório territorial — Tarefa 18.
@@ -118,9 +124,6 @@ export const ENQUADRAMENTO_DO_ENTORNO_JACARE: EnquadramentoGeografico = {
   latMax: -10.985,
 };
 
-/** Código IBGE da localidade Jacaré (Localidades do Brasil 2022). */
-export const CODIGO_DA_LOCALIDADE_JACARE = "280740200039";
-
 /** Código IBGE da sede municipal de Tobias Barreto. */
 export const CODIGO_DA_SEDE_TOBIAS_BARRETO = "2807402";
 
@@ -152,17 +155,27 @@ const RADICAIS_DE_LUGARES = new Set(
   PONTOS_DE_VISITA_PREVISTOS.flatMap((p) => radicaisDoNome(p.nome)),
 );
 
+/** Localidades do IBGE que correspondem à localidade confirmada de um lugar. */
+const LOCALIDADES_DOS_LUGARES = new Set(
+  REFERENCIAS_TERRITORIAIS.flatMap((r) =>
+    r.localidadeIbge === null ? [] : [r.localidadeIbge],
+  ),
+);
+
 /**
  * Um nome geográfico que compartilhe radical com o nome de um lugar de campo
  * **não entra** na camada: o rótulo seria lido como a posição do lugar. A
- * exclusão é por regra, não por lista — nenhuma localidade sensível é escrita
- * no código. Jacaré é a exceção, porque já é pública no A02.
+ * exclusão é por regra, não por lista.
+ *
+ * Exceção: a localidade do IBGE declarada como correspondente à localidade
+ * confirmada de um lugar (`referencias.ts`). Ela entra, e o mapa a desenha com
+ * o símbolo de "localidade do lugar", distinto do pin.
  */
 export function nomePodeEntrarNoEntorno(
   nome: string,
   codigo?: string,
 ): boolean {
-  if (codigo === CODIGO_DA_LOCALIDADE_JACARE) return true;
+  if (codigo !== undefined && LOCALIDADES_DOS_LUGARES.has(codigo)) return true;
   return !radicaisDoNome(nome).some((r) => RADICAIS_DE_LUGARES.has(r));
 }
 

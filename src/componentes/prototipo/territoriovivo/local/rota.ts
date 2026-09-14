@@ -1,4 +1,4 @@
-import type { PosicaoConfirmada } from "./coordenadas";
+import type { PosicaoConfirmada } from "./referencias";
 
 /**
  * Destinos de "Abrir rota" — arquitetura da ação (Tarefa 19).
@@ -20,8 +20,8 @@ import type { PosicaoConfirmada } from "./coordenadas";
  * **Decisão do laboratório:** oferecer os dois, OpenStreetMap primeiro, com
  * aviso de serviço externo. O destino definitivo é decisão humana.
  *
- * Só existe destino quando existe coordenada confirmada — e só no DEV, até a
- * publicação ser autorizada.
+ * O destino é sempre a coordenada confirmada de `referencias.ts`, cuja
+ * publicação o responsável autorizou em 2026-09-14.
  */
 
 export type DestinoDeRota = {

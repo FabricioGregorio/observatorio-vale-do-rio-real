@@ -352,6 +352,13 @@ Os valores são iguais a 1440 e a 375 px.
 > §9 desta tarefa no laboratório (pins reais, rota externa por link explícito)
 > e está registrado na [Tarefa 19](./19-coordenadas-confirmadas-e-camadas-sob-demanda.md).
 > As coordenadas não estão neste repositório.
+>
+> **Atualização — 2026-09-14 (Tarefa 20):** a frase acima valeu até a decisão
+> humana posterior. As coordenadas, o município e a localidade dos quatro
+> lugares passaram a ser versionados em
+> `src/componentes/prototipo/territoriovivo/local/referencias.ts`, e os entornos
+> de Borda da Mata, Serra dos Macacos e Ilha Grande foram versionados junto com
+> sua procedência. A camada de Jacaré desta tarefa não mudou (mesmo SHA-256).
 
 - [x] **Responsável autorizou a exposição pública das quatro coordenadas
       exatas?** — sim, 2026-09-14 (Tarefa 19, §1).

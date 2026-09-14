@@ -9,37 +9,31 @@ import {
   PASTA_PUBLICA_DA_PESQUISA,
 } from "../../../dados/pesquisa/derivados";
 import { PONTOS_DE_VISITA_PREVISTOS } from "../../../dados/territorio/pontos";
-import { CODIGO_DA_LOCALIDADE_JACARE } from "./local/entorno";
 import type { IdDoEntorno } from "./local/entornos";
+import {
+  FONTE_DA_COORDENADA,
+  type IdDoLugar,
+  referenciaDe,
+} from "./local/referencias";
+
+export { IDS_DOS_LUGARES, type IdDoLugar } from "./local/referencias";
 
 /**
  * Lugares de campo do laboratório territorial.
  *
  * ## Regra deste arquivo
  *
- * Só entra aqui o que já é **público** ou já está versionado no repositório.
+ * Só entra aqui o que já é **público** ou foi autorizado pelo responsável.
  * Achados em fontes restritas — transcrições, relatórios não publicados,
- * planilhas — ficam fora do código e fora da interface: o repositório tem
- * remoto público, e um comentário também é publicação. Onde a informação
- * pública não existe, o campo é `null` e a ficha simplesmente não mostra a
- * seção.
+ * planilhas — ficam fora do código e fora da interface. Onde a informação
+ * pública não existe, o campo é `null` e a ficha não mostra a seção.
  *
- * ## Posição
+ * ## Território × documentos
  *
- * As coordenadas confirmadas (Tarefa 19) **não** estão aqui: vivem num
- * arquivo local fora do Git (`local/coordenadas.ts`) e são anexadas em tempo de
- * build. Geografia confirmada não autoriza conteúdo: as fichas continuam
- * restritas ao que é publicável.
+ * Nome, município, localidade e posição vêm de `local/referencias.ts`, a fonte
+ * única autorizada em 2026-09-14. A autorização é **territorial**: não muda o
+ * estado de nenhum material desta lista.
  */
-
-export const IDS_DOS_LUGARES = [
-  "recanto-da-serra",
-  "borda-da-mata",
-  "serra-dos-macacos",
-  "ilha-grande",
-] as const;
-
-export type IdDoLugar = (typeof IDS_DOS_LUGARES)[number];
 
 export type EstadoDoMaterial = "publico" | "restrito" | "pendente";
 
@@ -81,8 +75,8 @@ export type FotoDoLugar = {
 export type CamadaLocalDoLugar = {
   readonly entorno: IdDoEntorno;
   /**
-   * Localidade do IBGE citada em documento público como a do lugar. É
-   * **referência**, desenhada com símbolo próprio; nunca a posição do lugar.
+   * Localidade do IBGE correspondente à localidade confirmada. É
+   * **contexto**, desenhada com símbolo próprio; nunca a posição do lugar.
    */
   readonly localidadeIbge: string | null;
 };
@@ -92,14 +86,14 @@ export type LugarDeCampo = {
   readonly nome: string;
   readonly nomeCompleto: string | null;
   readonly tipo: ComFonte | null;
-  /** Código IBGE, igual ao de `pontos.ts`. `null` quando não publicado. */
+  /** Código IBGE do município, de `referencias.ts`. */
   readonly municipioId: string | null;
   readonly localidade: ComFonte | null;
   readonly descricao: ComFonte | null;
   readonly materiais: readonly Material[];
   readonly dados: readonly DadoDoLugar[];
   readonly fotos: readonly FotoDoLugar[];
-  /** Referência de acesso publicada. A rota externa depende da posição. */
+  /** Referência publicada. A rota externa sai da posição confirmada. */
   readonly comoChegar: { readonly referencia: ComFonte | null } | null;
   readonly camadaLocal: CamadaLocalDoLugar | null;
   /** Lacuna editorial de localização (município/localidade não publicados). */
@@ -111,14 +105,20 @@ const A02 = {
   url: "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a02-relatorio-tecnico-recanto-da-serra-publico-v1.pdf",
 } as const;
 
-function municipioDoPonto(id: IdDoLugar): string | null {
-  return (
-    PONTOS_DE_VISITA_PREVISTOS.find((p) => p.id === id)?.municipioId ?? null
-  );
-}
-
 function nomeDoPonto(id: IdDoLugar): string | null {
   return PONTOS_DE_VISITA_PREVISTOS.find((p) => p.id === id)?.nome ?? null;
+}
+
+/** Campos territoriais comuns, todos da fonte única. */
+function territorio(id: IdDoLugar, entorno: IdDoEntorno) {
+  const r = referenciaDe(id);
+  return {
+    id,
+    nome: r.nome,
+    municipioId: r.municipioIbge,
+    localidade: { texto: r.localidade, fonte: FONTE_DA_COORDENADA },
+    camadaLocal: { entorno, localidadeIbge: r.localidadeIbge },
+  } as const;
 }
 
 const FOTO_VERTICAL = DERIVADOS_DO_HERO.find((d) =>
@@ -128,14 +128,21 @@ const FOTO_VERTICAL = DERIVADOS_DO_HERO.find((d) =>
 /** Recorte dos indicadores H4: os dois equipamentos, com nome completo. */
 const RECORTE_H4 = INDICADORES[0].recorte;
 
+const RECANTO = territorio("recanto-da-serra", "jacare");
+const SERRA = territorio("serra-dos-macacos", "serra-dos-macacos");
+const REFERENCIA_DA_SERRA =
+  referenciaDe("serra-dos-macacos").referenciaTerritorial;
+
 export const LUGARES_DE_CAMPO: readonly LugarDeCampo[] = [
   {
-    id: "recanto-da-serra",
-    nome: "Recanto da Serra",
+    ...RECANTO,
     nomeCompleto: "Ecoparque e Museu Recanto da Serra",
     tipo: { texto: "Equipamento cultural", fonte: A02.titulo },
-    municipioId: municipioDoPonto("recanto-da-serra"),
-    localidade: { texto: "Povoado Jacaré", fonte: A02.titulo },
+    // A localidade já constava do A02; o responsável a confirmou.
+    localidade: {
+      texto: RECANTO.localidade.texto,
+      fonte: `${A02.titulo}; ${FONTE_DA_COORDENADA}`,
+    },
     descricao: {
       texto:
         "O relatório técnico publicado descreve o espaço como equipamento cultural e motor da economia criativa e solidária da região do Vale do Rio Real.",
@@ -180,22 +187,15 @@ export const LUGARES_DE_CAMPO: readonly LugarDeCampo[] = [
         fonte: A02.titulo,
       },
     },
-    camadaLocal: {
-      entorno: "jacare",
-      localidadeIbge: CODIGO_DA_LOCALIDADE_JACARE,
-    },
     lacunaDeLocalizacao: null,
   },
   {
-    id: "borda-da-mata",
-    nome: "Museu Borda da Mata",
+    ...territorio("borda-da-mata", "borda-da-mata"),
     nomeCompleto: nomeDoPonto("borda-da-mata"),
     tipo: {
       texto: "Equipamento cultural",
       fonte: `Recorte dos indicadores: ${RECORTE_H4}`,
     },
-    municipioId: municipioDoPonto("borda-da-mata"),
-    localidade: null,
     descricao: null,
     materiais: [
       { material: "Relatório técnico", estado: "restrito", href: null },
@@ -210,34 +210,33 @@ export const LUGARES_DE_CAMPO: readonly LugarDeCampo[] = [
     dados: [],
     fotos: [],
     comoChegar: null,
-    camadaLocal: { entorno: "borda-da-mata", localidadeIbge: null },
     lacunaDeLocalizacao: null,
   },
   {
-    id: "serra-dos-macacos",
-    nome: "Serra dos Macacos",
+    ...SERRA,
     nomeCompleto: null,
     tipo: null,
-    municipioId: municipioDoPonto("serra-dos-macacos"),
-    localidade: null,
     descricao: null,
     materiais: [
       { material: "Relato técnico (A04)", estado: "restrito", href: null },
     ],
     dados: [],
     fotos: [],
-    comoChegar: null,
-    camadaLocal: { entorno: "serra-dos-macacos", localidadeIbge: null },
-    lacunaDeLocalizacao:
-      "O município e a localidade deste lugar ainda não foram publicados. A posição no mapa não é usada para deduzi-los.",
+    comoChegar:
+      REFERENCIA_DA_SERRA === null
+        ? null
+        : {
+            referencia: {
+              texto: REFERENCIA_DA_SERRA,
+              fonte: FONTE_DA_COORDENADA,
+            },
+          },
+    lacunaDeLocalizacao: null,
   },
   {
-    id: "ilha-grande",
-    nome: "Ilha Grande",
+    ...territorio("ilha-grande", "ilha-grande"),
     nomeCompleto: null,
     tipo: null,
-    municipioId: municipioDoPonto("ilha-grande"),
-    localidade: null,
     descricao: null,
     materiais: [
       { material: "Entrevista gravada", estado: "restrito", href: null },
@@ -253,8 +252,6 @@ export const LUGARES_DE_CAMPO: readonly LugarDeCampo[] = [
       pendencia: null,
     })),
     comoChegar: null,
-    camadaLocal: { entorno: "ilha-grande", localidadeIbge: null },
-    lacunaDeLocalizacao:
-      "O município deste lugar ainda não está consolidado em documento público. A posição no mapa não é usada para deduzi-lo.",
+    lacunaDeLocalizacao: null,
   },
 ];

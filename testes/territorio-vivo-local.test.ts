@@ -187,47 +187,66 @@ describe("procedência da camada local", () => {
     normalização, um checkout em CRLF quebraria a conferência sem que o dado
     tivesse mudado.
   */
-  test("o derivado versionado de Jacaré confere com o SHA-256 registrado", () => {
-    const derivado = PROCEDENCIA_DO_ENTORNO.find(
-      (f) => f.papel === "derivado" && f.arquivo === "entorno-jacare.json",
+  test("cada derivado versionado confere com o SHA-256 e o tamanho registrados", () => {
+    const derivados = PROCEDENCIA_DO_ENTORNO.filter(
+      (f) => f.papel === "derivado",
     );
-    const conteudo = readFileSync(CAMINHO_DO_ENTORNO_JACARE, "utf8").replace(
-      /\r\n/g,
-      "\n",
+    expect(derivados.map((d) => d.lugar).sort()).toEqual(
+      ENTORNOS.map((e) => e.lugar).sort(),
     );
-    expect(createHash("sha256").update(conteudo).digest("hex")).toBe(
-      derivado?.sha256DoArquivo,
-    );
+    for (const derivado of derivados) {
+      const definicao = ENTORNOS.find((e) => e.lugar === derivado.lugar);
+      expect(definicao, derivado.arquivo).toBeDefined();
+      const conteudo = readFileSync(definicao?.caminho ?? "", "utf8").replace(
+        /\r\n/g,
+        "\n",
+      );
+      expect(
+        createHash("sha256").update(conteudo).digest("hex"),
+        derivado.arquivo,
+      ).toBe(derivado.sha256DoArquivo);
+      expect(Buffer.byteLength(conteudo), derivado.arquivo).toBe(
+        derivado.bytes,
+      );
+    }
+    expect(CAMINHO_DO_ENTORNO_JACARE).toContain("entorno-jacare.json");
   });
 });
 
 describe("entornos dos lugares", () => {
-  test("todo lugar declara um entorno; só o Recanto ancora uma localidade do IBGE", () => {
-    const entorno = carregarEntornoJacare();
+  test("localidade IBGE do lugar: nome igual à localidade confirmada, só quando há correspondente seguro", () => {
+    const entornoJacare = carregarEntornoJacare();
+    const esperado: Record<string, string | null> = {
+      "recanto-da-serra": CODIGO_DA_LOCALIDADE_JACARE,
+      "borda-da-mata": "280740200023",
+      "serra-dos-macacos": null,
+      "ilha-grande": null,
+    };
     for (const lugar of LUGARES_DE_CAMPO) {
-      expect(lugar.camadaLocal).not.toBeNull();
-      if (lugar.id !== "recanto-da-serra") {
-        expect(lugar.camadaLocal?.localidadeIbge ?? null).toBeNull();
-        continue;
-      }
-      expect(lugar.camadaLocal?.localidadeIbge).toBe(
-        CODIGO_DA_LOCALIDADE_JACARE,
+      expect(lugar.camadaLocal, lugar.id).not.toBeNull();
+      expect(lugar.camadaLocal?.localidadeIbge ?? null, lugar.id).toBe(
+        esperado[lugar.id],
       );
-      const localidade = entorno.localidades.find(
-        (l) => l.codigoIbge === lugar.camadaLocal?.localidadeIbge,
-      );
-      expect(lugar.localidade?.texto).toContain(localidade?.nome ?? "∅");
     }
+    const jacare = entornoJacare.localidades.find(
+      (l) => l.codigoIbge === CODIGO_DA_LOCALIDADE_JACARE,
+    );
+    expect(
+      LUGARES_DE_CAMPO.find((l) => l.id === "recanto-da-serra")?.localidade
+        ?.texto,
+    ).toContain(jacare?.nome ?? "∅");
   });
 
-  test("só o entorno de enquadramento fixo é versionável; os centrados ficam locais", () => {
+  test("os quatro entornos são versionáveis, fora de qualquer caminho .local", () => {
+    expect(ENTORNOS.map((e) => e.lugar)).toEqual([
+      "recanto-da-serra",
+      "borda-da-mata",
+      "serra-dos-macacos",
+      "ilha-grande",
+    ]);
     for (const definicao of ENTORNOS) {
-      if (definicao.enquadramentoFixo === null) {
-        expect(definicao.versionavel, definicao.id).toBe(false);
-        expect(definicao.caminho, definicao.id).toMatch(/\.local\.json$/);
-      } else {
-        expect(definicao.versionavel, definicao.id).toBe(true);
-      }
+      expect(definicao.versionavel, definicao.id).toBe(true);
+      expect(definicao.caminho, definicao.id).not.toMatch(/\.local\./);
     }
   });
 });
