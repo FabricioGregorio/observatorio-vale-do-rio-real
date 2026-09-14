@@ -47,6 +47,14 @@
 > formulários, fotografias em revisão). A promoção das coordenadas ao modelo
 > versionado depende de nova instrução específica; este commit ainda preserva
 > só a parte versionável preparada antes dessa decisão.
+>
+> **Promoção — 2026-09-14 (Tarefa 20):** com a instrução específica do
+> responsável, as coordenadas saíram do arquivo local e passaram para a fonte
+> versionada única `local/referencias.ts` (`publicacaoPublicaAutorizada: true`).
+> Os derivados de Borda, Serra e Ilha e sua procedência foram versionados. O
+> arquivo local, o teste local e as exclusões desta experiência em
+> `.git/info/exclude` foram removidos. As seções abaixo descrevem o estado
+> **anterior** e ficam como registro.
 
 **Este documento não contém as coordenadas.** Elas vivem no arquivo local
 `src/componentes/prototipo/territoriovivo/local/coordenadas-confirmadas.local.json`,

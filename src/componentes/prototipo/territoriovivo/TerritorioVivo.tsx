@@ -15,8 +15,8 @@ import {
   type LugarNoMapa,
   montarBaseDoTerritorio,
 } from "./local/composicao";
-import { FONTE_DA_COORDENADA } from "./local/coordenadas";
 import { FONTES_DAS_CAMADAS } from "./local/entorno";
+import { FONTE_DA_COORDENADA } from "./local/referencias";
 import { destinosDeRota } from "./local/rota";
 import { caminhoDoPin } from "./local/svg";
 import { ROTULO_DO_ESTADO } from "./lugares";
@@ -25,8 +25,8 @@ import { ROTULO_DO_ESTADO } from "./lugares";
  * Cartografia Viva — laboratório da experiência territorial.
  *
  * Server Component. A malha, a projeção e o recorte são os da cartografia
- * pública; os lugares de campo agora têm **posição confirmada** (Tarefa 19),
- * lida de arquivo local fora do Git.
+ * pública; os lugares de campo têm **posição confirmada** e publicação
+ * autorizada, lidas da fonte versionada `local/referencias.ts` (Tarefa 20).
  *
  * ## Uma cartografia que se transforma
  *
@@ -196,8 +196,8 @@ export function TerritorioVivo() {
       <style>{css.join("\n")}</style>
 
       <p className="tv-dev">
-        Laboratório · /dev/territorio-vivo · somente DEV · coordenadas
-        confirmadas sem autorização de publicação · não publicar
+        Laboratório · /dev/territorio-vivo · somente DEV · referências
+        territoriais públicas · rota não publicada
       </p>
 
       <div className="tv__cab">
@@ -428,7 +428,7 @@ export function TerritorioVivo() {
           <figcaption className="tv__nota tv__nota--geral">
             Malha municipal IBGE; recorte do Vale definido pelo projeto.{" "}
             {posicionados.length > 0
-              ? `Pins: posição confirmada — ${FONTE_DA_COORDENADA}; uso restrito a este laboratório, sem autorização de publicação.`
+              ? `Pins: posição confirmada — ${FONTE_DA_COORDENADA}; publicação pública autorizada pelo responsável.`
               : "Sem coordenadas confirmadas disponíveis: nenhum lugar é posicionado."}
             {foraDoVale.length > 0
               ? ` ${foraDoVale.map((l) => l.nome).join(", ")} fica fora do enquadramento do Vale: selecione na lista para deslocar o mapa.`
@@ -772,8 +772,8 @@ function FichaDoLugar({
             {lugar.dentroDoVale ? "" : ", fora do recorte do Vale"}.
           </p>
           <p className="fonte">
-            Fonte da coordenada: {FONTE_DA_COORDENADA}. Uso restrito ao
-            laboratório; a exposição pública ainda não foi autorizada.
+            Fonte da coordenada: {FONTE_DA_COORDENADA}. Publicação autorizada
+            pelo responsável; o ponto não vem do IBGE nem do OpenStreetMap.
           </p>
         </section>
       ) : null}
@@ -794,7 +794,7 @@ function FichaDoLugar({
               ) : null}
               {lugar.comoChegar?.referencia != null ? (
                 <div>
-                  <dt className="fonte">Referência de acesso</dt>
+                  <dt className="fonte">Referência</dt>
                   <dd>{lugar.comoChegar.referencia.texto}</dd>
                 </div>
               ) : null}

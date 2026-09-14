@@ -1,5 +1,5 @@
 /**
- * Deriva uma camada geográfica local do laboratório territorial — Tarefas 18 e 19.
+ * Deriva uma camada geográfica local do laboratório territorial — Tarefas 18 a 20.
  *
  * Uso:
  *
@@ -11,14 +11,16 @@
  *
  * As entradas **não** são versionadas (pesam MB e são reobtidas da fonte).
  *
- * ## Dois destinos
+ * ## Destinos
  *
- * - **Jacaré** (enquadramento fixo, não revela posição): o derivado é
- *   versionável e sua procedência vive em `local/procedencia.ts`.
- * - **Demais** (enquadramento centrado na coordenada confirmada): o derivado
- *   revelaria a posição. Ele e sua procedência vão para `local/entornos/`,
- *   excluído do Git. O script **aborta antes de gravar** se o Git não estiver
- *   ignorando o destino.
+ * - **Jacaré** (enquadramento fixo): `local/entorno-jacare.json`.
+ * - **Borda, Serra e Ilha** (enquadramento centrado na coordenada confirmada):
+ *   `local/entornos/<id>.json`.
+ *
+ * Os quatro são versionados desde a Tarefa 20, e a procedência de cada um vive
+ * em `local/procedencia.ts`. A trava para entorno **não versionável** — gravar
+ * só se o Git estiver ignorando o destino — continua no script para entornos
+ * futuros, embora nenhum atual a use.
  *
  * O centro vem sempre de confirmação humana direta; OSM e IBGE fornecem só o
  * contexto.
@@ -45,11 +47,6 @@ import { createRequire } from "node:module";
 import { dirname } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { z } from "zod";
-
-import {
-  carregarCoordenadasConfirmadas,
-  FONTE_DA_COORDENADA,
-} from "../src/componentes/prototipo/territoriovivo/local/coordenadas";
 import {
   type EnquadramentoGeografico,
   type EntornoLocal,
@@ -61,6 +58,10 @@ import {
   ENTORNOS,
   enquadramentoDoEntorno,
 } from "../src/componentes/prototipo/territoriovivo/local/entornos";
+import {
+  carregarCoordenadasConfirmadas,
+  FONTE_DA_COORDENADA,
+} from "../src/componentes/prototipo/territoriovivo/local/referencias";
 
 type Ponto = [number, number];
 

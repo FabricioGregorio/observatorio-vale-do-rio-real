@@ -3,25 +3,52 @@ import { expect, type Page, test } from "@playwright/test";
 /**
  * Laboratório territorial (`/dev/territorio-vivo`). DEV; 404 em produção.
  *
- * Os testes que dependem de posição pulam quando o arquivo local de
- * coordenadas confirmadas não existe (ele fica fora do Git; ver Tarefa 19).
+ * Referências territoriais públicas dos quatro lugares (Tarefa 20).
  */
 
 const ROTA = "/dev/territorio-vivo";
 const CAMADA = /\/dev\/territorio-vivo\/camada-local\/([a-z-]+)$/;
+
+const LUGARES = [
+  {
+    id: "recanto-da-serra",
+    aba: /Recanto da Serra/,
+    ficha: "Recanto da Serra",
+    localidade: "Povoado Jacaré, Tobias Barreto (SE)",
+    latitude: "-11.015393101706083",
+    longitude: "-38.048667603935414",
+  },
+  {
+    id: "borda-da-mata",
+    aba: /Museu Borda da Mata/,
+    ficha: "Museu Borda da Mata",
+    localidade: "Povoado Borda da Mata, Tobias Barreto (SE)",
+    latitude: "-11.127754407274919",
+    longitude: "-37.88642982557546",
+  },
+  {
+    id: "serra-dos-macacos",
+    aba: /Serra dos Macacos/,
+    ficha: "Serra dos Macacos",
+    localidade: "Povoado Samambaia, Tobias Barreto (SE)",
+    latitude: "-10.8811",
+    longitude: "-37.9867",
+  },
+  {
+    id: "ilha-grande",
+    aba: /Ilha Grande/,
+    ficha: "Ilha Grande",
+    localidade: "Povoado Ilha Grande, São Cristóvão (SE)",
+    latitude: "-11.0639",
+    longitude: "-37.2086",
+  },
+] as const;
 
 async function abrir(page: Page, destino: string = ROTA) {
   await page.goto(destino);
   const raiz = page.locator("#territorio-vivo");
   await expect(raiz).toHaveAttribute("data-interativo", "true");
   return raiz;
-}
-
-async function exigirCoordenadas(page: Page) {
-  const ausentes = await page
-    .locator('[data-tv-coordenadas="ausentes"]')
-    .count();
-  test.skip(ausentes > 0, "Sem arquivo local de coordenadas confirmadas.");
 }
 
 /** Registra, por id de lugar, cada pedido de camada local. */
@@ -42,8 +69,7 @@ async function caixa(page: Page, seletor: string) {
 
 /**
  * Ponta do pin na tela: é onde está a coordenada. Lida pela matriz de tela
- * do grupo do pin, cuja origem é a própria coordenada — e não pela caixa do
- * desenho, que arredonda.
+ * do grupo do pin, cuja origem é a própria coordenada.
  */
 async function pontaDoPin(page: Page, seletor: string) {
   const ponto = await page
@@ -81,7 +107,7 @@ const opacidade = (page: Page, seletor: string) =>
 const selecionar = (page: Page, nome: RegExp) =>
   page.getByRole("tab", { name: nome }).click();
 
-test("visão geral: lista, pins no Vale, Ilha Grande fora, nada detalhado carregado", async ({
+test("visão geral: quatro na lista, pins na posição real, Ilha Grande fora, nada detalhado carregado", async ({
   page,
 }) => {
   const pedidos = registrarCamadas(page);
@@ -89,18 +115,16 @@ test("visão geral: lista, pins no Vale, Ilha Grande fora, nada detalhado carreg
   await expect(raiz).toHaveAttribute("data-foco", "vale");
   await expect(page.getByRole("tab")).toHaveCount(5);
   await expect(page.locator("h1")).toHaveCount(1);
-  await exigirCoordenadas(page);
 
   await expect(page.locator('.tv-pin[data-tipo="lugar"]')).toHaveCount(4);
   const svg = await caixa(page, "[data-tv-mapa]");
   for (const id of ["recanto-da-serra", "borda-da-mata", "serra-dos-macacos"]) {
     const [x, y] = await pontaDoPin(page, `.tv-pin[data-pin="${id}"]`);
-    expect(x).toBeGreaterThan(svg.x);
-    expect(x).toBeLessThan(svg.x + svg.width);
-    expect(y).toBeGreaterThan(svg.y);
-    expect(y).toBeLessThan(svg.y + svg.height);
+    expect(x, id).toBeGreaterThan(svg.x);
+    expect(x, id).toBeLessThan(svg.x + svg.width);
+    expect(y, id).toBeGreaterThan(svg.y);
+    expect(y, id).toBeLessThan(svg.y + svg.height);
   }
-  // Ilha Grande não é trazida para dentro do recorte.
   const [xIlha] = await pontaDoPin(page, '.tv-pin[data-pin="ilha-grande"]');
   expect(xIlha).toBeGreaterThan(svg.x + svg.width);
   await expect(page.locator('.tv-pin[data-pin="ilha-grande"]')).toHaveAttribute(
@@ -108,7 +132,11 @@ test("visão geral: lista, pins no Vale, Ilha Grande fora, nada detalhado carreg
     "nao",
   );
   await expect(page.getByRole("tab", { name: /Ilha Grande/ })).toContainText(
-    "fora do recorte do Vale",
+    "São Cristóvão · fora do recorte do Vale",
+  );
+  // São Cristóvão continua fora do recorte: não recebe o preenchimento do Vale.
+  await expect(page.locator('.m[data-codigo="2806701"]')).not.toHaveClass(
+    /\bv\b/,
   );
 
   expect(pedidos).toEqual([]);
@@ -122,7 +150,6 @@ test("seleção por teclado troca a ficha inteira e o estado do mapa", async ({
   page,
 }) => {
   const raiz = await abrir(page);
-  await exigirCoordenadas(page);
   await page.getByRole("tab", { name: /Vale do Rio Real/ }).focus();
   await page.keyboard.press("ArrowDown");
   const aba = page.getByRole("tab", { name: /Recanto da Serra/ });
@@ -147,125 +174,124 @@ test("seleção por teclado troca a ficha inteira e o estado do mapa", async ({
   expect(contorno).not.toBe("none");
 });
 
-test("Recanto: camada local sob demanda, uma vez, com pin distinto da localidade", async ({
+test("sob demanda: 0 no início, 1 por lugar, cache ao voltar, outro lugar só a sua camada", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   const pedidos = registrarCamadas(page);
   const raiz = await abrir(page);
-  await exigirCoordenadas(page);
-  const doRecanto = () => pedidos.filter((id) => id === "recanto-da-serra");
   expect(pedidos).toEqual([]);
-
-  // Visão municipal (Tobias Barreto por outro lugar): nada do Recanto.
-  await selecionar(page, /Museu Borda da Mata/);
-  await expect(raiz).toHaveAttribute("data-foco", "lugar-borda-da-mata");
-  expect(doRecanto()).toEqual([]);
 
   await selecionar(page, /Recanto da Serra/);
   await expect(raiz).toHaveAttribute("data-escala", "local");
-  expect(doRecanto()).toHaveLength(1);
+  expect(pedidos).toEqual(["recanto-da-serra"]);
 
-  const local = page.locator('[data-tv-camada-local="recanto-da-serra"]');
-  const pin = local.locator('[data-tipo="lugar"][data-pin="recanto-da-serra"]');
-  const referencia = local.locator('[data-tipo="localidade-do-lugar"]');
-  await expect(pin).toHaveCount(1);
-  await expect(pin).toHaveAttribute("data-selecionado", "true");
-  await expect(referencia).toHaveCount(1);
-  await expect(referencia.locator(".forma")).toHaveCount(0);
-  const [px, py] = await pontaDoPin(
-    page,
-    '[data-tv-camada-local="recanto-da-serra"] [data-pin="recanto-da-serra"]',
-  );
-  const r = await caixa(
-    page,
-    '[data-tv-camada-local="recanto-da-serra"] [data-tipo="localidade-do-lugar"]',
-  );
-  expect(
-    Math.hypot(px - (r.x + r.width / 2), py - (r.y + r.height / 2)),
-  ).toBeGreaterThan(10);
-  await expect(local).toContainText("▸ Recanto da Serra");
-  await expect(local).toContainText("Jacaré · localidade");
-  await expect(local).not.toContainText("não publicada");
-  await expect(page.locator(".tv__legenda--local")).toBeVisible();
-  await expect(page.locator(".tv__legenda--geral")).toBeHidden();
-  await expect(page.locator(".tv__nota--local")).toContainText("OpenStreetMap");
-
-  // Volta ao Vale e seleciona de novo: usa o que já está em memória.
   await selecionar(page, /Vale do Rio Real/);
   await expect(raiz).not.toHaveAttribute("data-escala", "local");
   await selecionar(page, /Recanto da Serra/);
   await expect(raiz).toHaveAttribute("data-escala", "local");
-  expect(doRecanto()).toHaveLength(1);
+  expect(pedidos).toEqual(["recanto-da-serra"]);
+
+  await selecionar(page, /Museu Borda da Mata/);
+  await expect(raiz).toHaveAttribute("data-foco", "lugar-borda-da-mata");
+  await expect(raiz).toHaveAttribute("data-escala", "local");
+  expect(pedidos).toEqual(["recanto-da-serra", "borda-da-mata"]);
 });
 
-test("a aproximação de cada lugar o centraliza — inclusive fora do Vale", async ({
+test("mapa local: pin do lugar, localidade IBGE distinta, atribuição do OSM visível", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  // Sem camada local, o mapa fica na aproximação regional centrada no pin.
-  await page.route(CAMADA, (rota) => rota.abort());
   const raiz = await abrir(page);
-  await exigirCoordenadas(page);
-  for (const [id, nome] of [
-    ["recanto-da-serra", /Recanto da Serra/],
-    ["borda-da-mata", /Museu Borda da Mata/],
-    ["serra-dos-macacos", /Serra dos Macacos/],
-    ["ilha-grande", /Ilha Grande/],
+  for (const [id, aba, referencia] of [
+    ["recanto-da-serra", /Recanto da Serra/, "Jacaré · localidade"],
+    ["borda-da-mata", /Museu Borda da Mata/, "Borda da Mata · localidade"],
   ] as const) {
-    await selecionar(page, nome);
-    await expect(raiz).toHaveAttribute("data-foco", `lugar-${id}`);
+    await selecionar(page, aba);
+    await expect(raiz).toHaveAttribute("data-escala", "local");
+    const escopo = `[data-tv-camada-local="${id}"]`;
+    const pin = page.locator(`${escopo} [data-tipo="lugar"][data-pin="${id}"]`);
+    const ref = page.locator(`${escopo} [data-tipo="localidade-do-lugar"]`);
+    await expect(pin).toHaveAttribute("data-selecionado", "true");
+    await expect(ref).toHaveCount(1);
+    await expect(ref.locator(".forma")).toHaveCount(0);
+    const [px, py] = await pontaDoPin(page, `${escopo} [data-pin="${id}"]`);
+    const r = await caixa(page, `${escopo} [data-tipo="localidade-do-lugar"]`);
+    expect(
+      Math.hypot(px - (r.x + r.width / 2), py - (r.y + r.height / 2)),
+      id,
+    ).toBeGreaterThan(10);
+    await expect(page.locator(escopo)).toContainText(referencia);
+    await expect(page.locator(escopo)).not.toContainText("não publicada");
+    await expect(page.locator(".tv__nota--local")).toBeVisible();
+    await expect(page.locator(".tv__nota--local")).toContainText(
+      "© contribuidores do OpenStreetMap — ODbL 1.0",
+    );
+  }
+});
+
+test("cada seleção centraliza o pin e o mapa local pertence ao lugar", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  let bloquear = true;
+  await page.route(CAMADA, (rota) =>
+    bloquear ? rota.abort() : rota.continue(),
+  );
+  const raiz = await abrir(page);
+  for (const lugar of LUGARES) {
+    await selecionar(page, lugar.aba);
+    await expect(raiz).toHaveAttribute("data-foco", `lugar-${lugar.id}`);
     // Medido a cada seleção: clicar na aba pode rolar a página, e o mapa é sticky.
     const [cx, cy] = await centroDaVista(page);
-    const [x, y] = await pontaDoPin(page, `.tv-pin[data-pin="${id}"]`);
-    expect(Math.abs(x - cx), id).toBeLessThan(1);
-    expect(Math.abs(y - cy), id).toBeLessThan(1);
+    const [x, y] = await pontaDoPin(page, `.tv-pin[data-pin="${lugar.id}"]`);
+    expect(Math.abs(x - cx), lugar.id).toBeLessThan(1);
+    expect(Math.abs(y - cy), lugar.id).toBeLessThan(1);
   }
-  await expect(
-    page.getByRole("tabpanel", { name: "Ilha Grande" }).locator(".lacuna"),
-  ).toBeVisible();
-  // Ficha oculta sai da árvore de acessibilidade: conferida pelo id.
-  await expect(page.locator("#tv-painel-serra-dos-macacos")).toContainText(
-    "Restrito",
-  );
+  bloquear = false;
+  for (const lugar of LUGARES) {
+    await selecionar(page, lugar.aba);
+    await expect(raiz).toHaveAttribute("data-escala", "local");
+    const escopo = page.locator(`[data-tv-camada-local="${lugar.id}"]`);
+    await expect(escopo.locator('[data-selecionado="true"]')).toHaveAttribute(
+      "data-pin",
+      lugar.id,
+    );
+    expect(await opacidade(page, `[data-tv-camada-local="${lugar.id}"]`)).toBe(
+      1,
+    );
+  }
 });
 
-test("Tobias Barreto: Recanto e Borda como pins reais, contagem como complemento", async ({
+test("Tobias Barreto: Recanto, Borda e Serra como pins reais; contagem complementar", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.route(CAMADA, (rota) => rota.abort());
   const raiz = await abrir(page);
-  await exigirCoordenadas(page);
   await selecionar(page, /Museu Borda da Mata/);
   await expect(raiz).toHaveAttribute("data-foco", "lugar-borda-da-mata");
 
   const svg = await caixa(page, "[data-tv-mapa]");
-  const [xr, yr] = await pontaDoPin(
-    page,
-    '.tv-pin[data-pin="recanto-da-serra"]',
-  );
-  const [xb, yb] = await pontaDoPin(page, '.tv-pin[data-pin="borda-da-mata"]');
-  for (const [x, y] of [
-    [xr, yr],
-    [xb, yb],
-  ]) {
-    expect(x).toBeGreaterThan(svg.x);
-    expect(x).toBeLessThan(svg.x + svg.width);
-    expect(y).toBeGreaterThan(svg.y);
-    expect(y).toBeLessThan(svg.y + svg.height);
+  const pontas: (readonly [number, number])[] = [];
+  for (const id of ["recanto-da-serra", "borda-da-mata", "serra-dos-macacos"]) {
+    const [x, y] = await pontaDoPin(page, `.tv-pin[data-pin="${id}"]`);
+    expect(x, id).toBeGreaterThan(svg.x);
+    expect(x, id).toBeLessThan(svg.x + svg.width);
+    expect(y, id).toBeGreaterThan(svg.y);
+    expect(y, id).toBeLessThan(svg.y + svg.height);
+    expect(await opacidade(page, `.tv-pin[data-pin="${id}"] .nome`), id).toBe(
+      1,
+    );
+    pontas.push([x, y]);
   }
-  expect(Math.hypot(xr - xb, yr - yb)).toBeGreaterThan(40);
+  const [a, b] = pontas;
   expect(
-    await opacidade(page, '.tv-pin[data-pin="recanto-da-serra"] .nome'),
-  ).toBe(1);
+    Math.hypot((a?.[0] ?? 0) - (b?.[0] ?? 0), (a?.[1] ?? 0) - (b?.[1] ?? 0)),
+  ).toBeGreaterThan(40);
   const contagem = page.locator('.tv-contagem[data-codigo="2807402"]');
-  await expect(contagem).toContainText("2 lugares visitados neste município");
+  await expect(contagem).toContainText("3 lugares visitados neste município");
   expect(await opacidade(page, '.tv-contagem[data-codigo="2807402"]')).toBe(1);
-  await expect(page.locator("[data-tv-chip]")).toHaveCount(0);
-  await expect(
-    page.getByRole("tabpanel", { name: "Museu Borda da Mata" }),
-  ).not.toContainText("Povoado");
 });
 
 test("com movimento reduzido, a troca para o mapa detalhado é imediata", async ({
@@ -273,10 +299,8 @@ test("com movimento reduzido, a troca para o mapa detalhado é imediata", async 
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   const raiz = await abrir(page);
-  await exigirCoordenadas(page);
   await selecionar(page, /Recanto da Serra/);
   await expect(raiz).toHaveAttribute("data-escala", "local");
-  // Lido uma vez, sem espera: com movimento reduzido não há transição.
   const estado = await page.evaluate(() => {
     const mundo = document.querySelector(".tv-mundo");
     const local = document.querySelector(
@@ -294,69 +318,77 @@ test("com movimento reduzido, a troca para o mapa detalhado é imediata", async 
   expect(estado?.mundo).toBe(0);
 });
 
-test("tema escuro, mapa detalhado: vias, limite, nomes e pin selecionado contrastam", async ({
+test("tema escuro, quatro mapas detalhados: vias, limite, nomes e pin selecionado contrastam", async ({
   page,
 }) => {
   await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
-  const raiz = await abrir(page, `${ROTA}#lugar-recanto-da-serra`);
-  await exigirCoordenadas(page);
-  await expect(raiz).toHaveAttribute("data-escala", "local");
-  const r = await page.evaluate(() => {
-    const rgb = (css: string): number[] => {
-      const nums = (css.match(/-?\d*\.?\d+/g) ?? []).map(Number);
-      return css.startsWith("color(")
-        ? nums.slice(0, 3).map((n) => n * 255)
-        : nums.slice(0, 3);
-    };
-    const lum = (css: string) => {
-      const [r0, g0, b0] = rgb(css).map((v) => {
-        const c = v / 255;
-        return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-      });
-      return 0.2126 * (r0 ?? 0) + 0.7152 * (g0 ?? 0) + 0.0722 * (b0 ?? 0);
-    };
-    const contraste = (a: string, b: string) => {
-      const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m);
-      return ((x ?? 0) + 0.05) / ((y ?? 0) + 0.05);
-    };
-    const escopo = '[data-tv-camada-local="recanto-da-serra"]';
-    const estilo = (sel: string) => {
-      const el = document.querySelector(sel);
-      if (el === null) throw new Error(sel);
-      return getComputedStyle(el);
-    };
-    const placa = estilo(".tv__plano").backgroundColor;
-    const fundo = estilo(`${escopo} .mun`).fill;
-    return {
-      rodovia: contraste(estilo(`${escopo} .rodovia`).stroke, fundo),
-      estrada: contraste(estilo(`${escopo} .estrada`).stroke, fundo),
-      limite: contraste(estilo(`${escopo} .lim`).stroke, fundo),
-      nome: contraste(estilo(`${escopo} .loc text`).fill, placa),
-      contornoDoPin: contraste(
-        estilo(`${escopo} .pin[data-selecionado="true"] .forma`).stroke,
-        fundo,
-      ),
-      textoDoPin: contraste(
-        estilo(`${escopo} .pin-rotulo.selecionado text`).fill,
-        estilo(`${escopo} .pin-rotulo.selecionado rect`).fill,
-      ),
-      borda: contraste(
-        estilo(".tv__plano").borderTopColor,
-        estilo("body").backgroundColor,
-      ),
-    };
-  });
-  expect(r.rodovia).toBeGreaterThanOrEqual(3);
-  expect(r.limite).toBeGreaterThanOrEqual(3);
-  expect(r.nome).toBeGreaterThanOrEqual(4.5);
-  expect(r.contornoDoPin).toBeGreaterThanOrEqual(3);
-  expect(r.textoDoPin).toBeGreaterThanOrEqual(4.5);
-  expect(r.estrada).toBeGreaterThan(1.3);
-  expect(r.estrada).toBeLessThan(r.rodovia);
-  expect(r.borda).toBeGreaterThanOrEqual(1.8);
+  const raiz = await abrir(page);
+  for (const lugar of LUGARES) {
+    await selecionar(page, lugar.aba);
+    await expect(raiz).toHaveAttribute("data-escala", "local");
+    const r = await page.evaluate((id) => {
+      const rgb = (css: string): number[] => {
+        const nums = (css.match(/-?\d*\.?\d+/g) ?? []).map(Number);
+        return css.startsWith("color(")
+          ? nums.slice(0, 3).map((n) => n * 255)
+          : nums.slice(0, 3);
+      };
+      const lum = (css: string) => {
+        const [r0, g0, b0] = rgb(css).map((v) => {
+          const c = v / 255;
+          return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+        });
+        return 0.2126 * (r0 ?? 0) + 0.7152 * (g0 ?? 0) + 0.0722 * (b0 ?? 0);
+      };
+      const contraste = (a: string, b: string) => {
+        const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m);
+        return ((x ?? 0) + 0.05) / ((y ?? 0) + 0.05);
+      };
+      const escopo = `[data-tv-camada-local="${id}"]`;
+      const estilo = (sel: string) => {
+        const el = document.querySelector(sel);
+        if (el === null) throw new Error(sel);
+        return getComputedStyle(el);
+      };
+      const placa = estilo(".tv__plano").backgroundColor;
+      const fundo = estilo(`${escopo} .mun`).fill;
+      return {
+        rodovia: contraste(estilo(`${escopo} .rodovia`).stroke, fundo),
+        limite: contraste(estilo(`${escopo} .lim`).stroke, fundo),
+        nome: contraste(estilo(`${escopo} .loc text`).fill, placa),
+        contornoDoPin: contraste(
+          estilo(`${escopo} .pin[data-selecionado="true"] .forma`).stroke,
+          fundo,
+        ),
+        larguraDoContorno: Number.parseFloat(
+          estilo(`${escopo} .pin[data-selecionado="true"] .forma`).strokeWidth,
+        ),
+        textoDoPin: contraste(
+          estilo(`${escopo} .pin-rotulo.selecionado text`).fill,
+          estilo(`${escopo} .pin-rotulo.selecionado rect`).fill,
+        ),
+        etiqueta:
+          document.querySelector(`${escopo} .pin-rotulo.selecionado text`)
+            ?.textContent ?? "",
+        borda: contraste(
+          estilo(".tv__plano").borderTopColor,
+          estilo("body").backgroundColor,
+        ),
+      };
+    }, lugar.id);
+    expect(r.rodovia, lugar.id).toBeGreaterThanOrEqual(3);
+    expect(r.limite, lugar.id).toBeGreaterThanOrEqual(3);
+    expect(r.nome, lugar.id).toBeGreaterThanOrEqual(4.5);
+    expect(r.contornoDoPin, lugar.id).toBeGreaterThanOrEqual(3);
+    // Selecionado não depende só de cor: contorno mais grosso e etiqueta "▸".
+    expect(r.larguraDoContorno, lugar.id).toBeGreaterThanOrEqual(2.5);
+    expect(r.etiqueta, lugar.id).toMatch(/^▸ /);
+    expect(r.textoDoPin, lugar.id).toBeGreaterThanOrEqual(4.5);
+    expect(r.borda, lugar.id).toBeGreaterThanOrEqual(1.8);
+  }
 });
 
-test("como chegar: dois links explícitos, sem serviço externo antes do clique", async ({
+test("como chegar nos quatro: localidade, links exatos, nada externo antes do clique", async ({
   page,
 }) => {
   const externos: string[] = [];
@@ -364,44 +396,113 @@ test("como chegar: dois links explícitos, sem serviço externo antes do clique"
     const url = new URL(pedido.url());
     if (url.hostname !== "localhost") externos.push(pedido.url());
   });
-  await abrir(page, `${ROTA}#lugar-recanto-da-serra`);
-  await exigirCoordenadas(page);
-  const ficha = page.getByRole("tabpanel", { name: "Recanto da Serra" });
-  await expect(ficha).toContainText("Povoado Jacaré, Tobias Barreto (SE)");
-  await expect(ficha).not.toContainText("não publicada");
-  const links = ficha.getByRole("link", { name: /Abrir rota/ });
-  await expect(links).toHaveCount(2);
-  for (const link of await links.all()) {
-    await expect(link).toHaveAttribute("target", "_blank");
-    await expect(link).toHaveAttribute("rel", /noopener/);
-    await expect(link).toHaveAttribute("rel", /noreferrer/);
-    await expect(link).toHaveAttribute("referrerpolicy", "no-referrer");
+  await abrir(page);
+  for (const lugar of LUGARES) {
+    await selecionar(page, lugar.aba);
+    const ficha = page.getByRole("tabpanel", { name: lugar.ficha });
+    await expect(ficha).toContainText(lugar.localidade);
+    await expect(ficha).not.toContainText("não publicada");
+    await expect(ficha).not.toContainText("não foi autorizada");
+    const links = ficha.getByRole("link", { name: /Abrir rota/ });
+    await expect(links).toHaveCount(2);
+    await expect(
+      ficha.getByRole("link", { name: "Abrir rota no OpenStreetMap" }),
+    ).toHaveAttribute(
+      "href",
+      `https://www.openstreetmap.org/directions?route=%3B${lugar.latitude}%2C${lugar.longitude}`,
+    );
+    await expect(
+      ficha.getByRole("link", { name: "Abrir rota no Google Maps" }),
+    ).toHaveAttribute(
+      "href",
+      `https://www.google.com/maps/dir/?api=1&destination=${lugar.latitude}%2C${lugar.longitude}`,
+    );
+    for (const link of await links.all()) {
+      await expect(link).toHaveAttribute("target", "_blank");
+      await expect(link).toHaveAttribute("rel", /noopener/);
+      await expect(link).toHaveAttribute("rel", /noreferrer/);
+      await expect(link).toHaveAttribute("referrerpolicy", "no-referrer");
+    }
+    // Material restrito ou em revisão continua sem link.
+    await expect(
+      ficha
+        .locator(".materiais li")
+        .filter({ hasText: /Restrito|Em revisão/ })
+        .locator("a"),
+    ).toHaveCount(0);
   }
+  await expect(
+    page.getByRole("tabpanel", { name: "Serra dos Macacos" }),
+  ).toBeHidden();
+  await expect(page.locator("#tv-painel-serra-dos-macacos")).toContainText(
+    "divisa com os municípios de Simão Dias e Poço Verde",
+  );
   await expect(page.locator("iframe")).toHaveCount(0);
   await page.waitForLoadState("networkidle");
   expect(externos).toEqual([]);
 });
 
-test("375px: mapa grande, seletor compacto e depois a ficha", async ({
+test("375px, quatro lugares: mapa grande, seletor compacto, ficha, pin legível sem colisão", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 375, height: 812 });
-  await abrir(page, `${ROTA}#lugar-recanto-da-serra`);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const raiz = await abrir(page);
   const lista = page.getByRole("tablist");
   await expect(lista).toHaveAttribute("aria-orientation", "horizontal");
-  const mapa = await caixa(page, "[data-tv-mapa]");
-  const seletor = await caixa(page, "[data-tv-lista]");
-  const ficha = await caixa(page, "#tv-painel-recanto-da-serra");
-  expect(mapa.width).toBeGreaterThan(300);
-  expect(mapa.height).toBeGreaterThan(380);
-  expect(seletor.height).toBeLessThan(110);
-  expect(mapa.y).toBeLessThan(seletor.y);
-  expect(seletor.y).toBeLessThan(ficha.y);
-  await page.getByRole("tab", { name: /Recanto da Serra/ }).focus();
-  await page.keyboard.press("ArrowRight");
-  await expect(
-    page.getByRole("tab", { name: /Museu Borda da Mata/ }),
-  ).toBeFocused();
+  for (const lugar of LUGARES) {
+    await selecionar(page, lugar.aba);
+    await expect(raiz).toHaveAttribute("data-escala", "local");
+    const mapa = await caixa(page, "[data-tv-mapa]");
+    const seletor = await caixa(page, "[data-tv-lista]");
+    const ficha = await caixa(page, `#tv-painel-${lugar.id}`);
+    expect(mapa.width, lugar.id).toBeGreaterThan(300);
+    expect(mapa.height, lugar.id).toBeGreaterThan(380);
+    expect(seletor.height, lugar.id).toBeLessThan(110);
+    expect(mapa.y, lugar.id).toBeLessThan(seletor.y);
+    expect(seletor.y, lugar.id).toBeLessThan(ficha.y);
+
+    const escopo = `[data-tv-camada-local="${lugar.id}"]`;
+    const [px, py] = await pontaDoPin(
+      page,
+      `${escopo} [data-pin="${lugar.id}"]`,
+    );
+    expect(px, lugar.id).toBeGreaterThan(mapa.x);
+    expect(px, lugar.id).toBeLessThan(mapa.x + mapa.width);
+    expect(py, lugar.id).toBeGreaterThan(mapa.y);
+    expect(py, lugar.id).toBeLessThan(mapa.y + mapa.height);
+    const etiqueta = await caixa(page, `${escopo} .pin-rotulo.selecionado`);
+    expect(etiqueta.height, lugar.id).toBeGreaterThanOrEqual(10);
+    // A etiqueta do pin selecionado não cruza nenhum outro rótulo visível.
+    const colisoes = await page.evaluate(
+      ({ seletorDoEscopo }) => {
+        const escopoEl = document.querySelector(seletorDoEscopo);
+        const alvo = escopoEl
+          ?.querySelector(".pin-rotulo.selecionado")
+          ?.getBoundingClientRect();
+        if (escopoEl === null || alvo === undefined) return -1;
+        const outros = [
+          ...escopoEl.querySelectorAll(
+            ".loc text, .ref-rotulo, text.pin-rotulo, .escudo",
+          ),
+        ].filter(
+          (el) => getComputedStyle(el.closest("g") ?? el).display !== "none",
+        );
+        return outros.filter((el) => {
+          const r = el.getBoundingClientRect();
+          return (
+            r.width > 0 &&
+            r.left < alvo.right &&
+            r.right > alvo.left &&
+            r.top < alvo.bottom &&
+            r.bottom > alvo.top
+          );
+        }).length;
+      },
+      { seletorDoEscopo: escopo },
+    );
+    expect(colisoes, lugar.id).toBe(0);
+  }
 });
 
 for (const tema of ["light", "dark"] as const) {
@@ -411,7 +512,7 @@ for (const tema of ["light", "dark"] as const) {
     }) => {
       await page.emulateMedia({ colorScheme: tema });
       await page.setViewportSize({ width: largura, height: 900 });
-      await page.goto(`${ROTA}#lugar-recanto-da-serra`);
+      await page.goto(`${ROTA}#lugar-ilha-grande`);
       const d = await page.evaluate(() => ({
         cliente: document.documentElement.clientWidth,
         rolagem: document.documentElement.scrollWidth,

@@ -21,16 +21,16 @@ import {
   LUGARES_DE_CAMPO,
   type LugarDeCampo,
 } from "../lugares";
-import {
-  carregarCoordenadasConfirmadas,
-  type PosicaoConfirmada,
-} from "./coordenadas";
 import type { EnquadramentoGeografico } from "./entorno";
 import {
   type DefinicaoDeEntorno,
   definicaoDoEntorno,
   enquadramentoDoEntorno,
 } from "./entornos";
+import {
+  carregarCoordenadasConfirmadas,
+  type PosicaoConfirmada,
+} from "./referencias";
 
 /**
  * Base espacial do laboratório — compartilhada pela página e pela rota que

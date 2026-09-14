@@ -13,6 +13,12 @@ produção (conferido em build de produção local).
 > evolução segue na [Tarefa 18](./18-camada-geografica-local.md). Nela, as
 > etiquetas de lugar dentro do município (§9.1) foram retiradas e substituídas
 > por uma contagem, e entrou a camada geográfica local do Recanto da Serra.
+>
+> **Atualização — 2026-09-14:** o que aqui aparece como “município não
+> publicado” e “nenhuma coordenada” valeu até a decisão humana posterior. O
+> responsável autorizou publicar as coordenadas, o município, a localidade e
+> Como chegar dos quatro lugares — antes só local (Tarefa 19), agora versionados
+> (Tarefa 20). Os documentos restritos continuam restritos.
 
 **Esta tarefa NÃO autoriza:**
 
