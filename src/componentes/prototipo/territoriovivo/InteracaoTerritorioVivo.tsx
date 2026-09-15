@@ -36,6 +36,9 @@ export function InteracaoTerritorioVivo({ idRaiz }: { idRaiz: string }) {
     const abas = Array.from(
       raiz.querySelectorAll<HTMLAnchorElement>("[data-tv-aba]"),
     );
+    const voltas = Array.from(
+      raiz.querySelectorAll<HTMLAnchorElement>("[data-tv-voltar]"),
+    );
     if (lista === null || abas.length === 0) return;
 
     const paineis = new Map<string, HTMLElement>();
@@ -149,6 +152,12 @@ export function InteracaoTerritorioVivo({ idRaiz }: { idRaiz: string }) {
         if (painel !== undefined) painel.hidden = !sim;
       }
       ativo = indice;
+      if (estreita.matches && lista !== null) {
+        const esquerda =
+          escolhida.offsetLeft -
+          (lista.clientWidth - escolhida.offsetWidth) / 2;
+        lista.scrollTo({ left: Math.max(0, esquerda), behavior: "auto" });
+      }
       const textoDoAnuncio = escolhida.dataset.tvAnuncio ?? "";
       if (tituloDoMapa !== null) {
         tituloDoMapa.textContent = escolhida.dataset.tvRotuloMapa ?? "";
@@ -210,8 +219,17 @@ export function InteracaoTerritorioVivo({ idRaiz }: { idRaiz: string }) {
       selecionar(abas.indexOf(aba), true);
     }
 
+    function voltarAoTerritorio(evento: MouseEvent) {
+      evento.preventDefault();
+      selecionar(0, true);
+      abas[0]?.focus({ preventScroll: true });
+    }
+
     lista.addEventListener("keydown", aoTeclar);
     lista.addEventListener("click", aoClicar);
+    for (const voltar of voltas) {
+      voltar.addEventListener("click", voltarAoTerritorio);
+    }
 
     const inicial = abas.findIndex(
       (aba) => `#lugar-${aba.dataset.tvAba}` === window.location.hash,
@@ -222,6 +240,9 @@ export function InteracaoTerritorioVivo({ idRaiz }: { idRaiz: string }) {
       geracao += 1;
       lista.removeEventListener("keydown", aoTeclar);
       lista.removeEventListener("click", aoClicar);
+      for (const voltar of voltas) {
+        voltar.removeEventListener("click", voltarAoTerritorio);
+      }
       estreita.removeEventListener("change", orientar);
     };
   }, [idRaiz]);

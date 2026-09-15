@@ -115,6 +115,14 @@ test("visão geral: quatro na lista, pins na posição real, Ilha Grande fora, n
   await expect(raiz).toHaveAttribute("data-foco", "vale");
   await expect(page.getByRole("tab")).toHaveCount(5);
   await expect(page.locator("h1")).toHaveCount(1);
+  await expect(page.locator("h1")).toHaveText("Cartografia Viva");
+  await expect(page.locator(".tv-dev")).toHaveCount(0);
+  await expect(page.locator(".tv__cab")).toContainText(
+    "Cinco municípios formam o recorte do Vale do Rio Real",
+  );
+  await expect(page.locator(".tv__cab")).toContainText(
+    "Ilha Grande integra a pesquisa em São Cristóvão, fora desse recorte",
+  );
 
   await expect(page.locator('.tv-pin[data-tipo="lugar"]')).toHaveCount(4);
   const svg = await caixa(page, "[data-tv-mapa]");
@@ -172,6 +180,22 @@ test("seleção por teclado troca a ficha inteira e o estado do mapa", async ({
     (el) => getComputedStyle(el).outlineStyle,
   );
   expect(contorno).not.toBe("none");
+});
+
+test("a ficha permite voltar à visão territorial sem recarregar", async ({
+  page,
+}) => {
+  const raiz = await abrir(page);
+  await selecionar(page, /Serra dos Macacos/);
+  const ficha = page.getByRole("tabpanel", { name: "Serra dos Macacos" });
+  await ficha
+    .getByRole("link", { name: "Voltar à visão do território" })
+    .click();
+  await expect(raiz).toHaveAttribute("data-foco", "vale");
+  await expect(
+    page.getByRole("tab", { name: /Vale do Rio Real/ }),
+  ).toHaveAttribute("aria-selected", "true");
+  await expect(page).toHaveURL(/#lugar-vale$/);
 });
 
 test("sob demanda: 0 no início, 1 por lugar, cache ao voltar, outro lugar só a sua camada", async ({
@@ -259,6 +283,26 @@ test("Serra: comunidade visitada e Vila Samambaia permanecem territorialmente di
   await expect(ficha).toContainText(
     "Vila Samambaia · IBGE — referência territorial próxima; não representa o lugar visitado.",
   );
+  await expect(ficha).not.toContainText("A04");
+  await expect(ficha).not.toContainText(/Restrito|Em revisão/);
+});
+
+test("a candidata omite lacunas restritas sem reclassificar materiais", async ({
+  page,
+}) => {
+  await abrir(page);
+  await selecionar(page, /Museu Borda da Mata/);
+  const borda = page.getByRole("tabpanel", { name: "Museu Borda da Mata" });
+  await expect(borda).not.toContainText(/Restrito|Em revisão/);
+  await expect(
+    borda.getByRole("heading", { name: "Evidências públicas" }),
+  ).toHaveCount(0);
+
+  await selecionar(page, /Recanto da Serra/);
+  const recanto = page.getByRole("tabpanel", { name: "Recanto da Serra" });
+  await expect(recanto).toContainText("Relatório técnico");
+  await expect(recanto).toContainText("Atribuição formal de local pendente");
+  await expect(recanto).not.toContainText(/Restrito|Em revisão/);
 });
 
 test("cada seleção centraliza o pin e o mapa local pertence ao lugar", async ({
@@ -434,16 +478,18 @@ test("como chegar nos quatro: localidade, links exatos, nada externo antes do cl
     await expect(ficha).toContainText(lugar.localidade);
     await expect(ficha).not.toContainText("não publicada");
     await expect(ficha).not.toContainText("não foi autorizada");
-    const links = ficha.getByRole("link", { name: /Abrir rota/ });
+    const links = ficha.getByRole("link", {
+      name: /OpenStreetMap|Google Maps/,
+    });
     await expect(links).toHaveCount(2);
     await expect(
-      ficha.getByRole("link", { name: "Abrir rota no OpenStreetMap" }),
+      ficha.getByRole("link", { name: "OpenStreetMap", exact: true }),
     ).toHaveAttribute(
       "href",
       `https://www.openstreetmap.org/directions?route=%3B${lugar.latitude}%2C${lugar.longitude}`,
     );
     await expect(
-      ficha.getByRole("link", { name: "Abrir rota no Google Maps" }),
+      ficha.getByRole("link", { name: "Google Maps", exact: true }),
     ).toHaveAttribute(
       "href",
       `https://www.google.com/maps/dir/?api=1&destination=${lugar.latitude}%2C${lugar.longitude}`,
@@ -492,6 +538,17 @@ test("375px, quatro lugares: mapa grande, seletor compacto, ficha, pin legível 
     expect(seletor.height, lugar.id).toBeLessThan(110);
     expect(mapa.y, lugar.id).toBeLessThan(seletor.y);
     expect(seletor.y, lugar.id).toBeLessThan(ficha.y);
+    const abaAtiva = page.getByRole("tab", { name: lugar.aba });
+    const visivel = await abaAtiva.evaluate((el) => {
+      const aba = el.getBoundingClientRect();
+      const lista = el.parentElement?.parentElement?.getBoundingClientRect();
+      return (
+        lista !== undefined &&
+        aba.left >= lista.left - 1 &&
+        aba.right <= lista.right + 1
+      );
+    });
+    expect(visivel, lugar.id).toBe(true);
 
     const escopo = `[data-tv-camada-local="${lugar.id}"]`;
     const [px, py] = await pontaDoPin(
@@ -534,6 +591,38 @@ test("375px, quatro lugares: mapa grande, seletor compacto, ficha, pin legível 
     );
     expect(colisoes, lugar.id).toBe(0);
   }
+});
+
+test("375px, a candidata não cria controle fixo sobre a ficha", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await abrir(page);
+  await selecionar(page, /Recanto da Serra/);
+  const ficha = page.getByRole("tabpanel", { name: "Recanto da Serra" });
+  await ficha.scrollIntoViewIfNeeded();
+
+  const sobreposicoes = await page
+    .locator("#territorio-vivo *")
+    .evaluateAll((elementos) => {
+      const alvo = document
+        .querySelector('#territorio-vivo [role="tabpanel"]:not([hidden])')
+        ?.getBoundingClientRect();
+      if (alvo === undefined) return -1;
+      return elementos.filter((elemento) => {
+        if (getComputedStyle(elemento).position !== "fixed") return false;
+        const caixa = elemento.getBoundingClientRect();
+        return (
+          caixa.width > 0 &&
+          caixa.height > 0 &&
+          caixa.left < alvo.right &&
+          caixa.right > alvo.left &&
+          caixa.top < alvo.bottom &&
+          caixa.bottom > alvo.top
+        );
+      }).length;
+    });
+  expect(sobreposicoes).toBe(0);
 });
 
 for (const tema of ["light", "dark"] as const) {
