@@ -1,7 +1,4 @@
-import {
-  DEFINICAO_VALE_DO_RIO_REAL,
-  RECORTE_TERRITORIAL,
-} from "../../../dados/territorio/recorte";
+import { DEFINICAO_VALE_DO_RIO_REAL } from "../../../dados/territorio/recorte";
 import { CSS_DO_TERRITORIO_VIVO } from "./estilos";
 import {
   aplicar,
@@ -16,10 +13,8 @@ import {
   montarBaseDoTerritorio,
 } from "./local/composicao";
 import { FONTES_DAS_CAMADAS } from "./local/entorno";
-import { FONTE_DA_COORDENADA } from "./local/referencias";
 import { destinosDeRota } from "./local/rota";
 import { caminhoDoPin } from "./local/svg";
-import { ROTULO_DO_ESTADO } from "./lugares";
 
 /**
  * Cartografia Viva — laboratório da experiência territorial.
@@ -159,13 +154,6 @@ export function TerritorioVivo() {
             : ""
         }`;
 
-  const campoNoVale = doVale.filter((m) =>
-    m.relacoesTerritoriais.includes("pesquisa-campo"),
-  );
-  const comparacao = RECORTE_TERRITORIAL.filter((m) =>
-    m.relacoesTerritoriais.includes("comparacao"),
-  );
-
   const escalas = [
     { foco: FOCO_GERAL, barra: barraDeEscala(kmU, 1, vw * 0.22) },
     ...posicionados.map((l) => ({
@@ -195,18 +183,28 @@ export function TerritorioVivo() {
       <style>{CSS_DO_TERRITORIO_VIVO}</style>
       <style>{css.join("\n")}</style>
 
-      <p className="tv-dev">
-        Laboratório · /dev/territorio-vivo · somente DEV · referências
-        territoriais públicas · rota não publicada
-      </p>
-
       <div className="tv__cab">
-        <p className="meta-ficha">Território</p>
-        <h1>Cartografia viva do Vale do Rio Real</h1>
-        <p>
-          Os lugares visitados pela pesquisa e o que existe publicado sobre cada
-          um.
+        <p className="meta-ficha">Território da pesquisa</p>
+        <h1>Cartografia Viva</h1>
+        {/* Proposta editorial — aguarda aprovação humana para integração. */}
+        <p className="tv__abertura" data-copy-editorial="proposta">
+          Uma leitura espacial dos lugares, equipamentos e evidências que
+          fizeram parte da pesquisa do Observatório.
         </p>
+        <p className="tv__instrucao" data-copy-editorial="proposta">
+          Escolha um lugar para aproximar o mapa e consultar seus registros
+          públicos.
+        </p>
+        <div className="tv__contexto" data-copy-editorial="proposta">
+          <p>
+            <strong>Cinco municípios</strong> formam o recorte do Vale do Rio
+            Real.
+          </p>
+          <p>
+            <strong>Ilha Grande</strong> integra a pesquisa em São Cristóvão,
+            fora desse recorte.
+          </p>
+        </div>
       </div>
 
       <p aria-live="polite" className="sr-only" data-tv-regiao-anuncio="" />
@@ -426,23 +424,16 @@ export function TerritorioVivo() {
           </div>
 
           <figcaption className="tv__nota tv__nota--geral">
-            Malha municipal IBGE; recorte do Vale definido pelo projeto.{" "}
-            {posicionados.length > 0
-              ? `Pins: posição confirmada — ${FONTE_DA_COORDENADA}; publicação pública autorizada pelo responsável.`
-              : "Sem coordenadas confirmadas disponíveis: nenhum lugar é posicionado."}
-            {foraDoVale.length > 0
-              ? ` ${foraDoVale.map((l) => l.nome).join(", ")} fica fora do enquadramento do Vale: selecione na lista para deslocar o mapa.`
-              : ""}
+            Base cartográfica: IBGE. Os pins usam coordenadas confirmadas em
+            campo. Ilha Grande aparece ao selecionar o lugar, pois está fora do
+            enquadramento do Vale.
           </figcaption>
           <p className="tv__nota tv__nota--local">
-            Mapa detalhado do entorno. Localidades:{" "}
-            {FONTES_DAS_CAMADAS.localidades}. Vias e cursos d'água:{" "}
+            Base cartográfica: IBGE + OpenStreetMap. Vias e cursos d'água:{" "}
             <a href="https://www.openstreetmap.org/copyright">
               {FONTES_DAS_CAMADAS.vias}
             </a>
-            . Limites: IBGE, malha municipal. Pins: {FONTE_DA_COORDENADA} — não
-            vêm do IBGE nem do OpenStreetMap. A camada é carregada do próprio
-            site, sob demanda; nenhum serviço de mapa externo é consultado.
+            . O pin mantém a coordenada humana confirmada.
           </p>
           <ul
             aria-label="Legenda do mapa"
@@ -470,67 +461,44 @@ export function TerritorioVivo() {
           >
             <li>
               <span aria-hidden="true" className="tv__amostra--pin" />
-              Lugar da pesquisa
+              Lugar visitado
             </li>
             <li>
               <span
                 aria-hidden="true"
                 className="tv__amostra tv__amostra--referencia"
               />
-              Localidade do lugar (IBGE)
+              Localidade do lugar
             </li>
             <li>
               <span
                 aria-hidden="true"
                 className="tv__amostra tv__amostra--sede"
               />
-              Sede municipal
+              Sede
             </li>
             <li>
               <span
                 aria-hidden="true"
                 className="tv__amostra tv__amostra--localidade"
               />
-              Localidade (IBGE 2022)
-            </li>
-            <li>
-              <span
-                aria-hidden="true"
-                className="tv__amostra tv__amostra--localidade"
-              />
-              Referência cartográfica próxima (IBGE; não é o lugar)
+              Outra localidade ou referência IBGE
             </li>
             <li>
               <span aria-hidden="true" className="tv__traco" />
-              Rodovia
-            </li>
-            <li>
-              <span aria-hidden="true" className="tv__traco tv__traco--terra" />
-              Rodovia sem pavimento (OSM)
-            </li>
-            <li>
-              <span
-                aria-hidden="true"
-                className="tv__traco tv__traco--estrada"
-              />
-              Estrada local
-            </li>
-            <li>
-              <span aria-hidden="true" className="tv__traco tv__traco--agua" />
-              Curso d'água
-            </li>
-            <li>
-              <span
-                aria-hidden="true"
-                className="tv__traco tv__traco--limite"
-              />
-              Limite municipal
+              Rodovia principal
             </li>
           </ul>
         </figure>
 
         <nav aria-labelledby="tv-lista-titulo" className="tv__lista">
-          <h2 id="tv-lista-titulo">Lugares</h2>
+          <div className="tv__lista-cab">
+            <p className="meta-ficha">Percurso</p>
+            <h2 id="tv-lista-titulo">Explore os lugares</h2>
+            <p data-copy-editorial="proposta">
+              Veja o território inteiro ou escolha um ponto da pesquisa.
+            </p>
+          </div>
           <ul data-tv-lista="">
             <li>
               <a
@@ -606,45 +574,26 @@ export function TerritorioVivo() {
           >
             <p className="meta-ficha">Visão geral</p>
             <h2 id="tv-painel-vale-titulo">Vale do Rio Real</h2>
-            <p>{DEFINICAO_VALE_DO_RIO_REAL}</p>
+            <p className="tv__resumo">{DEFINICAO_VALE_DO_RIO_REAL}</p>
             <section>
-              <h3>Recorte</h3>
+              <h3>O recorte</h3>
               <p>{doVale.map((m) => m.nome).join(", ")}.</p>
-              <p className="fonte">
-                Pesquisa de campo registrada em{" "}
-                {campoNoVale.map((m) => m.nome).join(" e ")}.
-              </p>
             </section>
             <section>
-              <h3>Lugares visitados em campo</h3>
+              <h3>A pesquisa no território</h3>
               <p>
-                {lugares.length} lugares:{" "}
-                {lugares.map((l) => l.nome).join(", ")}.
+                Os quatro lugares desta cartografia podem ser explorados
+                individualmente. Três estão em Tobias Barreto, dentro do recorte
+                principal.
               </p>
             </section>
             <section>
-              <h3>Fora desta vista</h3>
-              <ul>
-                {comparacao.map((m) => (
-                  <li key={m.codigoIbge}>
-                    {m.nome} — pesquisa de campo e comparação de políticas
-                    públicas; não pertence ao recorte do Vale.
-                  </li>
-                ))}
-              </ul>
-            </section>
-            <section>
-              <h3>Evidências de pesquisa declaradas por município</h3>
-              <ul>
-                {RECORTE_TERRITORIAL.filter(
-                  (m) => m.evidenciasDePesquisa.length > 0,
-                ).map((m) => (
-                  <li key={m.codigoIbge}>
-                    <strong>{m.nome}:</strong>{" "}
-                    {m.evidenciasDePesquisa.join("; ")}
-                  </li>
-                ))}
-              </ul>
+              <h3>Ilha Grande</h3>
+              <p>
+                Faz parte da pesquisa e está em São Cristóvão. Sua presença
+                amplia a leitura documental, sem incluir São Cristóvão entre os
+                cinco municípios do Vale.
+              </p>
             </section>
           </section>
 
@@ -657,6 +606,16 @@ export function TerritorioVivo() {
           ))}
         </div>
       </div>
+
+      <section className="tv__fecho" data-copy-editorial="proposta">
+        <p className="meta-ficha">Sobre a cartografia</p>
+        <h2>Uma leitura espacial da pesquisa</h2>
+        <p>
+          Os pontos não formam um roteiro turístico. Eles situam lugares,
+          equipamentos e registros que compõem a documentação pública do
+          Observatório.
+        </p>
+      </section>
 
       <InteracaoTerritorioVivo idRaiz={ID_RAIZ} />
     </div>
@@ -671,10 +630,9 @@ function FichaDoLugar({
   municipio: string | null;
 }) {
   const idTitulo = `tv-painel-${lugar.id}-titulo`;
-  const contagem = lugar.materiais.reduce<Record<string, number>>((acc, m) => {
-    acc[m.estado] = (acc[m.estado] ?? 0) + 1;
-    return acc;
-  }, {});
+  const materiaisPublicos = lugar.materiais.filter(
+    (material) => material.estado === "publico",
+  );
   const posicao = lugar.posicao;
   const temComoChegar = lugar.comoChegar !== null || posicao !== null;
 
@@ -685,12 +643,25 @@ function FichaDoLugar({
       id={`tv-painel-${lugar.id}`}
     >
       <p className="meta-ficha">
-        {[lugar.tipo?.texto, municipio].filter(Boolean).join(" · ") ||
-          "Lugar visitado em campo"}
+        {["Lugar visitado", municipio].filter(Boolean).join(" · ")}
       </p>
       <h2 id={idTitulo}>{lugar.nome}</h2>
       {lugar.nomeCompleto !== null && lugar.nomeCompleto !== lugar.nome ? (
-        <p className="fonte">{lugar.nomeCompleto}</p>
+        <p className="tv__subtitulo">{lugar.nomeCompleto}</p>
+      ) : null}
+
+      {lugar.localidade !== null ? (
+        <div className="tv__identificacao">
+          <p className="fonte">Localização</p>
+          <p>
+            <strong>{lugar.localidade.texto}</strong>
+            {municipio !== null ? ` · ${municipio} (SE)` : ""}
+          </p>
+          <p className="tv__vinculo">
+            Lugar visitado em campo
+            {lugar.dentroDoVale ? "." : "; fora do recorte principal do Vale."}
+          </p>
+        </div>
       ) : null}
 
       {lugar.lacunaDeLocalizacao !== null ? (
@@ -704,35 +675,25 @@ function FichaDoLugar({
         </section>
       ) : null}
 
-      <section>
-        <h3>Relação com a pesquisa</h3>
-        <p>Lugar visitado em campo.</p>
-        <ul className="materiais">
-          {lugar.materiais.map((m) => (
-            <li key={m.material}>
-              <span>
-                {m.href !== null ? (
-                  <a href={m.href}>{m.material}</a>
-                ) : (
-                  m.material
-                )}
-              </span>
-              <span className="estado" data-estado={m.estado}>
-                {ROTULO_DO_ESTADO[m.estado]}
-              </span>
-            </li>
-          ))}
-        </ul>
-        <p className="fonte">
-          Status documental:{" "}
-          {Object.entries(contagem)
-            .map(
-              ([estado, n]) =>
-                `${n} ${ROTULO_DO_ESTADO[estado as keyof typeof ROTULO_DO_ESTADO].toLowerCase()}`,
-            )
-            .join(" · ")}
-        </p>
-      </section>
+      {materiaisPublicos.length > 0 ? (
+        <section>
+          <h3>Evidências públicas</h3>
+          <ul className="materiais">
+            {materiaisPublicos.map((m) => (
+              <li key={m.material}>
+                <span>
+                  {m.href !== null ? (
+                    <a href={m.href}>{m.material}</a>
+                  ) : (
+                    m.material
+                  )}
+                </span>
+                <span className="estado">Disponível</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       {lugar.dados.length > 0 ? (
         <section>
@@ -775,32 +736,14 @@ function FichaDoLugar({
         </section>
       ) : null}
 
-      {posicao !== null ? (
-        <section>
-          <h3>Posição no mapa</h3>
-          <p>
-            Posição confirmada
-            {lugar.dentroDoVale ? "" : ", fora do recorte do Vale"}.
-          </p>
-          <p className="fonte">
-            Fonte da coordenada: {FONTE_DA_COORDENADA}. Publicação autorizada
-            pelo responsável; o ponto não vem do IBGE nem do OpenStreetMap.
-          </p>
-        </section>
-      ) : null}
-
       {temComoChegar ? (
-        <section>
+        <section className="tv__acesso">
           <h3>Como chegar</h3>
           {lugar.localidade !== null || lugar.comoChegar?.referencia != null ? (
             <dl className="chegar">
               {lugar.localidade !== null ? (
                 <div>
-                  <dt className="fonte">
-                    {lugar.camadaLocal?.referenciaCartografica != null
-                      ? "Localização"
-                      : "Localidade"}
-                  </dt>
+                  <dt className="fonte">Localização documental</dt>
                   <dd>
                     {lugar.localidade.texto}
                     {municipio !== null ? `, ${municipio} (SE)` : ""}
@@ -819,7 +762,7 @@ function FichaDoLugar({
               ) : null}
               {lugar.comoChegar?.referencia != null ? (
                 <div>
-                  <dt className="fonte">Referência</dt>
+                  <dt className="fonte">Referência de acesso</dt>
                   <dd>{lugar.comoChegar.referencia.texto}</dd>
                 </div>
               ) : null}
@@ -828,8 +771,8 @@ function FichaDoLugar({
           {posicao !== null ? (
             <div className="rota">
               <p className="fonte">
-                Abrir rota: abre um serviço externo, em nova aba, só depois do
-                clique. Nada é carregado antes.
+                Consulta externa opcional. Nenhum serviço de mapas é carregado
+                antes do clique.
               </p>
               <ul>
                 {destinosDeRota(posicao).map((destino) => (
@@ -841,7 +784,7 @@ function FichaDoLugar({
                       rel="noopener noreferrer external"
                       target="_blank"
                     >
-                      Abrir rota no {destino.servico}
+                      {destino.servico}
                     </a>
                   </li>
                 ))}
@@ -852,20 +795,12 @@ function FichaDoLugar({
               Rota externa indisponível: não há destino geográfico confirmado.
             </p>
           )}
-          {lugar.localidade !== null || lugar.comoChegar?.referencia != null ? (
-            <p className="fonte">
-              Fonte:{" "}
-              {lugar.localidade?.fonte ?? lugar.comoChegar?.referencia?.fonte}
-            </p>
-          ) : null}
-          {lugar.local !== null ? (
-            <p className="fonte">
-              Mapa detalhado. Localidades: {FONTES_DAS_CAMADAS.localidades}.
-              Vias e cursos d'água: {FONTES_DAS_CAMADAS.vias}.
-            </p>
-          ) : null}
         </section>
       ) : null}
+
+      <a className="tv__voltar" data-tv-voltar="" href="#tv-painel-vale">
+        ← Voltar à visão do território
+      </a>
     </section>
   );
 }

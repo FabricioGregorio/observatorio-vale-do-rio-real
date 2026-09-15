@@ -95,10 +95,13 @@ export const CSS_DO_TERRITORIO_VIVO = `
   --tv-agua:color-mix(in srgb,var(--color-link) 70%,var(--color-fundo-elevado));
 }
 
-.tv-dev{margin:0;padding:.45rem clamp(1rem,4vw,3rem);background:var(--color-destaque);color:var(--color-texto-sobre-destaque);font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);text-transform:uppercase}
 .tv ul,.tv ol{list-style:none;margin:0;padding:0}
-.tv__cab{display:grid;gap:.6rem;max-width:var(--largura-leitura)}
-.tv__cab h1{font-size:clamp(var(--text-2xl),4vw,var(--text-4xl))}
+.tv__cab{display:grid;gap:.75rem;max-width:var(--largura-leitura)}
+.tv__cab h1{font-size:clamp(var(--text-3xl),5vw,var(--text-4xl));line-height:.98}
+.tv__abertura{max-width:42rem;font-size:clamp(var(--text-lg),2vw,var(--text-xl));line-height:1.45}
+.tv__instrucao{max-width:38rem;color:var(--color-texto-suave)}
+.tv__contexto{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem;margin-top:.5rem;padding-top:1rem;border-top:1px solid var(--color-borda)}
+.tv__contexto p{font-size:var(--text-sm)}
 .tv__grade{display:grid;gap:1.5rem;margin-top:clamp(1.5rem,4vw,2.5rem)}
 
 /* Placa do mapa */
@@ -175,7 +178,7 @@ export const CSS_DO_TERRITORIO_VIVO = `
 .tv__traco--estrada{border-top:1px solid var(--tv-via-estrada)}
 .tv__traco--agua{border-top:2px solid var(--tv-agua)}
 .tv__traco--limite{border-top:2px dashed var(--tv-limite)}
-.tv__nota{font-size:var(--text-sm);color:var(--color-texto-suave)}
+.tv__nota{max-width:54rem;font-size:var(--text-xs);line-height:1.55;color:var(--color-texto-suave)}
 .tv__legenda--local,.tv__nota--local{display:none}
 .tv[data-escala="local"] .tv__legenda--local{display:flex}
 .tv[data-escala="local"] .tv__nota--local{display:block}
@@ -184,6 +187,8 @@ export const CSS_DO_TERRITORIO_VIVO = `
 /* Lista de lugares */
 .tv__lista{display:grid;gap:.5rem;align-content:start;min-width:0}
 .tv__lista h2{font-size:var(--text-lg)}
+.tv__lista-cab{display:grid;gap:.2rem;margin-bottom:.25rem}
+.tv__lista-cab>p:last-child{font-size:var(--text-sm);color:var(--color-texto-suave)}
 .tv__lista ul{display:grid;gap:.4rem}
 .tv a{color:var(--color-link)}
 .tv [data-tv-aba]{display:grid;gap:.1rem;padding:.65rem .85rem;border:1px solid var(--color-borda);border-left:4px solid transparent;border-radius:var(--radius-ficha);background:var(--color-fundo-elevado);color:var(--color-texto);text-decoration:none;transition:background-color var(--duracao-hover) var(--easing-padrao)}
@@ -195,10 +200,14 @@ export const CSS_DO_TERRITORIO_VIVO = `
 
 /* Fichas */
 .tv__paineis{display:grid;gap:1.5rem;min-width:0}
-.tv [data-tv-painel]{display:grid;gap:1rem;padding:clamp(1rem,3vw,1.5rem);background:var(--color-fundo-elevado);border:1px solid var(--color-borda);border-top:3px solid var(--tv-contorno-foco);border-radius:var(--radius-ficha)}
+.tv [data-tv-painel]{display:grid;gap:1.15rem;padding:clamp(1rem,3vw,1.5rem) 0;border-top:3px solid var(--tv-contorno-foco)}
 .tv [data-tv-painel] h2{font-size:clamp(var(--text-xl),2.4vw,var(--text-2xl))}
 .tv [data-tv-painel] h3{font-family:var(--font-mono);font-size:var(--text-xs);font-weight:500;letter-spacing:var(--tracking-mono);text-transform:uppercase;color:var(--color-texto-suave)}
 .tv [data-tv-painel] section{display:grid;gap:.45rem}
+.tv__resumo{font-size:var(--text-lg);line-height:1.5}
+.tv__subtitulo{color:var(--color-texto-suave)}
+.tv__identificacao{display:grid;gap:.2rem;padding:.8rem 0;border-block:1px solid var(--color-borda)}
+.tv__vinculo{font-size:var(--text-sm);color:var(--color-texto-suave)}
 .tv .fonte{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);color:var(--color-texto-suave)}
 .tv .materiais li{display:flex;justify-content:space-between;gap:1rem;padding:.4rem 0;border-bottom:1px solid var(--color-borda);font-size:var(--text-sm)}
 .tv .estado{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);text-transform:uppercase;white-space:nowrap;color:var(--color-texto-suave)}
@@ -214,10 +223,14 @@ export const CSS_DO_TERRITORIO_VIVO = `
 .tv .lacuna{padding:.75rem;border:1px dashed var(--color-borda-forte);border-radius:var(--radius-ficha);font-size:var(--text-sm)}
 .tv .chegar dd{margin:0}
 .tv .chegar div{display:grid;gap:.1rem;padding:.35rem 0;border-bottom:1px solid var(--color-borda);font-size:var(--text-sm)}
+.tv__acesso{padding-top:.85rem;border-top:1px solid var(--color-borda)}
 .tv .rota{display:grid;gap:.45rem}
 .tv .rota ul{display:flex;flex-wrap:wrap;gap:.5rem}
-.tv .rota__link{display:inline-block;padding:.5rem .8rem;border:1px solid var(--tv-contorno-foco);border-radius:var(--radius-ficha);font-family:var(--font-display);font-weight:600;text-decoration:none}
+.tv .rota__link{display:inline-block;padding:.35rem 0;border-bottom:1px solid currentColor;font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;text-decoration:none}
 .tv .rota__link:hover{background:var(--tv-hover)}
+.tv__voltar{justify-self:start;margin-top:.25rem;font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;text-decoration:none}
+.tv__fecho{display:grid;gap:.5rem;max-width:var(--largura-leitura);margin-top:clamp(2.5rem,7vw,5rem);padding-top:clamp(1.5rem,4vw,2.5rem);border-top:1px solid var(--color-borda)}
+.tv__fecho h2{font-size:clamp(var(--text-xl),3vw,var(--text-2xl))}
 
 /*
   Movimento reduzido: troca instantânea de verdade. A regra global de
@@ -239,13 +252,18 @@ export const CSS_DO_TERRITORIO_VIVO = `
 /* Celular: mapa grande → faixa compacta de lugares → ficha */
 @media (max-width:767px){
   .tv__grade{gap:1rem}
+  .tv__contexto{grid-template-columns:1fr;gap:.4rem}
   .tv__plano svg{max-height:none}
+  .tv__lista-cab>p:last-child{display:none}
   .tv__lista h2{font-size:var(--text-sm);font-family:var(--font-mono);font-weight:500;letter-spacing:var(--tracking-mono);text-transform:uppercase;color:var(--color-texto-suave)}
   .tv__lista ul{display:flex;gap:.4rem;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;padding-bottom:.4rem}
   .tv__lista li{flex:0 0 auto;max-width:15rem;scroll-snap-align:start}
   .tv [data-tv-aba]{padding:.45rem .7rem}
   .tv [data-tv-aba] .nome{font-size:var(--text-sm);white-space:nowrap}
   .tv [data-tv-aba] .meta{white-space:nowrap}
+  .tv__nota{font-size:var(--text-xs)}
+  .tv__legenda{gap:.35rem .8rem}
+  .tv [data-tv-painel]{padding-top:1rem}
   /*
     Na placa estreita cada unidade do SVG vale ~0,6 do que vale no desktop:
     os nomes de "outras localidades" cairiam para ~7 px. Eles saem, e os
