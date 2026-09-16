@@ -1,4 +1,5 @@
 import { HomeLivre } from "../componentes/prototipo/homelivre/HomeLivre";
+import { listarArquivosPorDocumento } from "../dados/consultas/anexos";
 import { metadadosDaRota } from "../lib/site-url";
 
 export const metadata = metadadosDaRota({
@@ -26,9 +27,18 @@ export const metadata = metadadosDaRota({
  * A abertura fica na B2 aprovada. `?hero=` é instrumento de laboratório e não
  * é lido aqui: a Home pública não tem variante.
  *
- * Server Component, sem consulta a banco. O `<main id="conteudo">` vive no
- * layout raiz: aqui vai só o conteúdo.
+ * Server Component. A única consulta é a dos arquivos públicos, em build, pela
+ * mesma função que serve `/territorio` e o Acervo: o estado das fichas dos
+ * lugares é consequência do que está em `vw_anexo_publico`, nunca uma lista
+ * escrita à mão. O `<main id="conteudo">` vive no layout raiz: aqui vai só o
+ * conteúdo.
  */
-export default function Home() {
-  return <HomeLivre abertura="b2" contexto="publico" />;
+export default async function Home() {
+  return (
+    <HomeLivre
+      abertura="b2"
+      contexto="publico"
+      publicados={await listarArquivosPorDocumento()}
+    />
+  );
 }

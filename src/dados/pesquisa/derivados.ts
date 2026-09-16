@@ -15,6 +15,8 @@
 export const PASTA_PUBLICA_DA_PESQUISA = "/media/pesquisa";
 export const PASTA_DOS_DERIVADOS_DA_PESQUISA = "public/media/pesquisa";
 
+import fotosDosLugares from "./lugares-derivados.json";
+
 export type DerivadoDaPesquisa = {
   readonly id: "chegada-por-agua" | "forno-a-lenha" | "igrejinha";
   readonly arquivo: string;
@@ -137,3 +139,9 @@ export const BYTES_TOTAIS_DA_PESQUISA = DERIVADOS_DA_PESQUISA.reduce(
   (total, derivado) => total + derivado.bytes,
   0,
 );
+
+export type DerivadoDeLugar = (typeof fotosDosLugares)[number];
+
+/** Fotografias autorizadas para as fichas de Recanto e Borda da Mata. */
+export const DERIVADOS_DOS_LUGARES =
+  fotosDosLugares as readonly DerivadoDeLugar[];

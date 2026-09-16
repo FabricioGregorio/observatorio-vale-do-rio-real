@@ -8,7 +8,7 @@ import {
   enquadrar,
   kmPorUnidade,
 } from "../src/componentes/prototipo/territoriovivo/geometria";
-import { LUGARES_DE_CAMPO } from "../src/componentes/prototipo/territoriovivo/lugares";
+import { LUGARES_SEM_PUBLICACAO } from "../src/componentes/prototipo/territoriovivo/lugares";
 import { montarDadosDoMapa } from "../src/dados/territorio/mapa";
 import { PONTOS_DE_VISITA_PREVISTOS } from "../src/dados/territorio/pontos";
 
@@ -78,7 +78,7 @@ describe("geometria do enquadramento", () => {
 
 describe("limites de dado dos lugares", () => {
   test("são exatamente os quatro lugares confirmados, na ordem", () => {
-    expect(LUGARES_DE_CAMPO.map((l) => l.id)).toEqual([
+    expect(LUGARES_SEM_PUBLICACAO.map((l) => l.id)).toEqual([
       "recanto-da-serra",
       "borda-da-mata",
       "serra-dos-macacos",
@@ -87,7 +87,7 @@ describe("limites de dado dos lugares", () => {
   });
 
   test("município da ficha não contradiz pontos.ts; a posição fica fora da ficha", () => {
-    for (const lugar of LUGARES_DE_CAMPO) {
+    for (const lugar of LUGARES_SEM_PUBLICACAO) {
       const ponto = PONTOS_DE_VISITA_PREVISTOS.find((p) => p.id === lugar.id);
       // pontos.ts (dado da Home) só declara município onde já havia documento;
       // onde declara, a referência territorial autorizada coincide.
@@ -103,7 +103,7 @@ describe("limites de dado dos lugares", () => {
   });
 
   test("material restrito ou em revisão nunca tem link", () => {
-    for (const lugar of LUGARES_DE_CAMPO) {
+    for (const lugar of LUGARES_SEM_PUBLICACAO) {
       for (const material of lugar.materiais) {
         if (material.estado !== "publico") expect(material.href).toBeNull();
       }
@@ -111,7 +111,7 @@ describe("limites de dado dos lugares", () => {
   });
 
   test("lugar sem município publicado declara a lacuna; com município, não", () => {
-    for (const lugar of LUGARES_DE_CAMPO) {
+    for (const lugar of LUGARES_SEM_PUBLICACAO) {
       if (lugar.municipioId === null) {
         expect(lugar.lacunaDeLocalizacao).not.toBeNull();
       } else {

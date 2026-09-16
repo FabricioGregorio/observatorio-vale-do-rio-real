@@ -6,7 +6,7 @@ projeto está agora?**
 Como o projeto deve ser conduzido é assunto de
 [`PLANO_EXECUCAO_OBSERVATORIO.md`](./PLANO_EXECUCAO_OBSERVATORIO.md).
 
-**Data:** 2026-09-08
+**Data:** 2026-09-16
 
 ---
 
@@ -40,8 +40,9 @@ Como o projeto deve ser conduzido é assunto de
 | R2 | buckets público e privado validados; GET anônimo no privado negado |
 | Manifesto de Evidências | existe, em `src/lib/manifesto-evidencias.ts` |
 | ZIP público | gate canônico `PUBLICAVEL` + `revisao_privacidade = concluida`; não gera pacote vazio |
-| Banco | `documento` = **33**; `arquivo` = **18**; `documento_arquivo` = **18**; `pessoa` = **0**; `consentimento` = **0** |
-| Primeira publicação | **8 objetos**: A02=1 e D01=7; `vw_anexo_publico`=8; A04 e D01-08 fora |
+| Banco | `documento` = **33**; `arquivo` = **118**; `documento_arquivo` = **118**; `pessoa` = **0**; `consentimento` = **0** |
+| Primeira publicação | **8 objetos**: A02=1 e D01=7; A04 e D01-08 fora |
+| Publicação de 2026-09-16 | **+100 objetos**; `vw_anexo_publico` = **108**; 16 documentos `PUBLICAVEL` |
 | Domínio público | `https://acervo.observatoriotobiassoueu.com.br` |
 | Cache público | `public, max-age=86400`, sem `immutable` |
 
@@ -2265,3 +2266,93 @@ checkout; e a suíte de acessibilidade, migrada da Home antiga para a Home v2.
 
 Estado: **Home v2 promovida a `/` com exploração territorial por recorte;
 todos os gates verdes; sem Preview, sem Production, sem alteração de `main`.**
+
+
+---
+
+## Publicação do acervo — 2026-09-16
+
+Decisão humana desta data: **todos os materiais da pesquisa dos quatro lugares
+estão autorizados para publicação**. Somente CPF, telefone e assinatura
+exigiriam tratamento, e a varredura sobre os arquivos que foram ao ar não
+encontrou nenhum dos três. As classificações anteriores — `RESTRITO`,
+`PENDENTE`, `EM REVISÃO`, `ESPELHAVEL` — permanecem como histórico e deixaram
+de constituir veto.
+
+Registro operacional completo, com o inventário arquivo por arquivo:
+[`docs/carga/PUBLICACAO_ACERVO_2026-09-16.md`](./docs/carga/PUBLICACAO_ACERVO_2026-09-16.md).
+
+| Controle | Antes | Depois |
+|---|---:|---:|
+| `documento` | 33 | **33** |
+| `arquivo` | 18 | **118** |
+| `documento_arquivo` | 18 | **118** |
+| `vw_anexo_publico` | 8 | **108** |
+| documentos `PUBLICAVEL` | 2 | **16** |
+| arquivos privados | 10 | **10** |
+| `vw_pendencia_publicacao` | 0 | **0** |
+
+Os 100 novos, por categoria: 3 relatórios técnicos integrais (A02, A03, A04) ·
+3 planilhas de formulário (A09, A10) · 18 indicadores (A11) · 59 fotografias de
+campo (B01) · 8 áudios e 8 transcrições de entrevista (B02–B06, B08, B13, B14)
+· 1 peça institucional (D01-08).
+
+As 108 URLs foram baixadas anonimamente e conferiram SHA-256, bytes,
+`Content-Type` e `Cache-Control` em 108/108; zero `r2.dev`, zero endpoint S3.
+
+### Fonte única do estado dos materiais
+
+`src/dados/materiais-de-campo.ts` passou a ser a **única** tabela de materiais
+por lugar. Home e Território liam duas listas manuais separadas; a do Território
+chegou a afirmar público um relatório sem objeto correspondente. Agora as duas
+rotas buscam `listarArquivosPorDocumento()` em build e o estado é **calculado**
+a partir da URL: `publico` só existe onde há arquivo em `vw_anexo_publico`.
+Conjunto multiarquivo sem `principal` aponta para o grupo no Acervo, não para
+um arquivo qualquer.
+
+### Novos comandos e artefatos
+
+| O quê | Onde |
+|---|---|
+| Derivados web das 59 fotografias e dos 13 assets de ficha | `scripts/derivar-fotos-campo.py` (exige `uv run --with pillow --with pillow-heif`) |
+| Executor da publicação, dry-run por padrão | `scripts/publicar-acervo.ts` |
+| Correção dos vínculos da primeira execução | `scripts/corrigir-vinculos-publicacao.ts` |
+| Gravação do crédito de autoria de terceiro | `scripts/gravar-creditos-fotograficos.ts` |
+| Lote declarado, com hash de cada origem | `src/dados/lote-publicacao-2026-09-16.json` |
+
+### Incidente registrado
+
+A primeira execução resolveu o documento de destino por posição de linha no
+CSV do inventário, que **não** é `ordem_anexo`: 94 dos 100 vínculos foram para
+o documento errado e cinco documentos fora do lote foram promovidos. Os objetos
+no R2 estavam corretos; o erro foi relacional e não disparou constraint alguma.
+Corrigido em transação única, com o executor passando a resolver por slug.
+
+### Pendências que esta rodada abriu ou manteve
+
+1. **Proveniência física dos 58 derivados web** não está no banco:
+   `derivacao_metodo` exige `derivado_de_id`, e as fotografias originais nunca
+   foram espelhadas. A cadeia vive no manifesto e no registro de carga.
+   Espelhar os 59 originais no bucket privado fecharia a lacuna.
+2. **Créditos de terceiro — resolvido em 2026-09-16.** As duas fotografias
+   de autoria de terceiro continuam públicas, por decisão humana, agora com
+   crédito obrigatório: `Foto: Dani Santos` e `Foto: Iago de Andrade Santos`.
+   A atribuição se apoia no nome do arquivo original — nenhum dos dois traz
+   EXIF, XMP ou IPTC de autoria — e bate com a auditoria de 2026-09-05. O
+   crédito aparece em `/acervo`, na Sala do Avaliador, em `/anexos.json` e nas
+   fichas, a partir de uma declaração única em `derivar-fotos-campo.py`.
+   Guardado dentro de `documento_arquivo.rotulo` por falta de campo próprio;
+   a coluna dedicada está proposta na
+   [ADR-018](./docs/decisoes/ADR-018-credito-de-autoria-de-arquivo.md), **em
+   análise**. O que resta em aberto é a licença de uso das duas imagens, que é
+   questão jurídica e não técnica.
+3. **Legibilidade do Acervo com 108 objetos**: a ficha de B01 concentra 59
+   links numa lista só. Funciona e está agrupada corretamente, mas pede
+   paginação, filtro por lugar ou miniatura numa rodada editorial própria.
+4. **`RELATORIO_DO_RECANTO`** continua declarado à mão em
+   `homelivre/conteudo.ts` com URL, bytes, hash e licença do derivado público
+   de A02. A URL é real e responde, mas é cópia de dado do banco.
+
+Estado: **108 objetos públicos, Home, Território e Acervo derivando da mesma
+fonte; todos os gates verdes; sem push, sem Preview, sem Production, sem
+alteração de `main`.**

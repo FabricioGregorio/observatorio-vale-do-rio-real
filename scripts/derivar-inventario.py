@@ -108,7 +108,11 @@ def _caminho_da_aba(z: zipfile.ZipFile, nome: str) -> str:
     for rel in rels:
         if rel.get("Id") == rid:
             alvo = rel.get("Target")
-            return alvo if alvo.startswith("xl/") else f"xl/{alvo.lstrip('/')}"
+            # Relação relativa (`worksheets/sheet1.xml`) e relação absoluta
+            # (`/xl/worksheets/sheet1.xml`) são válidas no pacote OOXML.
+            # Normalizar antes de prefixar evita formar `xl/xl/...`.
+            normalizado = alvo.lstrip("/")
+            return normalizado if normalizado.startswith("xl/") else f"xl/{normalizado}"
     raise ErroDerivacao(f"Relacionamento {rid!r} da aba {nome!r} não encontrado.")
 
 

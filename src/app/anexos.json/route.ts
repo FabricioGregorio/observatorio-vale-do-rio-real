@@ -1,5 +1,6 @@
 import type { AnexoPublico } from "../../dados/consultas/anexos";
 import { listarAnexosPublicos } from "../../dados/consultas/anexos";
+import { separarCredito } from "../../dados/pesquisa/credito-fotografico";
 
 /**
  * `/anexos.json` — o mesmo conjunto da Sala do Avaliador, legível por máquina
@@ -24,7 +25,9 @@ export function serializarAnexos(anexos: readonly AnexoPublico[]) {
       ordem: a.ordemAnexo,
       slug: a.slug,
       titulo: a.titulo,
-      rotulo_arquivo: a.rotuloArquivo,
+      rotulo_arquivo: separarCredito(a.rotuloArquivo).rotulo || null,
+      /** Crédito de autoria de terceiro, já na forma de exibição. */
+      credito: separarCredito(a.rotuloArquivo).credito,
       principal: a.principal,
       tipo: a.tipo,
       resumo: a.resumo,

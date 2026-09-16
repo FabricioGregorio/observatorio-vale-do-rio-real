@@ -1,4 +1,6 @@
 import type { JSX } from "react";
+
+import type { ArquivosPublicados } from "../../../dados/materiais-de-campo";
 import {
   AberturaA,
   AberturaB,
@@ -68,9 +70,16 @@ const ABERTURAS: Readonly<
 export function HomeLivre({
   abertura = "b2",
   contexto = "dev",
+  publicados = new Map(),
 }: {
   abertura?: VarianteDaAbertura;
   contexto?: ContextoDaHome;
+  /**
+   * Arquivos públicos por documento, buscados pela rota em build. É a mesma
+   * fonte que abastece `/territorio` e o Acervo; sem ela as fichas caem para
+   * o estado declarado e nenhum link aparece.
+   */
+  publicados?: ArquivosPublicados;
 }) {
   const AberturaEscolhida = ABERTURAS[abertura];
 
@@ -95,10 +104,10 @@ export function HomeLivre({
       <AberturaEscolhida contexto={contexto} />
       <Origem contexto={contexto} />
       <Territorio contexto={contexto} />
-      <Lugares contexto={contexto} />
+      <Lugares contexto={contexto} publicados={publicados} />
       <Leitura contexto={contexto} />
       <Escuta contexto={contexto} />
-      <Produtos contexto={contexto} />
+      <Produtos contexto={contexto} publicados={publicados} />
       <Conferencia contexto={contexto} />
       <Creditos contexto={contexto} />
       <RodapeLivre />

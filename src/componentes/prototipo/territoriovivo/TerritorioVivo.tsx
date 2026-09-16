@@ -1,3 +1,4 @@
+import type { ArquivosPublicados } from "../../../dados/materiais-de-campo";
 import { DEFINICAO_VALE_DO_RIO_REAL } from "../../../dados/territorio/recorte";
 import { CSS_DO_TERRITORIO_VIVO } from "./estilos";
 import {
@@ -55,10 +56,13 @@ const varsDoMundo = (e: Enquadramento) =>
 
 export function TerritorioVivo({
   baseDasCamadas = BASE_DAS_CAMADAS_DEV,
+  publicados = new Map(),
 }: {
   baseDasCamadas?: string;
+  /** Arquivos públicos por documento, buscados pela rota em build. */
+  publicados?: ArquivosPublicados;
 }) {
-  const base = montarBaseDoTerritorio();
+  const base = montarBaseDoTerritorio({ publicados });
   const { dados, caixaDe, vista, vw, vh, fs, raio, kmU, doVale, visiveis } =
     base;
   const lugares = base.lugares;
@@ -731,6 +735,9 @@ function FichaDoLugar({
                 />
                 <figcaption>
                   {foto.legenda}
+                  {foto.credito !== null ? (
+                    <span className="credito">{foto.credito}</span>
+                  ) : null}
                   {foto.pendencia !== null ? (
                     <span className="pendencia">{foto.pendencia}</span>
                   ) : null}

@@ -14,7 +14,13 @@ import {
 import { INDICADORES } from "../../../dados/indicadores/derivados";
 import { exibirIndicador } from "../../../dados/indicadores/formato";
 import {
+  type ArquivosPublicados,
+  type MaterialResolvido,
+  resolverMateriaisDoLugar,
+} from "../../../dados/materiais-de-campo";
+import {
   DERIVADOS_DA_PESQUISA,
+  DERIVADOS_DOS_LUGARES,
   PASTA_PUBLICA_DA_PESQUISA,
 } from "../../../dados/pesquisa/derivados";
 import { RECORTE_TERRITORIAL } from "../../../dados/territorio/recorte";
@@ -466,15 +472,29 @@ export function Territorio({ contexto = "dev" }: PropsDeSecao) {
 
 /* -------------------------------------------------------------------------- */
 
-function MateriaisReunidos({ equipamento }: { equipamento: Equipamento }) {
+/**
+ * O estado de cada material vem resolvido contra `vw_anexo_publico`. Material
+ * público vira link para o arquivo real; sem URL não existe estado público.
+ */
+function MateriaisReunidos({
+  equipamento,
+  materiais,
+}: {
+  equipamento: Equipamento;
+  materiais: readonly MaterialResolvido[];
+}) {
   return (
     <ul
       aria-label={`O que a pesquisa reuniu sobre ${equipamento.nome}`}
       className="hl-reuniu"
     >
-      {equipamento.reunido.map((item) => (
+      {materiais.map((item) => (
         <li key={item.material}>
-          <span>{item.material}</span>
+          {item.href === null ? (
+            <span>{item.material}</span>
+          ) : (
+            <a href={item.href}>{item.material}</a>
+          )}
           <span className="hl-estado" data-estado={item.estado}>
             {ROTULO_DO_ESTADO[item.estado]}
           </span>
@@ -484,9 +504,59 @@ function MateriaisReunidos({ equipamento }: { equipamento: Equipamento }) {
   );
 }
 
-export function Lugares({ contexto = "dev" }: PropsDeSecao) {
+/** Fotografia principal da ficha, do recorte derivado das fotos de campo. */
+function fotoDaFicha(local: "Recanto da Serra" | "Borda da Mata") {
+  const doLugar = DERIVADOS_DOS_LUGARES.filter((f) => f.local === local);
+  return doLugar.find((f) => f.principal) ?? doLugar[0] ?? null;
+}
+
+/**
+ * Fotografia da ficha, com o crédito de autoria quando existe.
+ *
+ * O crédito vem do mesmo manifesto que alimenta o Acervo. A Home não pode
+ * perder uma atribuição que o Acervo conhece, e por isso ela não é escrita
+ * aqui: é lida do derivado.
+ */
+function FotoDaFicha({
+  foto,
+}: {
+  foto: (typeof DERIVADOS_DOS_LUGARES)[number] | null;
+}) {
+  if (foto === null) return <div className="hl-equip__imagem" />;
+  return (
+    <figure className="hl-equip__imagem">
+      <img
+        alt={foto.alt}
+        decoding="async"
+        height={foto.altura}
+        loading="lazy"
+        src={`${PASTA_PUBLICA_DA_PESQUISA}/${foto.arquivo}`}
+        width={foto.largura}
+      />
+      {foto.credito === null ? null : (
+        <figcaption className="hl-credito">{foto.credito}</figcaption>
+      )}
+    </figure>
+  );
+}
+
+export function Lugares({
+  contexto = "dev",
+  publicados = new Map(),
+}: PropsDeSecao & { publicados?: ArquivosPublicados }) {
   const recanto = EQUIPAMENTOS[0] as Equipamento;
   const borda = EQUIPAMENTOS[1] as Equipamento;
+  const fotos = {
+    recanto: fotoDaFicha("Recanto da Serra"),
+    borda: fotoDaFicha("Borda da Mata"),
+  };
+  const materiais = {
+    recanto: resolverMateriaisDoLugar("recanto-da-serra", publicados),
+    borda: resolverMateriaisDoLugar("borda-da-mata", publicados),
+  };
+  const relatorioDoBorda = materiais.borda.find(
+    (m) => m.material === "Relatório técnico",
+  );
 
   return (
     <Capitulo
@@ -504,16 +574,7 @@ export function Lugares({ contexto = "dev" }: PropsDeSecao) {
 
       <div className="hl-dupla">
         <article aria-labelledby="hl-recanto" className="hl-equip">
-          <div className="hl-equip__imagem">
-            <img
-              alt={ALT_DO_HERO}
-              decoding="async"
-              height={FOTO_VERTICAL.altura}
-              loading="lazy"
-              src={`${CAMINHO_PUBLICO}/${FOTO_VERTICAL.arquivo}`}
-              width={FOTO_VERTICAL.largura}
-            />
-          </div>
+          <FotoDaFicha foto={fotos.recanto} />
           <div className="hl-equip__corpo">
             <p className="meta-ficha">{recanto.lugar}</p>
             <h3 id="hl-recanto">{recanto.nome}</h3>
@@ -522,7 +583,10 @@ export function Lugares({ contexto = "dev" }: PropsDeSecao) {
               cultural e motor da economia criativa e solidária da região do
               Vale do Rio Real.
             </p>
-            <MateriaisReunidos equipamento={recanto} />
+            <MateriaisReunidos
+              equipamento={recanto}
+              materiais={materiais.recanto}
+            />
             <a
               className="hl-botao hl-botao--cheio"
               href={RELATORIO_DO_RECANTO.url}
@@ -533,51 +597,42 @@ export function Lugares({ contexto = "dev" }: PropsDeSecao) {
                 {RELATORIO_DO_RECANTO.licenca}
               </span>
             </a>
-            <Pendente>
-              Fotografia acima: mesma do topo da página; atribuição a confirmar
-            </Pendente>
           </div>
         </article>
 
         <article aria-labelledby="hl-borda" className="hl-equip">
-          <div className="hl-equip__imagem hl-equip__imagem--vazia">
-            <ol
-              aria-label={`${FOTOGRAFIAS_DO_BORDA_NO_ACERVO} fotografias de campo no acervo, nenhuma liberada para publicação`}
-              className="hl-folha"
-            >
-              {Array.from(
-                { length: FOTOGRAFIAS_DO_BORDA_NO_ACERVO },
-                (_, i) => {
-                  const numero = String(i + 1).padStart(2, "0");
-                  return (
-                    <li key={numero}>
-                      <span aria-hidden="true">{numero}</span>
-                    </li>
-                  );
-                },
-              )}
-              <li className="hl-folha__nota">
-                <span>
-                  {FOTOGRAFIAS_DO_BORDA_NO_ACERVO} fotografias no acervo ·
-                  nenhuma liberada
-                </span>
-              </li>
-            </ol>
-          </div>
+          <FotoDaFicha foto={fotos.borda} />
           <div className="hl-equip__corpo">
             <p className="meta-ficha">{borda.lugar}</p>
             <h3 id="hl-borda">{borda.nome}</h3>
             <p>
-              O relatório técnico do Borda da Mata existe no acervo, mas segue
-              restrito: contém dados pessoais que precisam ser tratados antes de
-              qualquer publicação. As fotografias de campo também aguardam
-              revisão.
+              O relatório técnico do Borda da Mata é um PDF digitalizado de sete
+              páginas, sem camada de texto. A decisão de 2026-09-16 autorizou
+              sua publicação integral, junto das fotografias de campo, da
+              entrevista e dos formulários do equipamento.
             </p>
-            <MateriaisReunidos equipamento={borda} />
-            <p className="hl-nota">
-              Nenhum documento do Borda da Mata está público ainda. Esta ficha
-              diz o que existe, sem antecipar o conteúdo.
-            </p>
+            <MateriaisReunidos
+              equipamento={borda}
+              materiais={materiais.borda}
+            />
+            {relatorioDoBorda?.href === undefined ||
+            relatorioDoBorda.href === null ? (
+              <p className="hl-nota">
+                Nenhum documento do Borda da Mata está público ainda. Esta ficha
+                diz o que existe, sem antecipar o conteúdo.
+              </p>
+            ) : (
+              <a
+                className="hl-botao hl-botao--cheio"
+                href={relatorioDoBorda.href}
+              >
+                Ler o relatório técnico
+                <span className="hl-botao__meta">
+                  PDF digitalizado · {FOTOGRAFIAS_DO_BORDA_NO_ACERVO}{" "}
+                  fotografias de campo no acervo
+                </span>
+              </a>
+            )}
           </div>
         </article>
       </div>
@@ -749,7 +804,29 @@ export function Escuta({ contexto = "dev" }: PropsDeSecao) {
 
 /* -------------------------------------------------------------------------- */
 
-export function Produtos({ contexto = "dev" }: PropsDeSecao) {
+export function resolverEstadoDosProdutos(publicados: ArquivosPublicados) {
+  const materiais = [
+    ...resolverMateriaisDoLugar("recanto-da-serra", publicados),
+    ...resolverMateriaisDoLugar("borda-da-mata", publicados),
+    ...resolverMateriaisDoLugar("serra-dos-macacos", publicados),
+    ...resolverMateriaisDoLugar("ilha-grande", publicados),
+  ];
+  const relatoriosPublicos = materiais
+    .filter((item) => /relat[oó]rio|relato técnico/i.test(item.material))
+    .every((item) => item.estado === "publico");
+  const entrevistasEFormulariosPublicos = materiais
+    .filter((item) => /entrevista|formulários/i.test(item.material))
+    .every((item) => item.estado === "publico");
+  return { relatoriosPublicos, entrevistasEFormulariosPublicos };
+}
+
+export function Produtos({
+  contexto = "dev",
+  publicados = new Map(),
+}: PropsDeSecao & { publicados?: ArquivosPublicados }) {
+  const { relatoriosPublicos, entrevistasEFormulariosPublicos } =
+    resolverEstadoDosProdutos(publicados);
+
   return (
     <Capitulo
       id="hl-produtos"
@@ -839,21 +916,44 @@ export function Produtos({ contexto = "dev" }: PropsDeSecao) {
           </Link>
         </li>
         <li>
-          <span className="hl-estado" data-estado="restrito">
-            Restrito
+          <span
+            className="hl-estado"
+            data-estado={relatoriosPublicos ? "publicado" : "restrito"}
+          >
+            {relatoriosPublicos ? "Público" : "Restrito"}
           </span>
           <h3>Relatórios técnicos — Borda da Mata e Serra dos Macacos</h3>
-          <p>No acervo, ainda não públicos.</p>
+          <p>
+            {relatoriosPublicos
+              ? "Relatórios integrais disponíveis no acervo."
+              : "No acervo, ainda não públicos."}
+          </p>
+          {relatoriosPublicos ? (
+            <Link href="/acervo" prefetch={false}>
+              Ver no acervo
+            </Link>
+          ) : null}
         </li>
         <li>
-          <span className="hl-estado" data-estado="restrito">
-            Restrito
+          <span
+            className="hl-estado"
+            data-estado={
+              entrevistasEFormulariosPublicos ? "publicado" : "restrito"
+            }
+          >
+            {entrevistasEFormulariosPublicos ? "Público" : "Restrito"}
           </span>
           <h3>Entrevistas e formulários</h3>
           <p>
-            {ENTREVISTAS.length} entrevistas e as planilhas de resposta, usadas
-            apenas em agregado.
+            {entrevistasEFormulariosPublicos
+              ? `${ENTREVISTAS.length} entrevistas e as planilhas de respostas estão disponíveis no acervo.`
+              : `${ENTREVISTAS.length} entrevistas e as planilhas de respostas aguardam publicação.`}
           </p>
+          {entrevistasEFormulariosPublicos ? (
+            <Link href="/acervo" prefetch={false}>
+              Ver no acervo
+            </Link>
+          ) : null}
         </li>
       </ul>
 

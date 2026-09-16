@@ -1,4 +1,5 @@
 import type { AnexoPublico } from "../../dados/consultas/anexos";
+import { separarCredito } from "../../dados/pesquisa/credito-fotografico";
 import { tamanhoLegivel } from "./TabelaAnexos";
 
 export type GrupoDeMateriaisPublicos = {
@@ -33,8 +34,17 @@ export function agruparMateriaisPublicos(
   return [...grupos.values()];
 }
 
-function rotuloDoArquivo(anexo: AnexoPublico, indice: number): string {
-  return anexo.rotuloArquivo ?? `Arquivo ${indice + 1}`;
+/**
+ * Identidade do arquivo e crédito de autoria, separados.
+ *
+ * O crédito das fotografias de terceiro viaja dentro de `rotulo` — ver
+ * `dados/pesquisa/credito-fotografico.ts`. Ele **não** entra no texto do
+ * link: fica numa linha própria, discreta, logo abaixo, junto do tipo e do
+ * tamanho.
+ */
+function identidadeDoArquivo(anexo: AnexoPublico, indice: number) {
+  const { rotulo, credito } = separarCredito(anexo.rotuloArquivo);
+  return { rotulo: rotulo || `Arquivo ${indice + 1}`, credito };
 }
 
 export function ListaMateriaisPublicos({ anexos }: { anexos: AnexoPublico[] }) {
@@ -82,24 +92,30 @@ export function ListaMateriaisPublicos({ anexos }: { anexos: AnexoPublico[] }) {
           </div>
 
           <ul className="flex list-none flex-col gap-3 p-0">
-            {grupo.arquivos.map((anexo, indice) => (
-              <li
-                className="flex flex-col gap-1 border-t pt-3"
-                key={anexo.linkPermanente}
-                style={{ borderColor: "var(--color-borda)" }}
-              >
-                <a
-                  className="font-semibold underline focus-visible:outline-destaque"
-                  href={anexo.linkPermanente}
-                  style={{ color: "var(--color-link)" }}
+            {grupo.arquivos.map((anexo, indice) => {
+              const { rotulo, credito } = identidadeDoArquivo(anexo, indice);
+              return (
+                <li
+                  className="flex flex-col gap-1 border-t pt-3"
+                  key={anexo.linkPermanente}
+                  style={{ borderColor: "var(--color-borda)" }}
                 >
-                  {rotuloDoArquivo(anexo, indice)}
-                </a>
-                <span className="meta-ficha">
-                  {anexo.mimeType} · {tamanhoLegivel(anexo.bytes)}
-                </span>
-              </li>
-            ))}
+                  <a
+                    className="font-semibold underline focus-visible:outline-destaque"
+                    href={anexo.linkPermanente}
+                    style={{ color: "var(--color-link)" }}
+                  >
+                    {rotulo}
+                  </a>
+                  <span className="meta-ficha">
+                    {anexo.mimeType} · {tamanhoLegivel(anexo.bytes)}
+                  </span>
+                  {credito === null ? null : (
+                    <span className="meta-ficha">{credito}</span>
+                  )}
+                </li>
+              );
+            })}
           </ul>
 
           <p className="meta-ficha mt-auto">Licença: {grupo.licenca}</p>

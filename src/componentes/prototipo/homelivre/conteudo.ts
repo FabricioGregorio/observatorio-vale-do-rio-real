@@ -45,13 +45,17 @@ export type Fonte = {
   readonly base: string;
 };
 
-export type EstadoDoMaterial = "publicado" | "restrito" | "pendente";
-
-export const ROTULO_DO_ESTADO: Readonly<Record<EstadoDoMaterial, string>> = {
-  publicado: "Público",
-  restrito: "Restrito",
-  pendente: "Em revisão",
-};
+/**
+ * Estado e rótulo dos materiais vivem em `dados/materiais-de-campo.ts`, que é
+ * a fonte única compartilhada com as fichas do Território. Aqui só se
+ * reexporta: manter uma segunda tabela de rótulos na Home foi exatamente o
+ * que fez a ficha do Borda da Mata afirmar "restrito" depois de o relatório
+ * ter sido publicado.
+ */
+export {
+  type EstadoDoMaterial,
+  ROTULO_DO_ESTADO,
+} from "../../../dados/materiais-de-campo";
 
 /**
  * Relatório Técnico — Recanto da Serra (A02).
@@ -69,60 +73,37 @@ export const RELATORIO_DO_RECANTO = {
   sha256: "b314cd7a5330276ecccc0c7cfe7dfe6461da721055318c15957db5cd7848961a",
 } as const;
 
-export type ItemReunido = {
-  readonly material: string;
-  readonly estado: EstadoDoMaterial;
-};
-
 export type Equipamento = {
   readonly id: "recanto-da-serra" | "borda-da-mata";
   readonly nome: string;
   readonly lugar: string;
-  readonly reunido: readonly ItemReunido[];
 };
 
 /**
- * Os dois equipamentos de Tobias Barreto.
+ * Os dois equipamentos de Tobias Barreto — identidade apenas.
  *
  * Nomes completos: recorte dos indicadores (`indicadores/derivados.ts`).
- * “Povoado Jacaré”: resumo executivo do A02 público. Os materiais listados
- * são os do inventário e da auditoria H3; o estado é o documental vigente.
+ * “Povoado Jacaré”: resumo executivo do A02 público. O que a pesquisa reuniu
+ * sobre cada um **não** está aqui: é resolvido contra `vw_anexo_publico` por
+ * `resolverMateriaisDoLugar`, e o `id` é a chave dessa resolução.
  */
 export const EQUIPAMENTOS: readonly Equipamento[] = [
   {
     id: "recanto-da-serra",
     nome: "Ecoparque e Museu Recanto da Serra",
     lugar: "Povoado Jacaré · Tobias Barreto (SE)",
-    reunido: [
-      { material: "Relatório técnico", estado: "publicado" },
-      { material: "Entrevista gravada", estado: "restrito" },
-      {
-        material: "Formulários de funcionamento e de visitantes",
-        estado: "restrito",
-      },
-      { material: "Fotografias de campo", estado: "pendente" },
-    ],
   },
   {
     id: "borda-da-mata",
     nome: "Centro Cultural e Museu Borda da Mata",
     lugar: "Tobias Barreto (SE)",
-    reunido: [
-      { material: "Relatório técnico", estado: "restrito" },
-      { material: "Entrevista gravada", estado: "restrito" },
-      {
-        material: "Formulários de funcionamento e de visitantes",
-        estado: "restrito",
-      },
-      { material: "Fotografias de campo", estado: "pendente" },
-    ],
   },
 ];
 
 /**
  * Fotografias de campo do Borda da Mata no corpus: H3-F001 a H3-F007 da
- * auditoria H3. Nenhuma tem derivado público; três têm sinal de pessoa
- * identificável e quatro não foram decodificadas (HEIC).
+ * auditoria H3. Desde 2026-09-16 as sete têm derivado web público, dentro de
+ * B01; a contagem permanece porque a ficha a cita.
  */
 export const FOTOGRAFIAS_DO_BORDA_NO_ACERVO = 7;
 

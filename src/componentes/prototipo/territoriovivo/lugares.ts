@@ -1,11 +1,12 @@
-import {
-  ALT_DO_HERO,
-  CAMINHO_PUBLICO,
-  DERIVADOS_DO_HERO,
-} from "../../../dados/hero/derivados";
 import { INDICADORES } from "../../../dados/indicadores/derivados";
 import {
+  type ArquivosPublicados,
+  type MaterialResolvido,
+  resolverMateriaisDoLugar,
+} from "../../../dados/materiais-de-campo";
+import {
   DERIVADOS_DA_PESQUISA,
+  DERIVADOS_DOS_LUGARES,
   PASTA_PUBLICA_DA_PESQUISA,
 } from "../../../dados/pesquisa/derivados";
 import { PONTOS_DE_VISITA_PREVISTOS } from "../../../dados/territorio/pontos";
@@ -36,20 +37,13 @@ export { IDS_DOS_LUGARES, type IdDoLugar } from "./local/referencias";
  * estado de nenhum material desta lista.
  */
 
-export type EstadoDoMaterial = "publico" | "restrito" | "pendente";
+export {
+  type EstadoDoMaterial,
+  ROTULO_DO_ESTADO,
+} from "../../../dados/materiais-de-campo";
 
-export const ROTULO_DO_ESTADO: Readonly<Record<EstadoDoMaterial, string>> = {
-  publico: "Público",
-  restrito: "Restrito",
-  pendente: "Em revisão",
-};
-
-export type Material = {
-  readonly material: string;
-  readonly estado: EstadoDoMaterial;
-  /** Só existe para material público. */
-  readonly href: string | null;
-};
+/** Material já resolvido contra `vw_anexo_publico`. Ver `materiais-de-campo`. */
+export type Material = MaterialResolvido;
 
 export type ComFonte = {
   readonly texto: string;
@@ -68,6 +62,12 @@ export type FotoDoLugar = {
   readonly altura: number;
   readonly alt: string;
   readonly legenda: string;
+  /**
+   * Crédito de autoria de terceiro, já pronto para exibição. Vem do mesmo
+   * manifesto que alimenta o Acervo: a ficha não pode perder a atribuição que
+   * o Acervo conhece.
+   */
+  readonly credito: string | null;
   /** Marca visível de atribuição ainda não encerrada. */
   readonly pendencia: string | null;
 };
@@ -103,10 +103,11 @@ export type LugarDeCampo = {
   readonly lacunaDeLocalizacao: string | null;
 };
 
-const A02 = {
-  titulo: "Relatório Técnico — Recanto da Serra (A02)",
-  url: "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a02-relatorio-tecnico-recanto-da-serra-publico-v1.pdf",
-} as const;
+/**
+ * Título do A02 para citação de fonte. A URL do relatório **não** mora aqui:
+ * ela vem de `vw_anexo_publico`, como a de qualquer outro material.
+ */
+const A02_TITULO = "Relatório Técnico — Recanto da Serra (A02)";
 
 function nomeDoPonto(id: IdDoLugar): string | null {
   return PONTOS_DE_VISITA_PREVISTOS.find((p) => p.id === id)?.nome ?? null;
@@ -128,9 +129,19 @@ function territorio(id: IdDoLugar, entorno: IdDoEntorno) {
   } as const;
 }
 
-const FOTO_VERTICAL = DERIVADOS_DO_HERO.find((d) =>
-  d.arquivo.includes("mobile"),
-) as (typeof DERIVADOS_DO_HERO)[number];
+function fotosDoLugar(local: "Recanto da Serra" | "Borda da Mata") {
+  return DERIVADOS_DOS_LUGARES.filter((foto) => foto.local === local).map(
+    (foto) => ({
+      src: `${PASTA_PUBLICA_DA_PESQUISA}/${foto.arquivo}`,
+      largura: foto.largura,
+      altura: foto.altura,
+      alt: foto.alt,
+      legenda: `${foto.local} · fotografia de campo`,
+      credito: foto.credito,
+      pendencia: null,
+    }),
+  );
+}
 
 /** Recorte dos indicadores H4: os dois equipamentos, com nome completo. */
 const RECORTE_H4 = INDICADORES[0].recorte;
@@ -140,125 +151,114 @@ const SERRA = territorio("serra-dos-macacos", "serra-dos-macacos");
 const REFERENCIA_DA_SERRA =
   referenciaDe("serra-dos-macacos").referenciaTerritorial;
 
-export const LUGARES_DE_CAMPO: readonly LugarDeCampo[] = [
-  {
-    ...RECANTO,
-    nomeCompleto: "Ecoparque e Museu Recanto da Serra",
-    tipo: { texto: "Equipamento cultural", fonte: A02.titulo },
-    // A localidade já constava do A02; o responsável a confirmou.
-    localidade: {
-      texto: RECANTO.localidade.texto,
-      fonte: `${A02.titulo}; ${FONTE_DA_COORDENADA}`,
-    },
-    descricao: {
-      texto:
-        "O relatório técnico publicado descreve o espaço como equipamento cultural e motor da economia criativa e solidária da região do Vale do Rio Real.",
-      fonte: A02.titulo,
-    },
-    materiais: [
-      { material: "Relatório técnico", estado: "publico", href: A02.url },
-      { material: "Entrevista gravada", estado: "restrito", href: null },
-      {
-        material: "Formulários de funcionamento e de visitantes",
-        estado: "restrito",
-        href: null,
+/**
+ * As quatro fichas, resolvidas contra o que está efetivamente publicado.
+ *
+ * `publicados` vem de `listarArquivosPorDocumento()`, em build. Nenhum estado
+ * `publico` é escrito aqui: ele é consequência de existir URL na view. Com o
+ * mapa vazio — máquina sem `DATABASE_URL` — as fichas caem para o estado
+ * declarado em `materiais-de-campo.ts`, e nenhum link falso aparece.
+ */
+export function lugaresDeCampo(
+  publicados: ArquivosPublicados,
+): readonly LugarDeCampo[] {
+  const materiais = (id: Parameters<typeof resolverMateriaisDoLugar>[0]) =>
+    resolverMateriaisDoLugar(id, publicados);
+  return [
+    {
+      ...RECANTO,
+      nomeCompleto: "Ecoparque e Museu Recanto da Serra",
+      tipo: { texto: "Equipamento cultural", fonte: A02_TITULO },
+      // A localidade já constava do A02; o responsável a confirmou.
+      localidade: {
+        texto: RECANTO.localidade.texto,
+        fonte: `${A02_TITULO}; ${FONTE_DA_COORDENADA}`,
       },
-      { material: "Fotografias de campo", estado: "pendente", href: null },
-    ],
-    dados: [
-      {
-        rotulo: "Receita registrada, 21/07 a 21/12/2025",
-        valor: "R$ 15.500,00",
-        fonte: A02.titulo,
-      },
-      {
-        rotulo: "Despesa registrada, 21/07 a 21/12/2025",
-        valor: "R$ 15.912,00",
-        fonte: A02.titulo,
-      },
-    ],
-    fotos: [
-      {
-        src: `${CAMINHO_PUBLICO}/${FOTO_VERTICAL.arquivo}`,
-        largura: FOTO_VERTICAL.largura,
-        altura: FOTO_VERTICAL.altura,
-        alt: ALT_DO_HERO,
-        legenda: "Caminho de chegada · conjunto de campo do Recanto da Serra",
-        pendencia: "Atribuição formal de local pendente",
-      },
-    ],
-    comoChegar: {
-      referencia: {
+      descricao: {
         texto:
-          "O relatório registra que não há alternativa de transporte do centro de Tobias Barreto até o Recanto da Serra.",
-        fonte: A02.titulo,
+          "O relatório técnico publicado descreve o espaço como equipamento cultural e motor da economia criativa e solidária da região do Vale do Rio Real.",
+        fonte: A02_TITULO,
       },
-    },
-    lacunaDeLocalizacao: null,
-  },
-  {
-    ...territorio("borda-da-mata", "borda-da-mata"),
-    nomeCompleto: nomeDoPonto("borda-da-mata"),
-    tipo: {
-      texto: "Equipamento cultural",
-      fonte: `Recorte dos indicadores: ${RECORTE_H4}`,
-    },
-    descricao: null,
-    materiais: [
-      { material: "Relatório técnico", estado: "restrito", href: null },
-      { material: "Entrevista gravada", estado: "restrito", href: null },
-      {
-        material: "Formulários de funcionamento e de visitantes",
-        estado: "restrito",
-        href: null,
+      materiais: materiais("recanto-da-serra"),
+      dados: [
+        {
+          rotulo: "Receita registrada, 21/07 a 21/12/2025",
+          valor: "R$ 15.500,00",
+          fonte: A02_TITULO,
+        },
+        {
+          rotulo: "Despesa registrada, 21/07 a 21/12/2025",
+          valor: "R$ 15.912,00",
+          fonte: A02_TITULO,
+        },
+      ],
+      fotos: fotosDoLugar("Recanto da Serra"),
+      comoChegar: {
+        referencia: {
+          texto:
+            "O relatório registra que não há alternativa de transporte do centro de Tobias Barreto até o Recanto da Serra.",
+          fonte: A02_TITULO,
+        },
       },
-      { material: "Fotografias de campo", estado: "pendente", href: null },
-    ],
-    dados: [],
-    fotos: [],
-    comoChegar: null,
-    lacunaDeLocalizacao: null,
-  },
-  {
-    ...SERRA,
-    nomeCompleto: null,
-    tipo: null,
-    descricao: null,
-    materiais: [
-      { material: "Relato técnico (A04)", estado: "restrito", href: null },
-    ],
-    dados: [],
-    fotos: [],
-    comoChegar:
-      REFERENCIA_DA_SERRA === null
-        ? null
-        : {
-            referencia: {
-              texto: REFERENCIA_DA_SERRA,
-              fonte: FONTE_DA_COORDENADA,
+      lacunaDeLocalizacao: null,
+    },
+    {
+      ...territorio("borda-da-mata", "borda-da-mata"),
+      nomeCompleto: nomeDoPonto("borda-da-mata"),
+      tipo: {
+        texto: "Equipamento cultural",
+        fonte: `Recorte dos indicadores: ${RECORTE_H4}`,
+      },
+      descricao: null,
+      materiais: materiais("borda-da-mata"),
+      dados: [],
+      fotos: fotosDoLugar("Borda da Mata"),
+      comoChegar: null,
+      lacunaDeLocalizacao: null,
+    },
+    {
+      ...SERRA,
+      nomeCompleto: null,
+      tipo: null,
+      descricao: null,
+      materiais: materiais("serra-dos-macacos"),
+      dados: [],
+      fotos: [],
+      comoChegar:
+        REFERENCIA_DA_SERRA === null
+          ? null
+          : {
+              referencia: {
+                texto: REFERENCIA_DA_SERRA,
+                fonte: FONTE_DA_COORDENADA,
+              },
             },
-          },
-    lacunaDeLocalizacao: null,
-  },
-  {
-    ...territorio("ilha-grande", "ilha-grande"),
-    nomeCompleto: null,
-    tipo: null,
-    descricao: null,
-    materiais: [
-      { material: "Entrevista gravada", estado: "restrito", href: null },
-      { material: "Fotografias de campo", estado: "publico", href: null },
-    ],
-    dados: [],
-    fotos: DERIVADOS_DA_PESQUISA.map((foto) => ({
-      src: `${PASTA_PUBLICA_DA_PESQUISA}/${foto.arquivo}`,
-      largura: foto.largura,
-      altura: foto.altura,
-      alt: foto.alt,
-      legenda: `${foto.titulo} · data não informada`,
-      pendencia: null,
-    })),
-    comoChegar: null,
-    lacunaDeLocalizacao: null,
-  },
-];
+      lacunaDeLocalizacao: null,
+    },
+    {
+      ...territorio("ilha-grande", "ilha-grande"),
+      nomeCompleto: null,
+      tipo: null,
+      descricao: null,
+      materiais: materiais("ilha-grande"),
+      dados: [],
+      fotos: DERIVADOS_DA_PESQUISA.map((foto) => ({
+        src: `${PASTA_PUBLICA_DA_PESQUISA}/${foto.arquivo}`,
+        largura: foto.largura,
+        altura: foto.altura,
+        alt: foto.alt,
+        legenda: `${foto.titulo} · data não informada`,
+        credito: null,
+        pendencia: null,
+      })),
+      comoChegar: null,
+      lacunaDeLocalizacao: null,
+    },
+  ];
+}
+
+/**
+ * Fichas sem nenhum material publicado. É o piso: serve a testes de forma e
+ * aos contextos sem banco, e nunca afirma publicação que não exista.
+ */
+export const LUGARES_SEM_PUBLICACAO = lugaresDeCampo(new Map());

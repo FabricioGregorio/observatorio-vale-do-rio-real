@@ -58,27 +58,56 @@ describe("ESPELHAVEL não é PUBLICAVEL", () => {
     expect(podePublicar(item)).toBe(false);
   });
 
-  test("os três itens ESPELHAVEL têm revisão pendente", () => {
-    const espelhaveis = Object.entries(CLASSIFICACAO).filter(
-      ([, c]) => c.estado === "ESPELHAVEL",
-    );
-    expect(espelhaveis).toHaveLength(DISTRIBUICAO_ESPERADA.ESPELHAVEL);
-    expect(espelhaveis.map(([codigo]) => codigo).sort()).toEqual([
-      "A02",
-      "A04",
-      "D01",
-    ]);
-    for (const [, c] of espelhaveis) {
-      expect(c.revisao).toBe("pendente");
+  test("a distribuição da classificação bate com a declarada", () => {
+    const contagem = Object.values(CLASSIFICACAO).reduce<
+      Record<string, number>
+    >((acc, c) => {
+      acc[c.estado] = (acc[c.estado] ?? 0) + 1;
+      return acc;
+    }, {});
+    for (const [estado, esperado] of Object.entries(DISTRIBUICAO_ESPERADA)) {
+      expect(contagem[estado] ?? 0, estado).toBe(esperado);
     }
   });
 
-  test("nenhum item da classificação aprovada é PUBLICAVEL", () => {
+  /**
+   * O gate não afrouxou com a decisão de 2026-09-16: o que mudou foi quais
+   * itens o satisfazem. Nenhum `PUBLICAVEL` pode existir com revisão pendente,
+   * que é o mesmo invariante do CHECK `documento_publicavel_exige_revisao`.
+   */
+  test("PUBLICAVEL exige revisão concluída em toda a classificação", () => {
     for (const [codigo, c] of Object.entries(CLASSIFICACAO)) {
-      expect(c.estado, `${codigo} não pode ser PUBLICAVEL`).not.toBe(
-        "PUBLICAVEL",
-      );
+      if (c.estado === "PUBLICAVEL") {
+        expect(c.revisao, `${codigo} publicável exige revisão`).toBe(
+          "concluida",
+        );
+      }
     }
+  });
+
+  test("os itens autorizados em 2026-09-16 estão PUBLICAVEL", () => {
+    const publicaveis = Object.entries(CLASSIFICACAO)
+      .filter(([, c]) => c.estado === "PUBLICAVEL")
+      .map(([codigo]) => codigo)
+      .sort();
+    expect(publicaveis).toEqual([
+      "A02",
+      "A03",
+      "A04",
+      "A09",
+      "A10",
+      "A11",
+      "B01",
+      "B02",
+      "B03",
+      "B04",
+      "B05",
+      "B06",
+      "B08",
+      "B13",
+      "B14",
+      "D01",
+    ]);
   });
 });
 
@@ -252,9 +281,18 @@ describe.skipIf(!URL_MANUTENCAO)(
                   (select count(*)::int from documento
                     where estado_documental = 'PUBLICAVEL') as pub`,
         );
-        // Prompt 3.10: oito registros públicos foram acrescentados sem
-        // substituir nem expor os dez objetos privados do Prompt 3.4.2.
-        expect(r.rows[0]).toEqual({ d: 33, a: 18, da: 18, v: 8, pub: 2 });
+        // Publicação de 2026-09-16: cem objetos públicos foram acrescentados
+        // aos oito do Prompt 3.10, e depois a transcrição textual acessível do
+        // A03 — derivada do PDF integral, que ela complementa sem substituir —
+        // levou o público a 109. Nada disso substitui nem expõe os dez objetos
+        // privados do Prompt 3.4.2, que continuam sendo 10 dos 119.
+        expect(r.rows[0]).toEqual({
+          d: 33,
+          a: 119,
+          da: 119,
+          v: 109,
+          pub: 16,
+        });
         const arquivos = await pool.query(
           `select a.chave_storage, a.sha256, a.bucket, a.visibilidade,
                   a.url_publica, da.principal, da.versao

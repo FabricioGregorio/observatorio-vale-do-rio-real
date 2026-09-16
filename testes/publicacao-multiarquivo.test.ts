@@ -219,19 +219,21 @@ describe.skipIf(!urlManutencao || !bucketPublico || !urlPublica)(
 
     test("A02=1, D01=7 e todos os consumidores recebem os mesmos 8", async () => {
       await comRollback(async (cliente) => {
-        // O banco real já contém a primeira publicação. Para continuar
-        // exercitando o caminho completo de inserção, reconstituímos o estado
-        // imediatamente anterior somente nesta transação, sempre desfeita.
+        // O banco real já contém a primeira publicação e a de 2026-09-16.
+        // Para continuar exercitando o caminho completo de inserção,
+        // reconstituímos o estado anterior às duas somente nesta transação,
+        // sempre desfeita. O vínculo sai antes do arquivo porque
+        // `documento_arquivo` referencia `arquivo` com ON DELETE RESTRICT.
         await cliente.query(`
           delete from documento_arquivo da
-           using arquivo a, documento d
-           where da.arquivo_id = a.id
-             and da.documento_id = d.id
-             and a.visibilidade = 'publico'
-             and d.slug in (
-               'identidade-visual',
-               'relatorio-tecnico-recanto-da-serra'
-             )
+           using arquivo a
+           where da.arquivo_id = a.id and a.visibilidade = 'publico'
+        `);
+        await cliente.query(`
+          update documento
+             set estado_documental = 'PENDENTE',
+                 status = 'rascunho',
+                 publicado_em = null
         `);
         await cliente.query(
           `

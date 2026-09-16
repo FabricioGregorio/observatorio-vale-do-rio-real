@@ -1,0 +1,275 @@
+[
+  {
+    "arquivo": "borda-conversa-casa-de-taipa.webp",
+    "largura": 1280,
+    "altura": 960,
+    "bytes": 147416,
+    "sha256": "956a2b46500cc70a7c19d64940d898c0b895d82d37b13d32bf1ad6caf45bf483",
+    "alt": "Conversa de campo dentro da casa de taipa do Borda da Mata.",
+    "local": "Borda da Mata",
+    "autor": null,
+    "credito": null,
+    "principal": false,
+    "acervo": "b01-centro-cultural-museu-borda-da-mata-conversa-com-oviedo-dentro-da-casa-de-taipa-v1.webp",
+    "original": {
+      "arquivo": "fotos/centro-cultural-museu-borda-da-mata/conversa-com-oviedo-dentro-da-casa-de-taipa.heic",
+      "largura": 4032,
+      "altura": 3024,
+      "bytes": 1743664,
+      "sha256": "73d9aa2fddc8fa00663de6720428c023c85fa48d6b55bdb2cc0e9a0a2e4b3bc6"
+    },
+    "transformacao": "orientação aplicada; imagem integral sem crop; largura máxima de 1280 px; conversão para WebP; metadados removidos"
+  },
+  {
+    "arquivo": "borda-conversa-oviedo-neide.webp",
+    "largura": 1280,
+    "altura": 960,
+    "bytes": 128346,
+    "sha256": "dca36525a8de1830c93cdebad6c33093349df5adf4120e5a0a296270ba29350a",
+    "alt": "Equipe em conversa com Oviêdo e Neide Abreu no Borda da Mata.",
+    "local": "Borda da Mata",
+    "autor": null,
+    "credito": null,
+    "principal": false,
+    "acervo": "b01-centro-cultural-museu-borda-da-mata-conversa-com-oviedo-e-neide-abreu-v1.webp",
+    "original": {
+      "arquivo": "fotos/centro-cultural-museu-borda-da-mata/conversa-com-oviedo-e-neide-abreu.heic",
+      "largura": 4032,
+      "altura": 3024,
+      "bytes": 2714204,
+      "sha256": "07667308b11f1aab7e717a56f02650f3838dd84a9ca9955ac84f89b452caecaa"
+    },
+    "transformacao": "orientação aplicada; imagem integral sem crop; largura máxima de 1280 px; conversão para WebP; metadados removidos"
+  },
+  {
+    "arquivo": "borda-espaco-historiador.webp",
+    "largura": 1280,
+    "altura": 1707,
+    "bytes": 244998,
+    "sha256": "09261f487965a78e5e59e37c2704cf80339ed2a36fa50abcd98a534ad93266e6",
+    "alt": "Espaço do historiador no Centro Cultural e Museu Borda da Mata.",
+    "local": "Borda da Mata",
+    "autor": null,
+    "credito": null,
+    "principal": false,
+    "acervo": "b01-centro-cultural-museu-borda-da-mata-espaco-do-historiador-v1.webp",
+    "original": {
+      "arquivo": "fotos/centro-cultural-museu-borda-da-mata/espaco-do-historiador.heic",
+      "largura": 3024,
+      "altura": 4032,
+      "bytes": 2749619,
+      "sha256": "b694b08c5e0665c80be6472b43acf99cf83b2016b299e4ca47a2e0eba27a8cf8"
+    },
+    "transformacao": "orientação aplicada; imagem integral sem crop; largura máxima de 1280 px; conversão para WebP; metadados removidos"
+  },
+  {
+    "arquivo": "borda-frente-casa-de-taipa.webp",
+    "largura": 1280,
+    "altura": 1707,
+    "bytes": 490166,
+    "sha256": "76764cded8d50330a5362c4ece3efaa765e5c82d5e3311ee8214b4474377df43",
+    "alt": "Fachada da casa de taipa do Centro Cultural e Museu Borda da Mata.",
+    "local": "Borda da Mata",
+    "autor": null,
+    "credito": null,
+    "principal": true,
+    "acervo": "b01-centro-cultural-museu-borda-da-mata-frente-casa-de-taipa-v1.webp",
+    "original": {
+      "arquivo": "fotos/centro-cultural-museu-borda-da-mata/frente-casa-de-taipa.heic",
+      "largura": 3024,
+      "altura": 4032,
+      "bytes": 3852535,
+      "sha256": "e56e29065948c94f14f00f7ecdc278c1846d4036038efa5841ceb837f35b7143"
+    },
+    "transformacao": "orientação aplicada; imagem integral sem crop; largura máxima de 1280 px; conversão para WebP; metadados removidos"
+  },
+  {
+    "arquivo": "borda-frente-museu.webp",
+    "largura": 1280,
+    "altura": 1707,
+    "bytes": 230346,
+    "sha256": "4f17d17521069bd33986ae3e593f9ada5404d06a7cc4b01524e2e29e5756aae8",
+    "alt": "Fachada do Museu Borda da Mata, com objetos expostos.",
+    "local": "Borda da Mata",
+    "autor": null,
+    "credito": null,
+    "principal": false,
+    "acervo": "b01-centro-cultural-museu-borda-da-mata-frente-do-museu-borda-da-mata-v1.webp",
+    "original": {
+      "arquivo": "fotos/centro-cultural-museu-borda-da-mata/frente-do-museu-borda-da-mata.heic",
+      "largura": 3024,
+      "altura": 4032,
+      "bytes": 2690038,
+      "sha256": "a34d4858b111bc8bb9ec86f75961d2ddc1a59085630ef3e892065516da42375c"
+    },
+    "transformacao": "orientação aplicada; imagem integral sem crop; largura máxima de 1280 px; conversão para WebP; metadados removidos"
+  },
+  {
+    "arquivo": "borda-geladeira-discos.webp",
+    "largura": 1280,
+    "altura": 1707,
+    "bytes": 203762,
+    "sha256": "bfc7dafa09ab388eb8876584ea2d7f72a71df019ef31f119dfc79fef0a8ad0a2",
+    "alt": "Geladeira reutilizada como acervo de discos e CDs no Borda da Mata.",
+    "local": "Borda da Mata",
+    "autor": null,
+    "credito": null,
+    "principal": false,
+    "acervo": "b01-centro-cultural-museu-borda-da-mata-geladeira-em-conversa-com-discos-e-cds-dentro-v1.webp",
+    "original": {
+      "arquivo": "fotos/centro-cultural-museu-borda-da-mata/geladeira-em-conversa-com-discos-e-cds-dentro.heic",
+      "largura": 3024,
+      "altura": 4032,
+      "bytes": 1849400,
+      "sha256": "4cfec584e3a0d0e03f5698e19b80bd85be9b74df019d59725e77feada2de5bea"
+    },
+    "transformacao": "orientação aplicada; imagem integral sem crop; largura máxima de 1280 px; conversão para WebP; metadados removidos"
+  },
+  {
+    "arquivo": "borda-entrevista-campo.webp",
+    "largura": 1280,
+    "altura": 1707,
+    "bytes": 292738,
+    "sha256": "5ef68cc44a6465bbf5b6a2b76e3fa0ceb5fc0e61fc200b41780c589c3e633932",
+    "alt": "Entrevista de campo dentro do Centro Cultural e Museu Borda da Mata.",
+    "local": "Borda da Mata",
+    "autor": null,
+    "credito": null,
+    "principal": false,
+    "acervo": "b01-centro-cultural-museu-borda-da-mata-lhucas-concedendo-entrevista-a-pedro-v1.webp",
+    "original": {
+      "arquivo": "fotos/centro-cultural-museu-borda-da-mata/lhucas-concedendo-entrevista-a-pedro.heic",
+      "largura": 3024,
+      "altura": 4032,
+      "bytes": 2107964,
+      "sha256": "2131371f46e35733f01cdeb0ad86b38d17f4069425529b104d195650ea9c5ea3"
+    },
+    "transformacao": "orientação aplicada; imagem integral sem crop; largura máxima de 1280 px; conversão para WebP; metadados removidos"
+  },
+  {
+    "arquivo": "recanto-estufa.webp",
+    "largura": 1280,
+    "altura": 1707,
+    "bytes": 720856,
+    "sha256": "4d8b8c55f910b29744f0bfb3e88129a270c1d2ac71065293d80d29bfa2a9c2e5",
+    "alt": "Estufa e mudas do Recanto da Serra.",
+    "local": "Recanto da Serra",
+    "autor": null,
+    "credito": null,
+    "principal": false,
+    "acervo": "b01-recanto-da-serra-estufa-v1.webp",
+    "original": {
+      "arquivo": "fotos/recanto-da-serra/estufa.jpg",
+      "largura": 3000,
+      "altura": 4000,
+      "bytes": 6391931,
+      "sha256": "e0a4bfd7d25624556f1916877cf01a17471b02a0467bf121c9f52365de032042"
+    },
+    "transformacao": "orientação aplicada; imagem integral sem crop; largura máxima de 1280 px; conversão para WebP; metadados removidos"
+  },
+  {
+    "arquivo": "recanto-entrevista-pedro-menezes.webp",
+    "largura": 1280,
+    "altura": 1707,
+    "bytes": 542130,
+    "sha256": "99082ca58728d2a7dd199773cd8fa603943ae5324673aae6bc4134c2cd37eeea",
+    "alt": "Entrevista de campo realizada sob uma árvore no Recanto da Serra.",
+    "local": "Recanto da Serra",
+    "autor": null,
+    "credito": null,
+    "principal": false,
+    "acervo": "b01-recanto-da-serra-momento-da-entrevista-com-pedro-menezes-v1.webp",
+    "original": {
+      "arquivo": "fotos/recanto-da-serra/momento-da-entrevista-com-pedro-menezes.jpg",
+      "largura": 3000,
+      "altura": 4000,
+      "bytes": 5693855,
+      "sha256": "2ce1b14f688c2d1d6e8a95244739c7607f586c9a8b819309e70eab470f43b70b"
+    },
+    "transformacao": "orientação aplicada; imagem integral sem crop; largura máxima de 1280 px; conversão para WebP; metadados removidos"
+  },
+  {
+    "arquivo": "recanto-museu-dona-maria.webp",
+    "largura": 1280,
+    "altura": 1707,
+    "bytes": 584608,
+    "sha256": "bbd15b96102018e871ac18152f74e849bb375e6d3b47652105e18aaf1fd4290a",
+    "alt": "Entrada do Museu Dona Maria, no Recanto da Serra.",
+    "local": "Recanto da Serra",
+    "autor": null,
+    "credito": null,
+    "principal": false,
+    "acervo": "b01-recanto-da-serra-museu-dona-maria-v1.webp",
+    "original": {
+      "arquivo": "fotos/recanto-da-serra/museu-dona-maria.jpg",
+      "largura": 3000,
+      "altura": 4000,
+      "bytes": 5896960,
+      "sha256": "832eaeeb9265f4bce3e1decaa7ff6cc18f05b73502ec65b7b35291f8898addce"
+    },
+    "transformacao": "orientação aplicada; imagem integral sem crop; largura máxima de 1280 px; conversão para WebP; metadados removidos"
+  },
+  {
+    "arquivo": "recanto-interior-bodega.webp",
+    "largura": 1280,
+    "altura": 1707,
+    "bytes": 231480,
+    "sha256": "5d2ac9e6b4b627ef5329d3687933021f6483d3d54a42219039d950d3da4f24f3",
+    "alt": "Interior da Bodega dos Tropeiros, com objetos e painel expositivo.",
+    "local": "Recanto da Serra",
+    "autor": null,
+    "credito": null,
+    "principal": false,
+    "acervo": "b01-recanto-da-serra-por-dentro-da-budega-v1.webp",
+    "original": {
+      "arquivo": "fotos/recanto-da-serra/por dentro da budega.jpg",
+      "largura": 3000,
+      "altura": 4000,
+      "bytes": 3949426,
+      "sha256": "4c10ee676dbfce66f1db86a052691b7263b50a47381c2d7f2ee6f2d2f5508ae6"
+    },
+    "transformacao": "orientação aplicada; imagem integral sem crop; largura máxima de 1280 px; conversão para WebP; metadados removidos"
+  },
+  {
+    "arquivo": "recanto-da-serra.webp",
+    "largura": 941,
+    "altura": 1672,
+    "bytes": 382474,
+    "sha256": "8a27ae3d13304738a6ea19b83212e2ef375279d8126d4e30b90bf545aee7ff62",
+    "alt": "Placa do Recanto da Serra junto à área ajardinada.",
+    "local": "Recanto da Serra",
+    "autor": null,
+    "credito": null,
+    "principal": true,
+    "acervo": "b01-recanto-da-serra-recanto-da-serra-v1.webp",
+    "original": {
+      "arquivo": "fotos/recanto-da-serra/recanto-da-serra.png",
+      "largura": 941,
+      "altura": 1672,
+      "bytes": 3325939,
+      "sha256": "6bc9b831dd4a96b975ee6c5c2557a0a6e887a4550dece6fa54fde92fbf6f2f7e"
+    },
+    "transformacao": "orientação aplicada; imagem integral sem crop; largura máxima de 1280 px; conversão para WebP; metadados removidos"
+  },
+  {
+    "arquivo": "recanto-volte-sempre.webp",
+    "largura": 1280,
+    "altura": 1707,
+    "bytes": 337516,
+    "sha256": "dba7a217cde8d74e3c7af710e97d96cb714c05c5923b2f360fbc55e545f52dfc",
+    "alt": "Visitantes passam sob a placa Volte Sempre no Recanto da Serra.",
+    "local": "Recanto da Serra",
+    "autor": null,
+    "credito": null,
+    "principal": false,
+    "acervo": "b01-recanto-da-serra-volte-sempre-v1.webp",
+    "original": {
+      "arquivo": "fotos/recanto-da-serra/volte-sempre.jpg",
+      "largura": 3000,
+      "altura": 4000,
+      "bytes": 4367097,
+      "sha256": "fb03f333043f5ce8d802c6a9fe1107796667d1ae525d7ab445eb7c932c074ffb"
+    },
+    "transformacao": "orientação aplicada; imagem integral sem crop; largura máxima de 1280 px; conversão para WebP; metadados removidos"
+  }
+]

@@ -283,26 +283,45 @@ test("Serra: comunidade visitada e Vila Samambaia permanecem territorialmente di
   await expect(ficha).toContainText(
     "Vila Samambaia · IBGE — referência territorial próxima; não representa o lugar visitado.",
   );
-  await expect(ficha).not.toContainText("A04");
+  // O relato técnico da Serra foi publicado em 2026-09-16; o que não pode
+  // mudar é a identificação territorial, verificada acima.
+  await expect(ficha).toContainText("Relato técnico (A04)");
   await expect(ficha).not.toContainText(/Restrito|Em revisão/);
 });
 
-test("a candidata omite lacunas restritas sem reclassificar materiais", async ({
+/**
+ * Depois da decisão de 2026-09-16, os dois equipamentos têm evidência pública.
+ * O contrato que permanece é o mesmo de antes, e é o que importa: a ficha
+ * nunca exibe rótulo de material restrito, e todo material listado como
+ * evidência pública tem link real — a ficha não “promove” nada por conta.
+ */
+test("as fichas listam evidência pública com link real e nenhum rótulo restrito", async ({
   page,
 }) => {
   await abrir(page);
-  await selecionar(page, /Museu Borda da Mata/);
-  const borda = page.getByRole("tabpanel", { name: "Museu Borda da Mata" });
-  await expect(borda).not.toContainText(/Restrito|Em revisão/);
-  await expect(
-    borda.getByRole("heading", { name: "Evidências públicas" }),
-  ).toHaveCount(0);
 
-  await selecionar(page, /Recanto da Serra/);
-  const recanto = page.getByRole("tabpanel", { name: "Recanto da Serra" });
-  await expect(recanto).toContainText("Relatório técnico");
-  await expect(recanto).toContainText("Atribuição formal de local pendente");
-  await expect(recanto).not.toContainText(/Restrito|Em revisão/);
+  for (const nome of ["Museu Borda da Mata", "Recanto da Serra"]) {
+    await selecionar(page, new RegExp(nome));
+    const ficha = page.getByRole("tabpanel", { name: nome });
+    await expect(ficha).not.toContainText(/Restrito|Em revisão/);
+    await expect(
+      ficha.getByRole("heading", { name: "Evidências públicas" }),
+    ).toHaveCount(1);
+    await expect(ficha).toContainText("Relatório técnico");
+
+    const evidencias = ficha.locator(".materiais li");
+    const quantidade = await evidencias.count();
+    expect(quantidade).toBeGreaterThan(0);
+    for (let i = 0; i < quantidade; i += 1) {
+      const link = evidencias.nth(i).getByRole("link");
+      await expect(link).toHaveCount(1);
+      // Arquivo único: link direto. Conjunto sem principal — as 59
+      // fotografias: âncora do grupo no Acervo, nunca um arquivo qualquer.
+      expect(await link.getAttribute("href")).toMatch(
+        /^(https:\/\/acervo\.observatoriotobiassoueu\.com\.br\/arquivos\/|\/acervo#acervo-)/,
+      );
+    }
+  }
 });
 
 test("cada seleção centraliza o pin e o mapa local pertence ao lugar", async ({

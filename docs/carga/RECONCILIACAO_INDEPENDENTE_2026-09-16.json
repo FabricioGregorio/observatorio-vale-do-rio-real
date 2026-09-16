@@ -1,0 +1,2260 @@
+{
+  "gerado_em": "2026-09-16T16:46:31.331Z",
+  "metodo": "inventário CSV + manifestos declarativos + hash local + consulta relacional por slug/chave; sem importar executores",
+  "totais": {
+    "esperados": 109,
+    "reais": 109,
+    "divergencias": 0,
+    "extras": 0,
+    "hashes_locais_divergentes": 0,
+    "fontes_locais_ausentes": 2,
+    "vw_pendencia_publicacao": 0
+  },
+  "banco": {
+    "documento": 33,
+    "arquivo": 119,
+    "documento_arquivo": 119,
+    "vw_anexo_publico": 109,
+    "documentos_publicaveis": 16,
+    "arquivos_privados": 10
+  },
+  "contagem_por_documento": [
+    {
+      "codigo": "A02",
+      "slug": "relatorio-tecnico-recanto-da-serra",
+      "descricao": "Relatório Técnico — Recanto da Serra",
+      "esperados": 2,
+      "reais": 2,
+      "diferenca": 0
+    },
+    {
+      "codigo": "A03",
+      "slug": "relatorio-tecnico-borda-da-mata",
+      "descricao": "Relatório Técnico — Borda da Mata",
+      "esperados": 2,
+      "reais": 2,
+      "diferenca": 0
+    },
+    {
+      "codigo": "A04",
+      "slug": "relatorio-tecnico-serra-dos-macacos",
+      "descricao": "Relatório Técnico — Serra dos Macacos",
+      "esperados": 1,
+      "reais": 1,
+      "diferenca": 0
+    },
+    {
+      "codigo": "A09",
+      "slug": "formulario-rotina-de-funcionamento",
+      "descricao": "Respostas do formulário de funcionamento",
+      "esperados": 1,
+      "reais": 1,
+      "diferenca": 0
+    },
+    {
+      "codigo": "A10",
+      "slug": "formulario-publico-consumidor",
+      "descricao": "Respostas do formulário de visitantes",
+      "esperados": 2,
+      "reais": 2,
+      "diferenca": 0
+    },
+    {
+      "codigo": "A11",
+      "slug": "anexo-indicadores-etapa-1",
+      "descricao": "Anexo Técnico de Indicadores — Etapa 1 de Levantamento",
+      "esperados": 18,
+      "reais": 18,
+      "diferenca": 0
+    },
+    {
+      "codigo": "B01",
+      "slug": "fotografias-visitas-i-vii",
+      "descricao": "Fotografias de comprovação — Visitas I a VII",
+      "esperados": 59,
+      "reais": 59,
+      "diferenca": 0
+    },
+    {
+      "codigo": "B02",
+      "slug": "entrevista-josenilson-bispo",
+      "descricao": "Entrevista — Josenilson Bispo (27/03/2026)",
+      "esperados": 2,
+      "reais": 2,
+      "diferenca": 0
+    },
+    {
+      "codigo": "B03",
+      "slug": "entrevista-oviedo-e-neide-abreu",
+      "descricao": "Entrevista — Oviêdo e Neide Abreu (28/03/2026)",
+      "esperados": 2,
+      "reais": 2,
+      "diferenca": 0
+    },
+    {
+      "codigo": "B04",
+      "slug": "entrevista-pedro-menezes",
+      "descricao": "Entrevista — Pedro Menezes (05/04/2026)",
+      "esperados": 2,
+      "reais": 2,
+      "diferenca": 0
+    },
+    {
+      "codigo": "B05",
+      "slug": "entrevista-paola-santana",
+      "descricao": "Entrevista — Paola Santana (06/04/2026)",
+      "esperados": 2,
+      "reais": 2,
+      "diferenca": 0
+    },
+    {
+      "codigo": "B06",
+      "slug": "entrevista-lideranca-ilha-grande",
+      "descricao": "Entrevista — Maria Madalena Santos (Dona Madá), Ilha Grande",
+      "esperados": 2,
+      "reais": 2,
+      "diferenca": 0
+    },
+    {
+      "codigo": "B08",
+      "slug": "entrevista-prefeito-tobias-barreto",
+      "descricao": "Entrevista — Prefeito de Tobias Barreto",
+      "esperados": 2,
+      "reais": 2,
+      "diferenca": 0
+    },
+    {
+      "codigo": "B13",
+      "slug": "entrevista-laerte-aguiar",
+      "descricao": "Entrevista — Laerte Santos Aguiar, Secretário Municipal de Cultura de Tomar do Geru",
+      "esperados": 2,
+      "reais": 2,
+      "diferenca": 0
+    },
+    {
+      "codigo": "B14",
+      "slug": "entrevista-marcio-andre",
+      "descricao": "Entrevista — Márcio André, Diretor de Turismo de São Cristóvão",
+      "esperados": 2,
+      "reais": 2,
+      "diferenca": 0
+    },
+    {
+      "codigo": "D01",
+      "slug": "identidade-visual",
+      "descricao": "Identidade visual — logomarca e cards",
+      "esperados": 8,
+      "reais": 8,
+      "diferenca": 0
+    }
+  ],
+  "documentos_nao_publicaveis": [
+    {
+      "slug": "painel-vivo-figma",
+      "titulo": "Painel Vivo de Dados",
+      "estado_documental": "IMPEDIDO",
+      "revisao_privacidade": "pendente",
+      "status": "rascunho",
+      "publicado_em": null
+    },
+    {
+      "slug": "diagnostico-interno-recanto-da-serra",
+      "titulo": "Diagnóstico Interno — Recanto da Serra",
+      "estado_documental": "PENDENTE",
+      "revisao_privacidade": "pendente",
+      "status": "rascunho",
+      "publicado_em": null
+    },
+    {
+      "slug": "diagnostico-interno-borda-da-mata",
+      "titulo": "Diagnóstico Interno — Borda da Mata",
+      "estado_documental": "PENDENTE",
+      "revisao_privacidade": "pendente",
+      "status": "rascunho",
+      "publicado_em": null
+    },
+    {
+      "slug": "diagnostico-interno-visitantes-i",
+      "titulo": "Diagnóstico Interno — Visitantes I",
+      "estado_documental": "PENDENTE",
+      "revisao_privacidade": "pendente",
+      "status": "rascunho",
+      "publicado_em": null
+    },
+    {
+      "slug": "diagnostico-interno-visitantes-ii",
+      "titulo": "Diagnóstico Interno — Visitantes II",
+      "estado_documental": "PENDENTE",
+      "revisao_privacidade": "pendente",
+      "status": "rascunho",
+      "publicado_em": null
+    },
+    {
+      "slug": "entrevista-cultura-itabaianinha",
+      "titulo": "Entrevista — Secretaria de Cultura de Itabaianinha",
+      "estado_documental": "PENDENTE",
+      "revisao_privacidade": "pendente",
+      "status": "rascunho",
+      "publicado_em": null
+    },
+    {
+      "slug": "relato-de-campo-lhucas",
+      "titulo": "Relato de campo — Lhucas",
+      "estado_documental": "PENDENTE",
+      "revisao_privacidade": "pendente",
+      "status": "rascunho",
+      "publicado_em": null
+    },
+    {
+      "slug": "relato-de-campo-fabricio",
+      "titulo": "Relato de campo — Fabricio",
+      "estado_documental": "PENDENTE",
+      "revisao_privacidade": "pendente",
+      "status": "rascunho",
+      "publicado_em": null
+    },
+    {
+      "slug": "relato-de-campo-luiz",
+      "titulo": "Relato de campo — Luiz",
+      "estado_documental": "PENDENTE",
+      "revisao_privacidade": "pendente",
+      "status": "rascunho",
+      "publicado_em": null
+    },
+    {
+      "slug": "relato-de-campo-galileu",
+      "titulo": "Relato de campo — Galileu",
+      "estado_documental": "PENDENTE",
+      "revisao_privacidade": "pendente",
+      "status": "rascunho",
+      "publicado_em": null
+    },
+    {
+      "slug": "relatorio-parcial-levantamento-de-dados",
+      "titulo": "Relatório Parcial de Levantamento de Dados",
+      "estado_documental": "PENDENTE",
+      "revisao_privacidade": "pendente",
+      "status": "rascunho",
+      "publicado_em": null
+    },
+    {
+      "slug": "documento-final",
+      "titulo": "Documento Final da pesquisa",
+      "estado_documental": "PENDENTE",
+      "revisao_privacidade": "pendente",
+      "status": "rascunho",
+      "publicado_em": null
+    },
+    {
+      "slug": "modelagem-estatistica",
+      "titulo": "Relatório de modelagem estatística",
+      "estado_documental": "PENDENTE",
+      "revisao_privacidade": "pendente",
+      "status": "rascunho",
+      "publicado_em": null
+    },
+    {
+      "slug": "podobservar-temporada-1",
+      "titulo": "PodObservar — 1ª temporada",
+      "estado_documental": "PENDENTE",
+      "revisao_privacidade": "pendente",
+      "status": "rascunho",
+      "publicado_em": null
+    },
+    {
+      "slug": "instagram",
+      "titulo": "Instagram @obs_tobiassoueu",
+      "estado_documental": "PENDENTE",
+      "revisao_privacidade": "pendente",
+      "status": "rascunho",
+      "publicado_em": null
+    },
+    {
+      "slug": "termos-de-consentimento",
+      "titulo": "Termos de consentimento das entrevistas",
+      "estado_documental": "PENDENTE",
+      "revisao_privacidade": "pendente",
+      "status": "rascunho",
+      "publicado_em": null
+    },
+    {
+      "slug": "manual-de-marcas",
+      "titulo": "Manual de aplicação de marcas do edital",
+      "estado_documental": "PENDENTE",
+      "revisao_privacidade": "pendente",
+      "status": "rascunho",
+      "publicado_em": null
+    }
+  ],
+  "arquivos_privados": [
+    {
+      "arquivo_id": "674a6fea-c6fa-4756-a596-a91a6289ceb3",
+      "chave_storage": "arquivos/analise-de-dados/relatorio-tecnico-recanto-da-serra-v1.pdf",
+      "sha256": "18b7bbb11b6157af525c7e1c88b7e385763dadc094bb60fdf6f3a27d9c2aff91",
+      "documento_slug": "relatorio-tecnico-recanto-da-serra",
+      "documento_titulo": "Relatório Técnico — Recanto da Serra",
+      "estado_documental": "PUBLICAVEL"
+    },
+    {
+      "arquivo_id": "b5a75b49-f9c6-4f2c-9980-81032f59a1fe",
+      "chave_storage": "arquivos/analise-de-dados/relatorio-tecnico-serra-dos-macacos-v1.pdf",
+      "sha256": "7e966429d1fccae8f7583ebc0fb6644c8f6393390e5a2a0d633cbe79a79a7cde",
+      "documento_slug": "relatorio-tecnico-serra-dos-macacos",
+      "documento_titulo": "Relatório Técnico — Serra dos Macacos",
+      "estado_documental": "PUBLICAVEL"
+    },
+    {
+      "arquivo_id": "66c89704-d95a-4c1e-8cd5-23f4ceb93365",
+      "chave_storage": "arquivos/publicidade/identidade-visual-01-logo-oficial-tobias-sou-eu-v1.png",
+      "sha256": "30e62b84e725fd2cace825a6805a094481272b315e5d85187aa5614382016337",
+      "documento_slug": "identidade-visual",
+      "documento_titulo": "Identidade visual — logomarca e cards",
+      "estado_documental": "PUBLICAVEL"
+    },
+    {
+      "arquivo_id": "1b80b7c1-a070-4c23-b710-283aa3d4a226",
+      "chave_storage": "arquivos/publicidade/identidade-visual-02-logo-v1.pdf",
+      "sha256": "14e3b886621e0d493e808dfd28e46c3886743997b30b06f7d09ea3940a5a59a2",
+      "documento_slug": "identidade-visual",
+      "documento_titulo": "Identidade visual — logomarca e cards",
+      "estado_documental": "PUBLICAVEL"
+    },
+    {
+      "arquivo_id": "e7b032bd-e513-4c19-a7e6-d6f4bc4efde7",
+      "chave_storage": "arquivos/publicidade/identidade-visual-03-horizontal-monocromatica-escura-v1.png",
+      "sha256": "efd532d88beeccce71a3e92c6705b582676f2965d90fb7599fde9383381ef940",
+      "documento_slug": "identidade-visual",
+      "documento_titulo": "Identidade visual — logomarca e cards",
+      "estado_documental": "PUBLICAVEL"
+    },
+    {
+      "arquivo_id": "21cf6a4c-3852-4a16-b021-0f51311db392",
+      "chave_storage": "arquivos/publicidade/identidade-visual-04-horizontal-monocromatica-escura-v1.svg",
+      "sha256": "8bda07efbe684aaae64cb28ff3b69b10cb572058aa9c4dfb04dbb670c6cef1dc",
+      "documento_slug": "identidade-visual",
+      "documento_titulo": "Identidade visual — logomarca e cards",
+      "estado_documental": "PUBLICAVEL"
+    },
+    {
+      "arquivo_id": "24a26350-eaa5-4dbe-b194-6893bf64532c",
+      "chave_storage": "arquivos/publicidade/identidade-visual-05-icon-v1.png",
+      "sha256": "6b230265d3c50b864bed83c5d3e7ddd02bd01998a92de818fefae487afc2571b",
+      "documento_slug": "identidade-visual",
+      "documento_titulo": "Identidade visual — logomarca e cards",
+      "estado_documental": "PUBLICAVEL"
+    },
+    {
+      "arquivo_id": "05abcc17-bf59-46d5-8997-89056e9bd739",
+      "chave_storage": "arquivos/publicidade/identidade-visual-06-icon-v1.svg",
+      "sha256": "f19d71e2ed22bfc1aac44be4760a07517d1f88cb2186cf6b59cdcbfa97d11883",
+      "documento_slug": "identidade-visual",
+      "documento_titulo": "Identidade visual — logomarca e cards",
+      "estado_documental": "PUBLICAVEL"
+    },
+    {
+      "arquivo_id": "2bf80e9a-6b92-4a71-bbef-7eb84e669760",
+      "chave_storage": "arquivos/publicidade/identidade-visual-07-logo-e-texto-v1.png",
+      "sha256": "d98a0eff2803f1819c8ab28cdd8ee61589ceba1f3ad97fe7d2911897e11f5116",
+      "documento_slug": "identidade-visual",
+      "documento_titulo": "Identidade visual — logomarca e cards",
+      "estado_documental": "PUBLICAVEL"
+    },
+    {
+      "arquivo_id": "f44ae8a7-d9d0-4371-afb0-77204997aaa9",
+      "chave_storage": "arquivos/publicidade/identidade-visual-08-primeiro-post-observatorio-v1.pdf",
+      "sha256": "3721a0e64c4ecf3e928206e5f9f9c1042303c2c5e9f205e38e9b095f85dcfdfe",
+      "documento_slug": "identidade-visual",
+      "documento_titulo": "Identidade visual — logomarca e cards",
+      "estado_documental": "PUBLICAVEL"
+    }
+  ],
+  "proveniencia_b01": {
+    "arquivos_encontrados": 63,
+    "conteudos_unicos": 59,
+    "derivados_webp": 58,
+    "derivados_com_pai_no_banco": 0,
+    "grupos_duplicados": [
+      {
+        "sha256": "e0a4bfd7d25624556f1916877cf01a17471b02a0467bf121c9f52365de032042",
+        "canonico": "fotos/recanto-da-serra/estufa.jpg",
+        "duplicatas": ["fotos/pedro-menezes/estufa.jpg"]
+      },
+      {
+        "sha256": "2ce1b14f688c2d1d6e8a95244739c7607f586c9a8b819309e70eab470f43b70b",
+        "canonico": "fotos/recanto-da-serra/momento-da-entrevista-com-pedro-menezes.jpg",
+        "duplicatas": ["fotos/pedro-menezes/momento-conversando-com-pedro.jpg"]
+      },
+      {
+        "sha256": "832eaeeb9265f4bce3e1decaa7ff6cc18f05b73502ec65b7b35291f8898addce",
+        "canonico": "fotos/recanto-da-serra/museu-dona-maria.jpg",
+        "duplicatas": ["fotos/pedro-menezes/frente-museu-dona-maria.jpg"]
+      },
+      {
+        "sha256": "fb03f333043f5ce8d802c6a9fe1107796667d1ae525d7ab445eb7c932c074ffb",
+        "canonico": "fotos/recanto-da-serra/volte-sempre.jpg",
+        "duplicatas": ["fotos/pedro-menezes/foto-saindo-placa-volte-sempre.jpg"]
+      }
+    ]
+  },
+  "extras_publicos": [],
+  "validacao_urls_anonimas": {
+    "total": 109,
+    "conformes": 109,
+    "divergencias": []
+  },
+  "objetos": [
+    {
+      "fonte_original": "derivados-publicos/A02/a02-relatorio-tecnico-recanto-da-serra-publico-v1.pdf",
+      "codigo_documental": "A02",
+      "slug_esperado": "relatorio-tecnico-recanto-da-serra",
+      "documento_id_real": "8d850419-7493-4568-b401-26e47ef4794a",
+      "arquivo_id_real": "8edbd8df-7d22-48ca-b17c-73ad711a744d",
+      "documento_arquivo": {
+        "documento_id": "8d850419-7493-4568-b401-26e47ef4794a",
+        "arquivo_id": "8edbd8df-7d22-48ca-b17c-73ad711a744d",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a02-relatorio-tecnico-recanto-da-serra-publico-v1.pdf",
+      "sha256": "b314cd7a5330276ecccc0c7cfe7dfe6461da721055318c15957db5cd7848961a",
+      "mime": "application/pdf",
+      "bytes": 756239,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/D01/d01-01-logo-oficial-tobias-sou-eu-publico-v1.png",
+      "codigo_documental": "D01",
+      "slug_esperado": "identidade-visual",
+      "documento_id_real": "26b50070-3466-41d0-a94f-783395a6678a",
+      "arquivo_id_real": "dc7952e4-1171-48df-8612-18f04f8f4673",
+      "documento_arquivo": {
+        "documento_id": "26b50070-3466-41d0-a94f-783395a6678a",
+        "arquivo_id": "dc7952e4-1171-48df-8612-18f04f8f4673",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/publicidade/d01-01-logo-oficial-tobias-sou-eu-publico-v1.png",
+      "sha256": "b8842594544c579a9fc508a912b9a913030013eb6de16704a007c7fefcc323f5",
+      "mime": "image/png",
+      "bytes": 257102,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/D01/d01-02-logo-publico-v1.pdf",
+      "codigo_documental": "D01",
+      "slug_esperado": "identidade-visual",
+      "documento_id_real": "26b50070-3466-41d0-a94f-783395a6678a",
+      "arquivo_id_real": "658f29a5-d1a1-4a03-b5c5-94490e41b700",
+      "documento_arquivo": {
+        "documento_id": "26b50070-3466-41d0-a94f-783395a6678a",
+        "arquivo_id": "658f29a5-d1a1-4a03-b5c5-94490e41b700",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/publicidade/d01-02-logo-publico-v1.pdf",
+      "sha256": "882810f458c2bb92d51c24dad691bb2553d0373125e70884e25856571ca2f551",
+      "mime": "application/pdf",
+      "bytes": 12943416,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/D01/d01-03-horizontal-monocromatica-escura-publico-v1.png",
+      "codigo_documental": "D01",
+      "slug_esperado": "identidade-visual",
+      "documento_id_real": "26b50070-3466-41d0-a94f-783395a6678a",
+      "arquivo_id_real": "880b28f9-310d-4d19-87b9-96f6f55ea6a8",
+      "documento_arquivo": {
+        "documento_id": "26b50070-3466-41d0-a94f-783395a6678a",
+        "arquivo_id": "880b28f9-310d-4d19-87b9-96f6f55ea6a8",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/publicidade/d01-03-horizontal-monocromatica-escura-publico-v1.png",
+      "sha256": "a52ccb2202f19b93e383e22295ff68e781ba3dbb5403983168c40b47c332659e",
+      "mime": "image/png",
+      "bytes": 129763,
+      "problemas": []
+    },
+    {
+      "fonte_original": "identidade-visual/observatorio/horizontal-monocromatica-escura.svg",
+      "codigo_documental": "D01",
+      "slug_esperado": "identidade-visual",
+      "documento_id_real": "26b50070-3466-41d0-a94f-783395a6678a",
+      "arquivo_id_real": "8fa602ff-86d3-4f71-a2d0-84d198b6ae9c",
+      "documento_arquivo": {
+        "documento_id": "26b50070-3466-41d0-a94f-783395a6678a",
+        "arquivo_id": "8fa602ff-86d3-4f71-a2d0-84d198b6ae9c",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/publicidade/d01-04-horizontal-monocromatica-escura-v1.svg",
+      "sha256": "8bda07efbe684aaae64cb28ff3b69b10cb572058aa9c4dfb04dbb670c6cef1dc",
+      "mime": "image/svg+xml",
+      "bytes": 31520,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/D01/d01-05-icon-publico-v1.png",
+      "codigo_documental": "D01",
+      "slug_esperado": "identidade-visual",
+      "documento_id_real": "26b50070-3466-41d0-a94f-783395a6678a",
+      "arquivo_id_real": "c24599c3-3b3f-4b01-96b7-12305f3d1798",
+      "documento_arquivo": {
+        "documento_id": "26b50070-3466-41d0-a94f-783395a6678a",
+        "arquivo_id": "c24599c3-3b3f-4b01-96b7-12305f3d1798",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/publicidade/d01-05-icon-publico-v1.png",
+      "sha256": "ec8c13aee802c5baaac15a11a5c8813ff5cb6733107bcae6c9c82dd79b6426a4",
+      "mime": "image/png",
+      "bytes": 100975,
+      "problemas": []
+    },
+    {
+      "fonte_original": "identidade-visual/observatorio/icon.svg",
+      "codigo_documental": "D01",
+      "slug_esperado": "identidade-visual",
+      "documento_id_real": "26b50070-3466-41d0-a94f-783395a6678a",
+      "arquivo_id_real": "2404fbc8-984e-40e2-888d-31134b23e608",
+      "documento_arquivo": {
+        "documento_id": "26b50070-3466-41d0-a94f-783395a6678a",
+        "arquivo_id": "2404fbc8-984e-40e2-888d-31134b23e608",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/publicidade/d01-06-icon-v1.svg",
+      "sha256": "f19d71e2ed22bfc1aac44be4760a07517d1f88cb2186cf6b59cdcbfa97d11883",
+      "mime": "image/svg+xml",
+      "bytes": 704574,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/D01/d01-07-logo-e-texto-publico-v1.png",
+      "codigo_documental": "D01",
+      "slug_esperado": "identidade-visual",
+      "documento_id_real": "26b50070-3466-41d0-a94f-783395a6678a",
+      "arquivo_id_real": "c127cccf-33ca-4389-b79b-c2d3363a2e76",
+      "documento_arquivo": {
+        "documento_id": "26b50070-3466-41d0-a94f-783395a6678a",
+        "arquivo_id": "c127cccf-33ca-4389-b79b-c2d3363a2e76",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/publicidade/d01-07-logo-e-texto-publico-v1.png",
+      "sha256": "9af5c7b249456496cf0a6a66a67a4262c1959be04eed93f9197ec02fc9e25846",
+      "mime": "image/png",
+      "bytes": 400824,
+      "problemas": []
+    },
+    {
+      "fonte_original": "relatorios/relatorio-tecnico-recanto-da-serra.pdf",
+      "codigo_documental": "A02",
+      "slug_esperado": "relatorio-tecnico-recanto-da-serra",
+      "documento_id_real": "8d850419-7493-4568-b401-26e47ef4794a",
+      "arquivo_id_real": "b3962918-8248-45b9-92f2-5fab3ff53751",
+      "documento_arquivo": {
+        "documento_id": "8d850419-7493-4568-b401-26e47ef4794a",
+        "arquivo_id": "b3962918-8248-45b9-92f2-5fab3ff53751",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a02-relatorio-tecnico-recanto-da-serra-integral-v1.pdf",
+      "sha256": "18b7bbb11b6157af525c7e1c88b7e385763dadc094bb60fdf6f3a27d9c2aff91",
+      "mime": "application/pdf",
+      "bytes": 602121,
+      "problemas": []
+    },
+    {
+      "fonte_original": "relatorios/relatorio-tecnico-borda-da-mata.pdf",
+      "codigo_documental": "A03",
+      "slug_esperado": "relatorio-tecnico-borda-da-mata",
+      "documento_id_real": "ba78378c-1b26-49c0-9746-dadc2fef29f2",
+      "arquivo_id_real": "83634c93-ff88-4ed1-8f05-9b17295de8b0",
+      "documento_arquivo": {
+        "documento_id": "ba78378c-1b26-49c0-9746-dadc2fef29f2",
+        "arquivo_id": "83634c93-ff88-4ed1-8f05-9b17295de8b0",
+        "principal": true
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a03-relatorio-tecnico-borda-da-mata-integral-v1.pdf",
+      "sha256": "6dfef47006ed97133c8fef2ce0b935643c7955efbc7abaece2bcc9b0edcfea2e",
+      "mime": "application/pdf",
+      "bytes": 2424406,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados/a03-borda-da-mata-ocr.md",
+      "codigo_documental": "A03",
+      "slug_esperado": "relatorio-tecnico-borda-da-mata",
+      "documento_id_real": "ba78378c-1b26-49c0-9746-dadc2fef29f2",
+      "arquivo_id_real": "3c8e8992-1640-4095-8edd-38894b7127f6",
+      "documento_arquivo": {
+        "documento_id": "ba78378c-1b26-49c0-9746-dadc2fef29f2",
+        "arquivo_id": "3c8e8992-1640-4095-8edd-38894b7127f6",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a03-relatorio-tecnico-borda-da-mata-texto-acessivel-v1.md",
+      "sha256": "1fbaa91d0dd43da1992e22724b99112127316dfecbd3c7f4d9d85ba5f87e8799",
+      "mime": "text/markdown",
+      "bytes": 10302,
+      "problemas": []
+    },
+    {
+      "fonte_original": "relatorios/relatorio-tecnico-serra-dos-macacos.pdf",
+      "codigo_documental": "A04",
+      "slug_esperado": "relatorio-tecnico-serra-dos-macacos",
+      "documento_id_real": "b1274066-17b9-49ad-a031-c642fe7e7d53",
+      "arquivo_id_real": "889cb4ad-e996-408d-8cfb-671ff5db169c",
+      "documento_arquivo": {
+        "documento_id": "b1274066-17b9-49ad-a031-c642fe7e7d53",
+        "arquivo_id": "889cb4ad-e996-408d-8cfb-671ff5db169c",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a04-relato-tecnico-serra-dos-macacos-integral-v1.pdf",
+      "sha256": "7e966429d1fccae8f7583ebc0fb6644c8f6393390e5a2a0d633cbe79a79a7cde",
+      "mime": "application/pdf",
+      "bytes": 76164,
+      "problemas": []
+    },
+    {
+      "fonte_original": "formularios/formulario-de-funcionamento-pedro-e-oviedo.xlsx",
+      "codigo_documental": "A09",
+      "slug_esperado": "formulario-rotina-de-funcionamento",
+      "documento_id_real": "66913079-fac2-4548-97d8-f832ce98108b",
+      "arquivo_id_real": "df335145-be05-46ad-87c8-b98cde565514",
+      "documento_arquivo": {
+        "documento_id": "66913079-fac2-4548-97d8-f832ce98108b",
+        "arquivo_id": "df335145-be05-46ad-87c8-b98cde565514",
+        "principal": true
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a09-formulario-de-funcionamento-respostas-v1.xlsx",
+      "sha256": "4e426325bf010a2914b7b459ea7b410e6150f4cfb0eb78e4a5da27f45b0e842c",
+      "mime": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "bytes": 25726,
+      "problemas": []
+    },
+    {
+      "fonte_original": "formularios/formulario-recanto-da-serra-respostas.xlsx",
+      "codigo_documental": "A10",
+      "slug_esperado": "formulario-publico-consumidor",
+      "documento_id_real": "0eed90f9-c0cf-4c65-9e34-f819b76192e3",
+      "arquivo_id_real": "8e4b7f12-5bdb-4992-87e7-da71e4b14ea0",
+      "documento_arquivo": {
+        "documento_id": "0eed90f9-c0cf-4c65-9e34-f819b76192e3",
+        "arquivo_id": "8e4b7f12-5bdb-4992-87e7-da71e4b14ea0",
+        "principal": true
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a10-formulario-recanto-da-serra-respostas-v1.xlsx",
+      "sha256": "c69044128c52d12a2d0a7fdff847b1e025b016c8ec91dced653a25b125d9bcc7",
+      "mime": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "bytes": 17609,
+      "problemas": []
+    },
+    {
+      "fonte_original": "formularios/formulario-borda-da-mata-respostas.xlsx",
+      "codigo_documental": "A10",
+      "slug_esperado": "formulario-publico-consumidor",
+      "documento_id_real": "0eed90f9-c0cf-4c65-9e34-f819b76192e3",
+      "arquivo_id_real": "12b90970-6f46-45b3-a6a9-f53d87b62c4b",
+      "documento_arquivo": {
+        "documento_id": "0eed90f9-c0cf-4c65-9e34-f819b76192e3",
+        "arquivo_id": "12b90970-6f46-45b3-a6a9-f53d87b62c4b",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a10-formulario-borda-da-mata-respostas-v1.xlsx",
+      "sha256": "7c50c0291901ca39a5497f674a2a19b0efa7b56ea58d150a8a21835b329b6fd1",
+      "mime": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "bytes": 9417,
+      "problemas": []
+    },
+    {
+      "fonte_original": "formularios/indicadores-observatorio/00-capa.pdf",
+      "codigo_documental": "A11",
+      "slug_esperado": "anexo-indicadores-etapa-1",
+      "documento_id_real": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+      "arquivo_id_real": "c4f0eb2f-2635-4333-a73c-5a00e19278c2",
+      "documento_arquivo": {
+        "documento_id": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+        "arquivo_id": "c4f0eb2f-2635-4333-a73c-5a00e19278c2",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a11-00-capa-v1.pdf",
+      "sha256": "c7bf054f79faabe5a7bf30337a10a3548bd8a787ac003b33a5094f0451c80bfb",
+      "mime": "application/pdf",
+      "bytes": 114854,
+      "problemas": []
+    },
+    {
+      "fonte_original": "formularios/indicadores-observatorio/01-sumario.pdf",
+      "codigo_documental": "A11",
+      "slug_esperado": "anexo-indicadores-etapa-1",
+      "documento_id_real": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+      "arquivo_id_real": "18a82fdb-1b2d-491c-a06a-1fc5d1a04af5",
+      "documento_arquivo": {
+        "documento_id": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+        "arquivo_id": "18a82fdb-1b2d-491c-a06a-1fc5d1a04af5",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a11-01-sumario-v1.pdf",
+      "sha256": "9abde76705a04434767346f463f22ae63c9a94b463d0f94db9cca043be313efb",
+      "mime": "application/pdf",
+      "bytes": 104911,
+      "problemas": []
+    },
+    {
+      "fonte_original": "formularios/indicadores-observatorio/02-painel-executivo.pdf",
+      "codigo_documental": "A11",
+      "slug_esperado": "anexo-indicadores-etapa-1",
+      "documento_id_real": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+      "arquivo_id_real": "aebf2f33-7c8e-484c-8eeb-a6df1a323f1e",
+      "documento_arquivo": {
+        "documento_id": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+        "arquivo_id": "aebf2f33-7c8e-484c-8eeb-a6df1a323f1e",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a11-02-painel-executivo-v1.pdf",
+      "sha256": "fe093922ee93f8d12d5473a5dba04840d2d894a825931d30c04cde9fef8354a8",
+      "mime": "application/pdf",
+      "bytes": 111426,
+      "problemas": []
+    },
+    {
+      "fonte_original": "formularios/indicadores-observatorio/03-indicadores-solidaria.pdf",
+      "codigo_documental": "A11",
+      "slug_esperado": "anexo-indicadores-etapa-1",
+      "documento_id_real": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+      "arquivo_id_real": "21b41e38-b610-4bef-b20b-ce5f80cc0c13",
+      "documento_arquivo": {
+        "documento_id": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+        "arquivo_id": "21b41e38-b610-4bef-b20b-ce5f80cc0c13",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a11-03-indicadores-solidaria-v1.pdf",
+      "sha256": "442c7c490f64183364eaf1cad058c1c15854e785ad96bfabeff3ca331d5e71ec",
+      "mime": "application/pdf",
+      "bytes": 117571,
+      "problemas": []
+    },
+    {
+      "fonte_original": "formularios/indicadores-observatorio/04-publico-mensuracao.pdf",
+      "codigo_documental": "A11",
+      "slug_esperado": "anexo-indicadores-etapa-1",
+      "documento_id_real": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+      "arquivo_id_real": "4c2f66fb-027b-4541-b085-58daecc372d4",
+      "documento_arquivo": {
+        "documento_id": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+        "arquivo_id": "4c2f66fb-027b-4541-b085-58daecc372d4",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a11-04-publico-mensuracao-v1.pdf",
+      "sha256": "66f0f2e3d39957a2a129a1b64d694a93ca787d675cd5d733a5b77cc800392f6f",
+      "mime": "application/pdf",
+      "bytes": 117400,
+      "problemas": []
+    },
+    {
+      "fonte_original": "formularios/indicadores-observatorio/05-serie-mensal.pdf",
+      "codigo_documental": "A11",
+      "slug_esperado": "anexo-indicadores-etapa-1",
+      "documento_id_real": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+      "arquivo_id_real": "6ce51e6c-9655-4931-a211-295e836b24bf",
+      "documento_arquivo": {
+        "documento_id": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+        "arquivo_id": "6ce51e6c-9655-4931-a211-295e836b24bf",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a11-05-serie-mensal-v1.pdf",
+      "sha256": "151e952509e52ee07b820098f307a59ad46a5f4a4a7a0c4b2890b92eb951d206",
+      "mime": "application/pdf",
+      "bytes": 93901,
+      "problemas": []
+    },
+    {
+      "fonte_original": "formularios/indicadores-observatorio/06-pessoas-trabalho.pdf",
+      "codigo_documental": "A11",
+      "slug_esperado": "anexo-indicadores-etapa-1",
+      "documento_id_real": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+      "arquivo_id_real": "4ccd60c4-de53-41ee-9612-c18ff088d296",
+      "documento_arquivo": {
+        "documento_id": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+        "arquivo_id": "4ccd60c4-de53-41ee-9612-c18ff088d296",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a11-06-pessoas-trabalho-v1.pdf",
+      "sha256": "9c7b74200941d2b77b820311621f5151312dd6eab3096260997fc3b9d6fb0811",
+      "mime": "application/pdf",
+      "bytes": 203310,
+      "problemas": []
+    },
+    {
+      "fonte_original": "formularios/indicadores-observatorio/07-localidades.pdf",
+      "codigo_documental": "A11",
+      "slug_esperado": "anexo-indicadores-etapa-1",
+      "documento_id_real": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+      "arquivo_id_real": "4871281e-0ed7-48d6-9360-02b3bb5cde5c",
+      "documento_arquivo": {
+        "documento_id": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+        "arquivo_id": "4871281e-0ed7-48d6-9360-02b3bb5cde5c",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a11-07-localidades-v1.pdf",
+      "sha256": "332048e0de36549ab5a14ef9d8c22d94296de890935537c7fdc55f62012e2916",
+      "mime": "application/pdf",
+      "bytes": 104978,
+      "problemas": []
+    },
+    {
+      "fonte_original": "formularios/indicadores-observatorio/08-fornecedores.pdf",
+      "codigo_documental": "A11",
+      "slug_esperado": "anexo-indicadores-etapa-1",
+      "documento_id_real": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+      "arquivo_id_real": "4bdd49f6-931e-4bf0-a026-18e208dbbb11",
+      "documento_arquivo": {
+        "documento_id": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+        "arquivo_id": "4bdd49f6-931e-4bf0-a026-18e208dbbb11",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a11-08-fornecedores-v1.pdf",
+      "sha256": "202afd35cce33009cc02fc3cf9ab3a925ec795d0c41e4c803dd97d99c49d9e6f",
+      "mime": "application/pdf",
+      "bytes": 113992,
+      "problemas": []
+    },
+    {
+      "fonte_original": "formularios/indicadores-observatorio/09-atividades.pdf",
+      "codigo_documental": "A11",
+      "slug_esperado": "anexo-indicadores-etapa-1",
+      "documento_id_real": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+      "arquivo_id_real": "a6b38687-3c97-41e7-a045-fd2bc83ca7f8",
+      "documento_arquivo": {
+        "documento_id": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+        "arquivo_id": "a6b38687-3c97-41e7-a045-fd2bc83ca7f8",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a11-09-atividades-v1.pdf",
+      "sha256": "0720f4a1af36ee071e351756805d8ca5df7fd2bb0ebf13b0af17931b27af774a",
+      "mime": "application/pdf",
+      "bytes": 99244,
+      "problemas": []
+    },
+    {
+      "fonte_original": "formularios/indicadores-observatorio/10-conciliacao.pdf",
+      "codigo_documental": "A11",
+      "slug_esperado": "anexo-indicadores-etapa-1",
+      "documento_id_real": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+      "arquivo_id_real": "f0be04fb-cbd2-47d3-88b7-8cdb299249de",
+      "documento_arquivo": {
+        "documento_id": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+        "arquivo_id": "f0be04fb-cbd2-47d3-88b7-8cdb299249de",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a11-10-conciliacao-v1.pdf",
+      "sha256": "3d0cd369c270ab24d67aa0e2aa6800fb83c41f6b31eb77171408015ddac44fc1",
+      "mime": "application/pdf",
+      "bytes": 110181,
+      "problemas": []
+    },
+    {
+      "fonte_original": "formularios/indicadores-observatorio/11-nota-metodologica.pdf",
+      "codigo_documental": "A11",
+      "slug_esperado": "anexo-indicadores-etapa-1",
+      "documento_id_real": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+      "arquivo_id_real": "dd7eb63c-3652-4ac5-a242-5960c8e923b5",
+      "documento_arquivo": {
+        "documento_id": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+        "arquivo_id": "dd7eb63c-3652-4ac5-a242-5960c8e923b5",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a11-11-nota-metodologica-v1.pdf",
+      "sha256": "21f508407c67f47a4e5518aa8b21a8961a13f6d0bbc15ff83392ef1619714ece",
+      "mime": "application/pdf",
+      "bytes": 122618,
+      "problemas": []
+    },
+    {
+      "fonte_original": "formularios/indicadores-observatorio/12-perfil-visitantes.pdf",
+      "codigo_documental": "A11",
+      "slug_esperado": "anexo-indicadores-etapa-1",
+      "documento_id_real": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+      "arquivo_id_real": "b1853cf8-2020-4421-aa43-09c20dfb59d1",
+      "documento_arquivo": {
+        "documento_id": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+        "arquivo_id": "b1853cf8-2020-4421-aa43-09c20dfb59d1",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a11-12-perfil-visitantes-v1.pdf",
+      "sha256": "ec9401bfacb0799bbcf2e81ed7e2f08686cc04e765f8bdcb4f7dc0cfb957a996",
+      "mime": "application/pdf",
+      "bytes": 129159,
+      "problemas": []
+    },
+    {
+      "fonte_original": "formularios/indicadores-observatorio/13-motivacao-atividades.pdf",
+      "codigo_documental": "A11",
+      "slug_esperado": "anexo-indicadores-etapa-1",
+      "documento_id_real": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+      "arquivo_id_real": "48c0dc6a-eb09-42a6-b137-307cfdb21cc3",
+      "documento_arquivo": {
+        "documento_id": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+        "arquivo_id": "48c0dc6a-eb09-42a6-b137-307cfdb21cc3",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a11-13-motivacao-atividades-v1.pdf",
+      "sha256": "01d83183cbba0d7b04b746340bfca5b846d0af7a819a74893e53d39f74eaa8e3",
+      "mime": "application/pdf",
+      "bytes": 125018,
+      "problemas": []
+    },
+    {
+      "fonte_original": "formularios/indicadores-observatorio/14-consumo-percepcao.pdf",
+      "codigo_documental": "A11",
+      "slug_esperado": "anexo-indicadores-etapa-1",
+      "documento_id_real": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+      "arquivo_id_real": "966e93f6-c1d3-45ae-b785-238568e2f99d",
+      "documento_arquivo": {
+        "documento_id": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+        "arquivo_id": "966e93f6-c1d3-45ae-b785-238568e2f99d",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a11-14-consumo-percepcao-v1.pdf",
+      "sha256": "bb412a77600037470ea2b70c03d26c72fc37c2a9d2138cdf148e764fb1f9263e",
+      "mime": "application/pdf",
+      "bytes": 121366,
+      "problemas": []
+    },
+    {
+      "fonte_original": "formularios/indicadores-observatorio/15-grupos-institucionais.pdf",
+      "codigo_documental": "A11",
+      "slug_esperado": "anexo-indicadores-etapa-1",
+      "documento_id_real": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+      "arquivo_id_real": "1d9ec033-d98f-41f9-814e-a70f6b1e1832",
+      "documento_arquivo": {
+        "documento_id": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+        "arquivo_id": "1d9ec033-d98f-41f9-814e-a70f6b1e1832",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a11-15-grupos-institucionais-v1.pdf",
+      "sha256": "d38ec73b859f58fc373bc732da7ca603a06d3d40d4e8022ea35d3da6996e737e",
+      "mime": "application/pdf",
+      "bytes": 115818,
+      "problemas": []
+    },
+    {
+      "fonte_original": "formularios/indicadores-observatorio/16-dicionario-dados.pdf",
+      "codigo_documental": "A11",
+      "slug_esperado": "anexo-indicadores-etapa-1",
+      "documento_id_real": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+      "arquivo_id_real": "d3a4e244-75dc-421b-923c-8447708d1013",
+      "documento_arquivo": {
+        "documento_id": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+        "arquivo_id": "d3a4e244-75dc-421b-923c-8447708d1013",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a11-16-dicionario-dados-v1.pdf",
+      "sha256": "1b08e39983184fc4e8e4636a86e1a66eb119f96675a5e009a2c3101d9454dbcd",
+      "mime": "application/pdf",
+      "bytes": 134633,
+      "problemas": []
+    },
+    {
+      "fonte_original": "formularios/indicadores-observatorio/anexo-indicadores-observatorio-pnab-estatico-final.xlsx",
+      "codigo_documental": "A11",
+      "slug_esperado": "anexo-indicadores-etapa-1",
+      "documento_id_real": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+      "arquivo_id_real": "b7e0ee1a-1e45-4223-85c5-5ccfb2f9edfb",
+      "documento_arquivo": {
+        "documento_id": "412ffeaf-4db6-4012-87c7-1594fc5c13b4",
+        "arquivo_id": "b7e0ee1a-1e45-4223-85c5-5ccfb2f9edfb",
+        "principal": true
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a11-planilha-indicadores-etapa-1-v1.xlsx",
+      "sha256": "10143117a960f3a07a84d3f798029d1490399b90b6276e42763d6c5f7b52c7b1",
+      "mime": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "bytes": 530387,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-centro-cultural-museu-borda-da-mata-conversa-com-oviedo-dentro-da-casa-de-taipa-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "aa3d16ae-78dd-48ce-ae0a-aaeeed4cba29",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "aa3d16ae-78dd-48ce-ae0a-aaeeed4cba29",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-centro-cultural-museu-borda-da-mata-conversa-com-oviedo-dentro-da-casa-de-taipa-v1.webp",
+      "sha256": "956a2b46500cc70a7c19d64940d898c0b895d82d37b13d32bf1ad6caf45bf483",
+      "mime": "image/webp",
+      "bytes": 147416,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-centro-cultural-museu-borda-da-mata-conversa-com-oviedo-e-neide-abreu-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "73cd0390-586d-4a13-addc-5595dc99b08f",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "73cd0390-586d-4a13-addc-5595dc99b08f",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-centro-cultural-museu-borda-da-mata-conversa-com-oviedo-e-neide-abreu-v1.webp",
+      "sha256": "dca36525a8de1830c93cdebad6c33093349df5adf4120e5a0a296270ba29350a",
+      "mime": "image/webp",
+      "bytes": 128346,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-centro-cultural-museu-borda-da-mata-espaco-do-historiador-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "17125627-2c23-40d9-9548-5a6ba7e8c878",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "17125627-2c23-40d9-9548-5a6ba7e8c878",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-centro-cultural-museu-borda-da-mata-espaco-do-historiador-v1.webp",
+      "sha256": "09261f487965a78e5e59e37c2704cf80339ed2a36fa50abcd98a534ad93266e6",
+      "mime": "image/webp",
+      "bytes": 244998,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-centro-cultural-museu-borda-da-mata-frente-casa-de-taipa-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "6dc4cabd-1054-423d-a6e8-64cd59fe6bf1",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "6dc4cabd-1054-423d-a6e8-64cd59fe6bf1",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-centro-cultural-museu-borda-da-mata-frente-casa-de-taipa-v1.webp",
+      "sha256": "76764cded8d50330a5362c4ece3efaa765e5c82d5e3311ee8214b4474377df43",
+      "mime": "image/webp",
+      "bytes": 490166,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-centro-cultural-museu-borda-da-mata-frente-do-museu-borda-da-mata-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "58cb6b14-35c2-4dfc-b0b0-f29c3fc8fd69",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "58cb6b14-35c2-4dfc-b0b0-f29c3fc8fd69",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-centro-cultural-museu-borda-da-mata-frente-do-museu-borda-da-mata-v1.webp",
+      "sha256": "4f17d17521069bd33986ae3e593f9ada5404d06a7cc4b01524e2e29e5756aae8",
+      "mime": "image/webp",
+      "bytes": 230346,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-centro-cultural-museu-borda-da-mata-geladeira-em-conversa-com-discos-e-cds-dentro-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "e627e918-e557-4420-9b1a-dd1547675a8e",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "e627e918-e557-4420-9b1a-dd1547675a8e",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-centro-cultural-museu-borda-da-mata-geladeira-em-conversa-com-discos-e-cds-dentro-v1.webp",
+      "sha256": "bfc7dafa09ab388eb8876584ea2d7f72a71df019ef31f119dfc79fef0a8ad0a2",
+      "mime": "image/webp",
+      "bytes": 203762,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-centro-cultural-museu-borda-da-mata-lhucas-concedendo-entrevista-a-pedro-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "1661129c-855b-439e-9cc4-1ee4edb89b6c",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "1661129c-855b-439e-9cc4-1ee4edb89b6c",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-centro-cultural-museu-borda-da-mata-lhucas-concedendo-entrevista-a-pedro-v1.webp",
+      "sha256": "5ef68cc44a6465bbf5b6a2b76e3fa0ceb5fc0e61fc200b41780c589c3e633932",
+      "mime": "image/webp",
+      "bytes": 292738,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-ilha-grande-arvores-preservadas-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "8556acf7-85ec-4f8b-a682-41643d3b18f5",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "8556acf7-85ec-4f8b-a682-41643d3b18f5",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-ilha-grande-arvores-preservadas-v1.webp",
+      "sha256": "0020df753e0fdaa905a6d99a6a39b2d293d9053789eea625012aa4eadac05db3",
+      "mime": "image/webp",
+      "bytes": 89614,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-ilha-grande-cais-ou-pier-ilha-grande-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "7ae760f3-5a83-48a6-9c1f-2eaabc9415a6",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "7ae760f3-5a83-48a6-9c1f-2eaabc9415a6",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-ilha-grande-cais-ou-pier-ilha-grande-v1.webp",
+      "sha256": "6683fb1348891399d61046f32df1e38a680ba050cbd97a362ae435a29fee1f8e",
+      "mime": "image/webp",
+      "bytes": 35500,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-ilha-grande-campo-verde-de-grama-e-arvores-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "0c27ab01-f6d3-4bb2-a42e-1c0cccb4cbd3",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "0c27ab01-f6d3-4bb2-a42e-1c0cccb4cbd3",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-ilha-grande-campo-verde-de-grama-e-arvores-v1.webp",
+      "sha256": "0ae97eadadf94f23c6e1fbb50f7d3f2bb8583e43ea97d2f21c5e97efae9034f9",
+      "mime": "image/webp",
+      "bytes": 85970,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-ilha-grande-chegando-a-ilha-grande-de-barco-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "bb8e116e-3794-4832-a4f6-7ba4e4015544",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "bb8e116e-3794-4832-a4f6-7ba4e4015544",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-ilha-grande-chegando-a-ilha-grande-de-barco-v1.webp",
+      "sha256": "0e14cb19abe159a875b5bfe6486d6591cfc9a24d4ef19115ea7daa19c5421ab0",
+      "mime": "image/webp",
+      "bytes": 30226,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-ilha-grande-dona-mada-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "bb3ea840-b687-47eb-b13e-31ba2be790dd",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "bb3ea840-b687-47eb-b13e-31ba2be790dd",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-ilha-grande-dona-mada-v1.webp",
+      "sha256": "349c2879540a0c76ad007bc0d52463ebe34b7515ec0708ba11ee93f041fcf045",
+      "mime": "image/webp",
+      "bytes": 13818,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-ilha-grande-forno-a-lenha-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "f9d4766c-1806-42f0-859f-cc75c6a150ab",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "f9d4766c-1806-42f0-859f-cc75c6a150ab",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-ilha-grande-forno-a-lenha-v1.webp",
+      "sha256": "b269d5763ab2d8c673caa80ac2020d08d1e19e6561cd7a28946fa15e1d28f61c",
+      "mime": "image/webp",
+      "bytes": 41888,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-ilha-grande-forno-a-lenha2-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "1f8fef44-b5da-4cf9-941a-aeae200796ff",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "1f8fef44-b5da-4cf9-941a-aeae200796ff",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-ilha-grande-forno-a-lenha2-v1.webp",
+      "sha256": "a12b913038fbea7c215eec856d05349ac3ac778735abe58c5cb8fa81591521fd",
+      "mime": "image/webp",
+      "bytes": 39102,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-ilha-grande-igrejinha-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "103ea1e5-3a15-4b67-9264-0388e6d9841f",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "103ea1e5-3a15-4b67-9264-0388e6d9841f",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-ilha-grande-igrejinha-v1.webp",
+      "sha256": "9d0ab7a31168856140ef35d0b5b6d56dbf7d46948c3d09397feeb8d95e6078c5",
+      "mime": "image/webp",
+      "bytes": 223968,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-ilha-grande-placa-bem-vindos-a-pedreiras-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "f96d7990-fd68-4fa0-be3a-37c47b50010c",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "f96d7990-fd68-4fa0-be3a-37c47b50010c",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-ilha-grande-placa-bem-vindos-a-pedreiras-v1.webp",
+      "sha256": "8e4beb2c284e7ec1aea9a98d576fa46ce3021db47b76a39b77cf30bd4f148ce3",
+      "mime": "image/webp",
+      "bytes": 149636,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-ilha-grande-rio-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "7f440b7c-7bc4-497b-abc9-4e3dfe5cf2da",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "7f440b7c-7bc4-497b-abc9-4e3dfe5cf2da",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-ilha-grande-rio-v1.webp",
+      "sha256": "be134855802bb381130ff605d3c26773286830337bd74e96ea34acc997965a38",
+      "mime": "image/webp",
+      "bytes": 25012,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-recanto-da-serra-bodega-dos-tropeiros-v1.svg",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "86e03efb-e3df-4d19-a922-2314c957943a",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "86e03efb-e3df-4d19-a922-2314c957943a",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-recanto-da-serra-bodega-dos-tropeiros-v1.svg",
+      "sha256": "13d14523624cfe0a7505962282b59032f13d7a039c822cda0d0b710940c5d758",
+      "mime": "image/svg+xml",
+      "bytes": 680838,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-recanto-da-serra-estufa-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "804b984b-1630-4efd-8f62-2fb77410eca1",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "804b984b-1630-4efd-8f62-2fb77410eca1",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-recanto-da-serra-estufa-v1.webp",
+      "sha256": "4d8b8c55f910b29744f0bfb3e88129a270c1d2ac71065293d80d29bfa2a9c2e5",
+      "mime": "image/webp",
+      "bytes": 720856,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-recanto-da-serra-momento-da-entrevista-com-pedro-menezes-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "b179eba3-aebb-46b3-8c51-a90885572505",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "b179eba3-aebb-46b3-8c51-a90885572505",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-recanto-da-serra-momento-da-entrevista-com-pedro-menezes-v1.webp",
+      "sha256": "99082ca58728d2a7dd199773cd8fa603943ae5324673aae6bc4134c2cd37eeea",
+      "mime": "image/webp",
+      "bytes": 542130,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-recanto-da-serra-museu-dona-maria-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "f5450052-d574-4a19-a300-188c0c8ed2cf",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "f5450052-d574-4a19-a300-188c0c8ed2cf",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-recanto-da-serra-museu-dona-maria-v1.webp",
+      "sha256": "bbd15b96102018e871ac18152f74e849bb375e6d3b47652105e18aaf1fd4290a",
+      "mime": "image/webp",
+      "bytes": 584608,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-recanto-da-serra-por-dentro-da-budega-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "39aa1c3e-a38f-4076-a5c3-839eba6b5938",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "39aa1c3e-a38f-4076-a5c3-839eba6b5938",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-recanto-da-serra-por-dentro-da-budega-v1.webp",
+      "sha256": "5d2ac9e6b4b627ef5329d3687933021f6483d3d54a42219039d950d3da4f24f3",
+      "mime": "image/webp",
+      "bytes": 231480,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-recanto-da-serra-recanto-da-serra-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "2463bb67-c4c3-4762-960d-159c3422b807",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "2463bb67-c4c3-4762-960d-159c3422b807",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-recanto-da-serra-recanto-da-serra-v1.webp",
+      "sha256": "8a27ae3d13304738a6ea19b83212e2ef375279d8126d4e30b90bf545aee7ff62",
+      "mime": "image/webp",
+      "bytes": 382474,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-recanto-da-serra-volte-sempre-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "b062a574-0bae-48ca-b954-5fcd743fc895",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "b062a574-0bae-48ca-b954-5fcd743fc895",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-recanto-da-serra-volte-sempre-v1.webp",
+      "sha256": "dba7a217cde8d74e3c7af710e97d96cb714c05c5923b2f360fbc55e545f52dfc",
+      "mime": "image/webp",
+      "bytes": 337516,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-dilson-de-agripino-durante-entrevista-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "2553f348-1bb1-4e5b-8735-a5a3b89c11d1",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "2553f348-1bb1-4e5b-8735-a5a3b89c11d1",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-dilson-de-agripino-durante-entrevista-v1.webp",
+      "sha256": "66346054c81343e61045d812334ed88e42fd6199b053dd3e212dccfcfdd296ce",
+      "mime": "image/webp",
+      "bytes": 132664,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-dilson-de-agripino-equipe-e-dilson-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "d56d8bfc-5512-4115-8a73-80f25264942a",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "d56d8bfc-5512-4115-8a73-80f25264942a",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-dilson-de-agripino-equipe-e-dilson-v1.webp",
+      "sha256": "627ac3d2aff41b514a2fa082c3892e619f361821390f809d4b57e89fc467fd6a",
+      "mime": "image/webp",
+      "bytes": 179474,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-dilson-de-agripino-equipe-e-dilson2-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "27e2e9c7-3a24-4fea-ba21-6320b20d5e27",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "27e2e9c7-3a24-4fea-ba21-6320b20d5e27",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-dilson-de-agripino-equipe-e-dilson2-v1.webp",
+      "sha256": "9598b6a1a265a78a56737898f5fc7a37bf5897a83b21a82e1a37e31da68ceb9d",
+      "mime": "image/webp",
+      "bytes": 176508,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-dilson-de-agripino-inicio-da-entrevista-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "901363dd-a1c0-499f-9caa-91ec6efab049",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "901363dd-a1c0-499f-9caa-91ec6efab049",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-dilson-de-agripino-inicio-da-entrevista-v1.webp",
+      "sha256": "d450695804dcca817b3fbc349dae377b29aa0ea32af8718e0f98e77e6d55cf90",
+      "mime": "image/webp",
+      "bytes": 160538,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-dilson-de-agripino-momento-antes-da-entrevista-com-dilson-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "3a594273-b6a2-4c05-ae8e-ad7272351a94",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "3a594273-b6a2-4c05-ae8e-ad7272351a94",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-dilson-de-agripino-momento-antes-da-entrevista-com-dilson-v1.webp",
+      "sha256": "ab00367339f53b17a5c46d82e0a6ad5c0b0007ebbcff5a4cb3a28bbd61a839f5",
+      "mime": "image/webp",
+      "bytes": 192542,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-dilson-de-agripino-momento-pos-entrevista-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "5e34d46c-3e63-4733-8860-e480400fcd95",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "5e34d46c-3e63-4733-8860-e480400fcd95",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-dilson-de-agripino-momento-pos-entrevista-v1.webp",
+      "sha256": "50d44fe615a26e72cff7f5305ba706afdc80575e8ffe48f491c415ee6d1653ea",
+      "mime": "image/webp",
+      "bytes": 103326,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-diretor-turismo-sao-cristovao-marcio-ramos-foto-por-dani-santos-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "d0af646c-e6b0-423d-9edc-d5ffc74b246a",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "d0af646c-e6b0-423d-9edc-d5ffc74b246a",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-diretor-turismo-sao-cristovao-marcio-ramos-foto-por-dani-santos-v1.webp",
+      "sha256": "a22f0daed765d2b73eb0996c9b4df8e739850f96c0ddfbb8f4e17c5a3b982361",
+      "mime": "image/webp",
+      "bytes": 67276,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-fundacao-cultura-sao-cristovao-paola-rodrigues-foto-por-iago-de-andrade-santos-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "0780c902-bb26-4004-ac50-86247c139cc2",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "0780c902-bb26-4004-ac50-86247c139cc2",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-fundacao-cultura-sao-cristovao-paola-rodrigues-foto-por-iago-de-andrade-santos-v1.webp",
+      "sha256": "e6347cdb28f766eb8d3c35715ae0d7e538965f9799ee91c302985cc9fa8abb89",
+      "mime": "image/webp",
+      "bytes": 73820,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-josenilson-bispo-antes-da-entrevista-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "379beb46-830e-4863-9f7a-67b0ffad0616",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "379beb46-830e-4863-9f7a-67b0ffad0616",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-josenilson-bispo-antes-da-entrevista-v1.webp",
+      "sha256": "93d8b8aa670e30a8cbde20c3ce0a8086977ec809895ab15a467d1d7f9a3d270f",
+      "mime": "image/webp",
+      "bytes": 224456,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-josenilson-bispo-antes-da-entrevista2-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "d464f7da-e79d-4646-b69c-6e0ede977b0c",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "d464f7da-e79d-4646-b69c-6e0ede977b0c",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-josenilson-bispo-antes-da-entrevista2-v1.webp",
+      "sha256": "add716346c5a5b9b6e184a263f5438fafefc5d4915510a51b2d73295d1a318aa",
+      "mime": "image/webp",
+      "bytes": 171630,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-josenilson-bispo-biblioteca-da-sala-de-nilsinho-com-equipe-lendo-e-pegando-livros-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "d03fb929-ba6d-450a-9eaa-c295244634f0",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "d03fb929-ba6d-450a-9eaa-c295244634f0",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-josenilson-bispo-biblioteca-da-sala-de-nilsinho-com-equipe-lendo-e-pegando-livros-v1.webp",
+      "sha256": "55bb1ef03f1d403baaa1165fc8d1e90858e68cf393194ef9a856d1859b01c9b0",
+      "mime": "image/webp",
+      "bytes": 277728,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-josenilson-bispo-bodega-dos-tropeiros-e-mensagem-de-silo-no-memorial-tobias-barreto-homenagem-ao-recanto-da-serra-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "66154f3b-91aa-4920-9b4f-3e6629e7840f",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "66154f3b-91aa-4920-9b4f-3e6629e7840f",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-josenilson-bispo-bodega-dos-tropeiros-e-mensagem-de-silo-no-memorial-tobias-barreto-homenagem-ao-recanto-da-serra-v1.webp",
+      "sha256": "e0680a55ba607fb14688743795c8add282f2163597751380ef5e00e22c962d81",
+      "mime": "image/webp",
+      "bytes": 40618,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-josenilson-bispo-bodega-dos-tropeiros-no-memorial-tobias-barreto-homenagem-ao-recanto-da-serra-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "a5281550-f775-4158-8d4c-28aec997f047",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "a5281550-f775-4158-8d4c-28aec997f047",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-josenilson-bispo-bodega-dos-tropeiros-no-memorial-tobias-barreto-homenagem-ao-recanto-da-serra-v1.webp",
+      "sha256": "e758a6ca8e0e402ee283a7c5c5747497ab4f76a3891db48d3cc61e25649045ec",
+      "mime": "image/webp",
+      "bytes": 96412,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-josenilson-bispo-foto-com-todos-pos-entrevista-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "eade2dd2-21a0-453f-b86a-131d66537220",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "eade2dd2-21a0-453f-b86a-131d66537220",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-josenilson-bispo-foto-com-todos-pos-entrevista-v1.webp",
+      "sha256": "786bda666018d775b212d4457e898e10c5945fc109bcfc5189c14d22e222a99a",
+      "mime": "image/webp",
+      "bytes": 252184,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-josenilson-bispo-foto-durante-entrevista-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "fc397b09-013e-4c91-ba4f-d0ab621108ab",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "fc397b09-013e-4c91-ba4f-d0ab621108ab",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-josenilson-bispo-foto-durante-entrevista-v1.webp",
+      "sha256": "63d344b855377c22ee675badda328a17af5c45302b9b7017150ea3a2cbe00e76",
+      "mime": "image/webp",
+      "bytes": 162874,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-josenilson-bispo-foto-durante-entrevista2-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "df8e35ca-a89f-490c-b207-d9864e079f1d",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "df8e35ca-a89f-490c-b207-d9864e079f1d",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-josenilson-bispo-foto-durante-entrevista2-v1.webp",
+      "sha256": "d47021ab565aa67301d4555f0bcfa7c5e320fd34430c89f90c84078171418e24",
+      "mime": "image/webp",
+      "bytes": 333294,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-josenilson-bispo-mensagem-de-silo-no-memorial-tobias-barreto-homenagem-ao-recanto-da-serra-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "4c822860-2fed-42c4-bbeb-dc6864142356",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "4c822860-2fed-42c4-bbeb-dc6864142356",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-josenilson-bispo-mensagem-de-silo-no-memorial-tobias-barreto-homenagem-ao-recanto-da-serra-v1.webp",
+      "sha256": "b8a9bce0561eeec69230a6535764f401e2bfdb5aba2d5e3f5b066c7fddff19b8",
+      "mime": "image/webp",
+      "bytes": 84652,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-josenilson-bispo-nilsinho-apresentando-mural-do-memorial-tobias-barreto-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "b7466b6c-0c03-4a3c-8b5d-49edf44f45e8",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "b7466b6c-0c03-4a3c-8b5d-49edf44f45e8",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-josenilson-bispo-nilsinho-apresentando-mural-do-memorial-tobias-barreto-v1.webp",
+      "sha256": "77f140d4ffbf5e13f4d0cfe71eb8b7bed77c1990ac6664133ed9faaa07292537",
+      "mime": "image/webp",
+      "bytes": 126510,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-josenilson-bispo-nilsinho-mostrando-banner-do-tobiarte-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "436bdb98-422e-4b8c-bc90-2622e39e4c0e",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "436bdb98-422e-4b8c-bc90-2622e39e4c0e",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-josenilson-bispo-nilsinho-mostrando-banner-do-tobiarte-v1.webp",
+      "sha256": "27ab4e6ec19e360a8ed7f9c48322bc9c9c6d8e1970415f3d4b0967406a881291",
+      "mime": "image/webp",
+      "bytes": 209120,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-josenilson-bispo-nilsinho-mostrando-banner-do-tobiarte2-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "ab404ad4-30b9-4e63-b3b4-9ee3fb846a5d",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "ab404ad4-30b9-4e63-b3b4-9ee3fb846a5d",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-josenilson-bispo-nilsinho-mostrando-banner-do-tobiarte2-v1.webp",
+      "sha256": "0cbbc7f642bcc5c9b7188b724f1438d07ab165ff6f5ed7b418762e9024da2bcf",
+      "mime": "image/webp",
+      "bytes": 243572,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-josenilson-bispo-nilsinho-mostrando-banner-do-tobiarte3-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "1c046392-e71a-4d96-a689-0add4fbfc8a3",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "1c046392-e71a-4d96-a689-0add4fbfc8a3",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-josenilson-bispo-nilsinho-mostrando-banner-do-tobiarte3-v1.webp",
+      "sha256": "c645b76b7459264b4d526c2d117a9edb5bb0d7b1b31e79788c8a8e7f609263cb",
+      "mime": "image/webp",
+      "bytes": 142406,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-laerte-aguiar-equipe-com-laerte-aguiar-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "fd714141-77f6-42ed-a680-b23a1f98e9c6",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "fd714141-77f6-42ed-a680-b23a1f98e9c6",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-laerte-aguiar-equipe-com-laerte-aguiar-v1.webp",
+      "sha256": "4700218a4cfc2fdd35fe5e207c717297e4571cafa35dc25ddb77d1e665516725",
+      "mime": "image/webp",
+      "bytes": 395042,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-laerte-aguiar-equipe-com-laerte-aguiar2-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "5796caf5-23ad-4617-98ec-4771ada8ddae",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "5796caf5-23ad-4617-98ec-4771ada8ddae",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-laerte-aguiar-equipe-com-laerte-aguiar2-v1.webp",
+      "sha256": "3eb726e8a03edf60972e265da244b347d771c237d58bf5f83c53494e272d1c77",
+      "mime": "image/webp",
+      "bytes": 362472,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-laerte-aguiar-equipe-com-laerte-aguiar3-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "7d0d2924-d8ca-42bc-9922-a69a3ed1b6de",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "7d0d2924-d8ca-42bc-9922-a69a3ed1b6de",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-laerte-aguiar-equipe-com-laerte-aguiar3-v1.webp",
+      "sha256": "185691ffedc857c8ba87aa4dcfbe1e884b57f6fa1a881ed03a7ae9c99c7ce8cf",
+      "mime": "image/webp",
+      "bytes": 588906,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-laerte-aguiar-equipe-com-laerte-aguiar4-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "44a41991-662f-4801-9f4a-2946dd747e18",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "44a41991-662f-4801-9f4a-2946dd747e18",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-laerte-aguiar-equipe-com-laerte-aguiar4-v1.webp",
+      "sha256": "e261549b396a4a5ae5c94e190d6371dca71ff6df27df5a5bfe82d65d735a79bc",
+      "mime": "image/webp",
+      "bytes": 181750,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-laerte-aguiar-equipe-com-laerte-aguiar5-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "4b31c26c-72cf-4186-aefe-e45c07c4df4a",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "4b31c26c-72cf-4186-aefe-e45c07c4df4a",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-laerte-aguiar-equipe-com-laerte-aguiar5-v1.webp",
+      "sha256": "7afa4c7af8657846839af1e72d602221ae214563f34ebb10c99ddf1ca326f0c2",
+      "mime": "image/webp",
+      "bytes": 179648,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-pedro-menezes-budega-dos-tropeiros-por-dentro-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "c3589b16-0071-4d5b-b4c2-41189aa406d9",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "c3589b16-0071-4d5b-b4c2-41189aa406d9",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-pedro-menezes-budega-dos-tropeiros-por-dentro-v1.webp",
+      "sha256": "6c16546d7962e2c2ef1f870194e92010ffa235cccac5b5d0097e9cfc2e8f3d29",
+      "mime": "image/webp",
+      "bytes": 373114,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-pedro-menezes-chegada-ao-recanto-placa-oxente-nao-se-avexe-nao-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "8523555a-0ed5-4297-98e1-4ddcb14c6460",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "8523555a-0ed5-4297-98e1-4ddcb14c6460",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-pedro-menezes-chegada-ao-recanto-placa-oxente-nao-se-avexe-nao-v1.webp",
+      "sha256": "6f245b4e427ef7869e6f52f458de916be9200bdb2ec85157a856079f19218b7f",
+      "mime": "image/webp",
+      "bytes": 799216,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-pedro-menezes-conhecendo-o-museu-e-memorial-epifanio-doria-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "a11e2754-cb88-4f42-aa8b-fd3f173d14ce",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "a11e2754-cb88-4f42-aa8b-fd3f173d14ce",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-pedro-menezes-conhecendo-o-museu-e-memorial-epifanio-doria-v1.webp",
+      "sha256": "21cd06e76d998a4c3433e289961d6b583757988fcb8ec9b77d7b0dc2ebbd649d",
+      "mime": "image/webp",
+      "bytes": 198960,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-pedro-menezes-frente-budega-dos-tropeiros-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "4a117e42-4a72-420a-8394-61882b14f7a2",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "4a117e42-4a72-420a-8394-61882b14f7a2",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-pedro-menezes-frente-budega-dos-tropeiros-v1.webp",
+      "sha256": "c14c2a31fec66280751ca37ea01f56e72acae49fad1f0ed17a55e1b623be9e06",
+      "mime": "image/webp",
+      "bytes": 489984,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-pedro-menezes-igreja-com-pedras-coruba-vista-de-longe-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "de486bf8-e22d-4c25-a24f-78ccd2940004",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "de486bf8-e22d-4c25-a24f-78ccd2940004",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-pedro-menezes-igreja-com-pedras-coruba-vista-de-longe-v1.webp",
+      "sha256": "6538be4481e654e51672f969d10ed0acbf04f571c238d98209174148f43cdeea",
+      "mime": "image/webp",
+      "bytes": 413100,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-pedro-menezes-momento-conversando-com-pedro2-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "7cf9e83b-ee7a-495d-921d-404d737227f3",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "7cf9e83b-ee7a-495d-921d-404d737227f3",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-pedro-menezes-momento-conversando-com-pedro2-v1.webp",
+      "sha256": "90769d850457086079322446334b0b590ccde0172abf515975b1307c4e6e7cc6",
+      "mime": "image/webp",
+      "bytes": 457038,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-pedro-menezes-visita-a-mensagem-de-silo2-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "a4bccdfc-3fe6-42fa-abe9-f1d15b13fbad",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "a4bccdfc-3fe6-42fa-abe9-f1d15b13fbad",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-pedro-menezes-visita-a-mensagem-de-silo2-v1.webp",
+      "sha256": "6d57a380f4fc14cb9d8e2c4a7b8a18a18ad729374049648d3e2bebf8ecebe2de",
+      "mime": "image/webp",
+      "bytes": 170588,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-pedro-menezes-visita-da-equipe-com-oviedo-e-neide-ao-recanto-da-serra-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "d4f79c3b-00f5-4929-812f-a22d32aae4b1",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "d4f79c3b-00f5-4929-812f-a22d32aae4b1",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-pedro-menezes-visita-da-equipe-com-oviedo-e-neide-ao-recanto-da-serra-v1.webp",
+      "sha256": "c8ed8a4a0afde92a4ffee2e9e42c91be8e3a43263cdcff2e2f5e447c1a3a7aab",
+      "mime": "image/webp",
+      "bytes": 149962,
+      "problemas": []
+    },
+    {
+      "fonte_original": "derivados-publicos/B01/b01-pedro-menezes-visita-na-mensagem-de-silo-v1.webp",
+      "codigo_documental": "B01",
+      "slug_esperado": "fotografias-visitas-i-vii",
+      "documento_id_real": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+      "arquivo_id_real": "ef4ecdc6-0d45-4a76-844a-acaa8a275550",
+      "documento_arquivo": {
+        "documento_id": "3e4b36c3-96c2-43a7-bc2c-cbe8cec13e6a",
+        "arquivo_id": "ef4ecdc6-0d45-4a76-844a-acaa8a275550",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-pedro-menezes-visita-na-mensagem-de-silo-v1.webp",
+      "sha256": "dff74fdf4595bbdde5786246b1480b6f08e60a421064691980db0deca136469b",
+      "mime": "image/webp",
+      "bytes": 278658,
+      "problemas": []
+    },
+    {
+      "fonte_original": "entrevistas/01-josenilson-bispo/audio/entrevista-01-josenilson-bispo-audio.m4a",
+      "codigo_documental": "B02",
+      "slug_esperado": "entrevista-josenilson-bispo",
+      "documento_id_real": "0a617dc1-3db1-4651-a715-458e63ef98b5",
+      "arquivo_id_real": "b66b98a6-fdec-481b-9d9f-fd323a751364",
+      "documento_arquivo": {
+        "documento_id": "0a617dc1-3db1-4651-a715-458e63ef98b5",
+        "arquivo_id": "b66b98a6-fdec-481b-9d9f-fd323a751364",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b02-entrevista-josenilson-bispo-audio-v1.m4a",
+      "sha256": "d38e9c437bde2bb5dfe8aea7caa45252632f3710371512668ec988dbd52bf1a6",
+      "mime": "audio/mp4",
+      "bytes": 25807110,
+      "problemas": []
+    },
+    {
+      "fonte_original": "entrevistas/01-josenilson-bispo/transcricao/entrevista-01-josenilson-bispo-transcricao.pdf",
+      "codigo_documental": "B02",
+      "slug_esperado": "entrevista-josenilson-bispo",
+      "documento_id_real": "0a617dc1-3db1-4651-a715-458e63ef98b5",
+      "arquivo_id_real": "eb30cd21-82b2-414f-a03c-24f35a8d26de",
+      "documento_arquivo": {
+        "documento_id": "0a617dc1-3db1-4651-a715-458e63ef98b5",
+        "arquivo_id": "eb30cd21-82b2-414f-a03c-24f35a8d26de",
+        "principal": true
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b02-entrevista-josenilson-bispo-transcricao-v1.pdf",
+      "sha256": "5f5a7bed432d59afa5c14854e7203cf53e398a868f050906bce0a601b66cb05d",
+      "mime": "application/pdf",
+      "bytes": 184212,
+      "problemas": []
+    },
+    {
+      "fonte_original": "entrevistas/02-oviedo-e-neide-abreu/audio/entrevista-02-oviedo-e-neide-abreu-audio.m4a",
+      "codigo_documental": "B03",
+      "slug_esperado": "entrevista-oviedo-e-neide-abreu",
+      "documento_id_real": "73636184-dc88-4f23-94c0-39727ddcc088",
+      "arquivo_id_real": "cef664c2-a696-41ea-aec7-0f31f0940446",
+      "documento_arquivo": {
+        "documento_id": "73636184-dc88-4f23-94c0-39727ddcc088",
+        "arquivo_id": "cef664c2-a696-41ea-aec7-0f31f0940446",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b03-entrevista-oviedo-e-neide-abreu-audio-v1.m4a",
+      "sha256": "c3dc21fb6ee35a744a38405665a8964ecb7d807f6bff9f898bd255107be98842",
+      "mime": "audio/mp4",
+      "bytes": 67404241,
+      "problemas": []
+    },
+    {
+      "fonte_original": "entrevistas/02-oviedo-e-neide-abreu/transcricao/entrevista-02-oviedo-e-neide-abreu-transcricao.pdf",
+      "codigo_documental": "B03",
+      "slug_esperado": "entrevista-oviedo-e-neide-abreu",
+      "documento_id_real": "73636184-dc88-4f23-94c0-39727ddcc088",
+      "arquivo_id_real": "b7da08e2-8c76-4700-a1d0-38f939b264ff",
+      "documento_arquivo": {
+        "documento_id": "73636184-dc88-4f23-94c0-39727ddcc088",
+        "arquivo_id": "b7da08e2-8c76-4700-a1d0-38f939b264ff",
+        "principal": true
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b03-entrevista-oviedo-e-neide-abreu-transcricao-v1.pdf",
+      "sha256": "6f4e97ccbe63baa006db10f41bcfa0fa33a83e4a7e771c8af3002c4419ec80b4",
+      "mime": "application/pdf",
+      "bytes": 165322,
+      "problemas": []
+    },
+    {
+      "fonte_original": "entrevistas/05-pedro-menezes/audio/entrevista-05-pedro-menezes-audio.m4a",
+      "codigo_documental": "B04",
+      "slug_esperado": "entrevista-pedro-menezes",
+      "documento_id_real": "9bef02e2-2f29-4e3a-9fdc-b81cdd340929",
+      "arquivo_id_real": "82cb3a8f-ef5a-4bdc-8a7c-51fcfe287d01",
+      "documento_arquivo": {
+        "documento_id": "9bef02e2-2f29-4e3a-9fdc-b81cdd340929",
+        "arquivo_id": "82cb3a8f-ef5a-4bdc-8a7c-51fcfe287d01",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b04-entrevista-pedro-menezes-audio-v1.m4a",
+      "sha256": "d7096363ae4541aaf62bc9dea7bf284f811b3a93daec30e9ec1c9ff8dd68f952",
+      "mime": "audio/mp4",
+      "bytes": 13527879,
+      "problemas": []
+    },
+    {
+      "fonte_original": "entrevistas/05-pedro-menezes/transcricao/entrevista-05-pedro-menezes-transcricao.pdf",
+      "codigo_documental": "B04",
+      "slug_esperado": "entrevista-pedro-menezes",
+      "documento_id_real": "9bef02e2-2f29-4e3a-9fdc-b81cdd340929",
+      "arquivo_id_real": "b604065f-67a4-4915-93e5-765db168e20a",
+      "documento_arquivo": {
+        "documento_id": "9bef02e2-2f29-4e3a-9fdc-b81cdd340929",
+        "arquivo_id": "b604065f-67a4-4915-93e5-765db168e20a",
+        "principal": true
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b04-entrevista-pedro-menezes-transcricao-v1.pdf",
+      "sha256": "8e6e8fbf17e7c9c5e6c92e6806efe6929f5be69604e29f9a41db17b441f58f72",
+      "mime": "application/pdf",
+      "bytes": 42058,
+      "problemas": []
+    },
+    {
+      "fonte_original": "entrevistas/03-fundacao-cultura-sao-cristovao/audio/entrevista-03-fundacao-cultura-sao-cristovao-audio.m4a",
+      "codigo_documental": "B05",
+      "slug_esperado": "entrevista-paola-santana",
+      "documento_id_real": "24b1e39c-e5be-4c0c-b900-fc1a16edf07f",
+      "arquivo_id_real": "708c5097-c1da-444a-bcec-a4d0a4d535c4",
+      "documento_arquivo": {
+        "documento_id": "24b1e39c-e5be-4c0c-b900-fc1a16edf07f",
+        "arquivo_id": "708c5097-c1da-444a-bcec-a4d0a4d535c4",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b05-entrevista-paola-santana-audio-v1.m4a",
+      "sha256": "ed04a253db99136db3f246c13762bd3ff5af80eb936d97ef0c2449475507267c",
+      "mime": "audio/mp4",
+      "bytes": 30529930,
+      "problemas": []
+    },
+    {
+      "fonte_original": "entrevistas/03-fundacao-cultura-sao-cristovao/transcricao/entrevista-03-fundacao-cultura-sao-cristovao-transcricao.pdf",
+      "codigo_documental": "B05",
+      "slug_esperado": "entrevista-paola-santana",
+      "documento_id_real": "24b1e39c-e5be-4c0c-b900-fc1a16edf07f",
+      "arquivo_id_real": "32930b0c-5f8c-4a19-b6e6-206d695b35a4",
+      "documento_arquivo": {
+        "documento_id": "24b1e39c-e5be-4c0c-b900-fc1a16edf07f",
+        "arquivo_id": "32930b0c-5f8c-4a19-b6e6-206d695b35a4",
+        "principal": true
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b05-entrevista-paola-santana-transcricao-v1.pdf",
+      "sha256": "53fca08161a64576823d88fb5fb4fbe87ebe6e4c09b822073aeb0c34048d77a2",
+      "mime": "application/pdf",
+      "bytes": 196060,
+      "problemas": []
+    },
+    {
+      "fonte_original": "entrevistas/08-dona-mada/audio/entrevista-08-dona-mada-audio.mp3",
+      "codigo_documental": "B06",
+      "slug_esperado": "entrevista-lideranca-ilha-grande",
+      "documento_id_real": "1cddb2b9-df57-4896-a745-5eb843cd50da",
+      "arquivo_id_real": "33da0d78-473c-457c-975a-c8e2125ae831",
+      "documento_arquivo": {
+        "documento_id": "1cddb2b9-df57-4896-a745-5eb843cd50da",
+        "arquivo_id": "33da0d78-473c-457c-975a-c8e2125ae831",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b06-entrevista-maria-madalena-santos-dona-mada-audio-v1.mp3",
+      "sha256": "df2e5be42f5cc3c1873d06cf93639e58fd5891edc2732b09d2ba7dd9949df2b9",
+      "mime": "audio/mpeg",
+      "bytes": 108037440,
+      "problemas": []
+    },
+    {
+      "fonte_original": "entrevistas/08-dona-mada/transcricao/entrevista-08-dona-mada-transcricao.pdf",
+      "codigo_documental": "B06",
+      "slug_esperado": "entrevista-lideranca-ilha-grande",
+      "documento_id_real": "1cddb2b9-df57-4896-a745-5eb843cd50da",
+      "arquivo_id_real": "1cfe06a2-bf89-4132-aed8-22a02c85bf1c",
+      "documento_arquivo": {
+        "documento_id": "1cddb2b9-df57-4896-a745-5eb843cd50da",
+        "arquivo_id": "1cfe06a2-bf89-4132-aed8-22a02c85bf1c",
+        "principal": true
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b06-entrevista-maria-madalena-santos-dona-mada-transcricao-v1.pdf",
+      "sha256": "3b4cc0955235381701dbd0a6ef0cb7afc558862b57b9fb4bd0fad25ed2f0d2b5",
+      "mime": "application/pdf",
+      "bytes": 49574,
+      "problemas": []
+    },
+    {
+      "fonte_original": "entrevistas/06-dilson-de-agripino/audio/entrevista-06-dilson-de-agripino-audio.m4a",
+      "codigo_documental": "B08",
+      "slug_esperado": "entrevista-prefeito-tobias-barreto",
+      "documento_id_real": "fcf2e972-0b54-4025-9e07-39300543aa67",
+      "arquivo_id_real": "ad7c9559-5373-44a1-b283-8028829b8ce2",
+      "documento_arquivo": {
+        "documento_id": "fcf2e972-0b54-4025-9e07-39300543aa67",
+        "arquivo_id": "ad7c9559-5373-44a1-b283-8028829b8ce2",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b08-entrevista-dilson-de-agripino-audio-v1.m4a",
+      "sha256": "21d16759e58f1de0f3a798bbcf537fc22b0ff7ee586a91486795e86f6fff8baf",
+      "mime": "audio/mp4",
+      "bytes": 19221297,
+      "problemas": []
+    },
+    {
+      "fonte_original": "entrevistas/06-dilson-de-agripino/transcricao/entrevista-06-dilson-de-agripino-transcricao.pdf",
+      "codigo_documental": "B08",
+      "slug_esperado": "entrevista-prefeito-tobias-barreto",
+      "documento_id_real": "fcf2e972-0b54-4025-9e07-39300543aa67",
+      "arquivo_id_real": "9cfa3a10-f914-49bd-a658-0b630d53e462",
+      "documento_arquivo": {
+        "documento_id": "fcf2e972-0b54-4025-9e07-39300543aa67",
+        "arquivo_id": "9cfa3a10-f914-49bd-a658-0b630d53e462",
+        "principal": true
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b08-entrevista-dilson-de-agripino-transcricao-v1.pdf",
+      "sha256": "7fc8a49543c1cc8d2b48527d7b6633768481724af3d7f2f8996157fec79eb0f2",
+      "mime": "application/pdf",
+      "bytes": 161064,
+      "problemas": []
+    },
+    {
+      "fonte_original": "entrevistas/07-laerte-aguiar/audio/entrevista-07-laerte-aguiar-audio.mp3",
+      "codigo_documental": "B13",
+      "slug_esperado": "entrevista-laerte-aguiar",
+      "documento_id_real": "50330f6f-e1a1-4b67-a5b3-ee80fe009f05",
+      "arquivo_id_real": "7096e5fc-0e57-4314-9440-0db6058df747",
+      "documento_arquivo": {
+        "documento_id": "50330f6f-e1a1-4b67-a5b3-ee80fe009f05",
+        "arquivo_id": "7096e5fc-0e57-4314-9440-0db6058df747",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b13-entrevista-laerte-aguiar-audio-v1.mp3",
+      "sha256": "ef4ff053498e062a786f9de306104d42c19f4270dd50c253ed2be083c997a2df",
+      "mime": "audio/mpeg",
+      "bytes": 37324362,
+      "problemas": []
+    },
+    {
+      "fonte_original": "entrevistas/07-laerte-aguiar/transcricao/entrevista-07-laerte-aguiar-transcricao.pdf",
+      "codigo_documental": "B13",
+      "slug_esperado": "entrevista-laerte-aguiar",
+      "documento_id_real": "50330f6f-e1a1-4b67-a5b3-ee80fe009f05",
+      "arquivo_id_real": "0de80b8c-2760-40b1-b588-acbcb06aefc5",
+      "documento_arquivo": {
+        "documento_id": "50330f6f-e1a1-4b67-a5b3-ee80fe009f05",
+        "arquivo_id": "0de80b8c-2760-40b1-b588-acbcb06aefc5",
+        "principal": true
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b13-entrevista-laerte-aguiar-transcricao-v1.pdf",
+      "sha256": "77476608e851b794a762e082e1ff60affd1fcc4dfb5f1978641246771f0142ea",
+      "mime": "application/pdf",
+      "bytes": 291096,
+      "problemas": []
+    },
+    {
+      "fonte_original": "entrevistas/04-diretor-turismo-sao-cristovao/audio/entrevista-04-diretor-turismo-sao-cristovao-audio.m4a",
+      "codigo_documental": "B14",
+      "slug_esperado": "entrevista-marcio-andre",
+      "documento_id_real": "cc8f877a-ef7d-4942-b3b2-bad33b8aa3ae",
+      "arquivo_id_real": "eccc4297-012d-4802-82e7-53cdb12365ff",
+      "documento_arquivo": {
+        "documento_id": "cc8f877a-ef7d-4942-b3b2-bad33b8aa3ae",
+        "arquivo_id": "eccc4297-012d-4802-82e7-53cdb12365ff",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b14-entrevista-marcio-andre-audio-v1.m4a",
+      "sha256": "396e60c5e2c3ee020eca7514e7c52a95bc11eb5a1ae1a57f989a0a07b2c739f8",
+      "mime": "audio/mp4",
+      "bytes": 57624686,
+      "problemas": []
+    },
+    {
+      "fonte_original": "entrevistas/04-diretor-turismo-sao-cristovao/transcricao/entrevista-04-diretor-turismo-sao-cristovao-transcricao.pdf",
+      "codigo_documental": "B14",
+      "slug_esperado": "entrevista-marcio-andre",
+      "documento_id_real": "cc8f877a-ef7d-4942-b3b2-bad33b8aa3ae",
+      "arquivo_id_real": "94ee24a8-9575-4678-bdbd-a22ddb5ccaf4",
+      "documento_arquivo": {
+        "documento_id": "cc8f877a-ef7d-4942-b3b2-bad33b8aa3ae",
+        "arquivo_id": "94ee24a8-9575-4678-bdbd-a22ddb5ccaf4",
+        "principal": true
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b14-entrevista-marcio-andre-transcricao-v1.pdf",
+      "sha256": "69edb10d5629f8bc0a4ee35928c02e418902df36a4a82adef188179511b91b29",
+      "mime": "application/pdf",
+      "bytes": 158236,
+      "problemas": []
+    },
+    {
+      "fonte_original": "identidade-visual/observatorio/primeiro-post-observatorio.pdf",
+      "codigo_documental": "D01",
+      "slug_esperado": "identidade-visual",
+      "documento_id_real": "26b50070-3466-41d0-a94f-783395a6678a",
+      "arquivo_id_real": "21f534be-dbdb-4955-9278-960af538cb9b",
+      "documento_arquivo": {
+        "documento_id": "26b50070-3466-41d0-a94f-783395a6678a",
+        "arquivo_id": "21f534be-dbdb-4955-9278-960af538cb9b",
+        "principal": false
+      },
+      "url_publica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/publicidade/d01-08-primeiro-post-observatorio-v1.pdf",
+      "sha256": "3721a0e64c4ecf3e928206e5f9f9c1042303c2c5e9f205e38e9b095f85dcfdfe",
+      "mime": "application/pdf",
+      "bytes": 35599475,
+      "problemas": []
+    }
+  ]
+}

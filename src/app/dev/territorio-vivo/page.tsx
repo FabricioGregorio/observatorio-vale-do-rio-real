@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { TerritorioVivo } from "../../../componentes/prototipo/territoriovivo/TerritorioVivo";
+import { listarArquivosPorDocumento } from "../../../dados/consultas/anexos";
 
 /**
  * Laboratório — Cartografia Viva como experiência territorial. **Rota DEV.**
@@ -24,8 +25,8 @@ export function exigirDesenvolvimentoDoTerritorioVivo(
   if (ambiente === "production") interromper();
 }
 
-export default function LaboratorioTerritorioVivo() {
+export default async function LaboratorioTerritorioVivo() {
   exigirDesenvolvimentoDoTerritorioVivo(process.env.NODE_ENV);
 
-  return <TerritorioVivo />;
+  return <TerritorioVivo publicados={await listarArquivosPorDocumento()} />;
 }

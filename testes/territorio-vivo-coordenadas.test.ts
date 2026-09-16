@@ -20,7 +20,7 @@ import {
 } from "../src/componentes/prototipo/territoriovivo/local/referencias";
 import { destinosDeRota } from "../src/componentes/prototipo/territoriovivo/local/rota";
 import { svgDoEntornoDoLugar } from "../src/componentes/prototipo/territoriovivo/local/servico";
-import { LUGARES_DE_CAMPO } from "../src/componentes/prototipo/territoriovivo/lugares";
+import { LUGARES_SEM_PUBLICACAO } from "../src/componentes/prototipo/territoriovivo/lugares";
 import { montarDadosDoMapa } from "../src/dados/territorio/mapa";
 import { PONTOS_DE_VISITA_PREVISTOS } from "../src/dados/territorio/pontos";
 
@@ -115,7 +115,7 @@ describe("dados territoriais públicos", () => {
       expect(r.municipioIbge, id).toBe(esperado.municipioIbge);
       expect(nomes.get(r.municipioIbge), id).toBe(esperado.municipio);
       expect(r.localidade, id).toBe(esperado.localidade);
-      const lugar = LUGARES_DE_CAMPO.find((l) => l.id === id);
+      const lugar = LUGARES_SEM_PUBLICACAO.find((l) => l.id === id);
       expect(lugar?.municipioId, id).toBe(esperado.municipioIbge);
       expect(lugar?.localidade?.texto, id).toBe(esperado.localidade);
       expect(lugar?.lacunaDeLocalizacao ?? null, id).toBeNull();
@@ -123,7 +123,9 @@ describe("dados territoriais públicos", () => {
   });
 
   test("a Serra dos Macacos traz a referência territorial autorizada", () => {
-    const serra = LUGARES_DE_CAMPO.find((l) => l.id === "serra-dos-macacos");
+    const serra = LUGARES_SEM_PUBLICACAO.find(
+      (l) => l.id === "serra-dos-macacos",
+    );
     expect(serra?.comoChegar?.referencia?.texto).toContain(
       "divisa com os municípios de Simão Dias e Poço Verde",
     );

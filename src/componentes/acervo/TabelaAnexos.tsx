@@ -1,4 +1,5 @@
 import type { AnexoPublico } from "../../dados/consultas/anexos";
+import { separarCredito } from "../../dados/pesquisa/credito-fotografico";
 
 /**
  * Tabela mestre da Sala do Avaliador (doc 01 §4).
@@ -121,8 +122,13 @@ export function TabelaAnexos({ anexos }: { anexos: AnexoPublico[] }) {
                 <span className="block">{anexo.titulo}</span>
                 {anexo.rotuloArquivo ? (
                   <span className="meta-ficha block">
-                    {anexo.rotuloArquivo}
+                    {separarCredito(anexo.rotuloArquivo).rotulo}
                     {anexo.principal ? " · arquivo principal" : ""}
+                  </span>
+                ) : null}
+                {separarCredito(anexo.rotuloArquivo).credito ? (
+                  <span className="meta-ficha block">
+                    {separarCredito(anexo.rotuloArquivo).credito}
                   </span>
                 ) : null}
                 {anexo.resumo ? (

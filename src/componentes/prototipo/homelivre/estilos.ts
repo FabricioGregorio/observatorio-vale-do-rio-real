@@ -158,7 +158,10 @@ export const CSS_DA_HOME_LIVRE = `
 .hl-dupla{display:grid;gap:2rem;margin-top:3rem}
 @media (min-width:960px){.hl-dupla{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .hl-equip{display:flex;flex-direction:column;background:var(--color-fundo-elevado);border:1px solid var(--color-borda);border-radius:var(--radius-ficha);overflow:hidden}
-.hl-equip__imagem{aspect-ratio:4/3;overflow:hidden;background:color-mix(in srgb,var(--color-fundo) 90%,var(--color-texto))}
+.hl-equip__imagem{position:relative;margin:0;aspect-ratio:4/3;overflow:hidden;background:color-mix(in srgb,var(--color-fundo) 90%,var(--color-texto))}
+/* Crédito de autoria: discreto, sobre a base da fotografia, nunca sobre a
+   área principal da imagem. */
+.hl-credito{position:absolute;right:0;bottom:0;padding:.15rem .4rem;background:color-mix(in srgb,var(--color-fundo) 82%,transparent);color:var(--color-texto-suave);font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono)}
 .hl-equip__imagem img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 25%}
 .hl-folha{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.6rem;height:100%;padding:clamp(1rem,3vw,1.75rem);align-content:center}
 .hl-folha li{display:grid;place-items:center;aspect-ratio:3/4;border:1px dashed var(--color-borda-forte);border-radius:var(--radius-ficha);color:var(--color-texto-suave);font-family:var(--font-mono);font-size:var(--text-xs)}

@@ -1,4 +1,5 @@
 import { TerritorioVivo } from "../../componentes/prototipo/territoriovivo/TerritorioVivo";
+import { listarArquivosPorDocumento } from "../../dados/consultas/anexos";
 import { metadadosDaRota } from "../../lib/site-url";
 
 export const metadata = metadadosDaRota({
@@ -8,6 +9,16 @@ export const metadata = metadadosDaRota({
     "Uma leitura espacial dos lugares, equipamentos e evidências que fizeram parte da pesquisa do Observatório.",
 });
 
-export default function PaginaTerritorio() {
-  return <TerritorioVivo baseDasCamadas="/territorio/camada-local" />;
+/**
+ * O estado de cada material das fichas vem de `vw_anexo_publico`, buscado
+ * aqui em build. Nenhuma exceção local: o Território e a Home leem a mesma
+ * fonte pela mesma consulta.
+ */
+export default async function PaginaTerritorio() {
+  return (
+    <TerritorioVivo
+      baseDasCamadas="/territorio/camada-local"
+      publicados={await listarArquivosPorDocumento()}
+    />
+  );
 }

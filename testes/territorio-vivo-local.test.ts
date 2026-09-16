@@ -22,7 +22,7 @@ import {
 } from "../src/componentes/prototipo/territoriovivo/local/entorno";
 import { ENTORNOS } from "../src/componentes/prototipo/territoriovivo/local/entornos";
 import { PROCEDENCIA_DO_ENTORNO } from "../src/componentes/prototipo/territoriovivo/local/procedencia";
-import { LUGARES_DE_CAMPO } from "../src/componentes/prototipo/territoriovivo/lugares";
+import { LUGARES_SEM_PUBLICACAO } from "../src/componentes/prototipo/territoriovivo/lugares";
 import { montarDadosDoMapa } from "../src/dados/territorio/mapa";
 import { PONTOS_DE_VISITA_PREVISTOS } from "../src/dados/territorio/pontos";
 import { carregarMalhaMunicipal } from "../src/dados/territorio/validacao";
@@ -222,7 +222,7 @@ describe("entornos dos lugares", () => {
       "serra-dos-macacos": null,
       "ilha-grande": null,
     };
-    for (const lugar of LUGARES_DE_CAMPO) {
+    for (const lugar of LUGARES_SEM_PUBLICACAO) {
       expect(lugar.camadaLocal, lugar.id).not.toBeNull();
       expect(lugar.camadaLocal?.localidadeIbge ?? null, lugar.id).toBe(
         esperado[lugar.id],
@@ -232,8 +232,8 @@ describe("entornos dos lugares", () => {
       (l) => l.codigoIbge === CODIGO_DA_LOCALIDADE_JACARE,
     );
     expect(
-      LUGARES_DE_CAMPO.find((l) => l.id === "recanto-da-serra")?.localidade
-        ?.texto,
+      LUGARES_SEM_PUBLICACAO.find((l) => l.id === "recanto-da-serra")
+        ?.localidade?.texto,
     ).toContain(jacare?.nome ?? "∅");
   });
 

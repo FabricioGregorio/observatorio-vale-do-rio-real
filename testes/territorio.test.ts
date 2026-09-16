@@ -32,7 +32,10 @@ import {
   MARCA_OBSERVATORIO,
   SIMBOLO_OBSERVATORIO,
 } from "../src/dados/hero/derivados";
-import { DERIVADOS_DA_PESQUISA } from "../src/dados/pesquisa/derivados";
+import {
+  DERIVADOS_DA_PESQUISA,
+  DERIVADOS_DOS_LUGARES,
+} from "../src/dados/pesquisa/derivados";
 import { FONTES_TERRITORIAIS } from "../src/dados/territorio/fontes";
 import {
   type MunicipioDoMapa,
@@ -195,6 +198,7 @@ describe("ausência de dado territorial inventado", () => {
     const declarados = new Set<string>([
       ...DERIVADOS_DO_HERO.map((d) => d.arquivo),
       ...DERIVADOS_DA_PESQUISA.map((d) => d.arquivo),
+      ...DERIVADOS_DOS_LUGARES.map((d) => d.arquivo),
       ...GRAFISMOS_DA_IDENTIDADE.map((g) => g.arquivo),
       MARCA_OBSERVATORIO.arquivo,
       SIMBOLO_OBSERVATORIO.arquivo,

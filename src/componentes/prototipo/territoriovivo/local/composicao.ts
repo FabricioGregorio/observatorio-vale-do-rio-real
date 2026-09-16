@@ -1,5 +1,6 @@
 import { existsSync } from "node:fs";
 
+import type { ArquivosPublicados } from "../../../../dados/materiais-de-campo";
 import {
   type MunicipioDoMapa,
   montarDadosDoMapa,
@@ -16,11 +17,7 @@ import {
   seCruzam,
   unirCaixas,
 } from "../geometria";
-import {
-  type IdDoLugar,
-  LUGARES_DE_CAMPO,
-  type LugarDeCampo,
-} from "../lugares";
+import { type IdDoLugar, type LugarDeCampo, lugaresDeCampo } from "../lugares";
 import type { EnquadramentoGeografico } from "./entorno";
 import {
   type DefinicaoDeEntorno,
@@ -87,6 +84,12 @@ export type BaseDoTerritorio = {
 
 export function montarBaseDoTerritorio(opcoes?: {
   readonly coordenadas?: ReadonlyMap<IdDoLugar, PosicaoConfirmada>;
+  /**
+   * Arquivos públicos por documento, de `listarArquivosPorDocumento()`. Sem
+   * ele as fichas caem para o estado declarado e nenhum link aparece — é o
+   * que o serviço de camada local usa, porque ele só precisa de geometria.
+   */
+  readonly publicados?: ArquivosPublicados;
 }): BaseDoTerritorio {
   const dados = montarDadosDoMapa();
   const caixas = new Map(
@@ -116,61 +119,63 @@ export function montarBaseDoTerritorio(opcoes?: {
     y1: y + vh / 4,
   });
 
-  const lugares = LUGARES_DE_CAMPO.map((lugar): LugarNoMapa => {
-    const posicao = coordenadas.get(lugar.id) ?? null;
-    if (posicao === null) {
+  const lugares = lugaresDeCampo(opcoes?.publicados ?? new Map()).map(
+    (lugar): LugarNoMapa => {
+      const posicao = coordenadas.get(lugar.id) ?? null;
+      if (posicao === null) {
+        return {
+          ...lugar,
+          posicao,
+          xy: null,
+          dentroDoVale: false,
+          regional: null,
+          local: null,
+        };
+      }
+      const xy = projetarContinuo(
+        posicao.longitude,
+        posicao.latitude,
+        dados.projecao,
+      );
+      const dentroDoVale =
+        xy[0] >= vista.x0 &&
+        xy[0] <= vista.x1 &&
+        xy[1] >= vista.y0 &&
+        xy[1] <= vista.y1;
+
+      let local: CamadaLocalDisponivel | null = null;
+      if (lugar.camadaLocal !== null) {
+        const definicao = definicaoDoEntorno(lugar.camadaLocal.entorno);
+        if (existsSync(definicao.caminho)) {
+          const geografico = enquadramentoDoEntorno(definicao, posicao);
+          const [ax, ay] = projetarContinuo(
+            geografico.lonMin,
+            geografico.latMax,
+            dados.projecao,
+          );
+          const [bx, by] = projetarContinuo(
+            geografico.lonMax,
+            geografico.latMin,
+            dados.projecao,
+          );
+          local = {
+            definicao,
+            geografico,
+            enquadramento: enquadrar({ x0: ax, y0: ay, x1: bx, y1: by }, vista),
+          };
+        }
+      }
+
       return {
         ...lugar,
         posicao,
-        xy: null,
-        dentroDoVale: false,
-        regional: null,
-        local: null,
+        xy,
+        dentroDoVale,
+        regional: enquadrar(janelaEm(xy), vista),
+        local,
       };
-    }
-    const xy = projetarContinuo(
-      posicao.longitude,
-      posicao.latitude,
-      dados.projecao,
-    );
-    const dentroDoVale =
-      xy[0] >= vista.x0 &&
-      xy[0] <= vista.x1 &&
-      xy[1] >= vista.y0 &&
-      xy[1] <= vista.y1;
-
-    let local: CamadaLocalDisponivel | null = null;
-    if (lugar.camadaLocal !== null) {
-      const definicao = definicaoDoEntorno(lugar.camadaLocal.entorno);
-      if (existsSync(definicao.caminho)) {
-        const geografico = enquadramentoDoEntorno(definicao, posicao);
-        const [ax, ay] = projetarContinuo(
-          geografico.lonMin,
-          geografico.latMax,
-          dados.projecao,
-        );
-        const [bx, by] = projetarContinuo(
-          geografico.lonMax,
-          geografico.latMin,
-          dados.projecao,
-        );
-        local = {
-          definicao,
-          geografico,
-          enquadramento: enquadrar({ x0: ax, y0: ay, x1: bx, y1: by }, vista),
-        };
-      }
-    }
-
-    return {
-      ...lugar,
-      posicao,
-      xy,
-      dentroDoVale,
-      regional: enquadrar(janelaEm(xy), vista),
-      local,
-    };
-  });
+    },
+  );
 
   const janelas: Caixa[] = [
     vista,

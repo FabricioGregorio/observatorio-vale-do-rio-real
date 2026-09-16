@@ -76,7 +76,7 @@ export const CSS_DAS_ABERTURAS = `
 .ab-b2{container-type:inline-size;position:relative;overflow-x:clip;padding-bottom:var(--hl-capitulo)}
 .ab-b2 *{--ab-b2-borda:max(var(--hl-margem),calc((100cqw - var(--largura-conteudo)) / 2 + var(--hl-margem)))}
 .ab-b2__foto{position:relative;margin:0}
-.ab-b2__foto img{display:block;width:100%;height:clamp(15rem,36svh,18rem);object-fit:cover;object-position:50% 22%}
+.ab-b2__foto img{display:block;width:100%;height:clamp(15rem,36svh,18rem);object-fit:cover;object-position:50% 42%}
 .ab-b2__legenda{display:flex;flex-direction:column;padding:.5rem var(--hl-margem) 0;font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);line-height:1.5;color:var(--color-texto-suave)}
 .ab-b2__linha>span+span::before{content:" · ";color:var(--color-texto-suave)}
 .ab-b2__legenda-titulo{font-family:var(--font-display);font-weight:600;letter-spacing:0;color:var(--color-texto)}
@@ -99,7 +99,7 @@ export const CSS_DAS_ABERTURAS = `
   .ab-seletor li{flex:0 0 auto}
 }
 @media (min-width:960px){
-  .ab-b2__foto img{height:clamp(24rem,54svh,36rem);object-position:50% 22%}
+  .ab-b2__foto img{height:clamp(24rem,54svh,36rem);object-position:50% 45%}
   .ab-b2__legenda{position:absolute;top:100%;right:var(--ab-b2-borda);align-items:flex-end;padding:.6rem 0 0;text-align:right}
   .ab-b2__t2{max-width:13ch}
   .ab-b2__base{grid-template-columns:calc(var(--ab-b2-borda) + (100cqw - 2 * var(--ab-b2-borda)) * .56) minmax(0,1fr);column-gap:clamp(2.5rem,5vw,4.5rem);margin-top:-8rem;padding-right:var(--ab-b2-borda)}

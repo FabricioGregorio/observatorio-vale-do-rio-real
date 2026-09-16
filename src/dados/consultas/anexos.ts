@@ -6,6 +6,10 @@ import {
   evidenciaManifestoSchema,
   podePublicar,
 } from "../../lib/manifesto-evidencias";
+import type {
+  ArquivoPublicado,
+  ArquivosPublicados,
+} from "../materiais-de-campo";
 
 /**
  * Consulta dos anexos públicos — alimenta a Sala do Avaliador, a versão
@@ -213,4 +217,34 @@ export async function listarAnexosPublicos(): Promise<AnexoPublico[]> {
 
   const evidencias = await listarEvidenciasDeAnexos();
   return selecionarAnexosPublicos(evidencias);
+}
+
+/**
+ * Arquivos públicos indexados pelo slug do documento.
+ *
+ * Alimenta as fichas da Home e do Território sem que nenhuma delas consulte o
+ * banco: a página busca em build, esta função agrupa, e a resolução do estado
+ * de cada material é pura (`dados/materiais-de-campo.ts`).
+ */
+export function indexarPorDocumento(
+  anexos: readonly AnexoPublico[],
+): ArquivosPublicados {
+  const mapa = new Map<string, ArquivoPublicado[]>();
+  for (const anexo of anexos) {
+    const lista = mapa.get(anexo.slug) ?? [];
+    lista.push({
+      url: anexo.linkPermanente,
+      rotulo: anexo.rotuloArquivo,
+      principal: anexo.principal,
+      mimeType: anexo.mimeType,
+      bytes: anexo.bytes,
+    });
+    mapa.set(anexo.slug, lista);
+  }
+  return mapa;
+}
+
+/** Atalho de build: consulta, filtra pelo gate canônico e indexa. */
+export async function listarArquivosPorDocumento(): Promise<ArquivosPublicados> {
+  return indexarPorDocumento(await listarAnexosPublicos());
 }

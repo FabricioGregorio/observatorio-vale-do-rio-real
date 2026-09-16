@@ -8,14 +8,12 @@
  * `A02` também é `Disponível` e é `ESPELHAVEL`. O que distingue os dois é a
  * auditoria, não a planilha.
  *
- * Fonte de cada valor: `docs/carga/PLANO_CARGA_DRY_RUN_v2_2026-09-06.md`,
- * aprovado no Prompt 3.2. Alterar um estado aqui é decisão humana; o
- * carregador não infere nada.
- *
- * Nenhum item é `PUBLICAVEL`. A promoção exige revisão de privacidade
- * concluída, e nenhuma foi concluída ainda — o CHECK
- * `documento_publicavel_exige_revisao` da migração 0004 impede a combinação
- * inconsistente no próprio banco.
+ * A classificação inicial veio de
+ * `docs/carga/PLANO_CARGA_DRY_RUN_v2_2026-09-06.md`. Em 2026-09-16, decisão
+ * humana posterior autorizou a publicação dos materiais da pesquisa e
+ * concluiu a revisão de privacidade: somente CPF, telefone e assinatura
+ * exigem versão pública tratada. Estados anteriores permanecem no histórico;
+ * este módulo registra a decisão vigente.
  */
 
 export type EstadoDocumental =
@@ -53,19 +51,22 @@ export const CLASSIFICACAO: Readonly<Record<string, ClassificacaoItem>> = {
       "painel no Figma devolve HTTP 403 anônimo; sem cópia local e sem arquivo para hash",
   },
   A02: {
-    estado: "ESPELHAVEL",
-    revisao: "pendente",
-    razao: "relatório existe localmente, com hash conferido; falta espelhar",
+    estado: "PUBLICAVEL",
+    revisao: "concluida",
+    razao:
+      "relatório autorizado; auditoria não encontrou CPF, telefone ou assinatura",
   },
   A03: {
-    estado: "RESTRITO",
-    revisao: "pendente",
-    razao: "PDF sem camada de texto e nomeia trabalhadores remunerados",
+    estado: "PUBLICAVEL",
+    revisao: "concluida",
+    razao:
+      "relatório autorizado; nomes de trabalhadores não impedem publicação",
   },
   A04: {
-    estado: "ESPELHAVEL",
-    revisao: "pendente",
-    razao: "relato existe localmente, com hash conferido; falta espelhar",
+    estado: "PUBLICAVEL",
+    revisao: "concluida",
+    razao:
+      "relato autorizado; auditoria não encontrou CPF, telefone ou assinatura",
   },
   A05: {
     estado: "PENDENTE",
@@ -84,53 +85,53 @@ export const CLASSIFICACAO: Readonly<Record<string, ClassificacaoItem>> = {
   A07: { estado: "PENDENTE", revisao: "pendente", razao: "não produzido" },
   A08: { estado: "PENDENTE", revisao: "pendente", razao: "não produzido" },
   A09: {
-    estado: "PENDENTE",
-    revisao: "pendente",
-    razao: "instrumento reconstituível dos cabeçalhos; PDF não produzido",
+    estado: "PUBLICAVEL",
+    revisao: "concluida",
+    razao: "planilha de respostas autorizada; sem CPF, telefone ou assinatura",
   },
   A10: {
-    estado: "PENDENTE",
-    revisao: "pendente",
-    razao: "instrumento reconstituível dos cabeçalhos; PDF não produzido",
+    estado: "PUBLICAVEL",
+    revisao: "concluida",
+    razao:
+      "planilhas de respostas autorizadas; sem CPF, telefone ou assinatura",
   },
   A11: {
-    estado: "RESTRITO",
-    revisao: "pendente",
-    razao: "o conjunto inclui arquivos que nomeiam pessoas",
+    estado: "PUBLICAVEL",
+    revisao: "concluida",
+    razao: "conjunto autorizado; nomes comuns não impedem publicação",
   },
 
   // ─── Comprovação de campo ────────────────────────────────────────
   B01: {
-    estado: "RESTRITO",
-    revisao: "pendente",
+    estado: "PUBLICAVEL",
+    revisao: "concluida",
     razao:
-      "fotografias de pessoas identificáveis, sem consentimento verificado",
+      "fotografias de campo autorizadas; pessoas identificáveis podem permanecer",
   },
   B02: {
-    estado: "RESTRITO",
-    revisao: "pendente",
-    razao: "áudio e transcrição de entrevista",
+    estado: "PUBLICAVEL",
+    revisao: "concluida",
+    razao: "áudio e transcrição autorizados; sem CPF, telefone ou assinatura",
   },
   B03: {
-    estado: "RESTRITO",
-    revisao: "pendente",
-    razao: "áudio e transcrição de entrevista",
+    estado: "PUBLICAVEL",
+    revisao: "concluida",
+    razao: "áudio e transcrição autorizados; sem CPF, telefone ou assinatura",
   },
   B04: {
-    estado: "RESTRITO",
-    revisao: "pendente",
-    razao: "áudio e transcrição de entrevista",
+    estado: "PUBLICAVEL",
+    revisao: "concluida",
+    razao: "áudio e transcrição autorizados; sem CPF, telefone ou assinatura",
   },
   B05: {
-    estado: "RESTRITO",
-    revisao: "pendente",
-    razao: "áudio e transcrição de entrevista",
+    estado: "PUBLICAVEL",
+    revisao: "concluida",
+    razao: "áudio e transcrição autorizados; sem CPF, telefone ou assinatura",
   },
   B06: {
-    estado: "RESTRITO",
-    revisao: "pendente",
-    razao:
-      "áudio e transcrição; evidência de consentimento não localizada na transcrição",
+    estado: "PUBLICAVEL",
+    revisao: "concluida",
+    razao: "decisão humana posterior autoriza áudio e transcrição",
   },
   B07: {
     estado: "PENDENTE",
@@ -139,23 +140,23 @@ export const CLASSIFICACAO: Readonly<Record<string, ClassificacaoItem>> = {
       "previsão de entrevista de Itabaianinha que não se realizou; sem arquivo",
   },
   B08: {
-    estado: "RESTRITO",
-    revisao: "pendente",
-    razao: "áudio e transcrição de entrevista",
+    estado: "PUBLICAVEL",
+    revisao: "concluida",
+    razao: "áudio e transcrição autorizados; sem CPF, telefone ou assinatura",
   },
   B09: { estado: "PENDENTE", revisao: "pendente", razao: "não produzido" },
   B10: { estado: "PENDENTE", revisao: "pendente", razao: "não produzido" },
   B11: { estado: "PENDENTE", revisao: "pendente", razao: "não produzido" },
   B12: { estado: "PENDENTE", revisao: "pendente", razao: "não produzido" },
   B13: {
-    estado: "RESTRITO",
-    revisao: "pendente",
-    razao: "evidência complementar: áudio e transcrição de entrevista",
+    estado: "PUBLICAVEL",
+    revisao: "concluida",
+    razao: "evidência complementar autorizada; sem CPF, telefone ou assinatura",
   },
   B14: {
-    estado: "RESTRITO",
-    revisao: "pendente",
-    razao: "evidência complementar: áudio e transcrição de entrevista",
+    estado: "PUBLICAVEL",
+    revisao: "concluida",
+    razao: "evidência complementar autorizada; sem CPF, telefone ou assinatura",
   },
 
   // ─── Produto final ──────────────────────────────────────────────
@@ -170,9 +171,9 @@ export const CLASSIFICACAO: Readonly<Record<string, ClassificacaoItem>> = {
 
   // ─── Publicidade ────────────────────────────────────────────────
   D01: {
-    estado: "ESPELHAVEL",
-    revisao: "pendente",
-    razao: "identidade visual existe localmente; falta espelhar",
+    estado: "PUBLICAVEL",
+    revisao: "concluida",
+    razao: "conjunto autorizado; oito arquivos revisados para publicação",
   },
   D02: {
     estado: "PENDENTE",
@@ -195,14 +196,14 @@ export const CLASSIFICACAO: Readonly<Record<string, ClassificacaoItem>> = {
   },
 };
 
-/** Distribuição esperada de estados, conforme o dry-run aprovado. */
+/** Distribuição esperada após a decisão humana de 2026-09-16. */
 export const DISTRIBUICAO_ESPERADA: Readonly<Record<EstadoDocumental, number>> =
   {
-    PUBLICAVEL: 0,
+    PUBLICAVEL: 16,
     IMPEDIDO: 1,
-    RESTRITO: 11,
-    ESPELHAVEL: 3,
-    PENDENTE: 18,
+    RESTRITO: 0,
+    ESPELHAVEL: 0,
+    PENDENTE: 16,
   };
 
 export const TOTAL_ESPERADO = 33;

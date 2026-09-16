@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { lerVarianteDaAbertura } from "../../../componentes/prototipo/homelivre/abertura";
 import { HomeLivre } from "../../../componentes/prototipo/homelivre/HomeLivre";
+import { listarArquivosPorDocumento } from "../../../dados/consultas/anexos";
 
 /**
  * Experimento controlado — Home livre. **Rota de desenvolvimento.**
@@ -37,5 +38,10 @@ export default async function ExperimentoHomeLivre({
   exigirDesenvolvimentoDaHomeLivre(process.env.NODE_ENV);
   const { hero } = await searchParams;
 
-  return <HomeLivre abertura={lerVarianteDaAbertura(hero)} />;
+  return (
+    <HomeLivre
+      abertura={lerVarianteDaAbertura(hero)}
+      publicados={await listarArquivosPorDocumento()}
+    />
+  );
 }

@@ -90,11 +90,18 @@ test.describe("CTA do pacote .zip", () => {
     await expect(page.locator('a[href$="anexos.zip"]')).toHaveCount(0);
   });
 
-  test("os oito anexos individuais continuam disponíveis", async ({ page }) => {
+  test("os anexos individuais continuam disponíveis", async ({
+    page,
+    request,
+  }) => {
+    const { total } = (await (await request.get("/anexos.json")).json()) as {
+      total: number;
+    };
     await page.goto("/prestacao-de-contas");
 
+    expect(total).toBeGreaterThan(0);
     await expect(
       page.getByRole("link", { name: "Baixar", exact: true }),
-    ).toHaveCount(8);
+    ).toHaveCount(total);
   });
 });
