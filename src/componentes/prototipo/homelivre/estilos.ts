@@ -162,7 +162,7 @@ export const CSS_DA_HOME_LIVRE = `
 /* Crédito de autoria: discreto, sobre a base da fotografia, nunca sobre a
    área principal da imagem. */
 .hl-credito{position:absolute;right:0;bottom:0;padding:.15rem .4rem;background:color-mix(in srgb,var(--color-fundo) 82%,transparent);color:var(--color-texto-suave);font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono)}
-.hl-equip__imagem img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 25%}
+.hl-equip__imagem img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 60%}
 .hl-folha{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.6rem;height:100%;padding:clamp(1rem,3vw,1.75rem);align-content:center}
 .hl-folha li{display:grid;place-items:center;aspect-ratio:3/4;border:1px dashed var(--color-borda-forte);border-radius:var(--radius-ficha);color:var(--color-texto-suave);font-family:var(--font-mono);font-size:var(--text-xs)}
 .hl-folha .hl-folha__nota{aspect-ratio:auto;align-self:stretch;border-style:solid;padding:.5rem;text-align:center;line-height:1.35;color:var(--color-texto)}
