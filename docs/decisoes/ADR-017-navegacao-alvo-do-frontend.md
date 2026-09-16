@@ -168,3 +168,27 @@ esta ADR.
 Não substitui nenhuma ADR. Supera `docs/01-arquitetura-informacao.md` §3 quanto à
 **composição** do menu principal, preservando o teto de seis itens que aquele
 documento fixou.
+
+## Emenda — 2026-09-15
+
+Por decisão humana posterior, a composição e o teto acima ficam superados, sem
+apagar o histórico da transição anterior. A navegação principal candidata passa
+de seis para **sete itens**, exatamente nesta ordem:
+
+```
+O Observatório · A Pesquisa · Território · Dados · Diário de Campo · PodObservar · Acervo
+```
+
+- `Território` e `Acervo` entram como itens principais somente junto de suas
+  rotas públicas reais;
+- `Diário de Campo` permanece no menu;
+- `Educação` sai apenas do menu principal; `/educacao` não é apagada;
+- rótulos, ordem e quantidade não podem ser reorganizados por preferência
+  técnica ou alfabética;
+- Prestação de Contas e Acessibilidade continuam como utilidades fora do menu
+  principal.
+
+A implementação permanece condicionada à validação do cabeçalho em 320, 375,
+768, 900, 1024, 1280 e 1440 px, a 200% de zoom e por teclado. Se os sete itens
+não couberem sem sobreposição, overflow, abreviação ou redução artificial da
+fonte, a integração deve parar para nova decisão humana.

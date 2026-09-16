@@ -4,6 +4,8 @@ import {
   CAMINHO_DAS_MARCAS,
   SIMBOLO_OBSERVATORIO,
 } from "../../dados/hero/derivados";
+import { MENU_PRINCIPAL } from "../../lib/navegacao";
+import { MenuMobile } from "../layout/MenuMobile";
 import { CabecalhoReativo } from "./CabecalhoReativo";
 import { CentralAcessibilidade } from "./CentralAcessibilidade";
 import { MENU_ALVO } from "./menuAlvo";
@@ -18,13 +20,8 @@ import { MENU_ALVO } from "./menuAlvo";
  * Direção Visual §8.2 descreve — marca pequena à esquerda, menu horizontal
  * minimalista, utilidades isoladas à direita.
  *
- * ## Itens sem destino
- *
- * `Território` e `Acervo` ainda não têm rota. Eles aparecem como **texto**,
- * marcados com `data-demonstracao`, e nunca como link: link que não navega é
- * pior que ausência, e leitor de tela anunciaria um destino inexistente.
- *
- * A distinção vem do dado, em `menuAlvo.ts`. Nada aqui decide destino.
+ * Na Home pública, a navegação vem da mesma fonte canônica do layout. O modo
+ * de protótipo preserva a demonstração histórica da H1.
  *
  * ## As duas utilidades
  *
@@ -65,10 +62,7 @@ export function CabecalhoPrototipo({
 }) {
   const idDoCabecalho =
     contexto === "home" ? ID_DO_CABECALHO_HOME : ID_DO_CABECALHO;
-  const itensDoMenu =
-    contexto === "home"
-      ? MENU_ALVO.filter((item) => item.href !== null)
-      : MENU_ALVO;
+  const itensDoMenu = contexto === "home" ? MENU_PRINCIPAL : MENU_ALVO;
 
   return (
     <header
@@ -133,6 +127,15 @@ export function CabecalhoPrototipo({
             ))}
           </ul>
         </nav>
+
+        {contexto === "home" ? (
+          <nav
+            aria-label="Principal (telas estreitas)"
+            className="order-3 w-full lg:hidden [&_[id]]:rounded-[var(--radius-ficha)] [&_[id]]:bg-[var(--color-fundo-inverso)] [&_[id]]:p-3"
+          >
+            <MenuMobile />
+          </nav>
+        ) : null}
 
         <div className="ml-auto flex items-center gap-3">
           <span

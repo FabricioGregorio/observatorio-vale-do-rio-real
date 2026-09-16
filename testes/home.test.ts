@@ -15,6 +15,24 @@ const rotulosDoSite = new Map<string, string>(
 );
 
 describe("caminhos prioritários da Home", () => {
+  test("o menu segue os sete itens e a ordem aprovados", () => {
+    expect(MENU_PRINCIPAL).toEqual([
+      { href: "/observatorio", rotulo: "O Observatório" },
+      { href: "/pesquisa", rotulo: "A Pesquisa" },
+      { href: "/territorio", rotulo: "Território" },
+      { href: "/dados", rotulo: "Dados" },
+      { href: "/campo", rotulo: "Diário de Campo" },
+      { href: "/podobservar", rotulo: "PodObservar" },
+      { href: "/acervo", rotulo: "Acervo" },
+    ]);
+  });
+
+  test("todo item do menu principal tem uma rota real", () => {
+    for (const item of MENU_PRINCIPAL) {
+      expect(existsSync(`src/app${item.href}/page.tsx`), item.href).toBe(true);
+    }
+  });
+
   test("todo destino é uma rota que existe no app", () => {
     for (const caminho of CAMINHOS_PRIORITARIOS) {
       expect(
