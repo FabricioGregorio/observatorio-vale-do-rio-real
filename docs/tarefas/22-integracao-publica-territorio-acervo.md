@@ -181,6 +181,41 @@ igual à medição anterior. Acervo não antecipa PDF, ZIP, preview ou imagem.
   conforme o comportamento previsto fora do CI, esse resultado não atesta o
   estado das pendências de publicação.
 
+### Infraestrutura mínima de Preview — 2026-09-16
+
+A role `preview_observatorio` foi provisionada fora das migrations, sem segredo
+no Git, com `LOGIN`, `NOINHERIT`, `NOSUPERUSER`, `NOCREATEDB`, `NOCREATEROLE`,
+`NOREPLICATION` e limite de cinco conexões. Seus únicos grants explícitos são
+`CONNECT` no database, `USAGE` no schema `public` e `SELECT` em
+`public.vw_anexo_publico`. A role tem ainda `default_transaction_read_only=on`,
+`statement_timeout=120s` e `idle_in_transaction_session_timeout=30s`.
+
+A decisão humana desta data aceita, somente para este checkpoint, os privilégios
+ambientais herdados de `PUBLIC`: `TEMPORARY` no database e `EXECUTE` nas funções
+security-invoker das extensões e do schema. A auditoria confirmou que `PUBLIC`
+não tem `CREATE` no schema e que nenhuma função executável por `PUBLIC` é
+`SECURITY DEFINER`. Esses privilégios ambientais não equivalem a acesso às
+fontes de dados.
+
+Autenticada como a nova role, a view pública retornou oito registros. Consultas
+diretas a `documento`, `arquivo`, `documento_arquivo`,
+`vw_pendencia_publicacao` e `pessoa` foram negadas com SQLSTATE `42501`. A role
+não tem membership, `CREATE` no schema nem `INSERT`, `UPDATE` ou `DELETE` em
+`documento`.
+
+O build completo com essa credencial passou e gerou Acervo, Território,
+`/anexos.json` e as duas páginas de Prestação de Contas sem solicitar outro
+objeto PostgreSQL. O smoke do artefato confirmou as rotas públicas e as quatro
+camadas em 200, parâmetro territorial inválido e rotas DEV em 404, e total 8 em
+`/anexos.json`. O gate separado, com a role read-only local, confirmou
+`documento=33`, `arquivo=18`, `documento_arquivo=18`,
+`vw_anexo_publico=8` e `vw_pendencia_publicacao=0`.
+
+Hardening futuro, fora deste release: revisar globalmente `TEMPORARY` de
+`PUBLIC`, `EXECUTE` de `PUBLIC`, default privileges de funções e a adoção de
+`security_barrier` em `vw_anexo_publico`. Nenhuma dessas mudanças foi executada
+nesta tarefa.
+
 Permanecem placeholders preexistentes em O Observatório, A Pesquisa, Dados,
 Diário de Campo e PodObservar. Este release continua sendo checkpoint, não
 freeze editorial final. Commit candidato e estado Git são registrados no
