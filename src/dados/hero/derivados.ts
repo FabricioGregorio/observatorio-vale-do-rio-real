@@ -91,9 +91,9 @@ export const DERIVADOS_DO_HERO: readonly DerivadoDoHero[] = [
     arquivo: "hero-observatorio-desktop-1440.webp",
     largura: 1440,
     altura: 936,
-    recorte: { x: 0, y: 1250, largura: 3000, altura: 1950 },
+    recorte: { x: 0, y: 750, largura: 3000, altura: 1950 },
     qualidade: 0.55,
-    sha256: "ffd76a44a03c63ab",
+    sha256: "a19d4b4b400451e7",
     tetoBytes: 300_000,
   },
   {

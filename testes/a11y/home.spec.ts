@@ -34,16 +34,15 @@ test.describe("Home", () => {
     await expect(h1).toHaveText(NOME_OFICIAL);
   });
 
-  test("serve a abertura B2 aprovada, com a ressalva documental da fotografia", async ({
+  test("serve a abertura B2 aprovada, com a identificação documental da fotografia", async ({
     page,
   }) => {
     await page.goto("/");
     await expect(page.locator('[data-abertura="b2"]')).toHaveCount(1);
     await expect(
-      page
-        .locator(".ab-b2__legenda")
-        .getByText("Atribuição formal de local pendente"),
+      page.locator(".ab-b2__legenda").getByText("Recanto da Serra"),
     ).toBeVisible();
+    await expect(page.locator(".ab-b2__legenda")).toContainText("05/04/2026");
   });
 
   test("mantém os sete capítulos na ordem narrativa aprovada", async ({
@@ -118,6 +117,15 @@ test.describe("Home", () => {
     await page.keyboard.press("Escape");
     await expect(painel).toBeHidden();
     await expect(gatilho).toBeFocused();
+  });
+
+  test("a Central de Acessibilidade fecha ao clicar fora", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Acessibilidade" }).click();
+    const painel = page.getByRole("dialog", { name: "Acessibilidade" });
+    await expect(painel).toBeVisible();
+    await page.locator("h1").click();
+    await expect(painel).toBeHidden();
   });
 
   test("o CTA principal é alcançável por teclado e tem foco visível", async ({

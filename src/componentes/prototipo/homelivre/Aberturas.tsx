@@ -92,7 +92,6 @@ function NotaDaFotografia({ className }: { className?: string }) {
       <span className="ab-nota__meta">
         {NOTA_DA_FOTOGRAFIA.conjunto} · {NOTA_DA_FOTOGRAFIA.data}
       </span>
-      <span className="ab-nota__pendente">{NOTA_DA_FOTOGRAFIA.pendente}</span>
     </span>
   );
 }
@@ -184,9 +183,6 @@ export function AberturaB2({ contexto = "dev" }: PropsDeSecao) {
           </span>
           <span className="ab-b2__linha">
             <span>{NOTA_DA_FOTOGRAFIA.data}</span>
-            <span className="ab-nota__pendente">
-              {NOTA_DA_FOTOGRAFIA.pendente}
-            </span>
           </span>
         </figcaption>
       </figure>
@@ -205,6 +201,7 @@ export function AberturaB2({ contexto = "dev" }: PropsDeSecao) {
         </div>
 
         <div className="ab-b2__lado">
+          <p className="ab-b2__provas-rotulo">A pesquisa em números</p>
           <ul aria-label="A pesquisa em números" className="ab-b2__provas">
             {provas.map((p) => (
               <li key={p.rotulo}>

@@ -2,7 +2,9 @@ import {
   type DadosDoMapa,
   montarDadosDoMapa,
 } from "../../../dados/territorio/mapa";
+import { posicaoNoSvg } from "../../../dados/territorio/projecao";
 import type { RelacaoTerritorial } from "../../../dados/territorio/tipos";
+import { REFERENCIAS_TERRITORIAIS } from "../territoriovivo/local/referencias";
 import {
   centroDoCaminho,
   DEFINICOES,
@@ -152,6 +154,29 @@ export function MapaDoRecorte({
                 })}
               </g>
             ))}
+
+            {REFERENCIAS_TERRITORIAIS.map((lugar) => {
+              const [x, y] = posicaoNoSvg(
+                [lugar.longitude, lugar.latitude],
+                projecao,
+              );
+              const recorte =
+                lugar.municipioIbge === "2806701" ? "comparacao" : "vale";
+              return (
+                <g
+                  className="hl-mapa__pin"
+                  data-pin-do-recorte={recorte}
+                  key={lugar.id}
+                  transform={`translate(${x} ${y})`}
+                >
+                  <circle r="11" />
+                  <circle className="hl-mapa__pin-miolo" r="3.5" />
+                  <text x="15" y="4">
+                    {lugar.nome}
+                  </text>
+                </g>
+              );
+            })}
           </g>
         </svg>
       </div>

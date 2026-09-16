@@ -91,12 +91,12 @@ const RECORTES: readonly Recorte[] = [
   {
     nome: "hero-observatorio-desktop",
     x: 0,
-    y: 1250,
+    y: 750,
     largura: 3000,
     altura: 1950,
     saidas: [1440],
     qualidade: 0.55,
-    nota: "Mantém pessoas e placas juntas, com faixa de grama embaixo para o texto — o que a Direção Visual §7.4 pede para telas largas.",
+    nota: "Deslocado para cima na Tarefa 23 para preservar as cabeças das pessoas, mantendo pessoas e placas juntas e faixa de grama para o texto.",
   },
   {
     nome: "hero-observatorio-mobile",

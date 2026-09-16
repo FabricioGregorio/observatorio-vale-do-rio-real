@@ -9,7 +9,7 @@ import {
   CAMINHO_PUBLICO,
   DERIVADOS_DO_HERO,
   MARCA_COLETIVO,
-  SIMBOLO_OBSERVATORIO,
+  MARCA_OBSERVATORIO,
 } from "../../../dados/hero/derivados";
 import { INDICADORES } from "../../../dados/indicadores/derivados";
 import { exibirIndicador } from "../../../dados/indicadores/formato";
@@ -103,12 +103,11 @@ export function Topo({ contexto = "dev" }: { contexto?: ContextoDaHome }) {
       <div className="hl-quadro hl-topo__linha">
         <Link className="hl-topo__marca" href="/" prefetch={false}>
           <img
-            alt=""
-            height={SIMBOLO_OBSERVATORIO.altura}
-            src={`${CAMINHO_DAS_MARCAS}/${SIMBOLO_OBSERVATORIO.arquivo}`}
-            width={SIMBOLO_OBSERVATORIO.largura}
+            alt="Observatório do Vale do Rio Real"
+            height={MARCA_OBSERVATORIO.altura}
+            src={`${CAMINHO_DAS_MARCAS}/${MARCA_OBSERVATORIO.arquivo}`}
+            width={MARCA_OBSERVATORIO.largura}
           />
-          <span>Observatório do Vale do Rio Real</span>
         </Link>
         <nav aria-label="Principal" className="hl-topo__nav">
           <ul>
@@ -353,6 +352,10 @@ export function Territorio({ contexto = "dev" }: PropsDeSecao) {
               <span aria-hidden="true" data-amostra="comparacao" />
               Pesquisado como comparação, fora do Vale
             </li>
+            <li>
+              <span aria-hidden="true" data-amostra="lugar" />
+              Lugar visitado, com posição confirmada
+            </li>
           </ul>
 
           <dl className="hl-municipios" id={ID_DA_LISTA_DO_RECORTE}>
@@ -381,8 +384,9 @@ export function Territorio({ contexto = "dev" }: PropsDeSecao) {
           <p className="hl-nota">
             {MUNICIPIOS_DE_COMPARACAO.map((m) => m.nome).join(", ")} entra como
             comparação de políticas públicas, não como parte do Vale. Ilha
-            Grande e Serra dos Macacos também estão no acervo da pesquisa, mas
-            ainda sem município consolidado — por isso não aparecem no mapa.
+            Grande e Serra dos Macacos também fazem parte da pesquisa e aparecem
+            como lugares visitados quando o recorte correspondente é
+            selecionado.
           </p>
         </div>
 

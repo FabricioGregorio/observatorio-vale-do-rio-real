@@ -87,9 +87,8 @@ export const CTA_DA_PESQUISA = "Conhecer a pesquisa";
  */
 export const NOTA_DA_FOTOGRAFIA = {
   titulo: "Caminho de chegada",
-  conjunto: "Conjunto de campo do Recanto da Serra",
-  data: "Data não informada",
-  pendente: "Atribuição formal de local pendente",
+  conjunto: "Recanto da Serra",
+  data: "05/04/2026",
 } as const;
 
 /** Sumário: a estrutura real desta página, com as âncoras que já existem. */

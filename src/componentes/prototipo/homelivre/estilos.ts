@@ -26,8 +26,8 @@ export const CSS_DA_HOME_LIVRE = `
 /* Topo */
 .hl-topo{border-bottom:1px solid var(--hl-fio)}
 .hl-topo__linha{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 2rem;padding-block:1rem}
-.home-livre .hl-topo__marca{display:flex;align-items:center;gap:.75rem;color:var(--color-texto);text-decoration:none;font-family:var(--font-display);font-weight:600;font-size:var(--text-sm)}
-.hl-topo__marca img{height:2.5rem;width:auto;border-radius:var(--radius-ficha)}
+.home-livre .hl-topo__marca{display:flex;align-items:center;color:var(--color-texto);text-decoration:none}
+.hl-topo__marca img{display:block;height:2.85rem;width:auto;max-width:min(15rem,48vw)}
 .hl-topo__nav{order:3;flex-basis:100%;overflow-x:auto}
 .hl-topo__nav ul{display:flex;gap:1.5rem;white-space:nowrap}
 .home-livre .hl-topo__nav a{color:var(--color-texto);font-family:var(--font-display);font-size:var(--text-sm);text-decoration:none}
@@ -35,12 +35,12 @@ export const CSS_DA_HOME_LIVRE = `
 .home-livre .hl-topo :focus-visible{outline-color:var(--color-destaque)}
 .home-livre .hl-capitulo a:not(.hl-botao),.home-livre .hl-abertura a:not(.hl-botao),.home-livre .hl-mapa__painel a{text-decoration:underline;text-underline-offset:.18em}
 .hl-topo__util{display:flex;align-items:center;gap:.75rem;margin-left:auto}
-@media (min-width:1024px){.hl-topo__nav{order:0;flex-basis:auto}}
+@media (min-width:1280px){.hl-topo__linha{flex-wrap:nowrap;gap:1.25rem}.hl-topo__nav{order:0;flex-basis:auto}}
 .hl-topo__nav-estreita{order:3;flex-basis:100%}
 .home-livre[data-contexto="publico"] .hl-topo__nav{display:none}
 .home-livre[data-contexto="publico"] .hl-topo__nav-estreita button,.home-livre[data-contexto="publico"] .hl-topo__nav-estreita a{color:var(--color-texto)}
 .home-livre[data-contexto="publico"] .hl-topo__nav-estreita button{border-color:var(--color-texto)}
-@media (min-width:1024px){.home-livre[data-contexto="publico"] .hl-topo__nav{display:block}.hl-topo__nav-estreita{display:none}}
+@media (min-width:1280px){.home-livre[data-contexto="publico"] .hl-topo__nav{display:block}.hl-topo__nav-estreita{display:none}}
 
 /* Botões */
 .home-livre .hl-botao{display:inline-flex;flex-wrap:wrap;align-items:baseline;gap:.25rem .75rem;padding:.8rem 1.15rem;border:1px solid var(--color-texto);border-radius:var(--radius-ficha);color:var(--color-texto);font-family:var(--font-display);font-weight:600;text-decoration:none;transition:background-color var(--duracao-hover) var(--easing-padrao),color var(--duracao-hover) var(--easing-padrao)}
@@ -121,6 +121,7 @@ export const CSS_DA_HOME_LIVRE = `
 [data-amostra="vale"]{background:color-mix(in srgb,var(--color-fundo) 45%,var(--color-marca))}
 [data-amostra="vale campo"]{background:var(--color-marca)}
 [data-amostra="comparacao"]{background:var(--color-acento)}
+[data-amostra="lugar"]{position:relative;background:var(--color-barro);border-radius:50% 50% 50% 0;transform:rotate(-45deg)}
 .hl-mapa__svg[data-interativo="true"] g[data-recorte]{cursor:pointer}
 .hl-mapa__svg[data-interativo="true"] g[data-recorte]:hover path{fill:color-mix(in srgb,var(--color-fundo) 76%,var(--color-texto))}
 .hl-mapa__svg g[data-recorte]:focus{outline:none}
@@ -131,6 +132,7 @@ export const CSS_DA_HOME_LIVRE = `
 .hl-mapa[data-selecionado="comparacao"] g[data-recorte="comparacao"] path{fill:var(--color-acento)}
 .hl-mapa__rotulo{fill:var(--color-texto);font-family:var(--font-display);font-weight:600;opacity:0;paint-order:stroke;stroke:var(--color-fundo);stroke-width:4;text-anchor:middle;transition:opacity var(--duracao-painel) var(--easing-padrao)}
 .hl-mapa[data-selecionado="vale"] g[data-recorte="vale"] .hl-mapa__rotulo,.hl-mapa[data-selecionado="comparacao"] g[data-recorte="comparacao"] .hl-mapa__rotulo{opacity:1}
+.hl-mapa__pin{display:none;pointer-events:none}.hl-mapa__pin circle{fill:var(--color-barro);stroke:var(--color-branco);stroke-width:2}.hl-mapa__pin .hl-mapa__pin-miolo{fill:var(--color-branco);stroke:none}.hl-mapa__pin text{fill:var(--color-texto);font-family:var(--font-display);font-size:18px;font-weight:600;paint-order:stroke;stroke:var(--color-fundo);stroke-width:5}.hl-mapa[data-selecionado="vale"] .hl-mapa__pin[data-pin-do-recorte="vale"],.hl-mapa[data-selecionado="comparacao"] .hl-mapa__pin[data-pin-do-recorte="comparacao"]{display:block}
 .hl-mapa__orientacao{margin:0 0 .75rem;font-size:var(--text-sm);color:var(--color-texto-suave)}
 .hl-mapa__painel{margin-top:1rem;padding:.9rem 1rem;border:1px solid var(--hl-fio);border-radius:var(--radius-ficha);font-size:var(--text-sm)}
 .hl-mapa__painel p{margin:0 0 .35rem}

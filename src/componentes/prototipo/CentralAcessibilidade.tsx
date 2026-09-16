@@ -59,6 +59,7 @@ export function CentralAcessibilidade() {
 
   const gatilho = useRef<HTMLButtonElement>(null);
   const painel = useRef<HTMLDivElement>(null);
+  const raiz = useRef<HTMLDivElement>(null);
   const idPainel = useId();
   const idTitulo = useId();
 
@@ -134,8 +135,17 @@ export function CentralAcessibilidade() {
     return () => document.removeEventListener("keydown", aoTeclar);
   }, [aberto, fechar]);
 
+  useEffect(() => {
+    if (!aberto) return;
+    function aoApontarFora(evento: PointerEvent) {
+      if (!raiz.current?.contains(evento.target as Node)) fechar();
+    }
+    document.addEventListener("pointerdown", aoApontarFora);
+    return () => document.removeEventListener("pointerdown", aoApontarFora);
+  }, [aberto, fechar]);
+
   return (
-    <div className="relative">
+    <div className="relative" ref={raiz}>
       <button
         aria-controls={idPainel}
         aria-expanded={aberto}
