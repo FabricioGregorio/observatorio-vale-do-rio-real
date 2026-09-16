@@ -33,11 +33,11 @@ test("candidata abre com a B2 por padrão e mantém a ordem das seções", async
     .evaluateAll((secoes) => secoes.map((s) => s.id));
   expect(ids).toEqual(SECOES);
 
-  await expect(
-    page
-      .locator(".ab-b2__legenda")
-      .getByText("Atribuição formal de local pendente"),
-  ).toBeVisible();
+  const legenda = page.locator(".ab-b2__legenda");
+  await expect(legenda).toContainText("Caminho de chegada");
+  await expect(legenda).toContainText("Recanto da Serra");
+  await expect(legenda).toContainText("05/04/2026");
+  await expect(legenda).not.toContainText(/data não informada/i);
 });
 
 for (const tema of ["light", "dark"] as const) {
