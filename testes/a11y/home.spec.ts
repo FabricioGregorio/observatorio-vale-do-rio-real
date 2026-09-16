@@ -71,7 +71,7 @@ test.describe("Home", () => {
     expect(medidas.quebrasManuais).toBe(0);
   });
 
-  test("o cabeçalho real omite destinos sem rota e não duplica o banner", async ({
+  test("o cabeçalho real exibe os sete destinos aprovados e não duplica o banner", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
@@ -79,17 +79,18 @@ test.describe("Home", () => {
 
     await expect(page.locator("header:visible")).toHaveCount(1);
     const nav = page.getByRole("navigation", { name: "Principal" });
-    for (const rotulo of ["Território", "Acervo"]) {
-      await expect(nav.getByText(rotulo, { exact: true })).toHaveCount(0);
-    }
     for (const destino of [
       "/observatorio",
       "/pesquisa",
+      "/territorio",
       "/dados",
+      "/campo",
       "/podobservar",
+      "/acervo",
     ]) {
       await expect(nav.locator(`a[href="${destino}"]`)).toHaveCount(1);
     }
+    await expect(nav.locator('a[href="/educacao"]')).toHaveCount(0);
   });
 
   test("a Central de Acessibilidade funciona na Home", async ({ page }) => {

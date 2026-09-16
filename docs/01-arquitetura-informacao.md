@@ -124,6 +124,13 @@ Cada público precisa chegar ao seu destino em **no máximo dois cliques a parti
 > `Diário de Campo` e `Educação` saem do menu principal e **continuam existindo**
 > como rotas.
 
+> **EMENDA POSTERIOR — 2026-09-15:** a decisão humana registrada na ADR-017
+> passa o menu para sete itens, nesta ordem:
+> `O Observatório · A Pesquisa · Território · Dados · Diário de Campo · PodObservar · Acervo`.
+> Diário de Campo permanece; Educação sai somente do menu e sua rota continua
+> existindo. Esta emenda supera a composição e o teto anteriores, preservando
+> seu registro histórico.
+
 **Rodapé:** Prestação de Contas · Imprensa · Acessibilidade · Privacidade · Contato · **bloco de créditos de fomento**.
 
 ---

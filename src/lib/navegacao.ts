@@ -1,30 +1,27 @@
 /**
  * Navegação do site — fonte única para cabeçalho e rodapé.
  *
- * Os destinos e rótulos vêm do mapa do site do doc 01 §3. Nenhum item é
- * inventado aqui: acrescentar entrada exige alterar o doc 01 antes.
- *
- * O menu principal tem **exatamente seis** itens — é o teto cognitivo que a
- * arquitetura de informação fixou, não um limite estético.
+ * Os destinos, rótulos e a ordem vêm da emenda de 2026-09-15 à ADR-017.
  */
 
 export type ItemNavegacao = {
-  readonly href: string;
+  readonly href: Route;
   readonly rotulo: string;
 };
 
-/** Menu principal (doc 01 §3). Seis itens, nem mais nem menos. */
-export const MENU_PRINCIPAL = [
+/** Menu principal (ADR-017, emenda de 2026-09-15). Sete itens, nesta ordem. */
+export const MENU_PRINCIPAL: readonly ItemNavegacao[] = [
   { href: "/observatorio", rotulo: "O Observatório" },
   { href: "/pesquisa", rotulo: "A Pesquisa" },
+  { href: "/territorio", rotulo: "Território" },
   { href: "/dados", rotulo: "Dados" },
   { href: "/campo", rotulo: "Diário de Campo" },
   { href: "/podobservar", rotulo: "PodObservar" },
-  { href: "/educacao", rotulo: "Educação" },
+  { href: "/acervo", rotulo: "Acervo" },
 ] as const;
 
 /** Links do rodapé (doc 01 §3). O bloco de créditos é separado. */
-export const MENU_RODAPE = [
+export const MENU_RODAPE: readonly ItemNavegacao[] = [
   { href: "/prestacao-de-contas", rotulo: "Prestação de Contas" },
   { href: "/imprensa", rotulo: "Imprensa" },
   { href: "/acessibilidade", rotulo: "Acessibilidade" },
@@ -34,3 +31,5 @@ export const MENU_RODAPE = [
 
 /** Âncora do conteúdo principal, alvo do link de pular. */
 export const ID_CONTEUDO = "conteudo";
+
+import type { Route } from "next";

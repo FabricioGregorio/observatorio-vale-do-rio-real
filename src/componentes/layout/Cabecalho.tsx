@@ -6,7 +6,7 @@ import { MenuMobile } from "./MenuMobile";
 /**
  * Cabeçalho do site: identificação e menu principal.
  *
- * Em telas largas a lista de seis itens fica visível; abaixo de `md` ela dá
+ * Em telas largas a lista de sete itens fica visível; abaixo de `lg` ela dá
  * lugar ao `MenuMobile`. As duas versões leem a mesma fonte, `navegacao.ts`,
  * para não divergirem.
  *
@@ -27,7 +27,7 @@ export function Cabecalho() {
         color: "var(--color-texto-inverso)",
       }}
     >
-      <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 md:flex-row md:items-center md:justify-between">
+      <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 lg:items-stretch xl:flex-row xl:items-center xl:justify-between">
         <Link
           href="/"
           prefetch={false}
@@ -40,8 +40,8 @@ export function Cabecalho() {
           Observatório do Vale do Rio Real
         </Link>
 
-        <nav aria-label="Principal" className="hidden md:block">
-          <ul className="flex list-none flex-wrap items-center gap-4 p-0">
+        <nav aria-label="Principal" className="hidden lg:block">
+          <ul className="flex list-none flex-wrap items-center justify-between gap-4 p-0 xl:justify-start">
             {MENU_PRINCIPAL.map((item) => (
               <li key={item.href}>
                 <Link

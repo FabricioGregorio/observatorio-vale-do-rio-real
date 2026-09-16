@@ -3,10 +3,12 @@ import { expect, test } from "@playwright/test";
 const ROTAS_EDITORIAIS = [
   ["/observatorio", "O Observatório"],
   ["/pesquisa", "A Pesquisa"],
+  ["/territorio", "Território"],
   ["/dados", "Dados"],
   ["/campo", "Diário de Campo"],
   ["/podobservar", "PodObservar"],
   ["/educacao", "Educação"],
+  ["/acervo", "Acervo"],
   ["/imprensa", "Imprensa"],
   ["/acessibilidade", "Acessibilidade"],
   ["/privacidade", "Privacidade"],

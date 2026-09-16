@@ -45,14 +45,19 @@ const SEM_LOCAL = "sem-local";
 const IDENTIDADE: Enquadramento = { s: 1, tx: 0, ty: 0 };
 
 const focoDoLugar = (id: string) => `lugar-${id}`;
-const urlDaCamada = (id: string) => `/dev/territorio-vivo/camada-local/${id}`;
+const BASE_DAS_CAMADAS_DEV = "/dev/territorio-vivo/camada-local";
+const urlDaCamada = (base: string, id: string) => `${base}/${id}`;
 const px = (n: number) => `${n.toFixed(2)}px`;
 const transformacao = (e: Enquadramento) =>
   `translate(${px(e.tx)},${px(e.ty)}) scale(${e.s.toFixed(4)})`;
 const varsDoMundo = (e: Enquadramento) =>
   `--tv-tx:${px(e.tx)};--tv-ty:${px(e.ty)};--tv-s:${e.s.toFixed(4)}`;
 
-export function TerritorioVivo() {
+export function TerritorioVivo({
+  baseDasCamadas = BASE_DAS_CAMADAS_DEV,
+}: {
+  baseDasCamadas?: string;
+}) {
   const base = montarBaseDoTerritorio();
   const { dados, caixaDe, vista, vw, vh, fs, raio, kmU, doVale, visiveis } =
     base;
@@ -547,7 +552,7 @@ export function TerritorioVivo() {
                     data-tv-anuncio={anuncio}
                     data-tv-camada={
                       p !== null && p.local !== null
-                        ? urlDaCamada(lugar.id)
+                        ? urlDaCamada(baseDasCamadas, lugar.id)
                         : undefined
                     }
                     data-tv-foco={
