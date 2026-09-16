@@ -34,7 +34,7 @@ for (const largura of [320, 375, 768, 900, 1024, 1280, 1440]) {
           }));
       });
 
-    if (largura < 1024) {
+    if (largura < 1360) {
       const gatilho = page.getByRole("button", { name: "Menu", exact: true });
       await gatilho.click();
       const links = page

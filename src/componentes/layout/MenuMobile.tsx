@@ -20,7 +20,11 @@ import { useEffect, useId, useRef, useState } from "react";
 
 import { MENU_PRINCIPAL } from "../../lib/navegacao";
 
-export function MenuMobile() {
+export function MenuMobile({
+  classeResponsiva = "lg:hidden",
+}: {
+  readonly classeResponsiva?: string;
+}) {
   const [aberto, setAberto] = useState(false);
   const gatilho = useRef<HTMLButtonElement>(null);
   const painel = useRef<HTMLDivElement>(null);
@@ -46,7 +50,7 @@ export function MenuMobile() {
   }, [aberto]);
 
   return (
-    <div className="lg:hidden">
+    <div className={classeResponsiva}>
       <button
         ref={gatilho}
         type="button"
@@ -55,8 +59,8 @@ export function MenuMobile() {
         onClick={() => setAberto((estava) => !estava)}
         className="meta-ficha border px-3 py-2 focus-visible:outline-destaque"
         style={{
-          borderColor: "var(--color-texto-inverso)",
-          color: "var(--color-texto-inverso)",
+          borderColor: "var(--borda-menu-mobile, var(--color-texto-inverso))",
+          color: "var(--texto-menu-mobile, var(--color-texto-inverso))",
           borderRadius: "var(--radius-ficha)",
         }}
       >
@@ -80,7 +84,10 @@ export function MenuMobile() {
                   prefetch={false}
                   onClick={() => setAberto(false)}
                   className="block px-2 py-2 focus-visible:outline-destaque"
-                  style={{ color: "var(--color-texto-inverso)" }}
+                  style={{
+                    color:
+                      "var(--texto-menu-mobile, var(--color-texto-inverso))",
+                  }}
                 >
                   {item.rotulo}
                 </Link>

@@ -150,6 +150,21 @@ export const SIMBOLO_OBSERVATORIO = {
   alt: "Símbolo oficial do Observatório: telescópio, serra e caminho",
 } as const;
 
+/** Ícone oficial escolhido exclusivamente para o cabeçalho da Home v2. */
+export const ICONE_OBSERVATORIO_CABECALHO = {
+  arquivo: "observatorio-icone-oficial-96.png",
+  origem: "identidade-visual/observatorio/icon.png",
+  sha256Original:
+    "20722639dba1b44885121e72fda6b7c1749f0607047215c513817d3619a1881f",
+  largura: 96,
+  altura: 96,
+  bytes: 11_299,
+  sha256: "566a5a07bef4c6207e3bf36238ff5dfe8cc89b9ab13adf05b7f2b553fbc177b9",
+  transformacao:
+    "redimensionamento integral de 565x565 para 96x96 em PNG, sem recorte, recoloração ou fundo acrescentado",
+  alt: "Símbolo oficial do Observatório: telescópio voltado para o céu sobre a serra e um caminho",
+} as const;
+
 /**
  * Marca do Coletivo Cultural "Tobias, sou Eu!".
  *

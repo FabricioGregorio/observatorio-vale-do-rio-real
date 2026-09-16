@@ -27,6 +27,7 @@ import { MapaTerritorio } from "../src/componentes/mapa/MapaTerritorio";
 import { GRAFISMOS_DA_IDENTIDADE } from "../src/dados/grafismos/derivados";
 import {
   DERIVADOS_DO_HERO,
+  ICONE_OBSERVATORIO_CABECALHO,
   MARCA_COLETIVO,
   MARCA_OBSERVATORIO,
   SIMBOLO_OBSERVATORIO,
@@ -197,6 +198,7 @@ describe("ausência de dado territorial inventado", () => {
       ...GRAFISMOS_DA_IDENTIDADE.map((g) => g.arquivo),
       MARCA_OBSERVATORIO.arquivo,
       SIMBOLO_OBSERVATORIO.arquivo,
+      ICONE_OBSERVATORIO_CABECALHO.arquivo,
       MARCA_COLETIVO.arquivo,
     ]);
 

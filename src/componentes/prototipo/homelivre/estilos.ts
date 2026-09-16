@@ -25,22 +25,27 @@ export const CSS_DA_HOME_LIVRE = `
 
 /* Topo */
 .hl-topo{border-bottom:1px solid var(--hl-fio)}
-.hl-topo__linha{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 2rem;padding-block:1rem}
-.home-livre .hl-topo__marca{display:flex;align-items:center;color:var(--color-texto);text-decoration:none}
-.hl-topo__marca img{display:block;height:2.85rem;width:auto;max-width:min(15rem,48vw)}
+.hl-topo__linha{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.5rem;max-width:var(--largura-cabecalho);padding-block:.85rem}
+.home-livre .hl-topo__marca{display:flex;align-items:center;gap:.65rem;color:var(--color-texto);text-decoration:none}
+.hl-topo__marca img{display:block;width:2.9rem;height:2.9rem;object-fit:contain}
+.hl-topo__marca span{max-width:13rem;font-family:var(--font-leitura);font-size:var(--text-base);font-weight:600;letter-spacing:var(--tracking-display);line-height:1.12}
 .hl-topo__nav{order:3;flex-basis:100%;overflow-x:auto}
-.hl-topo__nav ul{display:flex;gap:1.5rem;white-space:nowrap}
-.home-livre .hl-topo__nav a{color:var(--color-texto);font-family:var(--font-display);font-size:var(--text-sm);text-decoration:none}
-.home-livre .hl-topo__nav a:hover{text-decoration:underline}
-.home-livre .hl-topo :focus-visible{outline-color:var(--color-destaque)}
+.hl-topo__nav ul{display:flex;gap:1.15rem;white-space:nowrap}
+.home-livre .hl-topo__nav a{position:relative;display:inline-block;padding:.55rem 0;color:var(--color-texto);font-family:var(--font-display);font-size:var(--text-nav);font-weight:600;letter-spacing:.005em;line-height:1.2;text-decoration:none}
+.home-livre .hl-topo__nav a::after{content:"";position:absolute;right:0;bottom:.25rem;left:0;height:1px;background:var(--color-marca);transform:scaleX(0);transform-origin:right;transition:transform var(--duracao-hover) var(--easing-padrao)}
+.home-livre .hl-topo__nav a:hover{color:var(--color-marca)}
+.home-livre .hl-topo__nav a:hover::after,.home-livre .hl-topo__nav a:focus-visible::after,.home-livre .hl-topo__nav a[aria-current="page"]::after{transform:scaleX(1);transform-origin:left}
+.home-livre .hl-topo :focus-visible{outline:3px solid var(--color-destaque);outline-offset:3px}
 .home-livre .hl-capitulo a:not(.hl-botao),.home-livre .hl-abertura a:not(.hl-botao),.home-livre .hl-mapa__painel a{text-decoration:underline;text-underline-offset:.18em}
 .hl-topo__util{display:flex;align-items:center;gap:.75rem;margin-left:auto}
-@media (min-width:1280px){.hl-topo__linha{flex-wrap:nowrap;gap:1.25rem}.hl-topo__nav{order:0;flex-basis:auto}}
+@media (min-width:1360px){.hl-topo__linha{flex-wrap:nowrap;gap:1rem}.hl-topo__nav{order:0;flex-basis:auto;overflow:visible}}
 .hl-topo__nav-estreita{order:3;flex-basis:100%}
 .home-livre[data-contexto="publico"] .hl-topo__nav{display:none}
-.home-livre[data-contexto="publico"] .hl-topo__nav-estreita button,.home-livre[data-contexto="publico"] .hl-topo__nav-estreita a{color:var(--color-texto)}
-.home-livre[data-contexto="publico"] .hl-topo__nav-estreita button{border-color:var(--color-texto)}
-@media (min-width:1280px){.home-livre[data-contexto="publico"] .hl-topo__nav{display:block}.hl-topo__nav-estreita{display:none}}
+.home-livre[data-contexto="publico"] .hl-topo__nav-estreita{--borda-menu-mobile:var(--color-texto);--texto-menu-mobile:var(--color-texto)}
+@media (min-width:1360px){.home-livre[data-contexto="publico"] .hl-topo__nav{display:block}.hl-topo__nav-estreita{display:none}}
+.home-livre .hl-topo__acessibilidade{background:transparent;transition:background-color var(--duracao-hover) var(--easing-padrao),color var(--duracao-hover) var(--easing-padrao)}
+.home-livre .hl-topo__acessibilidade:hover{--fundo-acessibilidade:var(--color-texto);--texto-acessibilidade:var(--color-fundo)}
+.home-livre .hl-topo__prestacao:focus-visible,.home-livre .hl-topo__acessibilidade:focus-visible{outline-width:3px;outline-offset:3px}
 
 /* Botões */
 .home-livre .hl-botao{display:inline-flex;flex-wrap:wrap;align-items:baseline;gap:.25rem .75rem;padding:.8rem 1.15rem;border:1px solid var(--color-texto);border-radius:var(--radius-ficha);color:var(--color-texto);font-family:var(--font-display);font-weight:600;text-decoration:none;transition:background-color var(--duracao-hover) var(--easing-padrao),color var(--duracao-hover) var(--easing-padrao)}

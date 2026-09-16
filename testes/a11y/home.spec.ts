@@ -102,6 +102,79 @@ test.describe("Home", () => {
     ).toBeVisible();
   });
 
+  test("usa o ícone oficial escolhido e não a assinatura anterior", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const cabecalho = page.locator("#cabecalho-home");
+    await expect(
+      cabecalho.locator('img[src$="observatorio-icone-oficial-96.png"]'),
+    ).toHaveCount(1);
+    await expect(
+      cabecalho.locator('img[src$="observatorio-monocromatica-escura.svg"]'),
+    ).toHaveCount(0);
+  });
+
+  test("links e utilidades têm hover e foco perceptíveis", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    const cabecalho = page.locator("#cabecalho-home");
+    const link = cabecalho.getByRole("link", { name: "O Observatório" });
+    const acessibilidade = cabecalho.getByRole("button", {
+      name: "Acessibilidade",
+    });
+    const prestacao = cabecalho.getByRole("link", {
+      name: "Prestação de Contas",
+    });
+
+    const corInicial = await acessibilidade.evaluate(
+      (elemento) => getComputedStyle(elemento).backgroundColor,
+    );
+    await acessibilidade.hover();
+    await page.waitForTimeout(200);
+    expect(
+      await acessibilidade.evaluate(
+        (elemento) => getComputedStyle(elemento).backgroundColor,
+      ),
+    ).not.toBe(corInicial);
+
+    await prestacao.hover();
+    await expect(prestacao).toBeVisible();
+
+    await link.focus();
+    expect(
+      await link.evaluate(
+        (elemento) => getComputedStyle(elemento).outlineStyle,
+      ),
+    ).not.toBe("none");
+    await acessibilidade.focus();
+    expect(
+      await acessibilidade.evaluate(
+        (elemento) => getComputedStyle(elemento).outlineStyle,
+      ),
+    ).not.toBe("none");
+  });
+
+  test("menu compacto mantém contraste, navegação e retorno de foco", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto("/");
+    const menu = page.getByRole("button", { name: "Menu", exact: true });
+
+    await expect(menu).toBeVisible();
+    expect(
+      await menu.evaluate((elemento) => getComputedStyle(elemento).color),
+    ).toBe("rgb(23, 26, 23)");
+
+    await menu.click();
+    await expect(
+      page.getByRole("link", { name: "Acervo", exact: true }),
+    ).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(menu).toBeFocused();
+  });
+
   test("a Central de Acessibilidade funciona e devolve o foco", async ({
     page,
   }) => {

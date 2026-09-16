@@ -201,6 +201,6 @@ describe("navegação da Home v2", () => {
 
   test("o menu de telas estreitas é servido só no contexto público", () => {
     expect(secoes).toContain('aria-label="Principal (telas estreitas)"');
-    expect(secoes).toContain("<MenuMobile />");
+    expect(secoes).toContain('<MenuMobile classeResponsiva="" />');
   });
 });

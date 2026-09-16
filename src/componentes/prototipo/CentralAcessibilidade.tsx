@@ -149,12 +149,13 @@ export function CentralAcessibilidade() {
       <button
         aria-controls={idPainel}
         aria-expanded={aberto}
-        className="meta-ficha border px-3 py-2"
+        className="meta-ficha hl-topo__acessibilidade border px-3 py-2"
         onClick={() => setAberto((estava) => !estava)}
         ref={gatilho}
         style={{
           borderColor: "var(--hero-texto)",
-          color: "var(--hero-texto)",
+          backgroundColor: "var(--fundo-acessibilidade, transparent)",
+          color: "var(--texto-acessibilidade, var(--hero-texto))",
           borderRadius: "var(--radius-ficha)",
         }}
         type="button"

@@ -8,8 +8,8 @@ import {
   CAMINHO_DAS_MARCAS,
   CAMINHO_PUBLICO,
   DERIVADOS_DO_HERO,
+  ICONE_OBSERVATORIO_CABECALHO,
   MARCA_COLETIVO,
-  MARCA_OBSERVATORIO,
 } from "../../../dados/hero/derivados";
 import { INDICADORES } from "../../../dados/indicadores/derivados";
 import { exibirIndicador } from "../../../dados/indicadores/formato";
@@ -103,11 +103,12 @@ export function Topo({ contexto = "dev" }: { contexto?: ContextoDaHome }) {
       <div className="hl-quadro hl-topo__linha">
         <Link className="hl-topo__marca" href="/" prefetch={false}>
           <img
-            alt="Observatório do Vale do Rio Real"
-            height={MARCA_OBSERVATORIO.altura}
-            src={`${CAMINHO_DAS_MARCAS}/${MARCA_OBSERVATORIO.arquivo}`}
-            width={MARCA_OBSERVATORIO.largura}
+            alt=""
+            height={ICONE_OBSERVATORIO_CABECALHO.altura}
+            src={`${CAMINHO_DAS_MARCAS}/${ICONE_OBSERVATORIO_CABECALHO.arquivo}`}
+            width={ICONE_OBSERVATORIO_CABECALHO.largura}
           />
+          <span>Observatório do Vale do Rio Real</span>
         </Link>
         <nav aria-label="Principal" className="hl-topo__nav">
           <ul>
@@ -127,13 +128,13 @@ export function Topo({ contexto = "dev" }: { contexto?: ContextoDaHome }) {
             aria-label="Principal (telas estreitas)"
             className="hl-topo__nav-estreita"
           >
-            <MenuMobile />
+            <MenuMobile classeResponsiva="" />
           </nav>
         ) : null}
         <div className="hl-topo__util">
           <CentralAcessibilidade />
           <Link
-            className="hl-botao hl-botao--cheio hl-botao--curto"
+            className="hl-botao hl-botao--cheio hl-botao--curto hl-topo__prestacao"
             href="/prestacao-de-contas"
             prefetch={false}
           >

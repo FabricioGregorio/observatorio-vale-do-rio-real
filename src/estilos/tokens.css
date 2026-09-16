@@ -140,6 +140,7 @@
   /* Escala 1.25 a partir de 1rem */
   --text-xs: 0.64rem;
   --text-sm: 0.8rem;
+  --text-nav: 0.875rem;
   --text-base: 1rem;
   --text-lg: 1.25rem;
   --text-xl: 1.563rem;
@@ -190,6 +191,7 @@
   /* --- 3d. Layout --------------------------------------------------------- */
   --largura-leitura: 68ch;
   --largura-conteudo: 1180px;
+  --largura-cabecalho: 1360px;
   --radius-ficha: 2px; /* fichas de arquivo não têm cantos macios */
 }
 
