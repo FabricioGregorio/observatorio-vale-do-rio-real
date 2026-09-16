@@ -169,6 +169,7 @@
      regra global. */
 
   --duracao-hover: 150ms;
+  --duracao-hover-cabecalho: 200ms;
   --duracao-revelacao: 240ms;
   --duracao-painel: 240ms;
   --duracao-tema: 0ms;
@@ -192,7 +193,18 @@
   --largura-leitura: 68ch;
   --largura-conteudo: 1180px;
   --largura-cabecalho: 1360px;
+  --altura-cabecalho: 5rem;
+  --espaco-links-cabecalho: 1.5rem;
+  --espaco-painel-cabecalho: 1.5rem;
   --radius-ficha: 2px; /* fichas de arquivo não têm cantos macios */
+
+  /* O cabeçalho é uma superfície institucional estável nos dois temas. */
+  --color-cabecalho-fundo: var(--color-mata);
+  --color-cabecalho-painel: var(--color-noite);
+  --color-cabecalho-texto: var(--color-pedra);
+  --color-cabecalho-texto-suave: var(--color-pedra-suave);
+  --color-cabecalho-acento: var(--color-observatorio-claro);
+  --color-cabecalho-borda: var(--color-noite-borda-forte);
 }
 
 /* =============================================================================

@@ -30,7 +30,7 @@ import {
   MENU_PRINCIPAL,
   MENU_RODAPE,
 } from "../../../lib/navegacao";
-import { MenuMobile } from "../../layout/MenuMobile";
+import { MenuMobile, NavegacaoDoCabecalho } from "../../layout/MenuMobile";
 import { MapaInterativo } from "../../mapa/MapaInterativo";
 import { CentralAcessibilidade } from "../CentralAcessibilidade";
 import { REGISTROS_DE_APOIO } from "../dadosvivos/selecaoEditorial";
@@ -116,19 +116,23 @@ export function Topo({ contexto = "dev" }: { contexto?: ContextoDaHome }) {
           />
           <span>Observatório do Vale do Rio Real</span>
         </Link>
-        <nav aria-label="Principal" className="hl-topo__nav">
-          <ul>
-            {itens.map((item) =>
-              item.href === null ? null : (
-                <li key={item.rotulo}>
-                  <Link href={item.href} prefetch={false}>
-                    {item.rotulo}
-                  </Link>
-                </li>
-              ),
-            )}
-          </ul>
-        </nav>
+        {publico ? (
+          <NavegacaoDoCabecalho />
+        ) : (
+          <nav aria-label="Principal" className="hl-topo__nav">
+            <ul>
+              {itens.map((item) =>
+                item.href === null ? null : (
+                  <li key={item.rotulo}>
+                    <Link href={item.href} prefetch={false}>
+                      {item.rotulo}
+                    </Link>
+                  </li>
+                ),
+              )}
+            </ul>
+          </nav>
+        )}
         {publico ? (
           <nav
             aria-label="Principal (telas estreitas)"
@@ -140,11 +144,11 @@ export function Topo({ contexto = "dev" }: { contexto?: ContextoDaHome }) {
         <div className="hl-topo__util">
           <CentralAcessibilidade />
           <Link
-            className="hl-botao hl-botao--cheio hl-botao--curto hl-topo__prestacao"
+            className="hl-botao hl-botao--curto hl-topo__prestacao"
             href="/prestacao-de-contas"
             prefetch={false}
           >
-            Prestação de Contas
+            Prestação de contas <span aria-hidden="true">→</span>
           </Link>
         </div>
       </div>

@@ -179,9 +179,9 @@ describe("entradas públicas preservadas da Home antiga", () => {
 
 /**
  * A barra superior da Home v2 serve os dois lugares. No público ela precisa
- * usar a navegação canônica de sete itens; no laboratório, a demonstração
- * histórica da H1. Uma troca silenciosa aqui republicaria o menu de seis itens
- * com dois destinos mortos.
+ * usar a navegação hierarquizada; no laboratório, a demonstração histórica da
+ * H1. Os sete destinos continuam presentes, mas três vivem no painel de
+ * Conteúdos para separar navegação principal de acervo editorial.
  */
 describe("navegação da Home v2", () => {
   const secoes = readFileSync(
@@ -189,10 +189,8 @@ describe("navegação da Home v2", () => {
     "utf8",
   );
 
-  test("o topo escolhe o menu oficial quando o contexto é público", () => {
-    expect(secoes).toContain(
-      "const itens = publico ? MENU_PRINCIPAL : ITENS_COM_DESTINO;",
-    );
+  test("o topo público usa a navegação hierarquizada", () => {
+    expect(secoes).toContain("<NavegacaoDoCabecalho />");
   });
 
   test("o topo público carrega o identificador do cabeçalho da Home", () => {

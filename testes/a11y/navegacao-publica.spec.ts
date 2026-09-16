@@ -1,10 +1,13 @@
 import { expect, test } from "@playwright/test";
 
-const ITENS = [
+const ITENS_PRINCIPAIS = [
   ["O Observatório", "/observatorio"],
   ["A Pesquisa", "/pesquisa"],
   ["Território", "/territorio"],
   ["Dados", "/dados"],
+] as const;
+
+const ITENS_DE_CONTEUDO = [
   ["Diário de Campo", "/campo"],
   ["PodObservar", "/podobservar"],
   ["Acervo", "/acervo"],
@@ -34,7 +37,7 @@ for (const largura of [320, 375, 768, 900, 1024, 1280, 1440]) {
           }));
       });
 
-    if (largura < 1360) {
+    if (largura < 1280) {
       const gatilho = page.getByRole("button", { name: "Menu", exact: true });
       await gatilho.click();
       const links = page
@@ -42,7 +45,7 @@ for (const largura of [320, 375, 768, 900, 1024, 1280, 1440]) {
         .getByRole("link");
       await expect(links).toHaveCount(7);
       expect(await links.allTextContents()).toEqual(
-        ITENS.map(([rotulo]) => rotulo),
+        [...ITENS_PRINCIPAIS, ...ITENS_DE_CONTEUDO].map(([rotulo]) => rotulo),
       );
       expect(await diagnosticarCabecalho()).toEqual([]);
       await page.keyboard.press("Escape");
@@ -54,9 +57,24 @@ for (const largura of [320, 375, 768, 900, 1024, 1280, 1440]) {
       });
       await expect(menu).toBeVisible();
       const links = menu.getByRole("link");
-      await expect(links).toHaveCount(7);
+      await expect(links).toHaveCount(4);
       expect(await links.allTextContents()).toEqual(
-        ITENS.map(([rotulo]) => rotulo),
+        ITENS_PRINCIPAIS.map(([rotulo]) => rotulo),
+      );
+      const conteudos = menu.getByRole("button", { name: /Conteúdos/ });
+      await conteudos.click();
+      const painel = page.locator(
+        `[id="${await conteudos.getAttribute("aria-controls")}"]`,
+      );
+      await expect(painel.getByRole("link")).toHaveCount(3);
+      expect(await painel.getByRole("link").allTextContents()).toEqual(
+        ITENS_DE_CONTEUDO.map(([rotulo]) =>
+          rotulo === "Diário de Campo"
+            ? "Diário de CampoRegistros das visitas e do trabalho em território"
+            : rotulo === "PodObservar"
+              ? "PodObservarConversas e narrativas do Vale"
+              : "AcervoFotografias, documentos e memória",
+        ),
       );
     }
 
@@ -79,10 +97,34 @@ test("menu móvel preserva ordem, Enter, Esc e devolução de foco", async ({
   const links = menu.getByRole("link");
   await expect(links).toHaveCount(7);
   expect(await links.allTextContents()).toEqual(
-    ITENS.map(([rotulo]) => rotulo),
+    [...ITENS_PRINCIPAIS, ...ITENS_DE_CONTEUDO].map(([rotulo]) => rotulo),
   );
   await page.keyboard.press("Escape");
   await expect(gatilho).toBeFocused();
+});
+
+test("painel Conteúdos abre por teclado, fecha com Esc e clique externo", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  const gatilho = page.getByRole("button", { name: /Conteúdos/ });
+
+  await gatilho.focus();
+  await page.keyboard.press("Enter");
+  const primeiroLink = page
+    .getByRole("navigation", { name: "Principal", exact: true })
+    .getByRole("link", { name: /Diário de Campo/ });
+  await expect(primeiroLink).toBeFocused();
+
+  await page.keyboard.press("Escape");
+  await expect(gatilho).toBeFocused();
+  await expect(gatilho).toHaveAttribute("aria-expanded", "false");
+
+  await page.keyboard.press("Space");
+  await expect(gatilho).toHaveAttribute("aria-expanded", "true");
+  await page.locator("main h1").click();
+  await expect(gatilho).toHaveAttribute("aria-expanded", "false");
 });
 
 test("equivalente a 1440px com zoom 200% usa a navegação estreita sem overflow", async ({

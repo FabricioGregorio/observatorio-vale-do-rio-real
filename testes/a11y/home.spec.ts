@@ -66,7 +66,7 @@ test.describe("Home", () => {
     await expect(page.locator("main#conteudo")).toHaveCount(1);
   });
 
-  test("o cabeçalho exibe os sete destinos aprovados e nenhum a mais", async ({
+  test("o cabeçalho separa quatro destinos principais e três conteúdos", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
@@ -81,10 +81,12 @@ test.describe("Home", () => {
       "/pesquisa",
       "/territorio",
       "/dados",
-      "/campo",
-      "/podobservar",
-      "/acervo",
     ]) {
+      await expect(nav.locator(`a[href="${destino}"]`)).toHaveCount(1);
+    }
+    await expect(nav.getByRole("link")).toHaveCount(4);
+    await nav.getByRole("button", { name: /Conteúdos/ }).click();
+    for (const destino of ["/campo", "/podobservar", "/acervo"]) {
       await expect(nav.locator(`a[href="${destino}"]`)).toHaveCount(1);
     }
     await expect(nav.locator('a[href="/educacao"]')).toHaveCount(0);
@@ -98,7 +100,7 @@ test.describe("Home", () => {
     await expect(
       page
         .locator("#cabecalho-home")
-        .getByRole("link", { name: "Prestação de Contas", exact: true }),
+        .getByRole("link", { name: /Prestação de contas/ }),
     ).toBeVisible();
   });
 
@@ -124,7 +126,7 @@ test.describe("Home", () => {
       name: "Acessibilidade",
     });
     const prestacao = cabecalho.getByRole("link", {
-      name: "Prestação de Contas",
+      name: /Prestação de contas/,
     });
 
     const corInicial = await acessibilidade.evaluate(
@@ -165,7 +167,7 @@ test.describe("Home", () => {
     await expect(menu).toBeVisible();
     expect(
       await menu.evaluate((elemento) => getComputedStyle(elemento).color),
-    ).toBe("rgb(23, 26, 23)");
+    ).toBe("rgb(231, 229, 222)");
 
     await menu.click();
     await expect(

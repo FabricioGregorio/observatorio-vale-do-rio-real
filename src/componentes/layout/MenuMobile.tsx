@@ -16,9 +16,149 @@
  * verificado em `tokens.css`. Nenhum token novo, nenhuma cor nova.
  */
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 
-import { MENU_PRINCIPAL } from "../../lib/navegacao";
+import { type ItemNavegacao, MENU_PRINCIPAL } from "../../lib/navegacao";
+
+const DESCRICOES_DE_CONTEUDO = {
+  "/campo": "Registros das visitas e do trabalho em território",
+  "/podobservar": "Conversas e narrativas do Vale",
+  "/acervo": "Fotografias, documentos e memória",
+} as const;
+
+type RotaDeConteudo = keyof typeof DESCRICOES_DE_CONTEUDO;
+
+function itemEhConteudo(
+  item: ItemNavegacao,
+): item is ItemNavegacao & { readonly href: RotaDeConteudo } {
+  return item.href in DESCRICOES_DE_CONTEUDO;
+}
+
+const ITENS_PRINCIPAIS = MENU_PRINCIPAL.filter((item) => !itemEhConteudo(item));
+
+const ITENS_DE_CONTEUDO = MENU_PRINCIPAL.filter(itemEhConteudo);
+
+function rotaEstaAtiva(pathname: string, href: string): boolean {
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+/**
+ * Navegação larga da Home v2.
+ *
+ * `"use client"` é necessário apenas nesta ilha: o painel editorial controla
+ * abertura, clique externo, `Esc`, devolução de foco e o estado da rota atual.
+ * A marca e as utilidades permanecem no Server Component do cabeçalho.
+ */
+export function NavegacaoDoCabecalho() {
+  const [aberto, setAberto] = useState(false);
+  const pathname = usePathname();
+  const raiz = useRef<HTMLDivElement>(null);
+  const gatilho = useRef<HTMLButtonElement>(null);
+  const painel = useRef<HTMLDivElement>(null);
+  const idPainel = useId();
+  const conteudoAtivo = ITENS_DE_CONTEUDO.some((item) =>
+    rotaEstaAtiva(pathname, item.href),
+  );
+
+  useEffect(() => {
+    if (!aberto) return;
+    painel.current?.querySelector<HTMLAnchorElement>("a")?.focus();
+  }, [aberto]);
+
+  useEffect(() => {
+    if (!aberto) return;
+
+    function aoTeclar(evento: KeyboardEvent) {
+      if (evento.key !== "Escape") return;
+      evento.preventDefault();
+      setAberto(false);
+      gatilho.current?.focus();
+    }
+
+    function aoApontarFora(evento: PointerEvent) {
+      if (!raiz.current?.contains(evento.target as Node)) setAberto(false);
+    }
+
+    document.addEventListener("keydown", aoTeclar);
+    document.addEventListener("pointerdown", aoApontarFora);
+    return () => {
+      document.removeEventListener("keydown", aoTeclar);
+      document.removeEventListener("pointerdown", aoApontarFora);
+    };
+  }, [aberto]);
+
+  return (
+    <nav aria-label="Principal" className="hl-topo__nav">
+      <ul>
+        {ITENS_PRINCIPAIS.map((item) => (
+          <li key={item.href}>
+            <Link
+              aria-current={
+                rotaEstaAtiva(pathname, item.href) ? "page" : undefined
+              }
+              href={item.href}
+              prefetch={false}
+            >
+              {item.rotulo}
+            </Link>
+          </li>
+        ))}
+        <li className="hl-conteudos" data-ativo={conteudoAtivo || undefined}>
+          <div ref={raiz}>
+            <button
+              aria-controls={idPainel}
+              aria-expanded={aberto}
+              className="hl-conteudos__gatilho"
+              onClick={() => setAberto((estava) => !estava)}
+              ref={gatilho}
+              type="button"
+            >
+              Conteúdos <span aria-hidden="true">⌄</span>
+            </button>
+            {aberto ? (
+              <div className="hl-conteudos__painel" id={idPainel} ref={painel}>
+                <p className="hl-conteudos__titulo">
+                  Conteúdos do Observatório
+                </p>
+                <ul>
+                  {ITENS_DE_CONTEUDO.map((item) => (
+                    <li key={item.href}>
+                      <Link
+                        aria-current={
+                          rotaEstaAtiva(pathname, item.href)
+                            ? "page"
+                            : undefined
+                        }
+                        href={item.href}
+                        onClick={() => setAberto(false)}
+                        prefetch={false}
+                      >
+                        <strong>{item.rotulo}</strong>
+                        <span>{DESCRICOES_DE_CONTEUDO[item.href]}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </div>
+        </li>
+      </ul>
+      <noscript>
+        <ul className="hl-topo__sem-script">
+          {ITENS_DE_CONTEUDO.map((item) => (
+            <li key={item.href}>
+              <Link href={item.href} prefetch={false}>
+                {item.rotulo}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </noscript>
+    </nav>
+  );
+}
 
 export function MenuMobile({
   classeResponsiva = "lg:hidden",
@@ -26,8 +166,10 @@ export function MenuMobile({
   readonly classeResponsiva?: string;
 }) {
   const [aberto, setAberto] = useState(false);
+  const pathname = usePathname();
   const gatilho = useRef<HTMLButtonElement>(null);
   const painel = useRef<HTMLDivElement>(null);
+  const raiz = useRef<HTMLDivElement>(null);
   const idPainel = useId();
 
   // Esc fecha e o foco volta ao gatilho — senão quem usa teclado fica preso.
@@ -39,8 +181,15 @@ export function MenuMobile({
         gatilho.current?.focus();
       }
     }
+    function aoApontarFora(evento: PointerEvent) {
+      if (!raiz.current?.contains(evento.target as Node)) setAberto(false);
+    }
     document.addEventListener("keydown", aoTeclar);
-    return () => document.removeEventListener("keydown", aoTeclar);
+    document.addEventListener("pointerdown", aoApontarFora);
+    return () => {
+      document.removeEventListener("keydown", aoTeclar);
+      document.removeEventListener("pointerdown", aoApontarFora);
+    };
   }, [aberto]);
 
   // Ao abrir, o foco entra no painel; sem isso o leitor de tela não é levado
@@ -50,7 +199,7 @@ export function MenuMobile({
   }, [aberto]);
 
   return (
-    <div className={classeResponsiva}>
+    <div className={classeResponsiva} ref={raiz}>
       <button
         ref={gatilho}
         type="button"
@@ -76,10 +225,35 @@ export function MenuMobile({
           tabIndex={-1}
           className="mt-3"
         >
-          <ul className="flex list-none flex-col gap-1 p-0">
-            {MENU_PRINCIPAL.map((item) => (
+          <ul className="hl-menu-estreito__lista flex list-none flex-col gap-1 p-0">
+            {ITENS_PRINCIPAIS.map((item) => (
               <li key={item.href}>
                 <Link
+                  aria-current={
+                    rotaEstaAtiva(pathname, item.href) ? "page" : undefined
+                  }
+                  href={item.href}
+                  prefetch={false}
+                  onClick={() => setAberto(false)}
+                  className="block px-2 py-2 focus-visible:outline-destaque"
+                  style={{
+                    color:
+                      "var(--texto-menu-mobile, var(--color-texto-inverso))",
+                  }}
+                >
+                  {item.rotulo}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <p className="hl-menu-estreito__grupo">Conteúdos do Observatório</p>
+          <ul className="hl-menu-estreito__lista flex list-none flex-col gap-1 p-0">
+            {ITENS_DE_CONTEUDO.map((item) => (
+              <li key={item.href}>
+                <Link
+                  aria-current={
+                    rotaEstaAtiva(pathname, item.href) ? "page" : undefined
+                  }
                   href={item.href}
                   prefetch={false}
                   onClick={() => setAberto(false)}
