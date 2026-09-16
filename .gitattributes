@@ -1,0 +1,5 @@
+# Finais de linha normalizados em LF no repositório.
+#
+# Sem esta política, `core.autocrlf=true` no Windows materializa CRLF no working
+# tree e `pnpm lint` reprova arquivos que ninguém editou. Ver ESTADO_ATUAL.
+* text=auto eol=lf
