@@ -4,7 +4,7 @@ import {
   CAMINHO_DAS_MARCAS,
   SIMBOLO_OBSERVATORIO,
 } from "../../dados/hero/derivados";
-import { MENU_PRINCIPAL } from "../../lib/navegacao";
+import { ID_CABECALHO_HOME, MENU_PRINCIPAL } from "../../lib/navegacao";
 import { MenuMobile } from "../layout/MenuMobile";
 import { CabecalhoReativo } from "./CabecalhoReativo";
 import { CentralAcessibilidade } from "./CentralAcessibilidade";
@@ -32,7 +32,6 @@ import { MENU_ALVO } from "./menuAlvo";
  */
 
 export const ID_DO_CABECALHO = "cabecalho-prototipo";
-export const ID_DO_CABECALHO_HOME = "cabecalho-home";
 
 /**
  * Estilo do recolhimento, escopado pela classe do cabeçalho.
@@ -61,7 +60,7 @@ export function CabecalhoPrototipo({
   contexto?: "prototipo" | "home";
 }) {
   const idDoCabecalho =
-    contexto === "home" ? ID_DO_CABECALHO_HOME : ID_DO_CABECALHO;
+    contexto === "home" ? ID_CABECALHO_HOME : ID_DO_CABECALHO;
   const itensDoMenu = contexto === "home" ? MENU_PRINCIPAL : MENU_ALVO;
 
   return (

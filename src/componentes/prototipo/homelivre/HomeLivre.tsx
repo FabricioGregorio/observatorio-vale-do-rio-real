@@ -6,7 +6,8 @@ import {
   AberturaC,
   SeletorDeAbertura,
 } from "./Aberturas";
-import type { VarianteDaAbertura } from "./abertura";
+import type { ContextoDaHome, VarianteDaAbertura } from "./abertura";
+import type { PropsDeSecao } from "./Estrutura";
 import { CSS_DA_HOME_LIVRE } from "./estilos";
 import { CSS_DAS_ABERTURAS } from "./estilosAberturas";
 import {
@@ -33,12 +34,20 @@ import {
  * equipamentos de Tobias Barreto), o que ela mediu ali, quem foi ouvido, o
  * que foi produzido e como tudo isso se confere.
  *
+ * ## Onde isto é servido
+ *
+ * Desde 2026-09-16, por decisão humana, esta é a Home oficial em
+ * desenvolvimento: `/` a renderiza com `contexto="publico"`. O laboratório
+ * `/dev/home-livre` continua existindo como harness de regressão, com
+ * `contexto="dev"`, e segue respondendo 404 em produção. Não há duas Homes —
+ * há uma implementação e duas cascas.
+ *
  * ## Isolamento
  *
  * O layout raiz continua servindo cabeçalho e rodapé legados. Como em
- * `/dev/hero`, eles são escondidos só enquanto esta rota está renderizada, e
- * esta rota responde 404 em produção. Os estilos do experimento vivem sob
- * `.home-livre` e não alcançam nenhum outro componente.
+ * `/dev/hero`, eles são escondidos só enquanto esta composição está
+ * renderizada. Os estilos vivem sob `.home-livre` e não alcançam nenhum outro
+ * componente.
  */
 const CSS_DE_ISOLAMENTO = "body > header, body > footer { display: none; }";
 
@@ -46,7 +55,9 @@ const CSS_DE_ISOLAMENTO = "body > header, body > footer { display: none; }";
  * Rodada 2: só a abertura varia (`?hero=atual|a|b|c`). Do fim da abertura em
  * diante, o que é renderizado é o mesmo em qualquer variação.
  */
-const ABERTURAS: Readonly<Record<VarianteDaAbertura, () => JSX.Element>> = {
+const ABERTURAS: Readonly<
+  Record<VarianteDaAbertura, (props: PropsDeSecao) => JSX.Element>
+> = {
   atual: Abertura,
   a: AberturaA,
   b: AberturaB,
@@ -56,33 +67,40 @@ const ABERTURAS: Readonly<Record<VarianteDaAbertura, () => JSX.Element>> = {
 
 export function HomeLivre({
   abertura = "b2",
+  contexto = "dev",
 }: {
   abertura?: VarianteDaAbertura;
+  contexto?: ContextoDaHome;
 }) {
   const AberturaEscolhida = ABERTURAS[abertura];
 
   return (
-    <div className="home-livre" id="home-livre">
+    <div className="home-livre" data-contexto={contexto} id="home-livre">
       <style>{CSS_DE_ISOLAMENTO}</style>
       <style>{CSS_DA_HOME_LIVRE}</style>
       <style>{CSS_DAS_ABERTURAS}</style>
 
-      <p className="hl-dev">
-        Experimento controlado · /dev/home-livre · somente DEV · textos novos em
-        avaliação editorial · marcas tracejadas indicam material pendente
-      </p>
-      <SeletorDeAbertura ativa={abertura} />
+      {contexto === "dev" ? (
+        <>
+          <p className="hl-dev">
+            Experimento controlado · /dev/home-livre · somente DEV · textos
+            novos em avaliação editorial · marcas tracejadas indicam material
+            pendente
+          </p>
+          <SeletorDeAbertura ativa={abertura} />
+        </>
+      ) : null}
 
-      <Topo />
-      <AberturaEscolhida />
-      <Origem />
-      <Territorio />
-      <Lugares />
-      <Leitura />
-      <Escuta />
-      <Produtos />
-      <Conferencia />
-      <Creditos />
+      <Topo contexto={contexto} />
+      <AberturaEscolhida contexto={contexto} />
+      <Origem contexto={contexto} />
+      <Territorio contexto={contexto} />
+      <Lugares contexto={contexto} />
+      <Leitura contexto={contexto} />
+      <Escuta contexto={contexto} />
+      <Produtos contexto={contexto} />
+      <Conferencia contexto={contexto} />
+      <Creditos contexto={contexto} />
       <RodapeLivre />
     </div>
   );

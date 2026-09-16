@@ -18,10 +18,18 @@ import {
   PASTA_PUBLICA_DA_PESQUISA,
 } from "../../../dados/pesquisa/derivados";
 import { RECORTE_TERRITORIAL } from "../../../dados/territorio/recorte";
-import { MENU_RODAPE } from "../../../lib/navegacao";
+import type { RelacaoTerritorial } from "../../../dados/territorio/tipos";
+import {
+  ID_CABECALHO_HOME,
+  MENU_PRINCIPAL,
+  MENU_RODAPE,
+} from "../../../lib/navegacao";
+import { MenuMobile } from "../../layout/MenuMobile";
+import { MapaInterativo } from "../../mapa/MapaInterativo";
 import { CentralAcessibilidade } from "../CentralAcessibilidade";
 import { REGISTROS_DE_APOIO } from "../dadosvivos/selecaoEditorial";
 import { ITENS_COM_DESTINO } from "../menuAlvo";
+import type { ContextoDaHome } from "./abertura";
 import {
   ACOMPANHAMENTO,
   COLETIVO,
@@ -39,8 +47,15 @@ import {
   RELATORIO_DO_RECANTO,
   ROTULO_DO_ESTADO,
 } from "./conteudo";
-import { Capitulo, Fontes, Pendente } from "./Estrutura";
-import { MapaDoRecorte } from "./MapaDoRecorte";
+import { Capitulo, Fontes, Pendente, type PropsDeSecao } from "./Estrutura";
+import {
+  ID_DA_LISTA_DO_RECORTE,
+  ID_DO_MAPA,
+  ID_DO_PAINEL_DO_MAPA,
+  ID_DO_QUADRO_DO_MAPA,
+  MapaDoRecorte,
+} from "./MapaDoRecorte";
+import { DEFINICOES, type Recorte } from "./recortes";
 
 /**
  * Seções do experimento `/dev/home-livre`, na ordem narrativa:
@@ -69,9 +84,22 @@ function tamanhoEmKb(bytes: number): string {
 
 /* -------------------------------------------------------------------------- */
 
-export function Topo() {
+/**
+ * Barra superior da Home v2.
+ *
+ * No laboratório ela continua exibindo a demonstração histórica da H1
+ * (`ITENS_COM_DESTINO`). Servindo `/`, usa a navegação canônica de sete itens
+ * da ADR-017 e ganha o menu de telas estreitas: abaixo de 1024px a lista
+ * horizontal sai de cena e quem navega por teclado usa o mesmo `MenuMobile`
+ * do resto do site — o contrato verificado em
+ * `testes/a11y/navegacao-publica.spec.ts`.
+ */
+export function Topo({ contexto = "dev" }: { contexto?: ContextoDaHome }) {
+  const publico = contexto === "publico";
+  const itens = publico ? MENU_PRINCIPAL : ITENS_COM_DESTINO;
+
   return (
-    <div className="hl-topo">
+    <header className="hl-topo" id={publico ? ID_CABECALHO_HOME : undefined}>
       <div className="hl-quadro hl-topo__linha">
         <Link className="hl-topo__marca" href="/" prefetch={false}>
           <img
@@ -84,7 +112,7 @@ export function Topo() {
         </Link>
         <nav aria-label="Principal" className="hl-topo__nav">
           <ul>
-            {ITENS_COM_DESTINO.map((item) =>
+            {itens.map((item) =>
               item.href === null ? null : (
                 <li key={item.rotulo}>
                   <Link href={item.href} prefetch={false}>
@@ -95,6 +123,14 @@ export function Topo() {
             )}
           </ul>
         </nav>
+        {publico ? (
+          <nav
+            aria-label="Principal (telas estreitas)"
+            className="hl-topo__nav-estreita"
+          >
+            <MenuMobile />
+          </nav>
+        ) : null}
         <div className="hl-topo__util">
           <CentralAcessibilidade />
           <Link
@@ -106,13 +142,13 @@ export function Topo() {
           </Link>
         </div>
       </div>
-    </div>
+    </header>
   );
 }
 
 /* -------------------------------------------------------------------------- */
 
-export function Abertura() {
+export function Abertura({ contexto = "dev" }: PropsDeSecao) {
   return (
     <section
       aria-labelledby="hl-abertura-titulo"
@@ -160,7 +196,7 @@ export function Abertura() {
           </Link>
         </div>
 
-        <Fontes itens={FONTES.abertura} />
+        <Fontes contexto={contexto} itens={FONTES.abertura} />
       </div>
 
       <figure className="hl-abertura__foto">
@@ -189,7 +225,7 @@ export function Abertura() {
 
 /* -------------------------------------------------------------------------- */
 
-export function Origem() {
+export function Origem({ contexto = "dev" }: PropsDeSecao) {
   return (
     <Capitulo
       id="hl-origem"
@@ -257,7 +293,7 @@ export function Origem() {
         </li>
       </ol>
 
-      <Fontes itens={FONTES.origem} />
+      <Fontes contexto={contexto} itens={FONTES.origem} />
     </Capitulo>
   );
 }
@@ -270,7 +306,23 @@ const ROTULO_DA_RELACAO = {
   comparacao: "referência de comparação",
 } as const;
 
-export function Territorio() {
+const ID_DO_BOTAO_VOLTAR = "hl-mapa-voltar";
+
+/**
+ * A qual recorte explorável o município pertence.
+ *
+ * `comparacao` vem primeiro de propósito: São Cristóvão tem também
+ * `pesquisa-campo`, e em nenhuma hipótese ele pode cair no recorte do Vale.
+ */
+function recorteDoMunicipio(
+  relacoes: readonly RelacaoTerritorial[],
+): Recorte | undefined {
+  if (relacoes.includes("comparacao")) return "comparacao";
+  if (relacoes.includes("vale-rio-real")) return "vale";
+  return undefined;
+}
+
+export function Territorio({ contexto = "dev" }: PropsDeSecao) {
   return (
     <Capitulo
       className="hl-capitulo--territorio"
@@ -303,9 +355,14 @@ export function Territorio() {
             </li>
           </ul>
 
-          <dl className="hl-municipios">
+          <dl className="hl-municipios" id={ID_DA_LISTA_DO_RECORTE}>
             {RECORTE_TERRITORIAL.map((municipio) => (
-              <div key={municipio.codigoIbge}>
+              <div
+                data-recorte={recorteDoMunicipio(
+                  municipio.relacoesTerritoriais,
+                )}
+                key={municipio.codigoIbge}
+              >
                 <dt>{municipio.nome}</dt>
                 <dd>
                   {municipio.relacoesTerritoriais
@@ -329,12 +386,75 @@ export function Territorio() {
           </p>
         </div>
 
-        <div className="hl-mapa">
+        <div className="hl-mapa" id={ID_DO_QUADRO_DO_MAPA}>
+          {/*
+            Servidos com `hidden`. Quem revela e' a ilha, ao montar: sem
+            JavaScript nao ha orientacao prometendo exploracao, nem botao que
+            nao faz nada. Ver MapaInterativo.
+          */}
+          <p className="hl-mapa__orientacao" data-revelavel hidden>
+            Selecione um recorte no mapa para ver os municipios que ele reune.
+          </p>
+
           <MapaDoRecorte />
+
+          <div
+            aria-live="polite"
+            className="hl-mapa__painel"
+            data-revelavel
+            hidden
+            id={ID_DO_PAINEL_DO_MAPA}
+          >
+            <p data-painel-vazio>Nenhum recorte selecionado.</p>
+            {DEFINICOES.map((definicao) => (
+              <div
+                data-painel-de={definicao.chave}
+                hidden
+                key={definicao.chave}
+              >
+                <p className="hl-mapa__painel-titulo">{definicao.titulo}</p>
+                <p>{definicao.resumo}</p>
+                <p className="hl-mapa__painel-lista">
+                  {RECORTE_TERRITORIAL.filter(
+                    (municipio) =>
+                      recorteDoMunicipio(municipio.relacoesTerritoriais) ===
+                      definicao.chave,
+                  )
+                    .map((municipio) => municipio.nome)
+                    .join(" · ")}
+                </p>
+                <Link href="/territorio" prefetch={false}>
+                  Cartografia Viva
+                </Link>
+              </div>
+            ))}
+          </div>
+
+          <button
+            className="hl-mapa__voltar"
+            data-revelavel
+            hidden
+            id={ID_DO_BOTAO_VOLTAR}
+            type="button"
+          >
+            Ver Sergipe inteiro
+          </button>
+
+          <MapaInterativo
+            chave="recorte"
+            idDaLista={ID_DA_LISTA_DO_RECORTE}
+            idDoBotaoVoltar={ID_DO_BOTAO_VOLTAR}
+            idDoEstado={ID_DO_QUADRO_DO_MAPA}
+            idDoPainel={ID_DO_PAINEL_DO_MAPA}
+            idDoSvg={ID_DO_MAPA}
+            rotuloDaLista="Recortes do mapa"
+            seletorDasOpcoes="g[data-recorte]"
+            seletorDoQueRevelar={`#${ID_DO_QUADRO_DO_MAPA} [data-revelavel]`}
+          />
         </div>
       </div>
 
-      <Fontes itens={FONTES.territorio} />
+      <Fontes contexto={contexto} itens={FONTES.territorio} />
     </Capitulo>
   );
 }
@@ -359,7 +479,7 @@ function MateriaisReunidos({ equipamento }: { equipamento: Equipamento }) {
   );
 }
 
-export function Lugares() {
+export function Lugares({ contexto = "dev" }: PropsDeSecao) {
   const recanto = EQUIPAMENTOS[0] as Equipamento;
   const borda = EQUIPAMENTOS[1] as Equipamento;
 
@@ -459,14 +579,14 @@ export function Lugares() {
 
       <p className="hl-ponte">Os números a seguir vêm destes dois lugares.</p>
 
-      <Fontes itens={FONTES.equipamentos} />
+      <Fontes contexto={contexto} itens={FONTES.equipamentos} />
     </Capitulo>
   );
 }
 
 /* -------------------------------------------------------------------------- */
 
-export function Leitura() {
+export function Leitura({ contexto = "dev" }: PropsDeSecao) {
   const protagonista = INDICADORES[0];
 
   return (
@@ -539,14 +659,14 @@ export function Leitura() {
         detalhamento das atividades registradas
       </p>
 
-      <Fontes itens={FONTES.leitura} />
+      <Fontes contexto={contexto} itens={FONTES.leitura} />
     </Capitulo>
   );
 }
 
 /* -------------------------------------------------------------------------- */
 
-export function Escuta() {
+export function Escuta({ contexto = "dev" }: PropsDeSecao) {
   return (
     <Capitulo
       id="hl-escuta"
@@ -617,14 +737,14 @@ export function Escuta() {
         </ul>
       </div>
 
-      <Fontes itens={FONTES.escuta} />
+      <Fontes contexto={contexto} itens={FONTES.escuta} />
     </Capitulo>
   );
 }
 
 /* -------------------------------------------------------------------------- */
 
-export function Produtos() {
+export function Produtos({ contexto = "dev" }: PropsDeSecao) {
   return (
     <Capitulo
       id="hl-produtos"
@@ -704,7 +824,12 @@ export function Produtos() {
           </span>
           <h3>Identidade visual</h3>
           <p>Marca, símbolo e peças do projeto no acervo público.</p>
-          <Link href="/prestacao-de-contas" prefetch={false}>
+          {/*
+            Apontava para /prestacao-de-contas enquanto /acervo não existia. A
+            rota passou a existir na integração de 2026-09-16 e o destino
+            passou a ser o que o rótulo sempre disse. A copy não mudou.
+          */}
+          <Link href="/acervo" prefetch={false}>
             Ver no acervo
           </Link>
         </li>
@@ -753,14 +878,14 @@ export function Produtos() {
         </ul>
       </nav>
 
-      <Fontes itens={FONTES.produtos} />
+      <Fontes contexto={contexto} itens={FONTES.produtos} />
     </Capitulo>
   );
 }
 
 /* -------------------------------------------------------------------------- */
 
-export function Conferencia() {
+export function Conferencia({ contexto = "dev" }: PropsDeSecao) {
   return (
     <Capitulo
       id="hl-conferencia"
@@ -804,14 +929,30 @@ export function Conferencia() {
         </figure>
       </div>
 
-      <Fontes itens={FONTES.conferir} />
+      <Fontes contexto={contexto} itens={FONTES.conferir} />
     </Capitulo>
   );
 }
 
 /* -------------------------------------------------------------------------- */
 
-export function Creditos() {
+/**
+ * Régua de marcas — **estudo conceitual, não conteúdo publicável.**
+ *
+ * O próprio bloco declara "Não publicar": os arquivos oficiais de apoio e
+ * fomento não estão no repositório, os slots vazios anunciam material
+ * pendente e as regras de ordem e proporção ainda dependem de validação. Numa
+ * página de prestação de contas, publicar marca institucional em rascunho é
+ * afirmação sobre terceiros que ninguém autorizou.
+ *
+ * Por isso a seção inteira fica fora da árvore pública, pelo mesmo critério
+ * de `Fontes`. A atribuição institucional que o visitante precisa — quem
+ * realiza, quem financia e a quem se presta contas — já está escrita em texto
+ * no capítulo Origem, e não depende desta régua.
+ */
+export function Creditos({ contexto = "dev" }: PropsDeSecao) {
+  if (contexto === "publico") return null;
+
   return (
     <section aria-labelledby="hl-creditos-titulo" className="hl-creditos">
       <div className="hl-quadro">
@@ -872,7 +1013,7 @@ export function Creditos() {
           <li>Rótulo “Apoio / parceria” e posição do Coletivo a validar.</li>
         </ul>
 
-        <Fontes itens={FONTES.creditos} />
+        <Fontes contexto={contexto} itens={FONTES.creditos} />
       </div>
     </section>
   );

@@ -213,20 +213,25 @@ test.describe("protótipo Dados e indicadores H4", () => {
    * é a Home receber a candidata aprovada, uma vez, e nada da casca de DEV nem
    * do painel da H4.0.
    */
-  test("a Home recebe a seção pública uma única vez, e nada do laboratório", async ({
+  /**
+   * A Home passou a ser a candidata v2, que tem leitura quantitativa própria
+   * no capítulo IV. A seção pública H4.1 saiu de `/` junto com a composição
+   * que a hospedava; o que continua valendo, e é o que importa vigiar, é que
+   * nada do laboratório atravessa para o conteúdo público.
+   */
+  test("a Home tem uma leitura quantitativa, e nada do laboratório", async ({
     page,
   }) => {
     await page.goto("/");
 
-    // 1. Exatamente uma seção pública de dados.
-    await expect(page.getByTestId("dados-home")).toHaveCount(1);
-    await expect(page.locator("#secao-dados-home")).toHaveCount(1);
+    // 1. Exatamente um capítulo de leitura, com o título aprovado.
+    const leitura = page.locator("#hl-leitura");
+    await expect(leitura).toHaveCount(1);
+    await expect(
+      leitura.getByRole("heading", { name: "Onde o recurso circula" }),
+    ).toBeVisible();
 
-    // 2. É a composição pública aprovada, e não a do laboratório.
-    await expect(page.getByTestId("dados-home")).toHaveAttribute(
-      "data-contexto",
-      "home",
-    );
+    // 2. A casca do laboratório não veio junto.
     await expect(page.getByTestId("dados-prototipo")).toHaveCount(0);
 
     // 3. O painel da H4.0 não veio junto: ele é outra composição, e continua

@@ -310,7 +310,13 @@ test("H4.5: a Home recebeu só a candidata; a H4.0 continua como estava", async 
   page,
 }) => {
   await page.goto("/");
-  await expect(page.locator(".dados-vivos")).toHaveCount(1);
+  /*
+    A Home é a candidata v2 desde 2026-09-16, e a sua leitura quantitativa é
+    composição própria — a seção `.dados-vivos` da H4.1 saiu de `/` com a
+    Home que a hospedava. O título aprovado permanece, e a moldura do
+    laboratório continua proibida: é isso que este cenário guarda.
+  */
+  await expect(page.locator("#hl-leitura")).toHaveCount(1);
   await expect(page.getByText("Onde o recurso circula")).toHaveCount(1);
 
   // Moldura e material reservado do laboratório não acompanham.

@@ -100,7 +100,7 @@ for (const tema of TEMAS) {
       // O Hero tem medição própria sobre o pixel composto da fotografia.
       // Aqui continua valendo o propósito original: texto corrido sobre a
       // superfície semântica da página, abaixo da primeira dobra.
-      const razao = await contrasteDe(page, "#home-com-hero > div p");
+      const razao = await contrasteDe(page, "#hl-territorio .hl-texto p");
       expect(razao).not.toBeNull();
       expect(razao as number).toBeGreaterThanOrEqual(4.5);
     });

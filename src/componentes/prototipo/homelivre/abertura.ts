@@ -13,6 +13,23 @@ import type { Fonte } from "./conteudo";
 export const VARIANTES_DA_ABERTURA = ["atual", "a", "b", "b2", "c"] as const;
 export type VarianteDaAbertura = (typeof VARIANTES_DA_ABERTURA)[number];
 
+/**
+ * Onde a Home v2 está sendo renderizada.
+ *
+ * Desde a decisão humana de 2026-09-16 a candidata deixou de ser alternativa
+ * experimental e passou a servir `/`. A mesma implementação atende os dois
+ * lugares — duplicar a Home para publicá-la criaria exatamente a divergência
+ * que a decisão veio encerrar. O que muda entre eles é só a casca:
+ *
+ * - `dev`: mantém o aviso de experimento e o seletor de abertura, que são
+ *   instrumentos do laboratório e não podem aparecer em conteúdo público;
+ * - `publico`: usa a navegação canônica de sete itens (`MENU_PRINCIPAL`) com
+ *   o menu de telas estreitas, e nenhum rótulo de desenvolvimento.
+ *
+ * Nada da composição editorial varia com este parâmetro.
+ */
+export type ContextoDaHome = "dev" | "publico";
+
 const ESQUEMA_DA_VARIANTE = z.enum(VARIANTES_DA_ABERTURA);
 
 export function lerVarianteDaAbertura(

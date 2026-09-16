@@ -444,3 +444,135 @@ rastreado antes deste experimento.
 - `testes/a11y/home-livre.spec.ts` — novo
 - `docs/tarefas/16-home-v2-candidata-editorial-experimental.md` — este
   documento
+
+## 15. Promoção a Home oficial em desenvolvimento — 2026-09-16
+
+Decisão humana desta data: a Home v2 **deixou de ser experimento concorrente**.
+Ela é a Home oficial em desenvolvimento do Observatório, e `/` passou a
+renderizá-la. Não haverá Home v3 nem alternativa paralela: todo refinamento
+futuro é commit incremental nesta mesma linha.
+
+A Home estrutural H0–H4.1, que servia `/` até aqui, continua versionada e
+publicada em produção. O papel dela mudou, não o código: passa a ser **baseline
+publicado e ponto de rollback**, não linha de desenvolvimento. Nada foi
+removido, e nenhum documento anterior foi reescrito — o histórico das decisões
+que levaram até ela continua valendo como registro do que foi decidido quando.
+
+A promoção não duplicou a Home. `/` e `/dev/home-livre` renderizam o mesmo
+`HomeLivre`; o que os separa é o parâmetro `contexto`:
+
+- `publico` — navegação canônica de sete itens da ADR-017, menu de telas
+  estreitas e nenhum rótulo de desenvolvimento;
+- `dev` — aviso de experimento, seletor de abertura e a demonstração histórica
+  de menu da H1, como harness de regressão.
+
+`/dev/home-livre` segue existindo com essa função e continua respondendo 404 em
+produção, verificado no build local. Não existe segunda Home pública.
+
+A abertura pública é a B2 aprovada, fixa: `?hero=` é instrumento de laboratório
+e não é lido em `/`.
+
+### Correção de destino incorporada
+
+O item "Identidade visual" do capítulo Produtos apontava para
+`/prestacao-de-contas` enquanto `/acervo` não existia. A rota passou a existir
+na integração de 2026-09-16 e o destino passou a ser `/acervo`, que é o que o
+rótulo "Ver no acervo" sempre disse. A copy não mudou.
+
+### Aposentadoria da composição H2 — decisão de 2026-09-16
+
+A composição H2 do território — `SecaoMapa`, o mapa exploratório com índice
+sincronizado e navegação por teclado sobre os 75 municípios — era servida
+**somente** por `/`. Com a promoção da candidata v2 ela perdeu rota pública.
+
+Decisão humana: a H2 está **aposentada da composição pública**. Não será
+reincorporada à Home, não será movida inteira para `/territorio` e não fica
+como segunda experiência concorrente. O componente e os seus estilos
+continuam versionados como legado histórico; nenhuma rota pública e nenhuma
+rota `/dev` nova foi criada para mantê-los vivos.
+
+A aposentadoria é da **implementação**, não da exigência. Os contratos de
+acessibilidade que a H2 protegia foram auditados um a um e migrados:
+
+- **Reaproveitados** — seleção por teclado, `Enter`, `Espaço`, `Esc`, foco
+  visível que muda cor *e* espessura, estado selecionado perceptível sem
+  depender de cor, caminho único para mouse, toque e teclado, uma única
+  parada de `Tab`, mapa como `img` sem JavaScript e alternativa textual.
+  Agora em `testes/a11y/mapa.spec.ts`, aplicados a **dois recortes**.
+- **Aposentados** — os 75 municípios como opções individuais, o índice
+  textual dos 75, as setas percorrendo 75 itens e o título "Cartografia viva
+  do Vale do Rio Real" na Home, que hoje é o nome de `/territorio`.
+- **Conteúdo verificado** — os quatro lugares de pesquisa continuam públicos
+  em `/territorio`; o recorte e o vínculo de cada município continuam em
+  texto no capítulo II da Home.
+
+Sobre os 75 nomes: eles eram a alternativa textual de uma visualização do
+estado inteiro, não conteúdo editorial. O estado continua desenhado como
+**contexto**, com `<title>`, `<desc>` e a lista dos municípios com vínculo
+declarado ao lado. Nenhuma informação essencial foi perdida.
+
+### Mapa interativo da Home v2 — exploração por recorte
+
+Decisão humana da mesma data: a Home v2 **tem** mapa interativo, por junção
+entre a linguagem editorial da v2 e os princípios de interação da H2.
+
+Estado inicial: Sergipe em visão ampla, nenhum recorte destacado, nenhum
+município nomeado no desenho, nenhuma ficha aberta. **Foco não é seleção** —
+um recorte focado por teclado recebe contorno tracejado e nada mais; quem
+revela o recorte é `Enter`, `Espaço`, clique ou toque.
+
+São dois alvos, não setenta e cinco: o recorte do Vale do Rio Real, com os
+cinco municípios tratados como **um** recorte, e São Cristóvão como
+referência de comparação. Selecionar revela contorno, preenchimento, os nomes
+no desenho, os itens correspondentes na lista textual e um painel contextual
+com CTA para `/territorio`. `Esc` e a ação "Ver Sergipe inteiro" devolvem à
+visão geral, com o foco de volta no mapa.
+
+O reenquadramento é transformação CSS sobre o invólucro do desenho, com
+escala e deslocamento **calculados em tempo de build** a partir da mesma
+geometria projetada. Não há cálculo geométrico em runtime, nenhuma biblioteca
+nova e nenhuma malha adicional. A duração vem de `--duracao-painel`, que a H0
+zera sob `prefers-reduced-motion`.
+
+`MapaInterativo` foi **reutilizado e parametrizado**, não duplicado: a ilha já
+era comportamental e não renderizava nada. Ganhou o seletor das opções, a
+chave que liga opção e lista, o rótulo da lista, o elemento que recebe o
+estado, os elementos revelados na montagem e o botão de voltar. Os padrões
+preservam o comportamento do laboratório `/dev/territorio`.
+
+Sem JavaScript nada disso é prometido: o desenho continua `role="img"`, a
+lista textual continua completa, e orientação, painel e botão são servidos com
+`hidden` — a ilha os revela ao montar.
+
+### Conteúdo interno fora da árvore pública
+
+Auditoria do HTML servido em `/` encontrou material de laboratório que veio
+junto na promoção: nove blocos "Fontes desta seção · experimento" com caminhos
+de repositório, códigos de fase, documentos internos e os identificadores
+restritos A03 e A04; e a seção de créditos, que é estudo conceitual da régua
+de marcas e declara "Não publicar", com slots de marca pendentes e regras
+ainda a validar.
+
+Decisão: em `contexto="publico"` esses blocos **não são renderizados** — não
+escondidos por CSS, por `hidden` ou por comentário. Em `contexto="dev"`
+continuam completos, e `/dev/home-livre` segue respondendo 404 em produção.
+
+A atribuição institucional que o visitante precisa — quem realiza, quem
+financia e a quem se presta contas — já está escrita em texto no capítulo
+Origem, e não dependia da régua.
+
+### Correção de acessibilidade incorporada
+
+A varredura encontrou 17 links de conteúdo distinguidos apenas por cor
+(WCAG 1.4.1). Correção localizada: links dentro de capítulo, abertura e painel
+do mapa passam a ser sublinhados; cabeçalho, rodapé e botões vazados ficam
+fora, porque são landmarks de navegação ou já se distinguem por contorno. A
+barra superior da Home passou a ser `<header>`, e o seu foco usa milho, a
+mesma tinta do resto do site.
+
+### Placeholders e desvios
+
+Permanecem placeholders preexistentes em O Observatório, A Pesquisa, Dados,
+Diário de Campo e PodObservar. Os dois CTAs ambíguos — "Ir para o território"
+e "Conhecer a pesquisa", ambos âncoras internas — foram preservados por
+decisão e ficam registrados para a próxima rodada editorial.

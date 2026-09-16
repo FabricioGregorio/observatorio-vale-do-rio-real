@@ -687,13 +687,20 @@ test.describe("isolamento da rota", () => {
     expect(await resposta.text()).toContain("Disallow: /dev/");
   });
 
-  test("a Home usa apenas a variante B aprovada, sem os seletores do laboratório", async ({
+  /**
+   * A Home passou a ser a candidata v2, cuja abertura aprovada é a B2. O que
+   * este cenário guarda continua sendo o mesmo: `/` serve **uma** abertura, a
+   * aprovada, e nenhum seletor de variação do laboratório atravessa junto.
+   */
+  test("a Home usa apenas a abertura aprovada, sem os seletores do laboratório", async ({
     page,
   }) => {
     await page.goto("/");
     await expect(page.locator("#hero-wordmark")).toHaveCount(0);
     await expect(page.locator("#hero-tipografia")).toHaveCount(0);
-    await expect(page.locator("#hero-home")).toHaveCount(1);
+    await expect(page.locator("[data-abertura]")).toHaveCount(1);
+    await expect(page.locator('[data-abertura="b2"]')).toHaveCount(1);
+    await expect(page.locator(".ab-seletor")).toHaveCount(0);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(
       "Observatório de Cultura e Economia Criativa da Região do Vale do Rio Real",
     );

@@ -1,6 +1,17 @@
 import type { ReactNode } from "react";
 
+import type { ContextoDaHome } from "./abertura";
 import type { Fonte } from "./conteudo";
+
+/**
+ * Toda seção da Home v2 recebe o contexto, e por um motivo só: o bloco de
+ * fontes é instrumento de laboratório. Ele cita caminho de repositório, código
+ * de fase e identificador de documento restrito — material interno, que não
+ * pode existir na árvore pública. Por isso `Fontes` **não renderiza** em
+ * `publico`, em vez de ser escondido por CSS ou por `hidden`: esconder ainda
+ * seria publicar.
+ */
+export type PropsDeSecao = { contexto?: ContextoDaHome };
 
 /**
  * Peças de estrutura do experimento: capítulo, fontes e marcação de pendência.
@@ -46,7 +57,12 @@ export function Capitulo({
   );
 }
 
-export function Fontes({ itens }: { itens: readonly Fonte[] }) {
+export function Fontes({
+  contexto = "dev",
+  itens,
+}: PropsDeSecao & { itens: readonly Fonte[] }) {
+  if (contexto === "publico") return null;
+
   return (
     <details className="hl-fontes">
       <summary>Fontes desta seção · experimento</summary>

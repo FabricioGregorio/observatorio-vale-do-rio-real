@@ -42,7 +42,9 @@ for (const pagina of PAGINAS) {
           // nada.
           if (
             link.closest("svg") !== null ||
-            link.closest(".cabecalho-prototipo") !== null
+            link.closest(
+              "header, footer, nav, .cabecalho-prototipo, .hl-topo, .hl-rodape",
+            ) !== null
           )
             return false;
 
@@ -51,7 +53,12 @@ for (const pagina of PAGINAS) {
           const fundo = estilo.backgroundColor;
           const temFundo =
             fundo !== "transparent" && fundo !== "rgba(0, 0, 0, 0)";
-          return !sublinhado && !temFundo;
+          // Contorno tambem distingue sem depender de cor: e o caso dos
+          // botoes vazados, que tem borda visivel e fundo transparente.
+          const temBorda =
+            Number.parseFloat(estilo.borderTopWidth) > 0 ||
+            Number.parseFloat(estilo.borderBottomWidth) > 0;
+          return !sublinhado && !temFundo && !temBorda;
         })
         .map((link) => link.textContent?.trim().slice(0, 60) ?? ""),
     );

@@ -1,11 +1,4 @@
-import { SecaoDados } from "../componentes/dados/SecaoDados";
-import { HeroManifesto } from "../componentes/hero/HeroManifesto";
-import { CaminhosPrioritarios } from "../componentes/home/CaminhosPrioritarios";
-import { ChamadaAcervo } from "../componentes/home/ChamadaAcervo";
-import { CAMINHOS_PRIORITARIOS } from "../componentes/home/caminhos";
-import { SecaoMapa } from "../componentes/home/SecaoMapa";
-import { PesquisaEmCampo } from "../componentes/pesquisa/PesquisaEmCampo";
-import { CabecalhoPrototipo } from "../componentes/prototipo/CabecalhoPrototipo";
+import { HomeLivre } from "../componentes/prototipo/homelivre/HomeLivre";
 import { metadadosDaRota } from "../lib/site-url";
 
 export const metadata = metadadosDaRota({
@@ -15,64 +8,27 @@ export const metadata = metadadosDaRota({
 });
 
 /**
- * Home — fatia estrutural (Tarefa 10A) com Hero Manifesto integrado (H1/H2).
+ * Home — candidata editorial v2, promovida a página inicial.
  *
- * A estrutura planejada da Home tem seis seções:
+ * Decisão humana de 2026-09-16: a Home v2 deixou de ser alternativa
+ * experimental e passou a ser a Home oficial em desenvolvimento. A Home
+ * estrutural H0–H4.1 que esta rota servia até aqui continua publicada em
+ * produção como baseline de rollback, e seus componentes seguem versionados —
+ * o que ela deixou de ser é linha concorrente.
  *
- *   Hero Manifesto → Território → Pesquisa em Campo → Dados → Caminhos
- *   prioritários → Acervo
+ * Esta rota é só a casca pública: a composição inteira vem de `HomeLivre`, a
+ * mesma que `/dev/home-livre` renderiza como harness de regressão. Copiar a
+ * Home para publicá-la recriaria as duas estruturas visuais divergentes que a
+ * decisão veio encerrar, então o que muda entre os dois lugares é um
+ * parâmetro: `contexto="publico"` troca a demonstração de menu da H1 pela
+ * navegação canônica de sete itens e retira os rótulos de desenvolvimento.
  *
- * Uma delas **não** é renderizada nesta fatia, e a ausência é deliberada:
- *
- * - **Apresentação** do Observatório e do Coletivo "Tobias, sou Eu!" depende
- *   de texto humano aprovado. Não existe fonte para escrevê-la, e converter os
- *   documentos de arquitetura em copy pública seria inventar apresentação
- *   institucional.
- * A regra da fatia é explícita: seção que depende integralmente de conteúdo
- * bloqueado é omitida, não preenchida com texto plausível nem renderizada
- * vazia.
- *
- * A seção **Território** usa a composição H2 aprovada: SVG renderizado no
- * servidor, Preset B refinado e uma ilha cliente pequena para sincronizar
- * mapa, índice e painel. Nenhum comparativo numérico é publicado.
- *
- * A seção **Pesquisa em Campo** usa a composição H3 aprovada — A, Documental
- * aberto. São três fotografias derivadas de originais sem pessoa
- * identificável, servidas abaixo da dobra, sem `preload` e sem `priority`.
- * Nenhuma delas tem data confirmada, e nenhuma data é inferida.
- *
- * A seção **Dados** usa a composição H4.5.2 aprovada, "Onde o recurso
- * circula". Os valores vêm do agregado auditado na H4.0, em TypeScript
- * versionado: nenhuma tabela `indicador` existe no banco, nenhum número é
- * provisório e nenhum é escrito à mão aqui.
+ * A abertura fica na B2 aprovada. `?hero=` é instrumento de laboratório e não
+ * é lido aqui: a Home pública não tem variante.
  *
  * Server Component, sem consulta a banco. O `<main id="conteudo">` vive no
  * layout raiz: aqui vai só o conteúdo.
  */
 export default function Home() {
-  return (
-    <div id="home-com-hero">
-      {/*
-        O layout raiz ainda serve o cabeçalho legado às demais rotas. Nesta
-        página ele é substituído pela casca aprovada do Hero; a regra está
-        escopada à presença da própria Home e não afeta nenhuma outra rota.
-      */}
-      <style>{`body:has(#home-com-hero)>header:not(.cabecalho-prototipo){display:none}`}</style>
-      <CabecalhoPrototipo contexto="home" />
-      <HeroManifesto variante="tipografia" id="hero-home" />
-
-      <SecaoMapa />
-
-      <div className="mx-auto w-full max-w-6xl px-4">
-        <PesquisaEmCampo />
-      </div>
-
-      <SecaoDados />
-
-      <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 pb-12">
-        <CaminhosPrioritarios caminhos={CAMINHOS_PRIORITARIOS} />
-        <ChamadaAcervo />
-      </div>
-    </div>
-  );
+  return <HomeLivre abertura="b2" contexto="publico" />;
 }

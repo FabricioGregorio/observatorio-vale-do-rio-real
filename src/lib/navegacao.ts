@@ -32,4 +32,14 @@ export const MENU_RODAPE: readonly ItemNavegacao[] = [
 /** Âncora do conteúdo principal, alvo do link de pular. */
 export const ID_CONTEUDO = "conteudo";
 
+/**
+ * Identificador do cabeçalho servido na Home pública.
+ *
+ * Vive aqui, e não no componente, porque desde a promoção da Home v2
+ * (2026-09-16) duas cascas podem ocupar esse lugar — a do protótipo H1 e a da
+ * Home v2 — e o contrato verificado pelos testes de navegação é o
+ * identificador, não qual componente o renderiza.
+ */
+export const ID_CABECALHO_HOME = "cabecalho-home";
+
 import type { Route } from "next";

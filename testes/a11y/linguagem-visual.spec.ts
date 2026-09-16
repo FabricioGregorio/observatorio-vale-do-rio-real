@@ -390,82 +390,46 @@ const FAMILIAS = [
   "lv-g-transicao",
 ] as const;
 
-/** As raízes das seções que existiam antes da H4.1. */
-const SECOES_ANTERIORES = ["#hero-home", "#territorio-home", "#pesquisa-home"];
-
-test("H4.1: a gramática entra na Home confinada à seção de Dados", async ({
+/**
+ * A gramática visual da H4 nasceu para a seção de Dados da Home H0–H4.1. Com
+ * a promoção da candidata v2, aquela composição deixou de ser servida em `/`
+ * — e a exigência se inverte sem perder o propósito: em vez de confinada à
+ * seção, a gramática simplesmente não veste a Home pública. O laboratório
+ * continua sendo o único lugar onde ela existe, e os cenários que guardam
+ * isso seguem abaixo.
+ */
+test("H4.1: nem a gramática nem a casca do laboratório chegam à Home", async ({
   page,
 }) => {
   await page.goto("/");
 
-  // A seção existe e é a raiz declarada.
-  const raiz = page.locator("#secao-dados-home");
-  await expect(raiz).toHaveCount(1);
-
-  // Cada família só aparece dentro dela: o total da página é igual ao total
-  // dentro da seção. Se uma única ocorrência escapar, os números divergem.
   for (const familia of FAMILIAS) {
-    const naPagina = await page.locator(`.${familia}`).count();
-    const naSecao = await raiz.locator(`.${familia}`).count();
-    expect(naPagina, `${familia} fora da seção de Dados`).toBe(naSecao);
+    await expect(
+      page.locator(`.${familia}`),
+      `${familia} vazou para a Home`,
+    ).toHaveCount(0);
   }
-  // E a gramática é de fato usada pela composição, senão o teste acima
-  // passaria com zero dos dois lados e não provaria nada.
-  expect(await raiz.locator(`.${FAMILIAS[0]}`).count()).toBeGreaterThan(0);
-
-  // O mesmo para o grafismo: a assinatura é da H4, e é uma só.
-  const grafismos = page.locator('img[src*="/media/grafismos/"]');
-  await expect(grafismos).toHaveCount(1);
-  await expect(raiz.locator('img[src*="/media/grafismos/"]')).toHaveCount(1);
-});
-
-test("H4.1: H1, H2 e H3 não adquirem a gramática da H4", async ({ page }) => {
-  await page.goto("/");
-
-  for (const secao of SECOES_ANTERIORES) {
-    const escopo = page.locator(secao);
-    await expect(escopo, `${secao} deveria existir`).toHaveCount(1);
-
-    for (const familia of FAMILIAS) {
-      await expect(
-        escopo.locator(`.${familia}`),
-        `${familia} vazou para ${secao}`,
-      ).toHaveCount(0);
-    }
-    await expect(escopo.locator('[class*="dv-"]')).toHaveCount(0);
-    await expect(escopo.locator(".lv-revelar")).toHaveCount(0);
-  }
-});
-
-test("H4.1: a casca e os estados do laboratório não chegam à Home", async ({
-  page,
-}) => {
-  await page.goto("/");
+  await expect(page.locator('[class*="dv-"]')).toHaveCount(0);
+  await expect(page.locator(".lv-revelar")).toHaveCount(0);
 
   // Casca de comparação do laboratório.
   await expect(page.locator(".linguagem-visual")).toHaveCount(0);
   await expect(page.locator(".lv-abertura")).toHaveCount(0);
   await expect(page.locator(".lv-controles")).toHaveCount(0);
   await expect(page.locator('input[name="preset"]')).toHaveCount(0);
+  await expect(page.locator("[data-preset]")).toHaveCount(0);
 
-  // O preset do laboratório não pode vestir a Home nem as seções anteriores;
-  // a composição pública conserva o seu, que é outro.
-  await expect(page.locator('[data-preset="B"]')).toHaveCount(0);
-  await expect(page.locator('[data-preset="A"]')).toHaveCount(0);
-  await expect(page.locator('[data-preset="H4.5"]')).toHaveCount(1);
-
-  // Os papéis da gramática são variáveis de `.dados-vivos`, e não do documento:
-  // se subissem para o `body`, alcançariam H1–H3 por herança.
+  /*
+    Os papéis da gramática são variáveis da seção de laboratório, e não do
+    documento: se subissem para o `body`, alcançariam a Home por herança.
+  */
   const noBody = await page.evaluate(() =>
     getComputedStyle(document.body).getPropertyValue("--lv-ave-viva").trim(),
   );
   expect(noBody).toBe("");
-  const naSecao = await page.evaluate(() => {
-    const raiz = document.querySelector("#secao-dados-home");
-    if (raiz === null) return null;
-    return getComputedStyle(raiz).getPropertyValue("--lv-ave-viva").trim();
-  });
-  expect(naSecao).not.toBe("");
+
+  // A assinatura de identidade continua sendo uma só na página.
+  await expect(page.locator('img[src*="/media/grafismos/"]')).toHaveCount(1);
 
   // Vocabulário de desenvolvimento, inclusive como regra morta no CSS.
   expect(await page.content()).not.toMatch(/proposta|somente DEV/i);

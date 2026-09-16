@@ -32,8 +32,15 @@ export const CSS_DA_HOME_LIVRE = `
 .hl-topo__nav ul{display:flex;gap:1.5rem;white-space:nowrap}
 .home-livre .hl-topo__nav a{color:var(--color-texto);font-family:var(--font-display);font-size:var(--text-sm);text-decoration:none}
 .home-livre .hl-topo__nav a:hover{text-decoration:underline}
+.home-livre .hl-topo :focus-visible{outline-color:var(--color-destaque)}
+.home-livre .hl-capitulo a:not(.hl-botao),.home-livre .hl-abertura a:not(.hl-botao),.home-livre .hl-mapa__painel a{text-decoration:underline;text-underline-offset:.18em}
 .hl-topo__util{display:flex;align-items:center;gap:.75rem;margin-left:auto}
 @media (min-width:1024px){.hl-topo__nav{order:0;flex-basis:auto}}
+.hl-topo__nav-estreita{order:3;flex-basis:100%}
+.home-livre[data-contexto="publico"] .hl-topo__nav{display:none}
+.home-livre[data-contexto="publico"] .hl-topo__nav-estreita button,.home-livre[data-contexto="publico"] .hl-topo__nav-estreita a{color:var(--color-texto)}
+.home-livre[data-contexto="publico"] .hl-topo__nav-estreita button{border-color:var(--color-texto)}
+@media (min-width:1024px){.home-livre[data-contexto="publico"] .hl-topo__nav{display:block}.hl-topo__nav-estreita{display:none}}
 
 /* Botões */
 .home-livre .hl-botao{display:inline-flex;flex-wrap:wrap;align-items:baseline;gap:.25rem .75rem;padding:.8rem 1.15rem;border:1px solid var(--color-texto);border-radius:var(--radius-ficha);color:var(--color-texto);font-family:var(--font-display);font-weight:600;text-decoration:none;transition:background-color var(--duracao-hover) var(--easing-padrao),color var(--duracao-hover) var(--easing-padrao)}
@@ -105,12 +112,32 @@ export const CSS_DA_HOME_LIVRE = `
 /* II Território */
 .hl-territorio{display:grid;gap:3rem;margin-top:2rem;align-items:start}
 @media (min-width:960px){.hl-territorio{grid-template-columns:minmax(0,5fr) minmax(0,7fr)}}
+.hl-mapa{position:relative}
 .hl-mapa__svg{display:block;width:100%;height:auto}
-.hl-mapa__svg path,[data-amostra]{fill:color-mix(in srgb,var(--color-fundo) 86%,var(--color-texto));background:color-mix(in srgb,var(--color-fundo) 86%,var(--color-texto))}
-.hl-mapa__svg path{stroke:var(--color-fundo);stroke-width:1;vector-effect:non-scaling-stroke}
-.hl-mapa__svg path[data-rel~="vale"],[data-amostra="vale"]{fill:color-mix(in srgb,var(--color-fundo) 45%,var(--color-marca));background:color-mix(in srgb,var(--color-fundo) 45%,var(--color-marca))}
-.hl-mapa__svg path[data-rel~="vale"][data-rel~="campo"],[data-amostra="vale campo"]{fill:var(--color-marca);background:var(--color-marca)}
-.hl-mapa__svg path[data-rel~="comparacao"],[data-amostra="comparacao"]{fill:var(--color-acento);background:var(--color-acento)}
+.hl-mapa__janela{overflow:hidden}
+.hl-mapa__palco{transform-origin:0 0;transition:transform var(--duracao-painel) var(--easing-padrao);will-change:transform}
+.hl-mapa__svg path{fill:color-mix(in srgb,var(--color-fundo) 86%,var(--color-texto));stroke:var(--color-fundo);stroke-width:1;vector-effect:non-scaling-stroke}
+[data-amostra]{background:color-mix(in srgb,var(--color-fundo) 86%,var(--color-texto))}
+[data-amostra="vale"]{background:color-mix(in srgb,var(--color-fundo) 45%,var(--color-marca))}
+[data-amostra="vale campo"]{background:var(--color-marca)}
+[data-amostra="comparacao"]{background:var(--color-acento)}
+.hl-mapa__svg[data-interativo="true"] g[data-recorte]{cursor:pointer}
+.hl-mapa__svg[data-interativo="true"] g[data-recorte]:hover path{fill:color-mix(in srgb,var(--color-fundo) 76%,var(--color-texto))}
+.hl-mapa__svg g[data-recorte]:focus{outline:none}
+.hl-mapa__svg g[data-recorte]:focus-visible path{stroke:var(--color-destaque);stroke-width:3;stroke-dasharray:6 4}
+.hl-mapa__svg g[data-recorte][aria-selected="true"] path{stroke:var(--color-texto);stroke-width:2.4}
+.hl-mapa[data-selecionado="vale"] g[data-recorte="vale"] path[data-rel~="vale"]{fill:color-mix(in srgb,var(--color-fundo) 45%,var(--color-marca))}
+.hl-mapa[data-selecionado="vale"] g[data-recorte="vale"] path[data-rel~="vale"][data-rel~="campo"]{fill:var(--color-marca)}
+.hl-mapa[data-selecionado="comparacao"] g[data-recorte="comparacao"] path{fill:var(--color-acento)}
+.hl-mapa__rotulo{fill:var(--color-texto);font-family:var(--font-display);font-weight:600;opacity:0;paint-order:stroke;stroke:var(--color-fundo);stroke-width:4;text-anchor:middle;transition:opacity var(--duracao-painel) var(--easing-padrao)}
+.hl-mapa[data-selecionado="vale"] g[data-recorte="vale"] .hl-mapa__rotulo,.hl-mapa[data-selecionado="comparacao"] g[data-recorte="comparacao"] .hl-mapa__rotulo{opacity:1}
+.hl-mapa__orientacao{margin:0 0 .75rem;font-size:var(--text-sm);color:var(--color-texto-suave)}
+.hl-mapa__painel{margin-top:1rem;padding:.9rem 1rem;border:1px solid var(--hl-fio);border-radius:var(--radius-ficha);font-size:var(--text-sm)}
+.hl-mapa__painel p{margin:0 0 .35rem}
+.hl-mapa__painel-titulo{font-family:var(--font-display);font-weight:600}
+.hl-mapa__painel-lista{color:var(--color-texto-suave)}
+.hl-mapa__voltar{margin-top:.75rem;padding:.45rem .9rem;border:1px solid var(--color-texto);border-radius:var(--radius-ficha);background:none;color:var(--color-texto);font-family:var(--font-display);font-size:var(--text-sm);cursor:pointer}
+.hl-municipios>div[data-selecionado]{border-left:3px solid var(--color-marca);padding-left:.6rem;background:color-mix(in srgb,var(--color-fundo) 90%,var(--color-marca))}
 .hl-legenda-mapa{display:grid;gap:.4rem;margin-top:1.75rem;font-size:var(--text-sm)}
 .hl-legenda-mapa li{display:flex;align-items:center;gap:.6rem}
 .hl-legenda-mapa span{flex:0 0 1rem;height:1rem;border-radius:var(--radius-ficha)}

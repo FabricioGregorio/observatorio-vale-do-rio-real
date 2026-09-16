@@ -33,7 +33,7 @@ import {
   EQUIPAMENTOS,
   NOME_OFICIAL,
 } from "./conteudo";
-import { Fontes } from "./Estrutura";
+import { Fontes, type PropsDeSecao } from "./Estrutura";
 import { FragmentoDoVale } from "./FragmentoDoVale";
 
 /**
@@ -142,7 +142,7 @@ function CtaDaPesquisa() {
  * legenda sai de cima da imagem e vira linha documental logo abaixo dela. As
  * contagens diminuem para prova rápida, e o parágrafo de apoio sai.
  */
-export function AberturaB2() {
+export function AberturaB2({ contexto = "dev" }: PropsDeSecao) {
   const provas = [
     {
       valor: EQUIPAMENTOS.length,
@@ -218,7 +218,7 @@ export function AberturaB2() {
       </div>
 
       <div className="hl-quadro">
-        <Fontes itens={FONTES_DA_B2} />
+        <Fontes contexto={contexto} itens={FONTES_DA_B2} />
       </div>
     </section>
   );
@@ -233,7 +233,7 @@ export function AberturaB2() {
  * institucional. A fotografia sangra até a borda direita da janela e a nota
  * documental avança sobre a grade do texto. Origem cabe numa assinatura.
  */
-export function AberturaA() {
+export function AberturaA({ contexto = "dev" }: PropsDeSecao) {
   return (
     <section
       aria-labelledby="ab-a-titulo"
@@ -289,7 +289,7 @@ export function AberturaA() {
           </span>
           <Assinatura />
         </div>
-        <Fontes itens={FONTES_DAS_VARIACOES} />
+        <Fontes contexto={contexto} itens={FONTES_DAS_VARIACOES} />
       </div>
     </section>
   );
@@ -304,7 +304,7 @@ export function AberturaA() {
  * hierarquia, pousa sobre ela numa folha de papel — sem véu sobre a imagem.
  * Contagens derivadas dizem por que continuar. Sem Prestação de Contas aqui.
  */
-export function AberturaB() {
+export function AberturaB({ contexto = "dev" }: PropsDeSecao) {
   const contagens = [
     {
       valor: EQUIPAMENTOS.length,
@@ -370,7 +370,7 @@ export function AberturaB() {
       </div>
 
       <div className="hl-quadro">
-        <Fontes itens={FONTES_DAS_VARIACOES} />
+        <Fontes contexto={contexto} itens={FONTES_DAS_VARIACOES} />
       </div>
     </section>
   );
@@ -385,7 +385,7 @@ export function AberturaB() {
  * folha de mapa. O fragmento do recorte e a fotografia entram como provas, e
  * o sumário diz o que vem a seguir — Prestação de Contas incluída.
  */
-export function AberturaC() {
+export function AberturaC({ contexto = "dev" }: PropsDeSecao) {
   return (
     <section
       aria-labelledby="ab-c-titulo"
@@ -461,7 +461,7 @@ export function AberturaC() {
         </div>
       </div>
 
-      <Fontes itens={FONTES_DAS_VARIACOES} />
+      <Fontes contexto={contexto} itens={FONTES_DAS_VARIACOES} />
     </section>
   );
 }

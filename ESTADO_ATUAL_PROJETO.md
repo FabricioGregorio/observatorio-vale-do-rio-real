@@ -2219,3 +2219,49 @@ Registro da operação:
 
 Estado: **H0–H4.1 EM PRODUÇÃO E ESTÁVEL**. Sem merge, PR, alteração de banco,
 R2, DNS, Cloudflare ou configuração da Vercel. H5 não foi iniciada.
+
+---
+
+## 2026-09-16 — convergência para a Home v2
+
+**Linha ativa de desenvolvimento:** `exp/home-v2-territorio-vivo`.
+
+A branch transitória `codex/integracao-territorio-acervo` está **congelada**:
+o delta público de Território e Acervo foi promovido para a linha da Home v2
+por cherry-pick (`d9d83f1` → `022eae4`, `407ca35` → `86d8a24`), sem reaplicar os
+cinco commits territoriais, que já existiam ali com patch idêntico. Ela não
+recebe trabalho novo, não foi apagada e não foi mergeada em `main`.
+
+Por decisão humana desta data, a **Home v2 é a Home oficial em
+desenvolvimento** e `/` passou a renderizá-la. A Home estrutural H0–H4.1
+continua publicada em produção como baseline e ponto de rollback; ela deixou de
+ser linha concorrente, não deixou de existir. Não haverá Home v3 nem alternativa
+paralela. O registro da decisão está em
+[`docs/tarefas/16-home-v2-candidata-editorial-experimental.md`](./docs/tarefas/16-home-v2-candidata-editorial-experimental.md)
+§15.
+
+**Infraestrutura Preview:** parada. A credencial anterior da role
+`preview_observatorio` foi exposta em transcript e invalidada por rotação em
+2026-09-16; o ambiente Preview da Vercel foi devolvido a vazio e a credencial
+nova não foi cadastrada em lugar nenhum. Production permanece intocada.
+
+### Desvios conhecidos, ainda abertos
+
+1. **Peso da Home acima da meta de 500 KB** do doc 01 §7: a Home v2 em `/`
+   transfere 881.195 B em 19 requisições a 1440 px, dos quais 553.838 B são
+   imagem. A interatividade do mapa custou 1.557 B de JavaScript; a retirada do
+   material interno devolveu 2.841 B de documento. A próxima rodada de
+   aprimoramento da Home deve incluir tarefa específica de performance de
+   imagens.
+2. **Dois CTAs ambíguos na Home**: "Mapa do recorte → Ir para o território" e
+   "Conhecer a pesquisa" apontam para âncoras internas. Preservados por
+   decisão; tratamento na próxima rodada editorial.
+3. Os desvios anteriores desta lista continuam abertos.
+
+**Resolvidos nesta rodada:** os finais de linha, com `.gitattributes`
+(`* text=auto eol=lf`) em commit técnico separado — o repositório sempre
+esteve em LF, o desvio era do working tree por `core.autocrlf=true` no
+checkout; e a suíte de acessibilidade, migrada da Home antiga para a Home v2.
+
+Estado: **Home v2 promovida a `/` com exploração territorial por recorte;
+todos os gates verdes; sem Preview, sem Production, sem alteração de `main`.**

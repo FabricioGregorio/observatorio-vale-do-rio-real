@@ -80,73 +80,127 @@ describe("caminhos prioritários da Home", () => {
   });
 });
 /**
- * A Home e o laboratório compartilham a implementação da seção, e é justamente
- * por isso que a fiação precisa de guarda. Importar o componente do protótipo
- * direto na Home devolveria os rótulos "Preset" e "somente DEV" ao conteúdo
- * público sem quebrar tipo, lint ou build — o erro passaria silencioso.
+ * Fiação da Home pública — promoção da Home v2 (decisão humana de 2026-09-16).
+ *
+ * Até aqui esta seção guardava o contrário: que `/` montasse as entradas
+ * públicas das seções H0–H4.1 e nunca os componentes de laboratório. A Home v2
+ * substituiu aquela composição, e o risco mudou de lugar sem mudar de
+ * natureza. O que precisa de guarda agora é a promessa que a decisão fez:
+ *
+ * - `/` reutiliza a implementação aprovada, em vez de uma cópia — duas Homes
+ *   divergentes é exatamente o que a convergência veio encerrar;
+ * - nada de laboratório atravessa para o conteúdo público. O aviso de
+ *   experimento e o seletor de abertura não quebram tipo, lint nem build se
+ *   vazarem: só um teste os pega.
  */
-describe("fiação da seção Pesquisa em Campo", () => {
+describe("fiação da Home pública", () => {
   const home = readFileSync("src/app/page.tsx", "utf8");
-  const entrada = readFileSync(
-    "src/componentes/pesquisa/PesquisaEmCampo.tsx",
+  const componente = readFileSync(
+    "src/componentes/prototipo/homelivre/HomeLivre.tsx",
     "utf8",
   );
 
-  test("a Home usa a entrada pública, nunca o componente de laboratório", () => {
+  test("a Home reutiliza a implementação da v2, sem cópia", () => {
     expect(home).toContain(
-      'import { PesquisaEmCampo } from "../componentes/pesquisa/PesquisaEmCampo"',
+      'import { HomeLivre } from "../componentes/prototipo/homelivre/HomeLivre"',
     );
-    expect(home).toContain("<PesquisaEmCampo />");
-    expect(home).not.toContain("PesquisaEmCampoPrototipo");
+    expect(home).toContain("<HomeLivre");
   });
 
-  test("a entrada pública fixa a composição A e o contexto da Home", () => {
+  test("a rota pública declara o contexto público e a abertura aprovada", () => {
+    expect(home).toContain('contexto="publico"');
+    expect(home).toContain('abertura="b2"');
+  });
+
+  /**
+   * A Home antiga continua versionada como baseline de rollback. O que não
+   * pode voltar é ela disputar `/` com a v2 — e isso se detecta no import.
+   */
+  test("a rota pública não remonta a composição da Home antiga", () => {
+    for (const antigo of [
+      "HeroManifesto",
+      "SecaoMapa",
+      "PesquisaEmCampo",
+      "SecaoDados",
+      "CaminhosPrioritarios",
+      "ChamadaAcervo",
+      "CabecalhoPrototipo",
+    ]) {
+      expect(home, antigo).not.toContain(antigo);
+    }
+  });
+
+  test("a rota pública não lê variante de abertura", () => {
+    expect(home).not.toContain("searchParams");
+    expect(home).not.toContain("lerVarianteDaAbertura");
+  });
+
+  /**
+   * O aviso e o seletor existem para o laboratório. Se deixarem de depender do
+   * contexto, passam a ser servidos em `/` sem que nada mais reclame.
+   */
+  test("aviso de experimento e seletor de abertura dependem do contexto", () => {
+    const trecho = componente.slice(componente.indexOf("data-contexto"));
+    const aviso = trecho.indexOf("hl-dev");
+    const seletor = trecho.indexOf("SeletorDeAbertura ativa");
+    const guarda = trecho.indexOf('contexto === "dev"');
+
+    for (const posicao of [aviso, seletor, guarda])
+      expect(posicao).toBeGreaterThan(-1);
+    expect(guarda).toBeLessThan(aviso);
+    expect(guarda).toBeLessThan(seletor);
+  });
+});
+
+/**
+ * As entradas públicas das seções H0–H4.1 continuam versionadas e servindo os
+ * laboratórios. A fixação de composição e contexto segue valendo: elas não
+ * podem regredir para a casca de protótipo enquanto existirem.
+ */
+describe("entradas públicas preservadas da Home antiga", () => {
+  test("Pesquisa em Campo fixa a composição A e o contexto da Home", () => {
+    const entrada = readFileSync(
+      "src/componentes/pesquisa/PesquisaEmCampo.tsx",
+      "utf8",
+    );
     expect(entrada).toContain('composicao="documental-aberto"');
     expect(entrada).toContain('contexto="home"');
     expect(entrada).not.toContain("caderno-tecnico");
   });
-});
 
-describe("fiação da seção Dados — H4.1", () => {
-  const home = readFileSync("src/app/page.tsx", "utf8");
-  const entrada = readFileSync("src/componentes/dados/SecaoDados.tsx", "utf8");
-
-  test("a Home usa a entrada pública, nunca o componente de laboratório", () => {
-    expect(home).toContain(
-      'import { SecaoDados } from "../componentes/dados/SecaoDados"',
+  test("a seção de Dados fixa o contexto da Home", () => {
+    const entrada = readFileSync(
+      "src/componentes/dados/SecaoDados.tsx",
+      "utf8",
     );
-    expect(home).toContain("<SecaoDados />");
-    expect(home).not.toContain("DadosVivos");
-  });
-
-  test("a entrada pública fixa o contexto da Home", () => {
     expect(entrada).toContain('contexto="home"');
   });
+});
 
-  /**
-   * O plano da Home (§6.1) numera as seções: 01 Território, 02 Pesquisa em
-   * campo, 03 Dados. A ordem é editorial antes de ser visual, e um teste de
-   * posição é o que impede que uma inserção futura a desfaça sem querer.
-   */
-  test("Dados entra depois da Pesquisa em Campo e antes dos caminhos", () => {
-    const pesquisa = home.indexOf("<PesquisaEmCampo />");
-    const dados = home.indexOf("<SecaoDados />");
-    const caminhos = home.indexOf("<CaminhosPrioritarios");
+/**
+ * A barra superior da Home v2 serve os dois lugares. No público ela precisa
+ * usar a navegação canônica de sete itens; no laboratório, a demonstração
+ * histórica da H1. Uma troca silenciosa aqui republicaria o menu de seis itens
+ * com dois destinos mortos.
+ */
+describe("navegação da Home v2", () => {
+  const secoes = readFileSync(
+    "src/componentes/prototipo/homelivre/Secoes.tsx",
+    "utf8",
+  );
 
-    for (const posicao of [pesquisa, dados, caminhos])
-      expect(posicao).toBeGreaterThan(-1);
-    expect(dados).toBeGreaterThan(pesquisa);
-    expect(dados).toBeLessThan(caminhos);
+  test("o topo escolhe o menu oficial quando o contexto é público", () => {
+    expect(secoes).toContain(
+      "const itens = publico ? MENU_PRINCIPAL : ITENS_COM_DESTINO;",
+    );
   });
 
-  /**
-   * `.dados-vivos` já define `max-width` e centraliza. O invólucro das outras
-   * seções restringiria a largura duas vezes e comeria a sangria das passagens.
-   */
-  test("a seção não é envolvida pelo contêiner de largura das outras", () => {
-    // Filha direta da raiz, na mesma indentação de `<SecaoMapa />`: se alguém
-    // a embrulhar num contêiner, a indentação muda e este teste cai.
-    expect(home).toMatch(/\n {6}<SecaoDados \/>\n/);
-    expect(home).toMatch(/\n {6}<SecaoMapa \/>\n/);
+  test("o topo público carrega o identificador do cabeçalho da Home", () => {
+    expect(secoes).toContain("ID_CABECALHO_HOME");
+  });
+
+  test("o menu de telas estreitas é servido só no contexto público", () => {
+    expect(secoes).toContain('aria-label="Principal (telas estreitas)"');
+    expect(secoes).toContain("<MenuMobile />");
   });
 });

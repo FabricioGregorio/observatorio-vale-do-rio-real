@@ -1,328 +1,415 @@
 import { expect, test } from "@playwright/test";
 
 /**
- * Mapa territorial — Tarefa 10B.3.3.
+ * Mapa territorial da Home v2 — exploração por recorte.
  *
- * O que estes testes protegem é a razão de o Cenário C ter sido escolhido:
- * mapa que funciona sem JavaScript, sem WebGL e por teclado. Um mapa em canvas
- * passaria num teste de "existe um mapa" e falharia em quase todos estes.
+ * Este arquivo substitui o contrato da composição H2, aposentada da parte
+ * pública por decisão humana de 2026-09-16. O que mudou foi a implementação,
+ * não a exigência: os cenários de teclado, seleção, foco e alternativa textual
+ * continuam aqui, aplicados a **dois recortes** em vez de 75 municípios.
  *
- * Nada aqui compara o SVG inteiro: comparar 75 caminhos quebraria a cada
- * atualização da malha do IBGE sem indicar nada de útil.
+ * O que ficou para trás, e por quê: os 75 municípios eram opções porque o
+ * desenho era o estado inteiro como ferramenta. Na Home v2 o estado é
+ * contexto, e o que se explora é o recorte que o Observatório declarou. A
+ * experiência territorial completa é de `/territorio`, coberta em
+ * `territorio-publico.spec.ts`.
+ *
+ * As asserções de reenquadramento rodam com `prefers-reduced-motion`, e não
+ * por conveniência de teste: com movimento reduzido a mudança é imediata por
+ * contrato, o que torna o cenário determinístico sem afrouxar nada.
  */
 
-const MUNICIPIOS = ".mapa-territorio svg path[data-codigo]";
-const ITENS_DO_INDICE = "#territorio-home-lista > [data-codigo]";
+const SVG = "#hl-mapa";
+const QUADRO = "#hl-mapa-quadro";
+const VALE = '#hl-mapa g[data-recorte="vale"]';
+const COMPARACAO = '#hl-mapa g[data-recorte="comparacao"]';
+const MARCADOS = "#hl-municipios [data-selecionado]";
 
-/**
- * Abre a Home e espera a ilha de interação assumir o mapa.
- *
- * Sem isso os testes de interação são corrida: o SVG vem do servidor pronto,
- * mas `role="listbox"` e os `tabindex` só aparecem depois da hidratação. Um
- * clique antes disso não faz nada, e o teste falha sem que exista defeito.
- */
-async function abrirMapaInterativo(page: import("@playwright/test").Page) {
+const MUNICIPIOS_DO_VALE = [
+  "Tobias Barreto",
+  "Tomar do Geru",
+  "Itabaianinha",
+  "Cristinápolis",
+  "Poço Verde",
+];
+
+/** Espera a ilha assumir o desenho; antes disso não há interação nenhuma. */
+async function abrirMapa(page: import("@playwright/test").Page) {
   await page.goto("/");
-  await expect(page.locator(".mapa-territorio svg")).toHaveAttribute(
-    "role",
-    "listbox",
-  );
+  await expect(page.locator(SVG)).toHaveAttribute("data-interativo", "true");
 }
 
-test.describe("mapa territorial", () => {
-  test("a seção existe com o título aprovado", async ({ page }) => {
-    await page.goto("/");
-    await expect(
-      page.getByRole("heading", {
-        name: "Cartografia viva do Vale do Rio Real",
-      }),
-    ).toBeVisible();
-  });
+test.describe("mapa da Home — estado inicial", () => {
+  test("abre em visão ampla, sem recorte selecionado", async ({ page }) => {
+    await abrirMapa(page);
 
-  test("desenha os 75 municípios", async ({ page }) => {
-    await page.goto("/");
-    await expect(page.locator(MUNICIPIOS)).toHaveCount(75);
+    await expect(page.locator(QUADRO)).not.toHaveAttribute(
+      "data-selecionado",
+      /.*/,
+    );
+    await expect(page.locator(`${VALE}[aria-selected="true"]`)).toHaveCount(0);
+    await expect(
+      page.locator(`${COMPARACAO}[aria-selected="true"]`),
+    ).toHaveCount(0);
+    await expect(page.locator(MARCADOS)).toHaveCount(0);
   });
 
   /**
-   * Semântica: município não é link enquanto não houver página territorial
-   * aprovada. Nenhum `href` no SVG — nem para âncora da própria página só para
-   * ficar clicável.
+   * A regra visual da decisão: nada pode parecer escolhido antes de alguém
+   * escolher. Os rótulos dos municípios do recorte só existem no desenho
+   * depois da seleção.
    */
-  test("nenhum município usa semântica de link", async ({ page }) => {
-    await page.goto("/");
-    await expect(page.locator(".mapa-territorio svg a")).toHaveCount(0);
-    const comHref = await page.evaluate(
-      () =>
-        document.querySelectorAll(
-          ".mapa-territorio svg [href], .mapa-territorio svg [xlink\\:href]",
-        ).length,
-    );
-    expect(comHref).toBe(0);
+  test("nenhum município do recorte é nomeado no desenho", async ({ page }) => {
+    await abrirMapa(page);
+
+    const visiveis = await page
+      .locator("#hl-mapa .hl-mapa__rotulo")
+      .evaluateAll(
+        (rotulos) =>
+          rotulos.filter((r) => Number(getComputedStyle(r).opacity) > 0).length,
+      );
+    expect(visiveis).toBe(0);
   });
 
-  test("com JavaScript, o município é opção de uma listbox", async ({
+  test("o painel abre vazio e não afirma seleção que não houve", async ({
     page,
   }) => {
-    await abrirMapaInterativo(page);
-    const svg = page.locator(".mapa-territorio svg");
-    await expect(svg).toHaveAttribute("role", "listbox");
-    await expect(page.locator(`${MUNICIPIOS}[role="option"]`)).toHaveCount(75);
+    await abrirMapa(page);
+
+    await expect(
+      page.locator("#hl-mapa-painel [data-painel-vazio]"),
+    ).toBeVisible();
+    await expect(
+      page.locator("#hl-mapa-painel [data-painel-de]:visible"),
+    ).toHaveCount(0);
   });
 
-  test("todo município tem nome acessível", async ({ page }) => {
-    await page.goto("/");
-    const semNome = await page.evaluate(
-      (selector) =>
-        [...document.querySelectorAll(selector)].filter(
-          (no) => (no.getAttribute("aria-label") ?? "").trim().length === 0,
-        ).length,
-      MUNICIPIOS,
-    );
-    expect(semNome).toBe(0);
+  test("os dois recortes são opções nomeadas de uma única listbox", async ({
+    page,
+  }) => {
+    await abrirMapa(page);
+
+    await expect(page.locator(SVG)).toHaveAttribute("role", "listbox");
+    const opcoes = page.locator('#hl-mapa [role="option"]');
+    await expect(opcoes).toHaveCount(2);
+    expect(
+      await opcoes.evaluateAll((os) =>
+        os.map((o) => o.getAttribute("aria-label")),
+      ),
+    ).toEqual([
+      "Recorte do Vale do Rio Real",
+      "Referência de comparação, fora do Vale",
+    ]);
   });
 
-  /**
-   * O ponto desta rodada: o mapa é **uma** parada de Tab, não 75. É o roving
-   * tabindex — só o município ativo é alcançável.
-   */
+  /** Roving tabindex: o mapa é uma parada de Tab, não duas. */
   test("o mapa é uma única parada de Tab", async ({ page }) => {
-    await abrirMapaInterativo(page);
-    await expect(page.locator(`${MUNICIPIOS}[tabindex="0"]`)).toHaveCount(1);
-    await expect(page.locator(`${MUNICIPIOS}[tabindex="-1"]`)).toHaveCount(74);
+    await abrirMapa(page);
+
+    await expect(
+      page.locator('#hl-mapa [role="option"][tabindex="0"]'),
+    ).toHaveCount(1);
+    await expect(
+      page.locator('#hl-mapa [role="option"][tabindex="-1"]'),
+    ).toHaveCount(1);
+  });
+});
+
+test.describe("mapa da Home — seleção", () => {
+  test("clique no Vale seleciona os cinco municípios e São Cristóvão fica fora", async ({
+    page,
+  }) => {
+    await abrirMapa(page);
+    await page.locator(`${VALE} path`).first().click({ force: true });
+
+    await expect(page.locator(QUADRO)).toHaveAttribute(
+      "data-selecionado",
+      "vale",
+    );
+    await expect(page.locator(VALE)).toHaveAttribute("aria-selected", "true");
+    await expect(page.locator(COMPARACAO)).toHaveAttribute(
+      "aria-selected",
+      "false",
+    );
+
+    const nomes = await page
+      .locator(`${MARCADOS} dt`)
+      .evaluateAll((ns) => ns.map((n) => n.textContent?.trim() ?? ""));
+    expect(nomes).toEqual(MUNICIPIOS_DO_VALE);
+    expect(nomes).not.toContain("São Cristóvão");
   });
 
-  test("Tab sai do mapa em uma tecla", async ({ page }) => {
-    await abrirMapaInterativo(page);
-    await page.locator(`${MUNICIPIOS}[tabindex="0"]`).focus();
-    await page.keyboard.press("Tab");
-    const aindaNoMapa = await page.evaluate(
-      () => document.activeElement?.closest(".mapa-territorio svg") !== null,
+  test("clique em São Cristóvão destaca só ele, como referência de comparação", async ({
+    page,
+  }) => {
+    await abrirMapa(page);
+    await page.locator(`${COMPARACAO} path`).first().click({ force: true });
+
+    await expect(page.locator(QUADRO)).toHaveAttribute(
+      "data-selecionado",
+      "comparacao",
     );
-    expect(aindaNoMapa).toBe(false);
+    const nomes = await page
+      .locator(`${MARCADOS} dt`)
+      .evaluateAll((ns) => ns.map((n) => n.textContent?.trim() ?? ""));
+    expect(nomes).toEqual(["São Cristóvão"]);
+
+    const painel = page.locator(
+      '#hl-mapa-painel [data-painel-de="comparacao"]',
+    );
+    await expect(painel).toBeVisible();
+    await expect(painel).toContainText("comparação");
+    await expect(painel).not.toContainText("parte do Vale do Rio Real");
   });
 
-  test("setas navegam entre municípios", async ({ page }) => {
-    await abrirMapaInterativo(page);
-    const codigos = await page.evaluate(
-      (selector) =>
-        [...document.querySelectorAll(selector)].map((no) =>
-          no.getAttribute("data-codigo"),
-        ),
-      MUNICIPIOS,
-    );
+  /** Toque percorre o mesmo caminho de seleção: nada depende de `hover`. */
+  test("toque seleciona pelo mesmo caminho do clique", async ({ page }) => {
+    await abrirMapa(page);
+    await page.locator(`${VALE} path`).first().dispatchEvent("click");
 
-    await page.locator(`${MUNICIPIOS}[tabindex="0"]`).focus();
-    await page.keyboard.press("ArrowRight");
-    const depoisDeAvancar = await page.evaluate(() =>
-      document.activeElement?.getAttribute("data-codigo"),
+    await expect(page.locator(QUADRO)).toHaveAttribute(
+      "data-selecionado",
+      "vale",
     );
-    expect(depoisDeAvancar).toBe(codigos[1]);
-
-    await page.keyboard.press("ArrowLeft");
-    const depoisDeVoltar = await page.evaluate(() =>
-      document.activeElement?.getAttribute("data-codigo"),
-    );
-    expect(depoisDeVoltar).toBe(codigos[0]);
-
-    await page.keyboard.press("End");
-    const noFim = await page.evaluate(() =>
-      document.activeElement?.getAttribute("data-codigo"),
-    );
-    expect(noFim).toBe(codigos[codigos.length - 1]);
   });
 
-  test("Enter seleciona e Esc limpa", async ({ page }) => {
-    await abrirMapaInterativo(page);
-    await page.locator(`${MUNICIPIOS}[tabindex="0"]`).focus();
+  test("a seleção não depende só de cor: traço e rótulos mudam junto", async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await abrirMapa(page);
+
+    const traco = () =>
+      page
+        .locator(`${VALE} path`)
+        .first()
+        .evaluate((p) => getComputedStyle(p).strokeWidth);
+    const antes = await traco();
+
+    await page.locator(`${VALE} path`).first().click({ force: true });
+    await expect(page.locator(VALE)).toHaveAttribute("aria-selected", "true");
+    await expect.poll(traco).not.toBe(antes);
+
+    const rotulosVisiveis = () =>
+      page
+        .locator(`${VALE} .hl-mapa__rotulo`)
+        .evaluateAll(
+          (rs) =>
+            rs.filter((r) => Number(getComputedStyle(r).opacity) > 0).length,
+        );
+    await expect.poll(rotulosVisiveis).toBe(MUNICIPIOS_DO_VALE.length);
+  });
+});
+
+test.describe("mapa da Home — teclado", () => {
+  test("Enter seleciona, Esc limpa e o foco não seleciona sozinho", async ({
+    page,
+  }) => {
+    await abrirMapa(page);
+    const vale = page.locator(VALE);
+
+    await vale.focus();
+    // Foco não é seleção: é a exceção de acessibilidade ao princípio visual.
+    await expect(vale).toHaveAttribute("aria-selected", "false");
+    await expect(page.locator(QUADRO)).not.toHaveAttribute(
+      "data-selecionado",
+      /.*/,
+    );
+
     await page.keyboard.press("Enter");
-
-    const selecionado = await page.evaluate(() => {
-      const ativo = document.activeElement;
-      const codigo = ativo?.getAttribute("data-codigo") ?? "";
-      const item = document.querySelector(
-        `#territorio-home-lista [data-codigo="${codigo}"]`,
-      );
-      return {
-        opcao: ativo?.getAttribute("aria-selected"),
-        item: item?.getAttribute("data-selecionado"),
-      };
-    });
-    expect(selecionado.opcao).toBe("true");
-    expect(selecionado.item).toBe("true");
+    await expect(vale).toHaveAttribute("aria-selected", "true");
 
     await page.keyboard.press("Escape");
-    const depois = await page.evaluate(() => ({
-      opcoes: document.querySelectorAll('[aria-selected="true"]').length,
-      itens: document.querySelectorAll("[data-selecionado]").length,
-    }));
-    expect(depois.opcoes).toBe(0);
-    expect(depois.itens).toBe(0);
+    await expect(vale).toHaveAttribute("aria-selected", "false");
+    await expect(page.locator(MARCADOS)).toHaveCount(0);
   });
 
   test("Espaço também seleciona", async ({ page }) => {
-    await abrirMapaInterativo(page);
-    await page.locator(`${MUNICIPIOS}[tabindex="0"]`).focus();
+    await abrirMapa(page);
+    await page.locator(VALE).focus();
     await page.keyboard.press(" ");
-    await expect(
-      page.locator(`${MUNICIPIOS}[aria-selected="true"]`),
-    ).toHaveCount(1);
+    await expect(page.locator(VALE)).toHaveAttribute("aria-selected", "true");
   });
 
-  test("clique e toque continuam selecionando", async ({ page }) => {
-    await abrirMapaInterativo(page);
-    const alvo = page.locator(MUNICIPIOS).nth(10);
-    const codigo = await alvo.getAttribute("data-codigo");
+  test("as setas andam entre os dois recortes", async ({ page }) => {
+    await abrirMapa(page);
+    await page.locator(VALE).focus();
 
-    await alvo.click({ force: true });
-    await expect(alvo).toHaveAttribute("aria-selected", "true");
-    await expect(
-      page.locator(`#territorio-home-lista [data-codigo="${codigo}"]`),
-    ).toHaveAttribute("data-selecionado", "true");
+    await page.keyboard.press("ArrowRight");
+    expect(
+      await page.evaluate(() =>
+        document.activeElement?.getAttribute("data-recorte"),
+      ),
+    ).toBe("comparacao");
 
-    // Toque: o mesmo caminho de seleção, disparado por evento de ponteiro.
-    await page.locator(MUNICIPIOS).nth(20).dispatchEvent("click");
-    await expect(
-      page.locator(`${MUNICIPIOS}[aria-selected="true"]`),
-    ).toHaveCount(1);
+    await page.keyboard.press("ArrowLeft");
+    expect(
+      await page.evaluate(() =>
+        document.activeElement?.getAttribute("data-recorte"),
+      ),
+    ).toBe("vale");
+
+    await page.keyboard.press("End");
+    expect(
+      await page.evaluate(() =>
+        document.activeElement?.getAttribute("data-recorte"),
+      ),
+    ).toBe("comparacao");
   });
 
-  /**
-   * Foco não pode ser só cor: confere que a espessura do traço muda também.
-   */
-  test("o foco muda cor e espessura do traço", async ({ page }) => {
-    await abrirMapaInterativo(page);
-    const primeiro = page.locator(`${MUNICIPIOS}[tabindex="0"]`);
+  test("o foco é perceptível e não usa o tratamento da seleção", async ({
+    page,
+  }) => {
+    await abrirMapa(page);
+    const caminho = page.locator(`${VALE} path`).first();
+    const medir = () =>
+      caminho.evaluate((p) => {
+        const e = getComputedStyle(p);
+        return {
+          traco: e.strokeWidth,
+          cor: e.stroke,
+          tracejado: e.strokeDasharray,
+        };
+      });
 
-    const antes = await primeiro.evaluate((no) => ({
-      traco: getComputedStyle(no).strokeWidth,
-      cor: getComputedStyle(no).stroke,
-    }));
-
-    // `:focus-visible` só é ativado por teclado, então o foco vem de Tab.
-    await primeiro.focus();
+    const solto = await medir();
+    await page.locator(VALE).focus();
+    // `:focus-visible` depende de foco por teclado.
     await page.keyboard.press("ArrowRight");
     await page.keyboard.press("ArrowLeft");
+    const focado = await medir();
 
-    const depois = await primeiro.evaluate((no) => ({
-      traco: getComputedStyle(no).strokeWidth,
-      cor: getComputedStyle(no).stroke,
-    }));
-
-    expect(depois.traco).not.toBe(antes.traco);
-    expect(depois.cor).not.toBe(antes.cor);
+    expect(focado.traco).not.toBe(solto.traco);
+    expect(focado.cor).not.toBe(solto.cor);
+    expect(focado.tracejado).not.toBe(solto.tracejado);
+    // Foco não abre ficha nem marca a lista.
+    await expect(page.locator(MARCADOS)).toHaveCount(0);
   });
+});
 
-  test("a alternativa textual lista os 75 municípios", async ({ page }) => {
-    await page.goto("/");
-    await expect(page.locator(ITENS_DO_INDICE)).toHaveCount(75);
-  });
-
-  test("os quatro pontos de visita aparecem, ainda sem posição", async ({
+test.describe("mapa da Home — enquadramento", () => {
+  test("selecionar reenquadra e voltar restaura a visão geral", async ({
     page,
   }) => {
-    await page.goto("/");
-    const secao = page.getByRole("region", { name: "Pontos de pesquisa" });
-    await expect(secao).toBeVisible();
-    for (const nome of [
-      "Recanto da Serra",
-      "Centro Cultural e Museu Borda da Mata",
-      "Serra dos Macacos",
-      "Ilha Grande",
-    ]) {
-      await expect(secao.getByText(nome, { exact: false })).toBeVisible();
-    }
-    await expect(page.locator(".mapa-territorio svg circle")).toHaveCount(0);
-  });
+    // Com movimento reduzido a mudança é imediata por contrato.
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await abrirMapa(page);
+    const palco = page.locator("#hl-mapa-quadro .hl-mapa__palco");
+    const medir = () => palco.evaluate((p) => getComputedStyle(p).transform);
+    /*
+      `none` e a matriz identidade são os dois estados de "ainda não
+      reenquadrado": a transição parte da identidade, então esperar só por
+      "diferente de none" pegaria o primeiro quadro e concluiria cedo demais.
+    */
+    const reenquadrado = async () => {
+      const t = await medir();
+      return t !== "none" && t !== "matrix(1, 0, 0, 1, 0, 0)";
+    };
 
-  test("o Vale é destacado e São Cristóvão não entra nele", async ({
-    page,
-  }) => {
-    await page.goto("/");
-    const doVale = await page.evaluate(() =>
-      [...document.querySelectorAll(".mapa-territorio svg path.v")].map(
-        (no) => no.getAttribute("aria-label") ?? "",
-      ),
+    expect(await medir()).toBe("none");
+
+    await page.locator(`${VALE} path`).first().click({ force: true });
+    await expect(page.locator(QUADRO)).toHaveAttribute(
+      "data-selecionado",
+      "vale",
     );
-    expect(doVale).toHaveLength(5);
-    expect(doVale.join(" | ")).toContain("Tobias Barreto");
-    expect(doVale.join(" | ")).not.toContain("São Cristóvão");
+    await expect.poll(reenquadrado).toBe(true);
+    const comVale = await medir();
+
+    await page.locator(`${COMPARACAO} path`).first().click({ force: true });
+    await expect(page.locator(QUADRO)).toHaveAttribute(
+      "data-selecionado",
+      "comparacao",
+    );
+    await expect.poll(reenquadrado).toBe(true);
+    await expect.poll(medir).not.toBe(comVale);
+
+    await page.locator("#hl-mapa-voltar").click();
+    await expect(page.locator(QUADRO)).not.toHaveAttribute(
+      "data-selecionado",
+      /.*/,
+    );
+    await expect.poll(medir).toBe("none");
   });
 
-  /**
-   * Fronteira da camada base precisa ser perceptível sem competir com o Vale:
-   * traço mais escuro que o fundo, e mais fino que o do Vale.
-   */
-  test("a fronteira da base é perceptível e mais discreta que a do Vale", async ({
+  test("Esc também devolve à visão geral", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await abrirMapa(page);
+    await page.locator(VALE).focus();
+    await page.keyboard.press("Enter");
+    await expect(page.locator(QUADRO)).toHaveAttribute(
+      "data-selecionado",
+      "vale",
+    );
+
+    await page.keyboard.press("Escape");
+    await expect(page.locator(QUADRO)).not.toHaveAttribute(
+      "data-selecionado",
+      /.*/,
+    );
+  });
+
+  test("voltar devolve o foco ao mapa, e não ao documento", async ({
     page,
   }) => {
-    await page.goto("/");
-    const medidas = await page.evaluate(() => {
-      const base = document.querySelector(
-        ".mapa-territorio svg path.m:not(.v)",
-      );
-      const vale = document.querySelector(".mapa-territorio svg path.v");
-      const corpo = getComputedStyle(document.body).backgroundColor;
-      if (base === null || vale === null) return null;
-      return {
-        baseCor: getComputedStyle(base).stroke,
-        baseTraco: Number.parseFloat(getComputedStyle(base).strokeWidth),
-        valeTraco: Number.parseFloat(getComputedStyle(vale).strokeWidth),
-        fundo: corpo,
-      };
-    });
+    await abrirMapa(page);
+    await page.locator(`${VALE} path`).first().click({ force: true });
+    await page.locator("#hl-mapa-voltar").click();
 
-    expect(medidas).not.toBeNull();
-    // O traço da base não é a cor do fundo, e o Vale continua mais grosso.
-    expect(medidas?.baseCor).not.toBe(medidas?.fundo);
-    expect(medidas?.valeTraco).toBeGreaterThan(medidas?.baseTraco ?? 0);
-  });
-
-  test("não publica indicador nem comparativo no mapa", async ({ page }) => {
-    await page.goto("/");
-    const texto = (
-      await page.locator(".mapa-territorio").innerText()
-    ).toLowerCase();
-    expect(texto).not.toContain("indicador");
-    expect(texto).not.toContain("habitantes");
+    expect(
+      await page.evaluate(
+        () => document.activeElement?.closest("#hl-mapa") !== null,
+      ),
+    ).toBe(true);
   });
 });
 
 /**
- * Sem JavaScript, o essencial continua de pé — e o mapa não promete interação
- * que não pode cumprir. É esta suíte que justifica o Cenário C.
+ * Sem JavaScript o desenho é ilustração e diz isso: nenhum controle, nenhuma
+ * promessa de navegação. A informação territorial continua inteira em texto —
+ * é o que justifica desenhar o estado como contexto sem transformá-lo em
+ * ferramenta.
  */
-test.describe("mapa sem JavaScript", () => {
+test.describe("mapa da Home sem JavaScript", () => {
   test.use({ javaScriptEnabled: false });
 
-  test("o desenho e a lista completa vêm do servidor", async ({ page }) => {
-    await page.goto("/");
-    await expect(page.locator(MUNICIPIOS)).toHaveCount(75);
-    await expect(page.locator(ITENS_DO_INDICE)).toHaveCount(75);
-    await expect(
-      page.getByRole("heading", {
-        name: "Cartografia viva do Vale do Rio Real",
-      }),
-    ).toBeVisible();
-  });
-
-  test("o mapa se anuncia como imagem, sem prometer navegação", async ({
+  test("o desenho se anuncia como imagem, com alternativa textual", async ({
     page,
   }) => {
     await page.goto("/");
-    await expect(page.locator(".mapa-territorio svg")).toHaveAttribute(
-      "role",
-      "img",
+
+    const svg = page.locator(SVG);
+    await expect(svg).toHaveAttribute("role", "img");
+    await expect(svg).not.toHaveAttribute("data-interativo", "true");
+    await expect(page.locator('#hl-mapa [role="option"]')).toHaveCount(0);
+    await expect(page.locator("#hl-mapa [tabindex]")).toHaveCount(0);
+
+    await expect(page.locator("#hl-mapa title")).toHaveText(
+      "Sergipe e o recorte do Vale do Rio Real",
     );
-    await expect(page.locator(`${MUNICIPIOS}[tabindex]`)).toHaveCount(0);
-    await expect(page.locator(`${MUNICIPIOS}[role="option"]`)).toHaveCount(0);
+    await expect(page.locator("#hl-mapa desc")).toContainText(
+      "A lista ao lado descreve cada vínculo",
+    );
   });
 
-  test("os pontos sem coordenada continuam listados", async ({ page }) => {
+  test("nenhum controle interativo é oferecido", async ({ page }) => {
     await page.goto("/");
-    const secao = page.getByRole("region", { name: "Pontos de pesquisa" });
-    await expect(
-      secao.getByText("Ilha Grande", { exact: false }),
-    ).toBeVisible();
+
+    await expect(page.locator("#hl-mapa-voltar")).toBeHidden();
+    await expect(page.locator("#hl-mapa-painel")).toBeHidden();
+    await expect(page.locator(".hl-mapa__orientacao")).toBeHidden();
+  });
+
+  test("o vínculo de cada município continua legível em texto", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const lista = page.locator("#hl-municipios");
+
+    for (const nome of MUNICIPIOS_DO_VALE) {
+      await expect(lista).toContainText(nome);
+    }
+    await expect(lista).toContainText("São Cristóvão");
+    await expect(lista).toContainText("referência de comparação");
   });
 });

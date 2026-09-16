@@ -42,11 +42,41 @@ export function MapaInterativo({
   idDaLista,
   idDoPainel,
   promoverLista = false,
+  seletorDasOpcoes = "path[data-codigo]",
+  chave = "codigo",
+  rotuloDaLista = "Índice dos municípios de Sergipe",
+  idDoEstado,
+  seletorDoQueRevelar,
+  idDoBotaoVoltar,
 }: {
   idDoSvg: string;
   idDaLista: string;
   idDoPainel?: string;
   promoverLista?: boolean;
+  /**
+   * O que é opção dentro do desenho. O laboratório usa município; a Home usa
+   * recorte, que é um `<g>` com vários municípios dentro. A ilha não precisa
+   * saber a diferença — só precisa saber o que selecionar.
+   */
+  seletorDasOpcoes?: string;
+  /** Chave de `dataset` que liga a opção aos seus itens na lista textual. */
+  chave?: string;
+  rotuloDaLista?: string;
+  /**
+   * Elemento que recebe `data-selecionado` com a chave escolhida. É por ele
+   * que o CSS reenquadra o mapa: nenhuma geometria é calculada em runtime.
+   */
+  idDoEstado?: string;
+  /**
+   * Elementos servidos com `hidden` que só fazem sentido havendo interação:
+   * a orientação de uso, o painel e a ação de voltar. A ilha os revela ao
+   * montar e os esconde ao desmontar. Sem JavaScript continuam fora da árvore
+   * de acessibilidade — nenhum botão morto, nenhuma promessa que ninguém pode
+   * cumprir.
+   */
+  seletorDoQueRevelar?: string;
+  /** Volta à visão geral, com o mesmo efeito de `Esc`. */
+  idDoBotaoVoltar?: string;
 }) {
   useEffect(() => {
     const svg = document.getElementById(idDoSvg);
@@ -55,8 +85,11 @@ export function MapaInterativo({
       idDoPainel === undefined ? null : document.getElementById(idDoPainel);
     if (svg === null) return;
 
+    const estado =
+      idDoEstado === undefined ? null : document.getElementById(idDoEstado);
+
     const opcoes = Array.from(
-      svg.querySelectorAll<SVGPathElement>("path[data-codigo]"),
+      svg.querySelectorAll<SVGElement>(seletorDasOpcoes),
     );
     if (opcoes.length === 0) return;
 
@@ -73,7 +106,7 @@ export function MapaInterativo({
       lista === null
         ? []
         : Array.from(
-            lista.querySelectorAll<HTMLElement>(":scope > [data-codigo]"),
+            lista.querySelectorAll<HTMLElement>(`:scope > [data-${chave}]`),
           );
 
     for (const [indice, opcao] of opcoes.entries()) {
@@ -87,7 +120,7 @@ export function MapaInterativo({
 
     if (promoverLista && lista !== null) {
       lista.setAttribute("role", "listbox");
-      lista.setAttribute("aria-label", "Índice dos municípios de Sergipe");
+      lista.setAttribute("aria-label", rotuloDaLista);
       lista.setAttribute("data-interativo", "true");
       for (const [indice, item] of itensDaLista.entries()) {
         item.setAttribute("role", "option");
@@ -110,14 +143,44 @@ export function MapaInterativo({
       if (focar) proximo.focus();
     }
 
-    function itemDaLista(indice: number): HTMLElement | null {
-      const codigo = opcoes[indice]?.dataset.codigo;
-      if (codigo === undefined || lista === null) return null;
-      return lista.querySelector<HTMLElement>(`[data-codigo="${codigo}"]`);
+    function valorDa(indice: number): string | undefined {
+      return opcoes[indice]?.dataset[chave];
     }
 
-    function atualizarPainel(item: HTMLElement | null) {
+    /**
+     * Um recorte marca vários municípios na lista; um município marca um só.
+     * Os dois casos são o mesmo código, e por isso a ilha devolve sempre uma
+     * coleção.
+     */
+    function itensLigados(indice: number): HTMLElement[] {
+      const valor = valorDa(indice);
+      if (valor === undefined || lista === null) return [];
+      return Array.from(
+        lista.querySelectorAll<HTMLElement>(`[data-${chave}="${valor}"]`),
+      );
+    }
+
+    function atualizarPainel(item: HTMLElement | null, valor?: string) {
       if (painel === null) return;
+
+      /*
+        Modo por blocos: o servidor já escreveu o texto de cada opção e a ilha
+        só decide qual aparece. Nenhuma copy é montada em JavaScript — num site
+        de prestação de contas, texto não nasce no cliente.
+      */
+      const blocos = Array.from(
+        painel.querySelectorAll<HTMLElement>("[data-painel-de]"),
+      );
+      if (blocos.length > 0) {
+        const semSelecao = painel.querySelector<HTMLElement>(
+          "[data-painel-vazio]",
+        );
+        for (const bloco of blocos) {
+          bloco.hidden = bloco.dataset.painelDe !== valor;
+        }
+        if (semSelecao !== null) semSelecao.hidden = valor !== undefined;
+        return;
+      }
 
       const vazio = painel.querySelector<HTMLElement>("[data-painel-vazio]");
       const conteudo = painel.querySelector<HTMLElement>(
@@ -167,29 +230,39 @@ export function MapaInterativo({
     function selecionar(indice: number) {
       if (selecionado !== null) {
         opcoes[selecionado]?.setAttribute("aria-selected", "false");
-        itemDaLista(selecionado)?.removeAttribute("data-selecionado");
+        for (const anterior of itensLigados(selecionado)) {
+          anterior.removeAttribute("data-selecionado");
+          if (promoverLista) anterior.setAttribute("aria-selected", "false");
+        }
       }
       selecionado = indice;
       opcoes[indice]?.setAttribute("aria-selected", "true");
 
-      const item = itemDaLista(indice);
-      if (item !== null) {
+      const itens = itensLigados(indice);
+      for (const item of itens) {
         item.setAttribute("data-selecionado", "true");
         if (promoverLista) item.setAttribute("aria-selected", "true");
-        // `nearest` e sem animação: rolagem brusca atrapalha, e
-        // `prefers-reduced-motion` não deve ser contrariado.
-        item.scrollIntoView({ block: "nearest", behavior: "auto" });
       }
-      atualizarPainel(item);
+      // `nearest` e sem animação: rolagem brusca atrapalha, e
+      // `prefers-reduced-motion` não deve ser contrariado.
+      itens[0]?.scrollIntoView({ block: "nearest", behavior: "auto" });
+
+      const valor = valorDa(indice);
+      if (estado !== null && valor !== undefined) {
+        estado.setAttribute("data-selecionado", valor);
+      }
+      atualizarPainel(itens[0] ?? null, valor);
     }
 
     function limparSelecao() {
       if (selecionado === null) return;
       opcoes[selecionado]?.setAttribute("aria-selected", "false");
-      const item = itemDaLista(selecionado);
-      item?.removeAttribute("data-selecionado");
-      if (promoverLista) item?.setAttribute("aria-selected", "false");
+      for (const item of itensLigados(selecionado)) {
+        item.removeAttribute("data-selecionado");
+        if (promoverLista) item.setAttribute("aria-selected", "false");
+      }
       selecionado = null;
+      estado?.removeAttribute("data-selecionado");
       atualizarPainel(null);
     }
 
@@ -227,9 +300,9 @@ export function MapaInterativo({
     function aoClicar(evento: Event) {
       const alvo = evento.target;
       if (!(alvo instanceof Element)) return;
-      const opcao = alvo.closest("path[data-codigo]");
+      const opcao = alvo.closest(seletorDasOpcoes);
       if (opcao === null) return;
-      const indice = opcoes.indexOf(opcao as SVGPathElement);
+      const indice = opcoes.indexOf(opcao as SVGElement);
       if (indice < 0) return;
       mover(indice, false);
       selecionar(indice);
@@ -239,7 +312,7 @@ export function MapaInterativo({
     function aoFocar(evento: FocusEvent) {
       const alvo = evento.target;
       if (!(alvo instanceof Element)) return;
-      const indice = opcoes.indexOf(alvo as SVGPathElement);
+      const indice = opcoes.indexOf(alvo as SVGElement);
       if (indice >= 0) ativo = indice;
     }
 
@@ -254,10 +327,10 @@ export function MapaInterativo({
     }
 
     function selecionarPeloItem(indiceDaLista: number) {
-      const codigo = itensDaLista[indiceDaLista]?.dataset.codigo;
+      const codigo = itensDaLista[indiceDaLista]?.dataset[chave];
       if (codigo === undefined) return;
       const indiceDoMapa = opcoes.findIndex(
-        (opcao) => opcao.dataset.codigo === codigo,
+        (opcao) => opcao.dataset[chave] === codigo,
       );
       if (indiceDoMapa < 0) return;
       mover(indiceDoMapa, false);
@@ -296,7 +369,7 @@ export function MapaInterativo({
     function aoClicarNaLista(evento: Event) {
       const alvo = evento.target;
       if (!(alvo instanceof Element)) return;
-      const item = alvo.closest<HTMLElement>("[data-codigo]");
+      const item = alvo.closest<HTMLElement>(`[data-${chave}]`);
       if (item === null || !itensDaLista.includes(item)) return;
       const indice = itensDaLista.indexOf(item);
       moverNaLista(indice, false);
@@ -310,9 +383,29 @@ export function MapaInterativo({
       if (indice >= 0) ativoNaLista = indice;
     }
 
+    const revelados =
+      seletorDoQueRevelar === undefined
+        ? []
+        : Array.from(
+            document.querySelectorAll<HTMLElement>(seletorDoQueRevelar),
+          ).filter((elemento) => elemento.hidden);
+    for (const elemento of revelados) elemento.hidden = false;
+
+    const voltar =
+      idDoBotaoVoltar === undefined
+        ? null
+        : document.getElementById(idDoBotaoVoltar);
+
+    /** Voltar devolve o foco ao alvo ativo: ninguém fica perdido no documento. */
+    function aoVoltar() {
+      limparSelecao();
+      opcoes[ativo]?.focus();
+    }
+
     svg.addEventListener("keydown", aoTeclar);
     svg.addEventListener("click", aoClicar);
     svg.addEventListener("focusin", aoFocar);
+    voltar?.addEventListener("click", aoVoltar);
     if (promoverLista && lista !== null) {
       lista.addEventListener("keydown", aoTeclarLista);
       lista.addEventListener("click", aoClicarNaLista);
@@ -320,6 +413,8 @@ export function MapaInterativo({
     }
 
     return () => {
+      for (const elemento of revelados) elemento.hidden = true;
+      voltar?.removeEventListener("click", aoVoltar);
       svg.removeEventListener("keydown", aoTeclar);
       svg.removeEventListener("click", aoClicar);
       svg.removeEventListener("focusin", aoFocar);
@@ -332,6 +427,7 @@ export function MapaInterativo({
         lista.removeAttribute("data-interativo");
       }
       svg.removeAttribute("data-interativo");
+      estado?.removeAttribute("data-selecionado");
       for (const opcao of opcoes) {
         opcao.removeAttribute("role");
         opcao.removeAttribute("aria-selected");
@@ -346,7 +442,18 @@ export function MapaInterativo({
         item.removeAttribute("data-selecionado");
       }
     };
-  }, [idDoSvg, idDaLista, idDoPainel, promoverLista]);
+  }, [
+    idDoSvg,
+    idDaLista,
+    idDoPainel,
+    promoverLista,
+    seletorDasOpcoes,
+    chave,
+    rotuloDaLista,
+    idDoEstado,
+    seletorDoQueRevelar,
+    idDoBotaoVoltar,
+  ]);
 
   return null;
 }
