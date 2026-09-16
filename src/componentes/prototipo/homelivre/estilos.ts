@@ -94,15 +94,19 @@ export const CSS_DA_HOME_LIVRE = `
 
 /* Capítulos */
 .hl-capitulo{padding-block:var(--hl-capitulo);border-top:1px solid var(--hl-fio)}
-.hl-capitulo--rio,.hl-capitulo--serra{position:relative;overflow:clip}
-.hl-capitulo--rio>.hl-quadro,.hl-capitulo--serra>.hl-quadro{position:relative;isolation:isolate}
+.hl-capitulo--rio,.hl-capitulo--serra,.hl-capitulo--bodega,.hl-capitulo--cactus,.hl-capitulo--patrimonio{position:relative;overflow:clip}
+.hl-capitulo--rio>.hl-quadro,.hl-capitulo--serra>.hl-quadro,.hl-capitulo--bodega>.hl-quadro,.hl-capitulo--cactus>.hl-quadro,.hl-capitulo--patrimonio>.hl-quadro{position:relative;isolation:isolate}
 .hl-grafismo{position:absolute;z-index:-1;display:block;color:var(--color-grafismo-territorial);pointer-events:none}
+.hl-grafismo-local{position:absolute;z-index:-1;display:block;height:auto;pointer-events:none;user-select:none}
 .hl-grafismo--rio{right:calc(var(--hl-margem) * -1);bottom:calc(var(--hl-capitulo) * -.72);width:min(64rem,88vw);height:clamp(6rem,14vw,10rem);opacity:var(--opacidade-grafismo-rio)}
 .hl-grafismo--rio path{stroke-width:1.25}
 .hl-grafismo--serra{right:50%;bottom:calc(var(--hl-capitulo) * -.82);width:100vw;height:clamp(7rem,15vw,11rem);opacity:var(--opacidade-grafismo-serra);transform:translateX(50%)}
 .hl-grafismo--serra path:first-child{stroke-width:1.2}
 .hl-grafismo--serra path:last-child{stroke-width:.65}
-@media (max-width:767px){.hl-grafismo--rio{width:105vw;opacity:calc(var(--opacidade-grafismo-rio) * .8)}.hl-grafismo--serra{opacity:calc(var(--opacidade-grafismo-serra) * .8)}}
+.hl-grafismo-local--bodega{top:calc(var(--hl-capitulo) * -1);right:calc(var(--hl-margem) * -1);width:clamp(18rem,31vw,28rem);opacity:var(--opacidade-grafismo-bodega);filter:var(--filtro-grafismo-arquitetura);mix-blend-mode:var(--mescla-grafismo-arquitetura)}
+.hl-grafismo-local--cactus{right:calc(var(--hl-margem) * -1.4);bottom:calc(var(--hl-capitulo) * -1);width:clamp(5rem,8vw,7.5rem);opacity:var(--opacidade-grafismo-cactus)}
+.hl-grafismo-local--igreja-serra-dos-macacos{right:calc(var(--hl-margem) * -1);bottom:calc(var(--hl-capitulo) * -1);width:clamp(15rem,24vw,22rem);opacity:var(--opacidade-grafismo-patrimonio);filter:var(--filtro-grafismo-arquitetura);mix-blend-mode:var(--mescla-grafismo-arquitetura)}
+@media (max-width:767px){.hl-grafismo--rio{width:105vw;opacity:calc(var(--opacidade-grafismo-rio) * .8)}.hl-grafismo--serra{opacity:calc(var(--opacidade-grafismo-serra) * .8)}.hl-grafismo-local--bodega,.hl-grafismo-local--cactus,.hl-grafismo-local--igreja-serra-dos-macacos{display:none}}
 .hl-rotulo{display:flex;align-items:baseline;gap:.85rem;margin:0}
 .hl-num{font-family:var(--font-display);font-weight:var(--peso-numeral);font-stretch:125%;color:var(--color-marca)}
 .hl-antes{margin:1.25rem 0 0;max-width:40ch;font-size:var(--text-base);font-style:italic}
@@ -124,9 +128,10 @@ export const CSS_DA_HOME_LIVRE = `
 /* I Origem */
 .hl-origem{display:grid;gap:2rem;margin-top:2rem;align-items:start}
 .hl-origem .hl-texto{font-size:var(--text-lg);line-height:1.55}
-.hl-assinatura{display:flex;flex-direction:column;align-items:flex-start;gap:.5rem}
-.hl-assinatura img{width:auto;height:6.5rem}
-@media (max-width:767px){.hl-assinatura img{height:2.75rem}}
+.hl-assinatura{position:relative;display:flex;min-width:12rem;min-height:11rem;overflow:hidden;flex-direction:column;justify-content:flex-end;align-items:flex-start;gap:.5rem}
+.hl-assinatura .hl-grafismo-local--carcara{z-index:0;top:-3.5rem;right:1rem;width:8.5rem;opacity:var(--opacidade-grafismo-carcara)}
+.hl-assinatura .meta-ficha{position:relative;z-index:1}
+@media (max-width:767px){.hl-assinatura{min-width:0;min-height:4rem;overflow:visible}.hl-assinatura .hl-grafismo-local--carcara{top:0;right:auto;width:2.75rem;opacity:calc(var(--opacidade-grafismo-carcara) * 1.6)}.hl-assinatura .meta-ficha{margin-left:3.5rem}}
 @media (min-width:960px){.hl-origem{grid-template-columns:minmax(0,1fr) auto}}
 .hl-cadeia{display:grid;margin-top:3.5rem}
 .hl-elo{position:relative;padding:1.75rem 1.5rem 1.5rem 0;border-top:2px solid var(--color-texto)}

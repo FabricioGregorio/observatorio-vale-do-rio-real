@@ -94,6 +94,12 @@
   --opacidade-grafismo-topografia: 0.055;
   --opacidade-grafismo-rio: 0.12;
   --opacidade-grafismo-serra: 0.085;
+  --opacidade-grafismo-carcara: 0.16;
+  --opacidade-grafismo-cactus: 0.13;
+  --opacidade-grafismo-bodega: 0.13;
+  --opacidade-grafismo-patrimonio: 0.12;
+  --filtro-grafismo-arquitetura: none;
+  --mescla-grafismo-arquitetura: multiply;
 
   /* --- Hero — Fase H1 ------------------------------------------------------
      O Hero é escuro nos **dois** temas: fotografia documental com véu por
@@ -252,6 +258,12 @@
     --opacidade-grafismo-topografia: 0.075;
     --opacidade-grafismo-rio: 0.16;
     --opacidade-grafismo-serra: 0.12;
+    --opacidade-grafismo-carcara: 0.2;
+    --opacidade-grafismo-cactus: 0.17;
+    --opacidade-grafismo-bodega: 0.17;
+    --opacidade-grafismo-patrimonio: 0.12;
+    --filtro-grafismo-arquitetura: invert(1);
+    --mescla-grafismo-arquitetura: screen;
 
     /* No tema escuro o Hero adensa um pouco: uma fotografia clara demais no
        topo de uma pagina escura destoa da propria pagina. A fotografia
@@ -281,6 +293,12 @@
   --opacidade-grafismo-topografia: 0.075;
   --opacidade-grafismo-rio: 0.16;
   --opacidade-grafismo-serra: 0.12;
+  --opacidade-grafismo-carcara: 0.2;
+  --opacidade-grafismo-cactus: 0.17;
+  --opacidade-grafismo-bodega: 0.17;
+  --opacidade-grafismo-patrimonio: 0.12;
+  --filtro-grafismo-arquitetura: invert(1);
+  --mescla-grafismo-arquitetura: screen;
 
   /* No tema escuro o Hero adensa um pouco: uma fotografia clara demais no
      topo de uma pagina escura destoa da propria pagina. A fotografia

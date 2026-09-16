@@ -428,8 +428,19 @@ test("H4.1: nem a gramática nem a casca do laboratório chegam à Home", async 
   );
   expect(noBody).toBe("");
 
-  // A assinatura de identidade continua sendo uma só na página.
-  await expect(page.locator('img[src*="/media/grafismos/"]')).toHaveCount(1);
+  // A assinatura do carcará é única; a segunda camada contém só os três
+  // grafismos territoriais selecionados, sem a gramática do laboratório.
+  for (const tipo of [
+    "carcara",
+    "cactus",
+    "bodega",
+    "igreja-serra-dos-macacos",
+  ]) {
+    await expect(page.locator(`[data-grafismo-local="${tipo}"]`)).toHaveCount(
+      1,
+    );
+  }
+  await expect(page.locator('img[src*="/media/grafismos/"]')).toHaveCount(4);
 
   // Vocabulário de desenvolvimento, inclusive como regra morta no CSS.
   expect(await page.content()).not.toMatch(/proposta|somente DEV/i);

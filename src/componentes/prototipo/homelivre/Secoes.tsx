@@ -1,9 +1,5 @@
 import Link from "next/link";
 import {
-  CARCARA_DA_IDENTIDADE,
-  PASTA_PUBLICA_DOS_GRAFISMOS,
-} from "../../../dados/grafismos/derivados";
-import {
   ALT_DO_HERO,
   CAMINHO_DAS_MARCAS,
   CAMINHO_PUBLICO,
@@ -54,7 +50,11 @@ import {
   ROTULO_DO_ESTADO,
 } from "./conteudo";
 import { Capitulo, Fontes, Pendente, type PropsDeSecao } from "./Estrutura";
-import { GrafismoRioReal, GrafismoSerra } from "./GrafismosTerritoriais";
+import {
+  GrafismoRioReal,
+  GrafismoSerra,
+  GrafismoTerritorial,
+} from "./GrafismosTerritoriais";
 import {
   ID_DA_LISTA_DO_RECORTE,
   ID_DO_MAPA,
@@ -261,14 +261,8 @@ export function Origem({ contexto = "dev" }: PropsDeSecao) {
         </div>
 
         <aside className="hl-assinatura" aria-label="Assinatura visual">
-          <img
-            alt={CARCARA_DA_IDENTIDADE.alt}
-            aria-hidden="true"
-            height={CARCARA_DA_IDENTIDADE.altura}
-            src={`${PASTA_PUBLICA_DOS_GRAFISMOS}/${CARCARA_DA_IDENTIDADE.arquivo}`}
-            width={CARCARA_DA_IDENTIDADE.largura}
-          />
-          <p className="meta-ficha">{CARCARA_DA_IDENTIDADE.legenda}</p>
+          <GrafismoTerritorial tipo="carcara" variante="grande" />
+          <p className="meta-ficha">Carcará · grafismo da identidade</p>
         </aside>
       </div>
 
@@ -567,6 +561,7 @@ export function Lugares({
 
   return (
     <Capitulo
+      className="hl-capitulo--bodega"
       id="hl-lugares"
       numero="III"
       rotulo="Lugares"
@@ -647,6 +642,7 @@ export function Lugares({
       <p className="hl-ponte">Os números a seguir vêm destes dois lugares.</p>
 
       <Fontes contexto={contexto} itens={FONTES.equipamentos} />
+      <GrafismoTerritorial tipo="bodega" variante="fundo" />
     </Capitulo>
   );
 }
@@ -736,6 +732,7 @@ export function Leitura({ contexto = "dev" }: PropsDeSecao) {
 export function Escuta({ contexto = "dev" }: PropsDeSecao) {
   return (
     <Capitulo
+      className="hl-capitulo--cactus"
       id="hl-escuta"
       numero="V"
       rotulo="Escuta"
@@ -805,6 +802,7 @@ export function Escuta({ contexto = "dev" }: PropsDeSecao) {
       </div>
 
       <Fontes contexto={contexto} itens={FONTES.escuta} />
+      <GrafismoTerritorial tipo="cactus" variante="lateral" />
     </Capitulo>
   );
 }
@@ -836,6 +834,7 @@ export function Produtos({
 
   return (
     <Capitulo
+      className="hl-capitulo--patrimonio"
       id="hl-produtos"
       numero="VI"
       rotulo="Produtos"
@@ -991,6 +990,7 @@ export function Produtos({
       </nav>
 
       <Fontes contexto={contexto} itens={FONTES.produtos} />
+      <GrafismoTerritorial tipo="igreja-serra-dos-macacos" variante="canto" />
     </Capitulo>
   );
 }

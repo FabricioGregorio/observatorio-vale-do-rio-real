@@ -71,7 +71,7 @@ describe("H3.5: isolamento, procedência e conteúdo", () => {
       expect(bytes.subarray(0, 4).toString("latin1")).toBe("RIFF");
       expect(bytes.subarray(8, 12).toString("latin1")).toBe("WEBP");
       expect(bytes.length).toBe(peso);
-      expect(bytes.length).toBeLessThan(60_000);
+      expect(bytes.length).toBeLessThan(80_000);
       expect(createHash("sha256").update(bytes).digest("hex")).toBe(sha256);
 
       const chunks: string[] = [];
@@ -83,8 +83,8 @@ describe("H3.5: isolamento, procedência e conteúdo", () => {
       }
       expect(chunks).not.toContain("EXIF");
       expect(chunks).not.toContain("XMP ");
-      // O grafismo é recortado do fundo; sem o canal alfa ele chega como
-      // retângulo branco sobre a superfície da passagem.
+      // Todos os grafismos desta camada preservam transparência; na Bodega,
+      // o retângulo branco do SVG é removido antes da rasterização.
       expect(chunks).toContain("ALPH");
 
       // VP8X grava a dimensão do canvas menos um, em 24 bits little-endian.

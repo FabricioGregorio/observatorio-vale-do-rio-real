@@ -7,6 +7,54 @@
  * não uma representação altimétrica.
  */
 
+import {
+  GRAFISMOS_DA_IDENTIDADE,
+  PASTA_PUBLICA_DOS_GRAFISMOS,
+} from "../../../dados/grafismos/derivados";
+
+type TipoDoGrafismoLocal =
+  | "carcara"
+  | "cactus"
+  | "bodega"
+  | "igreja-serra-dos-macacos";
+
+type VarianteDoGrafismoLocal = "canto" | "lateral" | "fundo" | "grande";
+
+const GRAFISMO_POR_TIPO = new Map(
+  GRAFISMOS_DA_IDENTIDADE.map((grafismo) => [grafismo.id, grafismo]),
+);
+
+/**
+ * Fonte única para os derivados da identidade usados como paisagem editorial.
+ * A identificação territorial vive no contexto textual da seção; a imagem é
+ * sempre decorativa e nunca se apresenta como fotografia ou evidência.
+ */
+export function GrafismoTerritorial({
+  tipo,
+  variante,
+}: {
+  tipo: TipoDoGrafismoLocal;
+  variante: VarianteDoGrafismoLocal;
+}) {
+  const grafismo = GRAFISMO_POR_TIPO.get(tipo);
+  if (grafismo === undefined) return null;
+
+  return (
+    <img
+      alt={grafismo.alt}
+      aria-hidden="true"
+      className={`hl-grafismo-local hl-grafismo-local--${tipo} hl-grafismo-local--${variante}`}
+      data-grafismo-local={tipo}
+      decoding="async"
+      draggable="false"
+      height={grafismo.altura}
+      loading="lazy"
+      src={`${PASTA_PUBLICA_DOS_GRAFISMOS}/${grafismo.arquivo}`}
+      width={grafismo.largura}
+    />
+  );
+}
+
 export function GrafismoRioReal() {
   return (
     <svg

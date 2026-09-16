@@ -2,14 +2,14 @@
 
 Estrutura criada na Tarefa 10B.1, conforme 10B.0 v1.2 §11. Ela nasceu vazia e
 deixou de ser vazia na H1. Este arquivo descreve o estado **real** da pasta,
-auditado em 2026-09-11 na consolidação H3.5.1.
+auditado em 2026-09-16 na segunda fase dos grafismos territoriais.
 
 ## O que existe hoje
 
 ```
 media/
 ├── campo/       2 derivados do Hero          → src/dados/hero/derivados.ts
-├── grafismos/   1 grafismo da identidade     → src/dados/grafismos/derivados.ts
+├── grafismos/   4 grafismos da identidade    → src/dados/grafismos/derivados.ts
 ├── logos/       3 marcas institucionais      → src/dados/hero/derivados.ts
 ├── mapa/        vazia (.gitkeep)
 ├── pesquisa/    3 fotografias de campo       → src/dados/pesquisa/derivados.ts
@@ -20,7 +20,11 @@ media/
 | Pasta | Finalidade | Estado |
 |---|---|---|
 | `campo/` | fotografia do Hero, nas duas composições servidas por art direction | `hero-observatorio-desktop-1440.webp`, `hero-observatorio-mobile-540.webp` |
-| `grafismos/` | elementos gráficos da identidade visual; **não** são registro de pesquisa | `carcara-identidade-368.webp` |
+| `grafismos/` | elementos gráficos da identidade visual; **não** são registro de pesquisa | carcará, cacto, Bodega dos Tropeiros e igreja da Serra dos Macacos |
+
+Na Bodega, o SVG original traz um retângulo branco do tamanho do canvas. A
+derivação remove apenas esse fundo para produzir WebP com alfa; a arte e o
+enquadramento permanecem integrais. O original externo não é alterado.
 | `logos/` | marcas institucionais, de fomento e de parceiros | marca e símbolo do Observatório, marca do Coletivo |
 | `mapa/` | recursos do mapa territorial | vazia; a malha é GeoJSON e vive em `src/dados/territorio/` |
 | `pesquisa/` | fotografias das visitas de campo, com procedência documental | três derivados de Ilha Grande |
