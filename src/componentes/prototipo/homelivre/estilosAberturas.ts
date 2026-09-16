@@ -81,7 +81,8 @@ export const CSS_DAS_ABERTURAS = `
 .ab-b2__linha>span+span::before{content:" · ";color:var(--color-texto-suave)}
 .ab-b2__legenda-titulo{font-family:var(--font-display);font-weight:600;letter-spacing:0;color:var(--color-texto)}
 .ab-b2__base{display:grid;gap:2rem}
-.ab-b2__folha{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:1rem;padding:1.5rem var(--hl-margem) 0;background:var(--color-fundo)}
+.ab-b2__folha{position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:flex-start;gap:1rem;padding:1.5rem var(--hl-margem) 0;background:var(--color-fundo)}
+.ab-b2__folha::before{content:"";position:absolute;z-index:-1;inset:0;background:var(--color-grafismo-territorial);opacity:var(--opacidade-grafismo-topografia);pointer-events:none;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 720 360'%3E%3Cg fill='none' stroke='white' stroke-width='1.2'%3E%3Cpath d='M-30 71C81 6 166 26 222 83s119 63 188 3 181-76 340-8'/%3E%3Cpath d='M-44 112C72 41 163 57 216 109s120 59 191 7 181-61 354-9'/%3E%3Cpath d='M-55 157C62 84 154 90 211 138s124 56 196 15 181-48 365-14'/%3E%3Cpath d='M-61 207C54 132 147 126 209 168s128 54 201 24 180-36 373-21'/%3E%3Cpath d='M-66 263C50 181 143 166 210 202s132 55 207 36 180-22 378-25'/%3E%3Cpath d='M-72 325C48 232 140 207 213 237s136 57 214 49 181-6 381-31'/%3E%3C/g%3E%3C/svg%3E") center/cover no-repeat}
 .ab-b2__titulo{display:flex;flex-direction:column;gap:.15rem}
 .ab-b2__t1,.ab-b2__t3{font-size:clamp(var(--text-base),1.5vw,var(--text-lg));font-weight:600}
 .ab-b2__t2{font-size:clamp(2.1rem,4.6vw,4.25rem);line-height:.98;letter-spacing:-.035em;font-weight:700}

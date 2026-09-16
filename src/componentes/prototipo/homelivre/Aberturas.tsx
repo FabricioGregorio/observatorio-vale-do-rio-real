@@ -188,7 +188,7 @@ export function AberturaB2({ contexto = "dev" }: PropsDeSecao) {
       </figure>
 
       <div className="ab-b2__base">
-        <div className="ab-b2__folha">
+        <div className="ab-b2__folha" data-grafismo-topografia="true">
           <h1 className="ab-b2__titulo" id="ab-b2-titulo">
             <span className="ab-b2__t1">{NOME_OFICIAL_EM_PARTES[0]}</span>{" "}
             <span className="ab-b2__t2">{NOME_OFICIAL_EM_PARTES[1]}</span>{" "}

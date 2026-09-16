@@ -202,3 +202,30 @@ describe("navegação da Home v2", () => {
     expect(secoes).toContain('<MenuMobile classeResponsiva="" />');
   });
 });
+
+describe("sistema gráfico territorial da Home v2", () => {
+  const aberturas = readFileSync(
+    "src/componentes/prototipo/homelivre/Aberturas.tsx",
+    "utf8",
+  );
+  const secoes = readFileSync(
+    "src/componentes/prototipo/homelivre/Secoes.tsx",
+    "utf8",
+  );
+  const grafismos = readFileSync(
+    "src/componentes/prototipo/homelivre/GrafismosTerritoriais.tsx",
+    "utf8",
+  );
+
+  test("aplica somente as três famílias aprovadas", () => {
+    expect(aberturas).toContain('data-grafismo-topografia="true"');
+    expect(secoes).toContain("<GrafismoRioReal />");
+    expect(secoes).toContain("<GrafismoSerra />");
+    expect(grafismos.match(/data-grafismo-territorial=/g)).toHaveLength(2);
+  });
+
+  test("rio e serra são decorativos e não recebem foco", () => {
+    expect(grafismos.match(/aria-hidden="true"/g)).toHaveLength(2);
+    expect(grafismos.match(/focusable="false"/g)).toHaveLength(2);
+  });
+});

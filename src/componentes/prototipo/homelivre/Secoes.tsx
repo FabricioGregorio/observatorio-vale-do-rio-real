@@ -54,6 +54,7 @@ import {
   ROTULO_DO_ESTADO,
 } from "./conteudo";
 import { Capitulo, Fontes, Pendente, type PropsDeSecao } from "./Estrutura";
+import { GrafismoRioReal, GrafismoSerra } from "./GrafismosTerritoriais";
 import {
   ID_DA_LISTA_DO_RECORTE,
   ID_DO_MAPA,
@@ -238,6 +239,7 @@ export function Abertura({ contexto = "dev" }: PropsDeSecao) {
 export function Origem({ contexto = "dev" }: PropsDeSecao) {
   return (
     <Capitulo
+      className="hl-capitulo--rio"
       id="hl-origem"
       numero="I"
       rotulo="Origem"
@@ -304,6 +306,7 @@ export function Origem({ contexto = "dev" }: PropsDeSecao) {
       </ol>
 
       <Fontes contexto={contexto} itens={FONTES.origem} />
+      <GrafismoRioReal />
     </Capitulo>
   );
 }
@@ -997,6 +1000,7 @@ export function Produtos({
 export function Conferencia({ contexto = "dev" }: PropsDeSecao) {
   return (
     <Capitulo
+      className="hl-capitulo--serra"
       id="hl-conferencia"
       numero="VII"
       rotulo="Conferência"
@@ -1039,6 +1043,7 @@ export function Conferencia({ contexto = "dev" }: PropsDeSecao) {
       </div>
 
       <Fontes contexto={contexto} itens={FONTES.conferir} />
+      <GrafismoSerra />
     </Capitulo>
   );
 }

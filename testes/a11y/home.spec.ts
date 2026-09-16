@@ -45,6 +45,37 @@ test.describe("Home", () => {
     await expect(page.locator(".ab-b2__legenda")).toContainText("05/04/2026");
   });
 
+  test("os grafismos territoriais são discretos, decorativos e não interativos", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    await expect(page.locator('[data-grafismo-topografia="true"]')).toHaveCount(
+      1,
+    );
+    const grafismos = page.locator("[data-grafismo-territorial]");
+    await expect(grafismos).toHaveCount(2);
+
+    const estilos = await grafismos.evaluateAll((elementos) =>
+      elementos.map((elemento) => {
+        const estilo = getComputedStyle(elemento);
+        return {
+          oculto: elemento.getAttribute("aria-hidden"),
+          focavel: elemento.getAttribute("focusable"),
+          opacidade: Number(estilo.opacity),
+          eventos: estilo.pointerEvents,
+        };
+      }),
+    );
+    for (const estilo of estilos) {
+      expect(estilo.oculto).toBe("true");
+      expect(estilo.focavel).toBe("false");
+      expect(estilo.eventos).toBe("none");
+      expect(estilo.opacidade).toBeGreaterThan(0);
+      expect(estilo.opacidade).toBeLessThanOrEqual(0.16);
+    }
+  });
+
   test("mantém os sete capítulos na ordem narrativa aprovada", async ({
     page,
   }) => {
@@ -318,7 +349,7 @@ test.describe("Home — o que não pode ser publicado", () => {
 });
 
 test.describe("Home — apresentação", () => {
-  for (const largura of [320, 375, 768, 1024, 1440]) {
+  for (const largura of [320, 375, 768, 1024, 1280, 1440]) {
     for (const tema of ["light", "dark"] as const) {
       test(`${largura}px no tema ${tema} não transborda nem perde alt`, async ({
         page,

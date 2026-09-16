@@ -90,6 +90,10 @@
   --color-acento: var(--color-barro);
   --color-marca: var(--color-observatorio);
   --color-foco: var(--color-anil);
+  --color-grafismo-territorial: var(--color-marca);
+  --opacidade-grafismo-topografia: 0.055;
+  --opacidade-grafismo-rio: 0.12;
+  --opacidade-grafismo-serra: 0.085;
 
   /* --- Hero — Fase H1 ------------------------------------------------------
      O Hero é escuro nos **dois** temas: fotografia documental com véu por
@@ -244,6 +248,10 @@
     --color-acento: var(--color-barro-claro);
     --color-marca: var(--color-observatorio-claro);
     --color-foco: var(--color-milho);
+    --color-grafismo-territorial: var(--color-marca);
+    --opacidade-grafismo-topografia: 0.075;
+    --opacidade-grafismo-rio: 0.16;
+    --opacidade-grafismo-serra: 0.12;
 
     /* No tema escuro o Hero adensa um pouco: uma fotografia clara demais no
        topo de uma pagina escura destoa da propria pagina. A fotografia
@@ -269,6 +277,10 @@
   --color-acento: var(--color-barro-claro);
   --color-marca: var(--color-observatorio-claro);
   --color-foco: var(--color-milho);
+  --color-grafismo-territorial: var(--color-marca);
+  --opacidade-grafismo-topografia: 0.075;
+  --opacidade-grafismo-rio: 0.16;
+  --opacidade-grafismo-serra: 0.12;
 
   /* No tema escuro o Hero adensa um pouco: uma fotografia clara demais no
      topo de uma pagina escura destoa da propria pagina. A fotografia

@@ -94,6 +94,15 @@ export const CSS_DA_HOME_LIVRE = `
 
 /* Capítulos */
 .hl-capitulo{padding-block:var(--hl-capitulo);border-top:1px solid var(--hl-fio)}
+.hl-capitulo--rio,.hl-capitulo--serra{position:relative;overflow:clip}
+.hl-capitulo--rio>.hl-quadro,.hl-capitulo--serra>.hl-quadro{position:relative;isolation:isolate}
+.hl-grafismo{position:absolute;z-index:-1;display:block;color:var(--color-grafismo-territorial);pointer-events:none}
+.hl-grafismo--rio{right:calc(var(--hl-margem) * -1);bottom:calc(var(--hl-capitulo) * -.72);width:min(64rem,88vw);height:clamp(6rem,14vw,10rem);opacity:var(--opacidade-grafismo-rio)}
+.hl-grafismo--rio path{stroke-width:1.25}
+.hl-grafismo--serra{right:50%;bottom:calc(var(--hl-capitulo) * -.82);width:100vw;height:clamp(7rem,15vw,11rem);opacity:var(--opacidade-grafismo-serra);transform:translateX(50%)}
+.hl-grafismo--serra path:first-child{stroke-width:1.2}
+.hl-grafismo--serra path:last-child{stroke-width:.65}
+@media (max-width:767px){.hl-grafismo--rio{width:105vw;opacity:calc(var(--opacidade-grafismo-rio) * .8)}.hl-grafismo--serra{opacity:calc(var(--opacidade-grafismo-serra) * .8)}}
 .hl-rotulo{display:flex;align-items:baseline;gap:.85rem;margin:0}
 .hl-num{font-family:var(--font-display);font-weight:var(--peso-numeral);font-stretch:125%;color:var(--color-marca)}
 .hl-antes{margin:1.25rem 0 0;max-width:40ch;font-size:var(--text-base);font-style:italic}
