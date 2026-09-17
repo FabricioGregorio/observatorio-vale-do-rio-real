@@ -142,8 +142,21 @@ function territorio(id: IdDoLugar, entorno: IdDoEntorno) {
  * Serra dos Macacos trazia `[]` escrito à mão. Nenhum dos três sobrevive a uma
  * fotografia nova no corpus; este filtro sobrevive.
  *
- * Lugar sem fotografia pública devolve lista vazia, e a ficha diz isso. Não há
- * substituição por fotografia de outro lugar, aqui nem em lugar nenhum.
+ * Lugar sem fotografia no recorte devolve lista vazia, e a ficha diz isso. Não
+ * há substituição por fotografia de outro lugar, aqui nem em lugar nenhum.
+ *
+ * ## O que esta lista é, e o que ela não é
+ *
+ * É o **recorte editorial das fichas** — a seleção declarada em `FICHAS`, no
+ * gerador, mais os três derivados da H3. Não é o total de fotografias do lugar
+ * no Acervo, e muito menos o total no corpus. Ilha Grande deixa a diferença
+ * visível: 10 fotografias publicadas no Acervo, 3 escolhidas para a ficha.
+ *
+ * Serra dos Macacos devolve vazio por um motivo que não é o mesmo: em
+ * 2026-09-17 a pasta `fotos/serra-dos-macacos/` do corpus tem 11 originais, e
+ * nenhum deles foi derivado, publicado ou declarado em `FICHAS`. A ficha está
+ * certa ao não mostrar nada — publicar exigiria derivação, revisão de
+ * privacidade e seleção editorial, nesta ordem, e nenhuma das três aconteceu.
  */
 function fotografiasDoLugar(id: IdDoLugar): readonly FotoDoLugar[] {
   const dasFichas = DERIVADOS_DOS_LUGARES.filter(

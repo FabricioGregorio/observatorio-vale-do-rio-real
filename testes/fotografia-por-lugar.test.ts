@@ -85,14 +85,22 @@ describe("identidade entre fotografia e lugar", () => {
 });
 
 /**
- * Quantas fotografias públicas cada lugar reúne, hoje.
+ * Quantas fotografias o **recorte editorial das fichas** reúne por lugar.
  *
- * Números fixos de propósito: são a contagem conferida contra a pasta de
- * origem de cada original, e mudá-los deve exigir uma decisão, não acontecer
- * de passagem. Serra dos Macacos em zero **não é falha**: nenhuma fotografia
- * sua entrou no recorte público.
+ * O nome importa. Estes números não são o total de fotografias do lugar: são
+ * as que a seleção declarada em `FICHAS` — mais os três derivados da H3 —
+ * levou à ficha. Ilha Grande mostra a diferença: 10 fotografias suas estão
+ * publicadas no Acervo e 3 estão aqui.
+ *
+ * Números fixos de propósito: mudá-los deve exigir uma decisão editorial, não
+ * acontecer de passagem.
+ *
+ * Serra dos Macacos em zero não significa que não existam fotografias do
+ * lugar. Em 2026-09-17 o corpus tem 11 originais em `fotos/serra-dos-macacos/`
+ * e nenhum foi derivado, publicado ou declarado em `FICHAS`. Zero aqui é a
+ * leitura correta do que existe publicado, não um atestado sobre o corpus.
  */
-describe("fotografias públicas por lugar", () => {
+describe("recorte das fichas por lugar", () => {
   const porId = new Map(lugaresDeCampo(new Map()).map((l) => [l.id, l]));
 
   test.each([
@@ -100,7 +108,7 @@ describe("fotografias públicas por lugar", () => {
     ["borda-da-mata", 7],
     ["serra-dos-macacos", 0],
     ["ilha-grande", 3],
-  ] as const)("%s reúne %i fotografias públicas", (id, quantas) => {
+  ] as const)("%s leva %i fotografias à ficha", (id, quantas) => {
     expect(porId.get(id)?.fotos).toHaveLength(quantas);
   });
 
@@ -136,7 +144,42 @@ describe("fotografias públicas por lugar", () => {
   test("Serra dos Macacos não recebe imagem de substituição", () => {
     const serra = porId.get("serra-dos-macacos");
     expect(serra?.fotos).toEqual([]);
+    // A ficha continua inteira: o relato técnico A04 é dela e é público.
     expect(serra?.materiais.length).toBeGreaterThan(0);
+  });
+});
+
+/**
+ * O estado vazio só pode afirmar o que a ficha sabe.
+ *
+ * A primeira versão dizia "Nenhuma fotografia pública está vinculada a este
+ * lugar" e falava do acervo inteiro a partir do que a ficha reúne — afirmação
+ * que o corpus da Serra dos Macacos desmente. A frase certa descreve a ficha.
+ * O inverso também é proibido: anunciar material ainda não publicado exporia a
+ * existência de acervo fora do universo público.
+ */
+describe("frase do estado vazio", () => {
+  const componente = readFileSync(
+    "src/componentes/territorio/cartografia/TerritorioVivo.tsx",
+    "utf8",
+  );
+  const frase = /<p className="lacuna">([^<]*ficha[^<]*)<\/p>/.exec(
+    componente,
+  )?.[1];
+
+  test("existe e fala da ficha, não do acervo", () => {
+    expect(frase).toBeDefined();
+    expect(frase).toContain("ficha");
+  });
+
+  test("não afirma que o lugar não tem fotografia", () => {
+    expect(frase).not.toMatch(/nenhuma fotografia/i);
+    expect(frase).not.toMatch(/não (existe|há)/i);
+  });
+
+  test("não anuncia material fora do universo público", () => {
+    expect(frase).not.toMatch(/restrit|privad|bloquead|em revisão|pendente/i);
+    expect(frase).not.toMatch(/\d+\s+fotografia/i);
   });
 });
 

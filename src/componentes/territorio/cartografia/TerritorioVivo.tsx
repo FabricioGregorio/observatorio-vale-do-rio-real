@@ -815,14 +815,21 @@ function FichaDoLugar({
 
       {lugar.fotos.length === 0 ? (
         /*
-          Ausência declarada, não falha de carregamento. A frase fala do
-          universo público e só dele: não afirma, nem insinua, que exista
-          fotografia fora dele. Serra dos Macacos é hoje o único caso.
+          A frase descreve o estado **da ficha**, e nada além dele.
+          "Nenhuma fotografia pública está vinculada a este lugar", que estava
+          aqui antes, afirmava mais do que se podia provar: dizia do acervo
+          inteiro a partir do que a ficha reúne. Serra dos Macacos tem
+          fotografias de origem que nunca foram derivadas nem publicadas — o
+          que não torna a ficha errada, torna a frase anterior errada.
+
+          Também não se diz o contrário. Anunciar que existe material ainda não
+          publicado exporia a existência de acervo fora do universo público, e
+          o fail-closed vale nos dois sentidos.
         */
         <section>
           <h3>Fotografias</h3>
           <p className="lacuna">
-            Nenhuma fotografia pública está vinculada a este lugar.
+            Esta ficha ainda não reúne fotografia pública.
           </p>
         </section>
       ) : (
