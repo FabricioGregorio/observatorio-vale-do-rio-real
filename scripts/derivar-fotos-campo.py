@@ -159,10 +159,23 @@ FICHAS = {
     ),
 }
 
-# Imagem principal de cada ficha, por decisão humana de 2026-09-16.
+# Imagem principal de cada ficha, por decisão humana. Capa é a abertura da
+# ficha territorial: não é o `principal` de um documento no Acervo, que é
+# preferência de link (ADR-016), nem a primeira posição de um array.
+#
+# As duas últimas vêm do ADR-020, de 2026-09-17. Ficam declaradas aqui porque é
+# aqui que a decisão de capa mora; só produzem efeito quando o original
+# correspondente entrar em FICHAS, e nenhuma das duas entrou — a derivação está
+# suspensa enquanto o corpus não estabilizar (ADR-020, "execução suspensa").
+#
+# O nome do arquivo não decide nada: o corpus usa `principal-capa` em duas
+# pastas e `capa-principal` numa terceira. Quem identifica é o sha256, e ele
+# está no ADR.
 PRINCIPAIS = {
     "recanto-da-serra/recanto-da-serra.png",
     "centro-cultural-museu-borda-da-mata/frente-casa-de-taipa.heic",
+    "serra-dos-macacos/principal-capa.jpg",
+    "ilha-grande/principal-capa.jpg",
 }
 
 TRANSFORMACAO = (
@@ -202,6 +215,57 @@ def canonicos(raiz_fotos: Path) -> list[tuple[str, list[str]]]:
         ordenados = sorted(caminhos, key=prioridade)
         escolhidos.append((ordenados[0], ordenados[1:]))
     return sorted(escolhidos, key=lambda par: prioridade(par[0]))
+
+
+CORPUS_AUTORIZADO = Path("src/dados/pesquisa/corpus-b01-autorizado.json")
+
+
+def conferir_corpus(itens: list[dict]) -> None:
+    """Compara o corpus encontrado com o conjunto declarado, por conteúdo.
+
+    No lugar de ``len(itens) != 59``. O número dizia pouco e protegia menos do
+    que parecia: trocar um original por outro mantinha a contagem, e o script
+    regravaria manifesto e derivados sem uma palavra. Também quebrava em toda
+    mudança legítima do corpus, e a única saída óbvia era aumentar o número —
+    o que dissolve o gate em vez de responder a ele.
+
+    A declaração é uma lista de ``{arquivo, sha256}`` versionada no repositório,
+    no mesmo espírito de ``ORIGINAIS`` em ``derivar-pesquisa-campo.ts``: o
+    pipeline só deriva o que alguém declarou, e a divergência aparece **com
+    nome**, não como um número que não bate.
+
+    Ampliar o corpus é acrescentar entradas à declaração — um ato explícito,
+    revisável no diff, que é exatamente o que se quer de uma autorização.
+    """
+    declarado = {
+        item["sha256"]: item["arquivo"]
+        for item in json.loads(CORPUS_AUTORIZADO.read_text(encoding="utf-8"))
+    }
+    encontrado = {item["original"]["sha256"]: item["original"]["arquivo"] for item in itens}
+
+    ausentes = [declarado[h] for h in declarado.keys() - encontrado.keys()]
+    intrusos = [encontrado[h] for h in encontrado.keys() - declarado.keys()]
+    if ausentes or intrusos:
+        linhas = [f"Corpus divergente de {CORPUS_AUTORIZADO}."]
+        if ausentes:
+            linhas.append(f"  declarados e ausentes do corpus ({len(ausentes)}):")
+            linhas += [f"    - {a}" for a in sorted(ausentes)]
+        if intrusos:
+            linhas.append(f"  presentes e não declarados ({len(intrusos)}):")
+            linhas += [f"    + {a}" for a in sorted(intrusos)]
+        linhas.append("  Nada foi gravado. Declare o conjunto autorizado ou restaure o corpus.")
+        raise SystemExit("\n".join(linhas))
+
+    # Mesmo conteúdo sob outro caminho também é divergência: a procedência é o
+    # par arquivo+hash, e só o hash coincidir não basta.
+    renomeados = [
+        f"{declarado[h]} -> {encontrado[h]}" for h in declarado if declarado[h] != encontrado[h]
+    ]
+    if renomeados:
+        raise SystemExit(
+            "Conteúdo autorizado mudou de caminho; declare o novo:\n"
+            + "\n".join(f"    ~ {r}" for r in sorted(renomeados))
+        )
 
 
 def principal() -> None:
@@ -302,8 +366,7 @@ def principal() -> None:
                 }
             )
 
-    if len(itens) != 59:
-        raise SystemExit(f"Esperados 59 conteúdos únicos; obtidos {len(itens)}.")
+    conferir_corpus(itens)
     if len(recorte) != len(FICHAS):
         raise SystemExit("Recorte das fichas não bateu com a seleção declarada.")
 
