@@ -4,7 +4,7 @@
  * ## Por que este módulo existe
  *
  * Até 2026-09-16 o estado de cada material estava escrito duas vezes à mão:
- * em `homelivre/conteudo.ts`, para as fichas da Home, e em
+ * em `componentes/home/conteudo.ts`, para as fichas da Home, e em
  * `territoriovivo/lugares.ts`, para as fichas do Território. Duas listas
  * separadas divergem, e num site de prestação de contas divergir significa
  * afirmar que algo é público onde não é — ou o contrário.

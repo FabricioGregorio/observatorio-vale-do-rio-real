@@ -9,10 +9,16 @@ playwright-report/
 test-results/
 coverage/
 
-# Capturas e medições locais de protótipos; nunca versionar.
-/tmp/h3-screenshots/
-/tmp/h3-measure-*.bin
-/tmp/h4-screenshots/
+# Área de trabalho local: capturas, medições, renderizações de conferência e
+# derivados em preparo. Nunca versionar. Regra única — as três anteriores
+# (h3-screenshots, h3-measure-*.bin, h4-screenshots) cobriam só parte do que
+# foi parar aqui. Nada em /tmp/ é fonte: material com valor documental sai
+# daqui antes de ser citado.
+/tmp/
+
+# Configuração local de harness de agente (perfis de preview, ajustes de
+# sessão). É conveniência de máquina, não documentação do projeto.
+/.claude/
 
 # Artefato derivado de inventario-de-anexos.xlsx.
 # Regenerado por scripts/derivar-inventario.py; nunca editar à mão.

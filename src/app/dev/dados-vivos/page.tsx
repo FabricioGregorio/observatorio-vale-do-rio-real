@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { CentralAcessibilidade } from "../../../componentes/prototipo/CentralAcessibilidade";
+import { CentralAcessibilidade } from "../../../componentes/layout/CentralAcessibilidade";
 import { DadosVivos } from "../../../componentes/prototipo/dadosvivos/DadosVivos";
 import {
   CSS_DO_LABORATORIO_DOS_DADOS_VIVOS,
@@ -9,9 +9,9 @@ import {
 } from "../../../componentes/prototipo/dadosvivos/estilos";
 import { FaixaDeRegistros } from "../../../componentes/prototipo/dadosvivos/FaixaDeRegistros";
 import { RankingEditorial } from "../../../componentes/prototipo/dadosvivos/RankingEditorial";
-import { REGISTROS_RESERVADOS } from "../../../componentes/prototipo/dadosvivos/selecaoEditorial";
 import { CSS_DA_LINGUAGEM } from "../../../componentes/prototipo/linguagem/estilos";
 import { RevelacaoVisual } from "../../../componentes/prototipo/linguagem/RevelacaoVisual";
+import { REGISTROS_RESERVADOS } from "../../../dados/indicadores/selecaoEditorial";
 
 export const metadata: Metadata = {
   title: "Laboratório — Dados vivos",

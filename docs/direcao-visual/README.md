@@ -34,3 +34,12 @@ Em caso de divergência, vale o documento mais recente. A **Consolidação
 define o Vale do Rio Real, o modelo de camadas, a qualidade da malha e a lista
 de arquivos de dado. Decisão de biblioteca do mapa vale a da ADR-009.
 
+## Consolidação de 2026-09-17
+
+A Home especificada na **v1.3** (`10B.0_v1.3_Especificacao_de_Implementacao_da_Home.md`)
+foi substituída e seus componentes foram removidos do código. O documento
+permanece como registro da fase; ele **não** descreve a Home atual, cuja
+composição vive em `src/componentes/home/`.
+
+O que da v1.3 continua valendo é o que nunca foi da composição: tokens,
+tipografia e os critérios de “nenhum valor fora de `tokens.css`”.

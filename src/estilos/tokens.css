@@ -32,7 +32,7 @@
   --color-mata: #12301f;
   --color-anil: #1f3a5f;
   --color-pedra: #e7e5de;
-  --color-milho: #e8b23a;
+  --color-milho: #2e8b89;
   --color-barro: #8a4b2a;
   --color-carvao: #171a17;
 
@@ -118,9 +118,38 @@
   --hero-base: rgb(14 22 17 / 0.9);
   --hero-texto: var(--color-pedra);
   --hero-metadado: rgb(231 229 222 / 0.82);
-  --hero-sobreposicao-editorial: 108px;
-  --hero-respiro-numeros: 4rem;
-  --hero-altura-transicao: 5rem;
+  --hero-fundo-editorial: var(--color-noite);
+  --hero-veu-superior: rgb(14 22 17 / 0.2);
+  --hero-sombra-lateral: rgb(14 22 17 / 0.38);
+  --hero-painel: rgb(14 22 17 / 0.88);
+  --hero-altura-mobile: clamp(54rem, 115svh, 65rem);
+  --hero-respiro-foto-mobile: clamp(2rem, 5svh, 4rem);
+  --hero-respiro-foto-desktop: clamp(14rem, 30svh, 21rem);
+  --hero-gap-editorial: clamp(2rem, 5vw, 5rem);
+  --hero-rodape-mobile: 6rem;
+  --hero-rodape-desktop: 6.5rem;
+  --hero-base-legenda: 1.15rem;
+  --hero-padding-painel: 1.25rem;
+  --hero-titulo-editorial: clamp(2.5rem, 4.8vw, 4.5rem);
+  --hero-espaco-titulo: 0.5rem;
+  --hero-espaco-texto: 1.5rem;
+  --hero-numero-editorial: clamp(2rem, 3vw, 3rem);
+  --hero-filete: rgb(231 229 222 / 0.28);
+  --hero-acento-editorial: var(--color-milho);
+  --topo-espaco-editorial: 1rem;
+  --topo-padding-link: 0.75rem 0.5rem;
+  --topo-padding-mobile: 0.75rem;
+  --topo-marca-largura: 12rem;
+  --topo-botao-mobile: 5rem;
+  --topo-fundo-translucido: rgb(14 22 17 / 0.82);
+  --topo-desfoque: 8px;
+  --topo-reserva-rolagem: 11rem;
+  --topo-altura-utilidade: 2.5rem;
+  --hero-altura-tela: 100svh;
+  --hero-rodape-tela: 4rem;
+  --faixa-respiro: clamp(2rem, 4vw, 3rem);
+  --faixa-espaco: 1.5rem;
+  --faixa-coluna-numero: 3rem;
 
   /* Texto por cima de um preenchimento de milho — marcador, tarja, seleção.
      **Invariante de tema, de propósito**: milho é a mesma cor nos dois temas,
@@ -203,7 +232,8 @@
   --altura-cabecalho: 5rem;
   --espaco-links-cabecalho: 1.5rem;
   --espaco-painel-cabecalho: 1.5rem;
-  --radius-ficha: 2px; /* fichas de arquivo não têm cantos macios */
+  --radius-ficha: 2px;
+  /* fichas de arquivo não têm cantos macios */
 
   /* O cabeçalho é uma superfície institucional estável nos dois temas. */
   --color-cabecalho-fundo: var(--color-mata);
@@ -421,6 +451,7 @@
     position: absolute;
     left: -9999px;
   }
+
   .pular-conteudo:focus {
     position: fixed;
     top: 0.5rem;

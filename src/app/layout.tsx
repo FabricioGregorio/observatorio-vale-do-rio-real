@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Archivo, IBM_Plex_Mono, Literata } from "next/font/google";
 import { Cabecalho } from "../componentes/layout/Cabecalho";
+import { CSS_DO_CABECALHO } from "../componentes/layout/estilosCabecalho";
 import { PularConteudo } from "../componentes/layout/PularConteudo";
 import { Rodape } from "../componentes/layout/Rodape";
 import { ID_CONTEUDO } from "../lib/navegacao";
@@ -104,6 +105,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: SCRIPT_TEMA_INICIAL }} />
       </head>
       <body className="flex min-h-screen flex-col">
+        <style>{CSS_DO_CABECALHO}</style>
         <PularConteudo />
         <Cabecalho />
         {/*

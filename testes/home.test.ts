@@ -1,20 +1,20 @@
 /**
- * Testes da Home estrutural (Tarefa 10A).
+ * Home do Observatório — o que dá para verificar sem renderizar.
  *
- * Verificam o que dá para verificar sem renderizar: o conjunto de destinos, a
- * existência real das rotas e a proibição de descrever seção sem conteúdo.
- * O comportamento renderizado é coberto em `testes/a11y/home.spec.ts`.
+ * O comportamento renderizado é coberto em `testes/a11y/home.spec.ts`. Aqui
+ * ficam três contratos que nenhum tipo, lint ou build pega:
+ *
+ * 1. a navegação do site e as rotas que ela promete;
+ * 2. a fiação de `/` — uma Home só, sem casca de laboratório sobrando;
+ * 3. os limites de conteúdo: nada de título, duração ou link sugeridos onde o
+ *    material real ainda não existe.
  */
 import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, test } from "vitest";
-import { CAMINHOS_PRIORITARIOS } from "../src/componentes/home/caminhos";
-import { MENU_PRINCIPAL, MENU_RODAPE } from "../src/lib/navegacao";
+import { ENTREVISTAS, PODOBSERVAR } from "../src/componentes/home/conteudo";
+import { MENU_PRINCIPAL } from "../src/lib/navegacao";
 
-const rotulosDoSite = new Map<string, string>(
-  [...MENU_PRINCIPAL, ...MENU_RODAPE].map((item) => [item.href, item.rotulo]),
-);
-
-describe("caminhos prioritários da Home", () => {
+describe("navegação do site", () => {
   test("o menu segue os sete itens e a ordem aprovados", () => {
     expect(MENU_PRINCIPAL).toEqual([
       { href: "/observatorio", rotulo: "O Observatório" },
@@ -32,91 +32,23 @@ describe("caminhos prioritários da Home", () => {
       expect(existsSync(`src/app${item.href}/page.tsx`), item.href).toBe(true);
     }
   });
-
-  test("todo destino é uma rota que existe no app", () => {
-    for (const caminho of CAMINHOS_PRIORITARIOS) {
-      expect(
-        existsSync(`src/app${caminho.href}/page.tsx`),
-        `rota inexistente: ${caminho.href}`,
-      ).toBe(true);
-    }
-  });
-
-  test("os caminhos exigidos pela Tarefa 10 estão presentes", () => {
-    const destinos = CAMINHOS_PRIORITARIOS.map((caminho) => caminho.href);
-    expect(destinos).toContain("/prestacao-de-contas");
-    expect(destinos).toContain("/pesquisa");
-    expect(destinos).toContain("/podobservar");
-  });
-
-  test("a Prestação de Contas vem primeiro: é a ação principal", () => {
-    expect(CAMINHOS_PRIORITARIOS[0]?.href).toBe("/prestacao-de-contas");
-  });
-
-  test("nenhum destino aparece duas vezes", () => {
-    const destinos = CAMINHOS_PRIORITARIOS.map((caminho) => caminho.href);
-    expect(new Set(destinos).size).toBe(destinos.length);
-  });
-
-  test("o rótulo é o mesmo que o site usa no menu", () => {
-    for (const caminho of CAMINHOS_PRIORITARIOS) {
-      expect(rotulosDoSite.get(caminho.href)).toBe(caminho.rotulo);
-    }
-  });
-
-  /**
-   * A regra de integridade da fatia: destino sem conteúdo publicado declara o
-   * estado e não recebe descrição. Descrever uma seção vazia como se ela já
-   * entregasse algo é conteúdo inventado.
-   */
-  test("destino em preparação não tem descrição", () => {
-    for (const caminho of CAMINHOS_PRIORITARIOS) {
-      if (caminho.estado === "em-preparacao") {
-        expect(caminho.descricao).toBeNull();
-      } else {
-        expect(caminho.descricao).not.toBeNull();
-      }
-    }
-  });
 });
+
 /**
- * Fiação da Home pública — promoção da Home v2 (decisão humana de 2026-09-16).
- *
- * Até aqui esta seção guardava o contrário: que `/` montasse as entradas
- * públicas das seções H0–H4.1 e nunca os componentes de laboratório. A Home v2
- * substituiu aquela composição, e o risco mudou de lugar sem mudar de
- * natureza. O que precisa de guarda agora é a promessa que a decisão fez:
- *
- * - `/` reutiliza a implementação aprovada, em vez de uma cópia — duas Homes
- *   divergentes é exatamente o que a convergência veio encerrar;
- * - nada de laboratório atravessa para o conteúdo público. O aviso de
- *   experimento e o seletor de abertura não quebram tipo, lint nem build se
- *   vazarem: só um teste os pega.
+ * Consolidação de 2026-09-17: a Home passou a ser a implementação oficial e
+ * única. O que precisa de guarda é o que um tipo não pega — que `/` não volte
+ * a disputar composição com uma segunda Home, e que nenhum instrumento de
+ * laboratório reapareça no conteúdo público.
  */
 describe("fiação da Home pública", () => {
   const home = readFileSync("src/app/page.tsx", "utf8");
-  const componente = readFileSync(
-    "src/componentes/prototipo/homelivre/HomeLivre.tsx",
-    "utf8",
-  );
 
-  test("a Home reutiliza a implementação da v2, sem cópia", () => {
-    expect(home).toContain(
-      'import { HomeLivre } from "../componentes/prototipo/homelivre/HomeLivre"',
-    );
-    expect(home).toContain("<HomeLivre");
+  test("a rota serve a composição oficial de `componentes/home`", () => {
+    expect(home).toContain('from "../componentes/home/Home"');
+    expect(home).toContain("<ComposicaoDaHome");
   });
 
-  test("a rota pública declara o contexto público e a abertura aprovada", () => {
-    expect(home).toContain('contexto="publico"');
-    expect(home).toContain('abertura="b2"');
-  });
-
-  /**
-   * A Home antiga continua versionada como baseline de rollback. O que não
-   * pode voltar é ela disputar `/` com a v2 — e isso se detecta no import.
-   */
-  test("a rota pública não remonta a composição da Home antiga", () => {
+  test("a rota não remonta a composição da Home antiga", () => {
     for (const antigo of [
       "HeroManifesto",
       "SecaoMapa",
@@ -124,101 +56,88 @@ describe("fiação da Home pública", () => {
       "SecaoDados",
       "CaminhosPrioritarios",
       "ChamadaAcervo",
+      "AberturaObservatorio",
       "CabecalhoPrototipo",
     ]) {
       expect(home, antigo).not.toContain(antigo);
     }
   });
 
-  test("a rota pública não lê variante de abertura", () => {
+  test("a rota não lê variante de abertura nem contexto", () => {
     expect(home).not.toContain("searchParams");
     expect(home).not.toContain("lerVarianteDaAbertura");
+    expect(home).not.toContain("contexto");
+  });
+
+  /** A Home antiga e o harness `/dev/home-livre` não voltam pela porta dos fundos. */
+  test("não existe segunda Home nem rota de laboratório dela", () => {
+    for (const caminho of [
+      "src/app/dev/home-livre/page.tsx",
+      "src/componentes/prototipo/homelivre",
+      "src/componentes/home/caminhos.ts",
+      "src/componentes/home/SecaoMapa.tsx",
+      "src/componentes/dados/SecaoDados.tsx",
+      "src/componentes/pesquisa/PesquisaEmCampo.tsx",
+    ]) {
+      expect(existsSync(caminho), caminho).toBe(false);
+    }
+  });
+});
+
+/**
+ * A barra superior é do layout raiz e serve todas as rotas. Os sete destinos
+ * continuam presentes, mas três vivem no painel de Conteúdos, para separar
+ * navegação principal de acervo editorial.
+ */
+describe("cabeçalho do site", () => {
+  const cabecalho = readFileSync(
+    "src/componentes/layout/Cabecalho.tsx",
+    "utf8",
+  );
+
+  test("usa a navegação hierarquizada e o identificador do cabeçalho", () => {
+    expect(cabecalho).toContain("<NavegacaoPrincipal />");
+    expect(cabecalho).toContain("ID_CABECALHO_HOME");
+  });
+
+  test("serve o menu de telas estreitas", () => {
+    expect(cabecalho).toContain('aria-label="Principal (telas estreitas)"');
+    expect(cabecalho).toContain('<MenuMobile classeResponsiva="" />');
   });
 
   /**
-   * O aviso e o seletor existem para o laboratório. Se deixarem de depender do
-   * contexto, passam a ser servidos em `/` sem que nada mais reclame.
+   * Acessibilidade e Prestação de contas são a mesma utilidade e precisam da
+   * mesma altura; a hierarquia entre elas fica por cor, borda e fundo. A
+   * regra que garante isso é uma só, e as duas classes vivem nela.
    */
-  test("aviso de experimento e seletor de abertura dependem do contexto", () => {
-    const trecho = componente.slice(componente.indexOf("data-contexto"));
-    const aviso = trecho.indexOf("hl-dev");
-    const seletor = trecho.indexOf("SeletorDeAbertura ativa");
-    const guarda = trecho.indexOf('contexto === "dev"');
-
-    for (const posicao of [aviso, seletor, guarda])
-      expect(posicao).toBeGreaterThan(-1);
-    expect(guarda).toBeLessThan(aviso);
-    expect(guarda).toBeLessThan(seletor);
-  });
-});
-
-/**
- * As entradas públicas das seções H0–H4.1 continuam versionadas e servindo os
- * laboratórios. A fixação de composição e contexto segue valendo: elas não
- * podem regredir para a casca de protótipo enquanto existirem.
- */
-describe("entradas públicas preservadas da Home antiga", () => {
-  test("Pesquisa em Campo fixa a composição A e o contexto da Home", () => {
-    const entrada = readFileSync(
-      "src/componentes/pesquisa/PesquisaEmCampo.tsx",
+  test("as duas utilidades compartilham uma altura só", () => {
+    const css = readFileSync(
+      "src/componentes/layout/estilosCabecalho.ts",
       "utf8",
     );
-    expect(entrada).toContain('composicao="documental-aberto"');
-    expect(entrada).toContain('contexto="home"');
-    expect(entrada).not.toContain("caderno-tecnico");
-  });
-
-  test("a seção de Dados fixa o contexto da Home", () => {
-    const entrada = readFileSync(
-      "src/componentes/dados/SecaoDados.tsx",
-      "utf8",
-    );
-    expect(entrada).toContain('contexto="home"');
-  });
-});
-
-/**
- * A barra superior da Home v2 serve os dois lugares. No público ela precisa
- * usar a navegação hierarquizada; no laboratório, a demonstração histórica da
- * H1. Os sete destinos continuam presentes, mas três vivem no painel de
- * Conteúdos para separar navegação principal de acervo editorial.
- */
-describe("navegação da Home v2", () => {
-  const secoes = readFileSync(
-    "src/componentes/prototipo/homelivre/Secoes.tsx",
-    "utf8",
-  );
-
-  test("o topo público usa a navegação hierarquizada", () => {
-    expect(secoes).toContain("<NavegacaoDoCabecalho />");
-  });
-
-  test("o topo público carrega o identificador do cabeçalho da Home", () => {
-    expect(secoes).toContain("ID_CABECALHO_HOME");
-  });
-
-  test("o menu de telas estreitas é servido só no contexto público", () => {
-    expect(secoes).toContain('aria-label="Principal (telas estreitas)"');
-    expect(secoes).toContain('<MenuMobile classeResponsiva="" />');
+    const regra = css
+      .split("\n")
+      .find(
+        (linha) =>
+          linha.includes(".hl-topo__acessibilidade,") &&
+          linha.includes(".hl-topo__prestacao{"),
+      );
+    expect(regra).toBeDefined();
+    expect(regra).toContain("min-height:var(--topo-altura-utilidade)");
+    expect(regra).toContain("white-space:nowrap");
   });
 });
 
-describe("sistema gráfico territorial da Home v2", () => {
-  const aberturas = readFileSync(
-    "src/componentes/prototipo/homelivre/Aberturas.tsx",
-    "utf8",
-  );
-  const secoes = readFileSync(
-    "src/componentes/prototipo/homelivre/Secoes.tsx",
-    "utf8",
-  );
+describe("sistema gráfico territorial", () => {
+  const aberturas = readFileSync("src/componentes/home/Aberturas.tsx", "utf8");
+  const secoes = readFileSync("src/componentes/home/Secoes.tsx", "utf8");
   const grafismos = readFileSync(
-    "src/componentes/prototipo/homelivre/GrafismosTerritoriais.tsx",
+    "src/componentes/grafismos/GrafismosTerritoriais.tsx",
     "utf8",
   );
 
-  test("aplica somente as três famílias aprovadas", () => {
-    expect(aberturas).toContain('data-grafismo-topografia="true"');
+  test("preserva rio e serra e retira a topografia do painel removido", () => {
+    expect(aberturas).not.toContain('data-grafismo-topografia="true"');
     expect(secoes).toContain("<GrafismoRioReal />");
     expect(secoes).toContain("<GrafismoSerra />");
     expect(grafismos.match(/data-grafismo-territorial=/g)).toHaveLength(2);
@@ -227,5 +146,62 @@ describe("sistema gráfico territorial da Home v2", () => {
   test("rio e serra são decorativos e não recebem foco", () => {
     expect(grafismos.match(/aria-hidden="true"/g)).toHaveLength(2);
     expect(grafismos.match(/focusable="false"/g)).toHaveLength(2);
+  });
+});
+
+/**
+ * Limites de conteúdo. Vinham de `testes/rota-home-livre.test.ts` e seguem
+ * valendo: o que protegiam não era o laboratório, era a integridade do que a
+ * Home afirma. Material ausente é `null` com estado declarado — nunca um
+ * placeholder plausível.
+ */
+describe("limites de conteúdo da Home", () => {
+  test("PodObservar não traz título, duração, link ou transcrição sugeridos", () => {
+    expect(PODOBSERVAR.episodios).toHaveLength(PODOBSERVAR.episodiosPublicados);
+    for (const episodio of PODOBSERVAR.episodios) {
+      expect(episodio.titulo).toBeNull();
+      expect(episodio.duracao).toBeNull();
+      expect(episodio.url).toBeNull();
+      expect(episodio.transcricao).toBeNull();
+    }
+  });
+
+  test("as entrevistas são identificadas por instituição ou lugar", () => {
+    expect(ENTREVISTAS.map((e) => e.numero)).toEqual([
+      "01",
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+    ]);
+  });
+
+  /**
+   * O bloco de fontes citava caminho de repositório, código de fase e
+   * documento restrito. Ele nunca era renderizado em público — mas existia na
+   * árvore. Agora não existe, e é isso que se verifica.
+   */
+  test("nenhum instrumento de laboratório sobrou na composição", () => {
+    for (const arquivo of [
+      "src/componentes/home/Home.tsx",
+      "src/componentes/home/Secoes.tsx",
+      "src/componentes/home/Aberturas.tsx",
+      "src/componentes/home/Estrutura.tsx",
+      "src/componentes/home/conteudo.ts",
+    ]) {
+      const fonte = readFileSync(arquivo, "utf8");
+      for (const vestigio of [
+        "hl-dev",
+        "SeletorDeAbertura",
+        "Fontes desta seção",
+        "somente DEV",
+        "Não publicar",
+      ]) {
+        expect(fonte, `${arquivo} · ${vestigio}`).not.toContain(vestigio);
+      }
+    }
   });
 });

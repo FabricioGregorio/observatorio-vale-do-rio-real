@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 /**
- * Mapa territorial da Home v2 — exploração por recorte.
+ * Mapa territorial da Home — exploração por recorte.
  *
  * Este arquivo substitui o contrato da composição H2, aposentada da parte
  * pública por decisão humana de 2026-09-16. O que mudou foi a implementação,
@@ -9,7 +9,7 @@ import { expect, test } from "@playwright/test";
  * continuam aqui, aplicados a **dois recortes** em vez de 75 municípios.
  *
  * O que ficou para trás, e por quê: os 75 municípios eram opções porque o
- * desenho era o estado inteiro como ferramenta. Na Home v2 o estado é
+ * desenho era o estado inteiro como ferramenta. Na Home atual o estado é
  * contexto, e o que se explora é o recorte que o Observatório declarou. A
  * experiência territorial completa é de `/territorio`, coberta em
  * `territorio-publico.spec.ts`.

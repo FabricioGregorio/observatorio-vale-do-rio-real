@@ -1,37 +1,27 @@
 import Link from "next/link";
-import {
-  ALT_DO_HERO,
-  CAMINHO_DAS_MARCAS,
-  CAMINHO_PUBLICO,
-  DERIVADOS_DO_HERO,
-  ICONE_OBSERVATORIO_CABECALHO,
-  MARCA_COLETIVO,
-} from "../../../dados/hero/derivados";
-import { INDICADORES } from "../../../dados/indicadores/derivados";
-import { exibirIndicador } from "../../../dados/indicadores/formato";
+
+import { CAMINHO_DAS_MARCAS, MARCA_COLETIVO } from "../../dados/hero/derivados";
+import { INDICADORES } from "../../dados/indicadores/derivados";
+import { exibirIndicador } from "../../dados/indicadores/formato";
+import { REGISTROS_DE_APOIO } from "../../dados/indicadores/selecaoEditorial";
 import {
   type ArquivosPublicados,
   type MaterialResolvido,
   resolverMateriaisDoLugar,
-} from "../../../dados/materiais-de-campo";
+} from "../../dados/materiais-de-campo";
 import {
   DERIVADOS_DA_PESQUISA,
   DERIVADOS_DOS_LUGARES,
   PASTA_PUBLICA_DA_PESQUISA,
-} from "../../../dados/pesquisa/derivados";
-import { RECORTE_TERRITORIAL } from "../../../dados/territorio/recorte";
-import type { RelacaoTerritorial } from "../../../dados/territorio/tipos";
+} from "../../dados/pesquisa/derivados";
+import { RECORTE_TERRITORIAL } from "../../dados/territorio/recorte";
+import type { RelacaoTerritorial } from "../../dados/territorio/tipos";
+import { MENU_RODAPE } from "../../lib/navegacao";
 import {
-  ID_CABECALHO_HOME,
-  MENU_PRINCIPAL,
-  MENU_RODAPE,
-} from "../../../lib/navegacao";
-import { MenuMobile, NavegacaoDoCabecalho } from "../../layout/MenuMobile";
-import { MapaInterativo } from "../../mapa/MapaInterativo";
-import { CentralAcessibilidade } from "../CentralAcessibilidade";
-import { REGISTROS_DE_APOIO } from "../dadosvivos/selecaoEditorial";
-import { ITENS_COM_DESTINO } from "../menuAlvo";
-import type { ContextoDaHome } from "./abertura";
+  GrafismoRioReal,
+  GrafismoSerra,
+} from "../grafismos/GrafismosTerritoriais";
+import { MapaInterativo } from "../mapa/MapaInterativo";
 import {
   ACOMPANHAMENTO,
   COLETIVO,
@@ -40,17 +30,14 @@ import {
   ENTREVISTAS,
   EQUIPAMENTOS,
   type Equipamento,
-  FONTES,
   FOTOGRAFIAS_DO_BORDA_NO_ACERVO,
   LINHA_DO_EDITAL,
   NOME_OFICIAL,
   PODOBSERVAR,
-  REGUA_DE_MARCAS,
   RELATORIO_DO_RECANTO,
   ROTULO_DO_ESTADO,
 } from "./conteudo";
-import { Capitulo, Fontes, Pendente, type PropsDeSecao } from "./Estrutura";
-import { GrafismoRioReal, GrafismoSerra } from "./GrafismosTerritoriais";
+import { Capitulo, Pendente } from "./Estrutura";
 import {
   ID_DA_LISTA_DO_RECORTE,
   ID_DO_MAPA,
@@ -61,13 +48,13 @@ import {
 import { DEFINICOES, type Recorte } from "./recortes";
 
 /**
- * Seções do experimento `/dev/home-livre`, na ordem narrativa:
+ * Seções da Home, na ordem narrativa:
  *
- *   Abertura → I Origem → II Território → III Lugares → IV Leitura →
- *   V Escuta → VI Produtos → VII Conferência → Créditos
+ *   I Origem → II Território → III Lugares → IV Leitura → V Escuta →
+ *   VI Produtos → VII Conferência
  *
- * Todas são Server Components. A única ilha cliente da página é a Central de
- * Acessibilidade já existente, reutilizada sem alteração no topo.
+ * Todas são Server Components. A única ilha cliente da página é o mapa do
+ * recorte; o cabeçalho e a Central de Acessibilidade vivem no layout raiz.
  */
 
 const MUNICIPIOS_DO_VALE = RECORTE_TERRITORIAL.filter((m) =>
@@ -77,162 +64,13 @@ const MUNICIPIOS_DE_COMPARACAO = RECORTE_TERRITORIAL.filter((m) =>
   m.relacoesTerritoriais.includes("comparacao"),
 );
 
-const FOTO_VERTICAL = DERIVADOS_DO_HERO.find((d) =>
-  d.arquivo.includes("mobile"),
-) as (typeof DERIVADOS_DO_HERO)[number];
-
 function tamanhoEmKb(bytes: number): string {
   return `${Math.round(bytes / 1000)} kB`;
 }
 
 /* -------------------------------------------------------------------------- */
 
-/**
- * Barra superior da Home v2.
- *
- * No laboratório ela continua exibindo a demonstração histórica da H1
- * (`ITENS_COM_DESTINO`). Servindo `/`, usa a navegação canônica de sete itens
- * da ADR-017 e ganha o menu de telas estreitas: abaixo de 1024px a lista
- * horizontal sai de cena e quem navega por teclado usa o mesmo `MenuMobile`
- * do resto do site — o contrato verificado em
- * `testes/a11y/navegacao-publica.spec.ts`.
- */
-export function Topo({ contexto = "dev" }: { contexto?: ContextoDaHome }) {
-  const publico = contexto === "publico";
-  const itens = publico ? MENU_PRINCIPAL : ITENS_COM_DESTINO;
-
-  return (
-    <header className="hl-topo" id={publico ? ID_CABECALHO_HOME : undefined}>
-      <div className="hl-quadro hl-topo__linha">
-        <Link className="hl-topo__marca" href="/" prefetch={false}>
-          <img
-            alt=""
-            height={ICONE_OBSERVATORIO_CABECALHO.altura}
-            src={`${CAMINHO_DAS_MARCAS}/${ICONE_OBSERVATORIO_CABECALHO.arquivo}`}
-            width={ICONE_OBSERVATORIO_CABECALHO.largura}
-          />
-          <span>Observatório do Vale do Rio Real</span>
-        </Link>
-        {publico ? (
-          <NavegacaoDoCabecalho />
-        ) : (
-          <nav aria-label="Principal" className="hl-topo__nav">
-            <ul>
-              {itens.map((item) =>
-                item.href === null ? null : (
-                  <li key={item.rotulo}>
-                    <Link href={item.href} prefetch={false}>
-                      {item.rotulo}
-                    </Link>
-                  </li>
-                ),
-              )}
-            </ul>
-          </nav>
-        )}
-        {publico ? (
-          <nav
-            aria-label="Principal (telas estreitas)"
-            className="hl-topo__nav-estreita"
-          >
-            <MenuMobile classeResponsiva="" />
-          </nav>
-        ) : null}
-        <div className="hl-topo__util">
-          <CentralAcessibilidade />
-          <Link
-            className="hl-botao hl-botao--curto hl-topo__prestacao"
-            href="/prestacao-de-contas"
-            prefetch={false}
-          >
-            Prestação de contas <span aria-hidden="true">→</span>
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
-
-export function Abertura({ contexto = "dev" }: PropsDeSecao) {
-  return (
-    <section
-      aria-labelledby="hl-abertura-titulo"
-      className="hl-quadro hl-abertura"
-    >
-      <div className="hl-abertura__texto">
-        <p className="meta-ficha">Vale do Rio Real · Sergipe · Brasil</p>
-        <h1 id="hl-abertura-titulo">{NOME_OFICIAL}</h1>
-        <p className="hl-lede">
-          Uma pesquisa sobre cultura e economia criativa feita a partir do
-          território — em equipamentos culturais, com gestores públicos e nos
-          registros de quem mantém esses lugares funcionando.
-        </p>
-
-        <dl className="hl-tres">
-          <div>
-            <dt className="meta-ficha">Quem realiza</dt>
-            <dd>{COLETIVO}</dd>
-          </div>
-          <div>
-            <dt className="meta-ficha">Com que recurso</dt>
-            <dd>
-              {EDITAL_CURTO} — {LINHA_DO_EDITAL}
-            </dd>
-          </div>
-          <div>
-            <dt className="meta-ficha">Onde</dt>
-            <dd>
-              Vale do Rio Real, Sergipe — {MUNICIPIOS_DO_VALE.length} municípios
-              no recorte
-            </dd>
-          </div>
-        </dl>
-
-        <div className="hl-acoes">
-          <a className="hl-botao hl-botao--cheio" href="#hl-lugares">
-            Ver o que a pesquisa encontrou
-          </a>
-          <Link
-            className="hl-botao"
-            href="/prestacao-de-contas"
-            prefetch={false}
-          >
-            Conferir a prestação de contas
-          </Link>
-        </div>
-
-        <Fontes contexto={contexto} itens={FONTES.abertura} />
-      </div>
-
-      <figure className="hl-abertura__foto">
-        <img
-          alt={ALT_DO_HERO}
-          decoding="async"
-          fetchPriority="high"
-          height={FOTO_VERTICAL.altura}
-          src={`${CAMINHO_PUBLICO}/${FOTO_VERTICAL.arquivo}`}
-          width={FOTO_VERTICAL.largura}
-        />
-        <figcaption className="hl-legenda">
-          <strong>Caminho de chegada</strong>
-          <span className="meta-ficha">
-            Registro do acervo do projeto · data não informada
-          </span>
-          <Pendente>
-            Arquivo idêntico ao da pasta de campo do Recanto da Serra ·
-            atribuição de local a confirmar
-          </Pendente>
-        </figcaption>
-      </figure>
-    </section>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
-
-export function Origem({ contexto = "dev" }: PropsDeSecao) {
+export function Origem() {
   return (
     <Capitulo
       className="hl-capitulo--rio"
@@ -290,7 +128,6 @@ export function Origem({ contexto = "dev" }: PropsDeSecao) {
         </li>
       </ol>
 
-      <Fontes contexto={contexto} itens={FONTES.origem} />
       <GrafismoRioReal />
     </Capitulo>
   );
@@ -320,7 +157,7 @@ function recorteDoMunicipio(
   return undefined;
 }
 
-export function Territorio({ contexto = "dev" }: PropsDeSecao) {
+export function Territorio() {
   return (
     <Capitulo
       className="hl-capitulo--territorio"
@@ -456,8 +293,6 @@ export function Territorio({ contexto = "dev" }: PropsDeSecao) {
           />
         </div>
       </div>
-
-      <Fontes contexto={contexto} itens={FONTES.territorio} />
     </Capitulo>
   );
 }
@@ -533,9 +368,10 @@ function FotoDaFicha({
 }
 
 export function Lugares({
-  contexto = "dev",
   publicados = new Map(),
-}: PropsDeSecao & { publicados?: ArquivosPublicados }) {
+}: {
+  publicados?: ArquivosPublicados;
+}) {
   const recanto = EQUIPAMENTOS[0] as Equipamento;
   const borda = EQUIPAMENTOS[1] as Equipamento;
   const fotos = {
@@ -630,15 +466,13 @@ export function Lugares({
       </div>
 
       <p className="hl-ponte">Os números a seguir vêm destes dois lugares.</p>
-
-      <Fontes contexto={contexto} itens={FONTES.equipamentos} />
     </Capitulo>
   );
 }
 
 /* -------------------------------------------------------------------------- */
 
-export function Leitura({ contexto = "dev" }: PropsDeSecao) {
+export function Leitura() {
   const protagonista = INDICADORES[0];
 
   return (
@@ -710,15 +544,13 @@ export function Leitura({ contexto = "dev" }: PropsDeSecao) {
         Esta leitura apresenta um recorte. O levantamento completo preserva o
         detalhamento das atividades registradas
       </p>
-
-      <Fontes contexto={contexto} itens={FONTES.leitura} />
     </Capitulo>
   );
 }
 
 /* -------------------------------------------------------------------------- */
 
-export function Escuta({ contexto = "dev" }: PropsDeSecao) {
+export function Escuta() {
   return (
     <Capitulo
       id="hl-escuta"
@@ -788,8 +620,6 @@ export function Escuta({ contexto = "dev" }: PropsDeSecao) {
           ))}
         </ul>
       </div>
-
-      <Fontes contexto={contexto} itens={FONTES.escuta} />
     </Capitulo>
   );
 }
@@ -813,9 +643,10 @@ export function resolverEstadoDosProdutos(publicados: ArquivosPublicados) {
 }
 
 export function Produtos({
-  contexto = "dev",
   publicados = new Map(),
-}: PropsDeSecao & { publicados?: ArquivosPublicados }) {
+}: {
+  publicados?: ArquivosPublicados;
+}) {
   const { relatoriosPublicos, entrevistasEFormulariosPublicos } =
     resolverEstadoDosProdutos(publicados);
 
@@ -974,15 +805,13 @@ export function Produtos({
           </li>
         </ul>
       </nav>
-
-      <Fontes contexto={contexto} itens={FONTES.produtos} />
     </Capitulo>
   );
 }
 
 /* -------------------------------------------------------------------------- */
 
-export function Conferencia({ contexto = "dev" }: PropsDeSecao) {
+export function Conferencia() {
   return (
     <Capitulo
       className="hl-capitulo--serra"
@@ -1027,7 +856,6 @@ export function Conferencia({ contexto = "dev" }: PropsDeSecao) {
         </figure>
       </div>
 
-      <Fontes contexto={contexto} itens={FONTES.conferir} />
       <GrafismoSerra />
     </Capitulo>
   );
@@ -1035,90 +863,7 @@ export function Conferencia({ contexto = "dev" }: PropsDeSecao) {
 
 /* -------------------------------------------------------------------------- */
 
-/**
- * Régua de marcas — **estudo conceitual, não conteúdo publicável.**
- *
- * O próprio bloco declara "Não publicar": os arquivos oficiais de apoio e
- * fomento não estão no repositório, os slots vazios anunciam material
- * pendente e as regras de ordem e proporção ainda dependem de validação. Numa
- * página de prestação de contas, publicar marca institucional em rascunho é
- * afirmação sobre terceiros que ninguém autorizou.
- *
- * Por isso a seção inteira fica fora da árvore pública, pelo mesmo critério
- * de `Fontes`. A atribuição institucional que o visitante precisa — quem
- * realiza, quem financia e a quem se presta contas — já está escrita em texto
- * no capítulo Origem, e não depende desta régua.
- */
-export function Creditos({ contexto = "dev" }: PropsDeSecao) {
-  if (contexto === "publico") return null;
-
-  return (
-    <section aria-labelledby="hl-creditos-titulo" className="hl-creditos">
-      <div className="hl-quadro">
-        <p className="meta-ficha" id="hl-creditos-titulo">
-          Realização, apoio e fomento
-        </p>
-
-        <p className="hl-aviso">
-          Estrutura conceitual da régua de marcas.{" "}
-          <strong>Não publicar.</strong> As marcas de apoio e fomento não estão
-          no repositório, e o layout depende de validação técnica / nada opor
-          antes da publicação final.
-        </p>
-
-        <div className="hl-regua">
-          {REGUA_DE_MARCAS.map((grupo) => (
-            <div
-              className="hl-regua__grupo"
-              data-grupo={grupo.grupo}
-              key={grupo.grupo}
-            >
-              <p className="meta-ficha">{grupo.rotulo}</p>
-              <ul className="hl-regua__marcas">
-                {grupo.marcas.map((marca) => (
-                  <li className="hl-slot" key={marca.nome}>
-                    {marca.arquivo !== null &&
-                    marca.largura !== null &&
-                    marca.altura !== null ? (
-                      <img
-                        alt={marca.nome}
-                        height={marca.altura}
-                        src={marca.arquivo}
-                        width={marca.largura}
-                      />
-                    ) : (
-                      <span className="hl-slot__vazio">
-                        <strong>{marca.nome}</strong>
-                        <span>arquivo oficial RGB pendente</span>
-                      </span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        <ul className="hl-regras">
-          <li>Arquivos oficiais em RGB, sem recriar marca.</li>
-          <li>
-            Fundo neutro; em fundo escuro, só versões vazadas ou monocromáticas
-            oficialmente autorizadas.
-          </li>
-          <li>
-            Proporções e áreas de proteção preservadas; alturas visuais
-            equivalentes.
-          </li>
-          <li>Rótulo “Apoio / parceria” e posição do Coletivo a validar.</li>
-        </ul>
-
-        <Fontes contexto={contexto} itens={FONTES.creditos} />
-      </div>
-    </section>
-  );
-}
-
-export function RodapeLivre() {
+export function RodapeDaHome() {
   return (
     <div className="hl-rodape">
       <div className="hl-quadro hl-rodape__linha">

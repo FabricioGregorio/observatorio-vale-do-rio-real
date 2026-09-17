@@ -44,7 +44,7 @@ function rotaEstaAtiva(pathname: string, href: string): boolean {
 }
 
 /**
- * Navegação larga da Home v2.
+ * Navegação larga do cabeçalho do site.
  *
  * `"use client"` é necessário apenas nesta ilha: o painel editorial controla
  * abertura, clique externo, `Esc`, devolução de foco e o estado da rota atual.

@@ -1,11 +1,8 @@
-import type {
-  DadosDoMapa,
-  MunicipioDoMapa,
-} from "../../../dados/territorio/mapa";
-import type { RelacaoTerritorial } from "../../../dados/territorio/tipos";
+import type { DadosDoMapa, MunicipioDoMapa } from "../../dados/territorio/mapa";
+import type { RelacaoTerritorial } from "../../dados/territorio/tipos";
 
 /**
- * Recortes exploráveis do mapa da Home v2.
+ * Recortes exploráveis do mapa da Home.
  *
  * A Home não transforma os 75 municípios de Sergipe em opções: o estado inteiro
  * é **contexto**, e o que se explora são os recortes que o Observatório

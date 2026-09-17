@@ -3,7 +3,6 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test, vi } from "vitest";
 import { exigirDesenvolvimentoDosDadosVivos } from "../src/app/dev/dados-vivos/page";
-import { SecaoDados } from "../src/componentes/dados/SecaoDados";
 import { PainelDeDados } from "../src/componentes/prototipo/dados/PainelDeDados";
 import { DadosVivos } from "../src/componentes/prototipo/dadosvivos/DadosVivos";
 import {
@@ -17,12 +16,6 @@ import {
   RankingEditorial,
 } from "../src/componentes/prototipo/dadosvivos/RankingEditorial";
 import {
-  APOIO_DA_HOME,
-  REGISTROS_DE_APOIO,
-  REGISTROS_RESERVADOS,
-  RESERVADOS_AO_CONJUNTO,
-} from "../src/componentes/prototipo/dadosvivos/selecaoEditorial";
-import {
   ATIVIDADES,
   CONTEXTO_DOS_DADOS,
   INDICADORES,
@@ -32,6 +25,12 @@ import {
   exibirIndicador,
   formatarReais,
 } from "../src/dados/indicadores/formato";
+import {
+  APOIO_DA_HOME,
+  REGISTROS_DE_APOIO,
+  REGISTROS_RESERVADOS,
+  RESERVADOS_AO_CONJUNTO,
+} from "../src/dados/indicadores/selecaoEditorial";
 
 const h45 = renderToStaticMarkup(createElement(DadosVivos, {}));
 const h40Painel = renderToStaticMarkup(
@@ -362,7 +361,7 @@ describe("H4.5.2: a Home mostra quatro indicadores de apoio, na ordem decidida",
 
   test("a seleção editorial referencia IDs e não redefine valores", () => {
     const fonte = readFileSync(
-      "src/componentes/prototipo/dadosvivos/selecaoEditorial.ts",
+      "src/dados/indicadores/selecaoEditorial.ts",
       "utf8",
     );
     expect(fonte).not.toMatch(/valor(?:Bruto|Exibido)?\s*:/);
@@ -544,7 +543,7 @@ describe("H4.5.2: nenhuma dependência e nenhuma ilha nova", () => {
       "src/componentes/prototipo/dadosvivos/RankingEditorial.tsx",
       "src/componentes/prototipo/dadosvivos/SerieViva.tsx",
       "src/componentes/prototipo/dadosvivos/estilos.ts",
-      "src/componentes/prototipo/dadosvivos/selecaoEditorial.ts",
+      "src/dados/indicadores/selecaoEditorial.ts",
     ];
     for (const arquivo of arquivos) {
       expect(readFileSync(arquivo, "utf8")).not.toContain("use client");
@@ -609,17 +608,20 @@ describe("H4.5: a H4.0 continua intacta e desacoplada", () => {
 });
 
 /**
- * H4.1 — a mesma composição, agora consumida pela Home.
+ * H4.1 — a composição em contexto de página, sem vocabulário de laboratório.
  *
- * `naHome` é o que a Home serve; `h45` (acima) é o que o laboratório serve. A
- * diferença entre os dois precisa ser exatamente o vocabulário de
- * desenvolvimento, e nada mais.
+ * `naHome` é a composição com `contexto: "home"`; `h45` (acima) é o que o
+ * laboratório serve. A diferença entre os dois precisa ser exatamente o
+ * vocabulário de desenvolvimento, e nada mais.
+ *
+ * A entrada `SecaoDados` que a Home antiga usava saiu com ela; a Home atual
+ * compõe a leitura quantitativa no próprio capítulo IV, a partir de
+ * `INDICADORES` e da mesma `selecaoEditorial.ts`.
  */
-describe("H4.1: a composição entra na Home sem virar outra coisa", () => {
+describe("H4.1: a composição de contexto não vira outra coisa", () => {
   const naHome = renderToStaticMarkup(
     createElement(DadosVivos, { contexto: "home" as const }),
   );
-  const secao = renderToStaticMarkup(createElement(SecaoDados));
 
   test("o conteúdo editorial é idêntico ao aprovado", () => {
     expect(naHome).toContain("Onde o recurso circula");
@@ -684,7 +686,6 @@ describe("H4.1: a composição entra na Home sem virar outra coisa", () => {
 
   test("nenhum vocabulário de laboratório sobra na Home", () => {
     expect(naHome).not.toMatch(/proposta|somente DEV/i);
-    expect(secao).not.toMatch(/proposta|somente DEV/i);
   });
 
   /**
@@ -700,16 +701,6 @@ describe("H4.1: a composição entra na Home sem virar outra coisa", () => {
     expect(CSS_DO_LABORATORIO_DOS_DADOS_VIVOS).toContain(".dv-proposta");
     expect(CSS_DO_LABORATORIO_DOS_DADOS_VIVOS).toContain(".dv-ranking");
     expect(CSS_DO_LABORATORIO_DOS_DADOS_VIVOS).toContain(".dv-preview__marca");
-  });
-
-  /**
-   * As regras de revelação e de movimento reduzido são escopadas em
-   * `.dados-vivos …`. Sem a classe na raiz, a seção perderia as duas.
-   */
-  test("a entrada pública traz a raiz, o CSS e a ilha de revelação", () => {
-    expect(secao).toContain('class="dados-vivos"');
-    expect(secao).toContain('id="secao-dados-home"');
-    expect(secao).toContain("dv-artigo");
   });
 
   test("o laboratório continua com o que é dele", () => {

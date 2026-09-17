@@ -4,9 +4,9 @@ import {
   type IndicadorDerivado,
 } from "../../../dados/indicadores/derivados";
 import { exibirIndicador } from "../../../dados/indicadores/formato";
+import { REGISTROS_DE_APOIO } from "../../../dados/indicadores/selecaoEditorial";
 import { FaixaDeRegistros } from "./FaixaDeRegistros";
 import { SerieViva } from "./SerieViva";
-import { REGISTROS_DE_APOIO } from "./selecaoEditorial";
 
 /**
  * Seção Dados no sistema gráfico vivo — H4.5.

@@ -1,10 +1,10 @@
 import {
   type DadosDoMapa,
   montarDadosDoMapa,
-} from "../../../dados/territorio/mapa";
-import { posicaoNoSvg } from "../../../dados/territorio/projecao";
-import type { RelacaoTerritorial } from "../../../dados/territorio/tipos";
-import { REFERENCIAS_TERRITORIAIS } from "../territoriovivo/local/referencias";
+} from "../../dados/territorio/mapa";
+import { posicaoNoSvg } from "../../dados/territorio/projecao";
+import type { RelacaoTerritorial } from "../../dados/territorio/tipos";
+import { REFERENCIAS_TERRITORIAIS } from "../prototipo/territoriovivo/local/referencias";
 import {
   centroDoCaminho,
   DEFINICOES,

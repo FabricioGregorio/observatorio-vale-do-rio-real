@@ -150,7 +150,7 @@ export const SIMBOLO_OBSERVATORIO = {
   alt: "Símbolo oficial do Observatório: telescópio, serra e caminho",
 } as const;
 
-/** Ícone oficial escolhido exclusivamente para o cabeçalho da Home v2. */
+/** Ícone oficial escolhido exclusivamente para o cabeçalho do site. */
 export const ICONE_OBSERVATORIO_CABECALHO = {
   arquivo: "observatorio-icone-oficial-96.png",
   origem: "identidade-visual/observatorio/icon.png",

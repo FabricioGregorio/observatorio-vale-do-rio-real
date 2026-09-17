@@ -1,5 +1,5 @@
 /**
- * Grafismos territoriais da Home v2.
+ * Grafismos territoriais.
  *
  * São peças decorativas, sem conteúdo alternativo e sem interação. O traçado
  * do rio deriva da geometria pública do OpenStreetMap já versionada em

@@ -5,9 +5,9 @@ import {
   SIMBOLO_OBSERVATORIO,
 } from "../../dados/hero/derivados";
 import { ID_CABECALHO_HOME, MENU_PRINCIPAL } from "../../lib/navegacao";
+import { CentralAcessibilidade } from "../layout/CentralAcessibilidade";
 import { MenuMobile } from "../layout/MenuMobile";
 import { CabecalhoReativo } from "./CabecalhoReativo";
-import { CentralAcessibilidade } from "./CentralAcessibilidade";
 import { MENU_ALVO } from "./menuAlvo";
 
 /**

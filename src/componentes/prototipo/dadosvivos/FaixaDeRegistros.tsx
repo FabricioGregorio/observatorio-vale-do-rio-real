@@ -1,5 +1,5 @@
 import { exibirIndicador } from "../../../dados/indicadores/formato";
-import type { RegistroDeApoio } from "./selecaoEditorial";
+import type { RegistroDeApoio } from "../../../dados/indicadores/selecaoEditorial";
 
 /**
  * Indicadores secundários como faixa de registros — H4.5.

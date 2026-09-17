@@ -1,7 +1,4 @@
-import {
-  INDICADORES,
-  type IndicadorDerivado,
-} from "../../../dados/indicadores/derivados";
+import { INDICADORES, type IndicadorDerivado } from "./derivados";
 
 /**
  * Seleção editorial da H4.5.2 — o que a Home mostra, e em que ordem.

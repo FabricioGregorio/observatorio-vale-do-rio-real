@@ -2350,9 +2350,65 @@ Corrigido em transação única, com o executor passando a resolver por slug.
    links numa lista só. Funciona e está agrupada corretamente, mas pede
    paginação, filtro por lugar ou miniatura numa rodada editorial própria.
 4. **`RELATORIO_DO_RECANTO`** continua declarado à mão em
-   `homelivre/conteudo.ts` com URL, bytes, hash e licença do derivado público
+   `componentes/home/conteudo.ts` com URL, bytes, hash e licença do derivado público
    de A02. A URL é real e responde, mas é cópia de dado do banco.
 
 Estado: **108 objetos públicos, Home, Território e Acervo derivando da mesma
 fonte; todos os gates verdes; sem push, sem Preview, sem Production, sem
 alteração de `main`.**
+
+---
+
+## 2026-09-17 — consolidação: a Home oficial deixa de ser protótipo
+
+**Linha ativa de desenvolvimento:** `exp/home-v2-territorio-vivo`. Sem push,
+sem Preview, sem Production, sem alteração de `main`.
+
+Decisão humana desta data: **a Home atual é a Home oficial do Observatório.**
+Não existe mais Home candidata, experimental, v2 ou alternativa preservada como
+opção de produto. A consolidação está registrada em
+[`docs/tarefas/26-consolidacao-home-oficial.md`](./docs/tarefas/26-consolidacao-home-oficial.md).
+
+O que mudou na árvore:
+
+- `src/componentes/prototipo/homelivre/` → `src/componentes/home/`, e o
+  componente `HomeLivre` → `Home`. A Home oficial não vive mais dentro de uma
+  pasta de protótipo;
+- a composição estrutural **H0–H4.1 foi removida** — ela estava sem consumidor
+  desde a promoção de 2026-09-16. O histórico Git a preserva;
+- **`/dev/home-livre` foi removida**: era harness da mesma composição que `/` já
+  servia. Com ela saiu o parâmetro `contexto` inteiro — aviso de experimento,
+  seletor `?hero=`, variantes A/B/C da abertura, blocos de fontes e a régua de
+  marcas marcada “Não publicar”;
+- Central de Acessibilidade e grafismos territoriais saíram de `prototipo/`
+  para `layout/` e `grafismos/`; a seleção editorial de indicadores foi para
+  `src/dados/indicadores/`;
+- cabeçalho: “Acessibilidade” e “Prestação de contas” passaram a ter a mesma
+  altura, por `--topo-altura-utilidade`.
+
+O texto visível de `/` é **idêntico** antes e depois: a comparação do HTML
+renderizado acusa só o contêiner renomeado e um `<div>` vazio a menos.
+
+### Desvios conhecidos, ainda abertos
+
+1. **`--color-milho` está com valor de teal** (`#2e8b89`, era `#e8b23a`) no
+   working tree, vindo da tarefa 25. Reprova cinco invariantes de contraste em
+   `testes/contraste.test.ts`: texto sobre marcador (4,32:1 e 4,32:1) e
+   destaque sobre superfície inversa (3,52:1 no claro, 2,62:1 no escuro),
+   contra o piso de 4,5:1. **Decisão humana pendente:** devolver o token ao
+   amarelo ou reescrever os invariantes. Não foi tocado na consolidação.
+2. **`tmp/a03-borda-da-mata-acessivel.md`**: derivado textual acessível de A03,
+   com procedência, `estado: PUBLICAVEL` e revisão de privacidade concluída,
+   morando numa pasta de trabalho descartável e agora ignorada pelo Git.
+   Precisa de lugar definitivo antes de ser citado como fonte.
+3. **Componentes órfãos do mapa SSR**: `MapaTerritorio`, `MunicipioNoMapa`,
+   `Municipio`, `FichaMunicipio` e `MarcadorVisita` ficaram sem consumidor de
+   produto com a saída de `SecaoMapa`, mas continuam cobertos por
+   `testes/territorio.test.ts`. Não removidos — decisão humana.
+4. **`src/componentes/prototipo/territoriovivo/`** é o motor da página pública
+   `/territorio` e continua com nome de protótipo. Mesma consolidação feita na
+   Home, em tarefa própria.
+5. Os desvios anteriores desta lista continuam abertos.
+
+Estado: **uma Home só, em `/`, fora de `prototipo/`; sem push, sem Preview, sem
+Production, sem alteração de `main`.**

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { CentralAcessibilidade } from "../../../componentes/prototipo/CentralAcessibilidade";
+import { CentralAcessibilidade } from "../../../componentes/layout/CentralAcessibilidade";
 import { CSS_DA_LINGUAGEM } from "../../../componentes/prototipo/linguagem/estilos";
 import {
   PAPEL_DOS_PRESETS,

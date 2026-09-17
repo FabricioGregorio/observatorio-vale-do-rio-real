@@ -1,14 +1,15 @@
 import { expect, test } from "@playwright/test";
 
 /**
- * Home pública — candidata v2 promovida a `/` em 2026-09-16.
+ * Home do Observatório — a página inicial, em `/`.
  *
- * Os cenários da composição H0–H4.1 que esta suíte guardava saíram com ela:
- * aquela Home continua versionada como baseline de rollback, mas não é mais
- * o que `/` serve. O que **não** saiu — e é o que este arquivo protege — são
- * os contratos que nunca foram de uma composição específica: um `h1`,
- * landmarks, navegação, teclado, movimento reduzido, funcionamento sem
- * JavaScript, privacidade e ausência de material interno no conteúdo público.
+ * Desde a consolidação de 2026-09-17 existe uma Home só, e esta suíte é a
+ * única que a cobre renderizada. Ela protege duas ordens de contrato: os que
+ * valem para qualquer composição servida em `/` — um `h1`, landmarks,
+ * navegação, teclado, movimento reduzido, funcionamento sem JavaScript,
+ * privacidade e ausência de material interno no conteúdo público — e os que
+ * são desta composição: a abertura aprovada, os sete capítulos e os grafismos
+ * territoriais.
  *
  * O mapa territorial tem suíte própria em `mapa.spec.ts`.
  */
@@ -51,7 +52,7 @@ test.describe("Home", () => {
     await page.goto("/");
 
     await expect(page.locator('[data-grafismo-topografia="true"]')).toHaveCount(
-      1,
+      0,
     );
     const grafismos = page.locator("[data-grafismo-territorial]");
     await expect(grafismos).toHaveCount(2);
@@ -95,6 +96,13 @@ test.describe("Home", () => {
       page.getByRole("navigation", { name: "Principal", exact: true }),
     ).toBeVisible();
     await expect(page.locator("main#conteudo")).toHaveCount(1);
+  });
+
+  test("marca a Home como rota ativa na navbar", async ({ page }) => {
+    await page.goto("/");
+    const marca = page.locator("#cabecalho-home .hl-topo__marca");
+    await expect(marca).toHaveAttribute("aria-current", "page");
+    await expect(marca.locator("span")).toHaveCSS("color", "rgb(42, 157, 150)");
   });
 
   test("o cabeçalho separa quatro destinos principais e três conteúdos", async ({
@@ -347,6 +355,101 @@ test.describe("Home — o que não pode ser publicado", () => {
 });
 
 test.describe("Home — apresentação", () => {
+  for (const largura of [375, 1440]) {
+    test(`faixa de números após Origem, com disposição responsiva em ${largura}px`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: largura, height: 900 });
+      await page.goto("/");
+      await expect(
+        page.locator("#hl-origem + #hl-numeros + #hl-territorio"),
+      ).toHaveCount(1);
+      await expect(page.locator(".ab-b2__lado")).toHaveCount(0);
+      const faixa = page.locator("#hl-numeros");
+      await expect(faixa.locator("strong")).toHaveText(["2", "8", "5"]);
+      expect(
+        await faixa.evaluate((e) => getComputedStyle(e).backgroundColor),
+      ).toBe("rgba(0, 0, 0, 0)");
+      const itens = await faixa.locator("li").evaluateAll((elementos) =>
+        elementos.map((e) => ({
+          x: e.getBoundingClientRect().x,
+          y: e.getBoundingClientRect().y,
+        })),
+      );
+      if (!itens[0] || !itens[1]) throw new Error("Indicadores ausentes");
+      if (largura < 768) {
+        expect(itens[1].x).toBe(itens[0].x);
+        expect(itens[1].y).toBeGreaterThan(itens[0].y);
+      } else {
+        expect(itens[1].y).toBe(itens[0].y);
+        expect(itens[1].x).toBeGreaterThan(itens[0].x);
+      }
+    });
+  }
+
+  for (const largura of [375, 1440]) {
+    test(`Hero ocupa a tela e a próxima seção começa abaixo em ${largura}px`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: largura, height: 900 });
+      await page.goto("/");
+      const hero = await page.locator(".ab-b2").boundingBox();
+      const proxima = await page.locator("#hl-origem").boundingBox();
+      expect(hero?.y).toBe(0);
+      expect(hero?.height).toBe(900);
+      expect(proxima?.y).toBe(900);
+      const painel = await page.locator(".ab-b2__folha").boundingBox();
+      const legenda = await page.locator(".ab-b2__legenda").boundingBox();
+      expect((painel?.y ?? 0) + (painel?.height ?? 0)).toBeLessThan(
+        legenda?.y ?? 0,
+      );
+    });
+  }
+
+  for (const largura of [375, 1440]) {
+    test(`navbar translúcida sobre a foto e fixa ao rolar em ${largura}px`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: largura, height: 900 });
+      await page.goto("/");
+      const topo = page.locator("#cabecalho-home");
+      const foto = await page.locator(".ab-b2__foto").boundingBox();
+      const cabecalho = await topo.boundingBox();
+      expect(foto?.y).toBe(0);
+      expect(cabecalho?.y).toBe(0);
+      const fundo = await topo.evaluate(
+        (elemento) => getComputedStyle(elemento).backgroundColor,
+      );
+      expect(fundo).toMatch(/^rgba\(.+, 0\.82\)$/);
+      await page.getByRole("link", { name: "Conhecer a pesquisa" }).click();
+      await expect(topo).toBeInViewport();
+      expect((await topo.boundingBox())?.y).toBe(0);
+      const destino = await page.locator("#hl-lugares").boundingBox();
+      expect(destino?.y).toBeGreaterThanOrEqual(cabecalho?.height ?? 0);
+      await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+      expect((await topo.boundingBox())?.y).toBe(0);
+    });
+  }
+
+  test("menu aberto ocupa a largura do celular sem comprimir a marca", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 320, height: 812 });
+    await page.goto("/");
+    const marca = page.locator(".hl-topo__marca");
+    const antes = await marca.boundingBox();
+    await page.getByRole("button", { name: "Menu", exact: true }).click();
+    const depois = await marca.boundingBox();
+    expect(depois?.width).toBe(antes?.width);
+    const painel = page.locator('.hl-topo__nav-estreita [tabindex="-1"]');
+    const quadro = await painel.boundingBox();
+    expect(quadro?.width).toBeGreaterThan(280);
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth),
+    ).toBe(320);
+    await expect(painel.getByRole("link", { name: "Acervo" })).toBeVisible();
+  });
+
   for (const largura of [320, 375, 768, 1024, 1280, 1440]) {
     for (const tema of ["light", "dark"] as const) {
       test(`${largura}px no tema ${tema} não transborda nem perde alt`, async ({
@@ -359,13 +462,17 @@ test.describe("Home — apresentação", () => {
         const medidas = await page.evaluate(() => {
           const foto =
             document.querySelector<HTMLImageElement>(".ab-b2__foto img");
+          const hero = document.querySelector<HTMLElement>(".ab-b2");
           const folha = document.querySelector<HTMLElement>(".ab-b2__folha");
-          const numeros = document.querySelector<HTMLElement>(
-            ".ab-b2__provas-rotulo",
+          const legenda =
+            document.querySelector<HTMLElement>(".ab-b2__legenda");
+          const imagem = document.querySelector<HTMLElement>(
+            ".ab-b2__foto picture",
           );
-          if (!foto || !folha || !numeros)
+          if (!foto || !hero || !folha || !legenda || !imagem)
             throw new Error("Abertura B2 incompleta");
           const quadro = foto.getBoundingClientRect();
+          const abertura = hero.getBoundingClientRect();
           return {
             rolagem: document.documentElement.scrollWidth,
             janela: window.innerWidth,
@@ -374,24 +481,27 @@ test.describe("Home — apresentação", () => {
             foto: {
               esquerda: quadro.left,
               direita: quadro.right,
+              topo: quadro.top,
               base: quadro.bottom,
             },
+            hero: { topo: abertura.top, base: abertura.bottom },
             folha: folha.getBoundingClientRect().top,
-            numeros: numeros.getBoundingClientRect().top,
+            legenda: legenda.getBoundingClientRect().bottom,
             recorte: getComputedStyle(foto).clipPath,
+            overlay: getComputedStyle(imagem, "::after").backgroundImage,
           };
         });
         expect(medidas.rolagem).toBeLessThanOrEqual(medidas.janela);
         expect(medidas.semAlt).toBe(0);
         expect(medidas.foto.esquerda).toBe(0);
         expect(medidas.foto.direita).toBe(largura);
+        expect(medidas.foto.topo).toBe(medidas.hero.topo);
+        expect(medidas.foto.base).toBe(medidas.hero.base);
         expect(medidas.recorte).toBe("none");
-        expect(medidas.numeros).toBeGreaterThan(medidas.foto.base);
-        if (largura >= 960) {
-          expect(medidas.foto.base - medidas.folha).toBeCloseTo(108, 0);
-        } else {
-          expect(medidas.folha).toBeGreaterThanOrEqual(medidas.foto.base);
-        }
+        expect(medidas.overlay).toContain("linear-gradient");
+        expect(medidas.folha).toBeGreaterThan(medidas.foto.topo);
+        expect(medidas.folha).toBeLessThan(medidas.foto.base);
+        expect(medidas.legenda).toBeLessThanOrEqual(medidas.foto.base);
       });
     }
   }
@@ -418,7 +528,7 @@ test.describe("Home — apresentação", () => {
     await page.goto("/");
 
     const animado = await page.evaluate(() =>
-      [...document.querySelectorAll("#home-livre *")]
+      [...document.querySelectorAll("#home *")]
         .map((e) => getComputedStyle(e))
         .some(
           (s) => s.animationName !== "none" && s.animationDuration !== "0s",

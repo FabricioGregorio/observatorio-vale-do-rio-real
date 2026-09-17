@@ -1,4 +1,4 @@
-import { HomeLivre } from "../componentes/prototipo/homelivre/HomeLivre";
+import { Home as ComposicaoDaHome } from "../componentes/home/Home";
 import { listarArquivosPorDocumento } from "../dados/consultas/anexos";
 import { metadadosDaRota } from "../lib/site-url";
 
@@ -9,23 +9,11 @@ export const metadata = metadadosDaRota({
 });
 
 /**
- * Home — candidata editorial v2, promovida a página inicial.
+ * Home do Observatório — a página inicial do site.
  *
- * Decisão humana de 2026-09-16: a Home v2 deixou de ser alternativa
- * experimental e passou a ser a Home oficial em desenvolvimento. A Home
- * estrutural H0–H4.1 que esta rota servia até aqui continua publicada em
- * produção como baseline de rollback, e seus componentes seguem versionados —
- * o que ela deixou de ser é linha concorrente.
- *
- * Esta rota é só a casca pública: a composição inteira vem de `HomeLivre`, a
- * mesma que `/dev/home-livre` renderiza como harness de regressão. Copiar a
- * Home para publicá-la recriaria as duas estruturas visuais divergentes que a
- * decisão veio encerrar, então o que muda entre os dois lugares é um
- * parâmetro: `contexto="publico"` troca a demonstração de menu da H1 pela
- * navegação canônica de sete itens e retira os rótulos de desenvolvimento.
- *
- * A abertura fica na B2 aprovada. `?hero=` é instrumento de laboratório e não
- * é lido aqui: a Home pública não tem variante.
+ * Esta rota é só a casca pública: a composição inteira vive em
+ * `src/componentes/home/`. Não há segunda Home, rota alternativa nem variante
+ * de abertura — `/` é o único endereço dela.
  *
  * Server Component. A única consulta é a dos arquivos públicos, em build, pela
  * mesma função que serve `/territorio` e o Acervo: o estado das fichas dos
@@ -34,11 +22,5 @@ export const metadata = metadadosDaRota({
  * conteúdo.
  */
 export default async function Home() {
-  return (
-    <HomeLivre
-      abertura="b2"
-      contexto="publico"
-      publicados={await listarArquivosPorDocumento()}
-    />
-  );
+  return <ComposicaoDaHome publicados={await listarArquivosPorDocumento()} />;
 }
