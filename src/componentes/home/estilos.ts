@@ -83,45 +83,72 @@ export const CSS_DA_HOME = `
   .hl-elo+.hl-elo::before{left:1.5rem}
 }
 
-/* II Território */
-.hl-territorio{display:grid;gap:3rem;margin-top:2rem;align-items:start}
-@media (min-width:960px){.hl-territorio{grid-template-columns:minmax(0,5fr) minmax(0,7fr)}}
-.hl-mapa{position:relative}
-.hl-mapa__svg{display:block;width:100%;height:auto}
-.hl-mapa__janela{overflow:hidden}
-.hl-mapa__palco{transform-origin:0 0;transition:transform var(--duracao-painel) var(--easing-padrao);will-change:transform}
-.hl-mapa__svg path{fill:color-mix(in srgb,var(--color-fundo) 86%,var(--color-texto));stroke:var(--color-fundo);stroke-width:1;vector-effect:non-scaling-stroke}
-[data-amostra]{background:color-mix(in srgb,var(--color-fundo) 86%,var(--color-texto))}
-[data-amostra="vale"]{background:color-mix(in srgb,var(--color-fundo) 45%,var(--color-marca))}
-[data-amostra="vale campo"]{background:var(--color-marca)}
-[data-amostra="comparacao"]{background:var(--color-acento)}
-[data-amostra="lugar"]{position:relative;background:var(--color-barro);border-radius:50% 50% 50% 0;transform:rotate(-45deg)}
-.hl-mapa__svg[data-interativo="true"] g[data-recorte]{cursor:pointer}
-.hl-mapa__svg[data-interativo="true"] g[data-recorte]:hover path{fill:color-mix(in srgb,var(--color-fundo) 76%,var(--color-texto))}
-.hl-mapa__svg g[data-recorte]:focus{outline:none}
-.hl-mapa__svg g[data-recorte]:focus-visible path{stroke:var(--color-destaque);stroke-width:3;stroke-dasharray:6 4}
-.hl-mapa__svg g[data-recorte][aria-selected="true"] path{stroke:var(--color-texto);stroke-width:2.4}
-.hl-mapa[data-selecionado="vale"] g[data-recorte="vale"] path[data-rel~="vale"]{fill:color-mix(in srgb,var(--color-fundo) 45%,var(--color-marca))}
-.hl-mapa[data-selecionado="vale"] g[data-recorte="vale"] path[data-rel~="vale"][data-rel~="campo"]{fill:var(--color-marca)}
-.hl-mapa[data-selecionado="comparacao"] g[data-recorte="comparacao"] path{fill:var(--color-acento)}
-.hl-mapa__rotulo{fill:var(--color-texto);font-family:var(--font-display);font-weight:600;opacity:0;paint-order:stroke;stroke:var(--color-fundo);stroke-width:4;text-anchor:middle;transition:opacity var(--duracao-painel) var(--easing-padrao)}
-.hl-mapa[data-selecionado="vale"] g[data-recorte="vale"] .hl-mapa__rotulo,.hl-mapa[data-selecionado="comparacao"] g[data-recorte="comparacao"] .hl-mapa__rotulo{opacity:1}
-.hl-mapa__pin{display:none;pointer-events:none}.hl-mapa__pin circle{fill:var(--color-barro);stroke:var(--color-branco);stroke-width:2}.hl-mapa__pin .hl-mapa__pin-miolo{fill:var(--color-branco);stroke:none}.hl-mapa__pin text{fill:var(--color-texto);font-family:var(--font-display);font-size:18px;font-weight:600;paint-order:stroke;stroke:var(--color-fundo);stroke-width:5}.hl-mapa[data-selecionado="vale"] .hl-mapa__pin[data-pin-do-recorte="vale"],.hl-mapa[data-selecionado="comparacao"] .hl-mapa__pin[data-pin-do-recorte="comparacao"]{display:block}
-.hl-mapa__orientacao{margin:0 0 .75rem;font-size:var(--text-sm);color:var(--color-texto-suave)}
-.hl-mapa__painel{margin-top:1rem;padding:.9rem 1rem;border:1px solid var(--hl-fio);border-radius:var(--radius-ficha);font-size:var(--text-sm)}
-.hl-mapa__painel p{margin:0 0 .35rem}
-.hl-mapa__painel-titulo{font-family:var(--font-display);font-weight:600}
-.hl-mapa__painel-lista{color:var(--color-texto-suave)}
-.hl-mapa__voltar{margin-top:.75rem;padding:.45rem .9rem;border:1px solid var(--color-texto);border-radius:var(--radius-ficha);background:none;color:var(--color-texto);font-family:var(--font-display);font-size:var(--text-sm);cursor:pointer}
-.hl-municipios>div[data-selecionado]{border-left:3px solid var(--color-marca);padding-left:.6rem;background:color-mix(in srgb,var(--color-fundo) 90%,var(--color-marca))}
-.hl-legenda-mapa{display:grid;gap:.4rem;margin-top:1.75rem;font-size:var(--text-sm)}
-.hl-legenda-mapa li{display:flex;align-items:center;gap:.6rem}
-.hl-legenda-mapa span{flex:0 0 1rem;height:1rem;border-radius:var(--radius-ficha)}
-.hl-municipios{margin-top:1.5rem;border-top:1px solid var(--color-texto)}
-.hl-municipios>div{display:grid;grid-template-columns:minmax(8rem,1fr) 2fr;gap:1rem;padding:.6rem 0;border-bottom:1px solid var(--hl-fio);font-size:var(--text-sm)}
-.hl-municipios dt{font-family:var(--font-display);font-weight:600}
-.hl-municipios dd{margin:0;color:var(--color-texto-suave)}
-.hl-municipios__nota{display:block;color:var(--color-texto)}
+/* II Território — cartografia editorial.
+
+   O tratamento visual base é a folha cartográfica compartilhada, servida pelo
+   próprio mapa: CSS_DO_MAPA (as quatro camadas) e CSS_DO_TERRITORIO (a
+   moldura, o volume, a grade e a legenda). Aqui ficam só as regras do que a
+   Home tem e o laboratório não: o recorte como opção, os lugares confirmados,
+   o painel revelável e o controle de volta.
+
+   Nada aqui repinta a malha. O mapa é invariante de tema de propósito — a
+   camada cartográfica é lida sobre pedra nos dois temas, e trocar os valores
+   junto com os papéis semânticos desfaria a legibilidade das fronteiras. */
+.hl-capitulo--territorio .territorio-cartografico{margin-top:2rem;padding-block:0;border-top:0}
+.hl-capitulo--territorio .territorio-cartografico__introducao h3{font-size:clamp(var(--text-xl),2.4vw,var(--text-2xl))}
+.hl-capitulo--territorio .territorio-cartografico__introducao h3+p{margin-top:.75rem}
+
+/* O recorte é a opção, não o município: foco, hover e seleção pousam no grupo.
+   Os três estados se distinguem sem depender de cor — repouso fino e sólido,
+   foco tracejado em anil, seleção grossa em carvão.
+
+   As duas primeiras regras desfazem o hover e o cursor que a folha
+   compartilhada dá a cada um dos 75 polígonos. No laboratório o município é
+   alvo; aqui não é, e prometer o contrário com o ponteiro — ou apagar a camada
+   pintando o polígono de mata-claro — seria dizer o que não é verdade. */
+.hl-capitulo--territorio .territorio-cartografico .m{cursor:default}
+.hl-capitulo--territorio .territorio-cartografico .m:hover{fill:var(--color-pedra)}
+.hl-capitulo--territorio .territorio-cartografico .v:hover{fill:var(--color-milho)}
+.territorio-cartografico__svg[data-interativo="true"] g[data-recorte] .m{cursor:pointer}
+.territorio-cartografico__svg[data-interativo="true"] g[data-recorte]:hover .m{stroke:var(--color-carvao);stroke-width:2.4}
+.territorio-cartografico g[data-recorte]:focus{outline:none}
+.territorio-cartografico g[data-recorte]:focus-visible .m{stroke:var(--color-anil);stroke-width:3;stroke-dasharray:6 4}
+.territorio-cartografico g[data-recorte][aria-selected="true"] .m{stroke:var(--color-carvao);stroke-width:3.5}
+
+/* Lugar visitado: o ponto aparece sempre, o nome só com o recorte
+   selecionado. O irmão geral alcança o pin a partir do grupo escolhido —
+   nenhum estado precisa subir para um invólucro. */
+.territorio-cartografico__lugar{pointer-events:none}
+.territorio-cartografico__lugar circle{stroke-width:2.5}
+.territorio-cartografico__lugar text{fill:var(--color-carvao);font-family:var(--font-display);font-size:20px;font-weight:600;paint-order:stroke;stroke:var(--color-branco);stroke-width:5;opacity:0;transition:opacity var(--duracao-painel) var(--easing-padrao)}
+.territorio-cartografico g[data-recorte="vale"][aria-selected="true"]~.territorio-cartografico__lugar[data-lugar-do-recorte="vale"] text,.territorio-cartografico g[data-recorte="comparacao"][aria-selected="true"]~.territorio-cartografico__lugar[data-lugar-do-recorte="comparacao"] text{opacity:1}
+.territorio-cartografico__amostra--lugar{width:.85rem;height:.85rem;border:1px solid var(--color-branco);border-radius:50%;background:var(--color-barro)}
+
+/* O painel é servido com hidden; a folha compartilhada dá display:grid a ele,
+   o que venceria a regra do agente do usuário e o deixaria visível sem
+   JavaScript, prometendo uma interação que não existe. */
+.territorio-cartografico__painel[hidden],.territorio-cartografico__painel [data-painel-de][hidden]{display:none}
+.territorio-cartografico__painel h4{font-family:var(--font-display);font-size:var(--text-base);font-weight:600}
+.territorio-cartografico__painel h4+p{margin-top:.35rem}
+.territorio-cartografico__painel-lista{margin-top:.35rem;font-size:var(--text-sm);color:var(--color-texto-suave)}
+/* Voltar só existe havendo a que voltar: com o painel no estado vazio, a
+   visão já é Sergipe inteiro e o botão seria um controle morto. Onde :has()
+   não resolver, ele aparece e continua correto — só é redundante. */
+.territorio-cartografico__painel:has([data-painel-vazio]:not([hidden])) .territorio-cartografico__voltar{display:none}
+.territorio-cartografico__voltar{justify-self:start;padding:.45rem .9rem;border:1px solid var(--color-texto);border-radius:var(--radius-ficha);background:none;color:var(--color-texto);font-family:var(--font-display);font-size:var(--text-sm);cursor:pointer}
+.territorio-cartografico__voltar:hover{background:var(--color-texto);color:var(--color-fundo)}
+.territorio-cartografico__pontos li{display:grid;gap:.1rem}
+.territorio-cartografico__lugar-nome{font-family:var(--font-display);font-weight:600;color:var(--color-texto)}
+
+/* Leitura em texto: alternativa completa sem JavaScript e lista que a ilha
+   marca. Fechada por padrão — a Home é síntese, e a exploração é de
+   /territorio. */
+.hl-capitulo--territorio .territorio-cartografico__indice{margin-top:2.5rem}
+.hl-capitulo--territorio .territorio-cartografico__lista{grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr));max-height:none;overflow:visible}
+.hl-capitulo--territorio .territorio-cartografico__item dt{font-family:var(--font-display);font-weight:600}
+.hl-capitulo--territorio .territorio-cartografico__item dd{margin:0}
+.hl-capitulo--territorio .territorio-cartografico__item[data-selecionado="true"]{border-color:var(--color-marca);background:color-mix(in srgb,var(--color-fundo) 88%,var(--color-marca));color:var(--color-texto)}
+.hl-capitulo--territorio .territorio-cartografico__item[data-selecionado="true"] .meta-ficha{color:var(--color-texto-suave)}
 
 /* III Lugares */
 .hl-dupla{display:grid;gap:2rem;margin-top:3rem}

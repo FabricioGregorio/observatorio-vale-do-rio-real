@@ -45,7 +45,6 @@ export function MapaInterativo({
   seletorDasOpcoes = "path[data-codigo]",
   chave = "codigo",
   rotuloDaLista = "Índice dos municípios de Sergipe",
-  idDoEstado,
   seletorDoQueRevelar,
   idDoBotaoVoltar,
 }: {
@@ -63,11 +62,6 @@ export function MapaInterativo({
   chave?: string;
   rotuloDaLista?: string;
   /**
-   * Elemento que recebe `data-selecionado` com a chave escolhida. É por ele
-   * que o CSS reenquadra o mapa: nenhuma geometria é calculada em runtime.
-   */
-  idDoEstado?: string;
-  /**
    * Elementos servidos com `hidden` que só fazem sentido havendo interação:
    * a orientação de uso, o painel e a ação de voltar. A ilha os revela ao
    * montar e os esconde ao desmontar. Sem JavaScript continuam fora da árvore
@@ -84,9 +78,6 @@ export function MapaInterativo({
     const painel =
       idDoPainel === undefined ? null : document.getElementById(idDoPainel);
     if (svg === null) return;
-
-    const estado =
-      idDoEstado === undefined ? null : document.getElementById(idDoEstado);
 
     const opcoes = Array.from(
       svg.querySelectorAll<SVGElement>(seletorDasOpcoes),
@@ -247,11 +238,7 @@ export function MapaInterativo({
       // `prefers-reduced-motion` não deve ser contrariado.
       itens[0]?.scrollIntoView({ block: "nearest", behavior: "auto" });
 
-      const valor = valorDa(indice);
-      if (estado !== null && valor !== undefined) {
-        estado.setAttribute("data-selecionado", valor);
-      }
-      atualizarPainel(itens[0] ?? null, valor);
+      atualizarPainel(itens[0] ?? null, valorDa(indice));
     }
 
     function limparSelecao() {
@@ -262,7 +249,6 @@ export function MapaInterativo({
         if (promoverLista) item.setAttribute("aria-selected", "false");
       }
       selecionado = null;
-      estado?.removeAttribute("data-selecionado");
       atualizarPainel(null);
     }
 
@@ -427,7 +413,6 @@ export function MapaInterativo({
         lista.removeAttribute("data-interativo");
       }
       svg.removeAttribute("data-interativo");
-      estado?.removeAttribute("data-selecionado");
       for (const opcao of opcoes) {
         opcao.removeAttribute("role");
         opcao.removeAttribute("aria-selected");
@@ -450,7 +435,6 @@ export function MapaInterativo({
     seletorDasOpcoes,
     chave,
     rotuloDaLista,
-    idDoEstado,
     seletorDoQueRevelar,
     idDoBotaoVoltar,
   ]);

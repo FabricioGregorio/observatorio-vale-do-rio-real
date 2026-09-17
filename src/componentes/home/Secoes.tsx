@@ -14,14 +14,17 @@ import {
   DERIVADOS_DOS_LUGARES,
   PASTA_PUBLICA_DA_PESQUISA,
 } from "../../dados/pesquisa/derivados";
-import { RECORTE_TERRITORIAL } from "../../dados/territorio/recorte";
-import type { RelacaoTerritorial } from "../../dados/territorio/tipos";
+import {
+  DEFINICAO_VALE_DO_RIO_REAL,
+  RECORTE_TERRITORIAL,
+} from "../../dados/territorio/recorte";
 import { MENU_RODAPE } from "../../lib/navegacao";
 import {
   GrafismoRioReal,
   GrafismoSerra,
 } from "../grafismos/GrafismosTerritoriais";
 import { MapaInterativo } from "../mapa/MapaInterativo";
+import { REFERENCIAS_TERRITORIAIS } from "../prototipo/territoriovivo/local/referencias";
 import {
   ACOMPANHAMENTO,
   COLETIVO,
@@ -39,13 +42,14 @@ import {
 } from "./conteudo";
 import { Capitulo, Pendente } from "./Estrutura";
 import {
+  CLASSE_DO_MAPA,
+  CSS_CARTOGRAFICO,
   ID_DA_LISTA_DO_RECORTE,
   ID_DO_MAPA,
   ID_DO_PAINEL_DO_MAPA,
-  ID_DO_QUADRO_DO_MAPA,
   MapaDoRecorte,
 } from "./MapaDoRecorte";
-import { DEFINICOES, type Recorte } from "./recortes";
+import { DEFINICOES, recorteDoMunicipio } from "./recortes";
 
 /**
  * Seções da Home, na ordem narrativa:
@@ -142,21 +146,21 @@ const ROTULO_DA_RELACAO = {
 } as const;
 
 const ID_DO_BOTAO_VOLTAR = "hl-mapa-voltar";
+const ID_DO_TITULO_DA_LEITURA = "hl-territorio-leitura";
+const ID_DO_TITULO_DOS_PONTOS = "hl-territorio-pontos";
 
 /**
- * A qual recorte explorável o município pertence.
+ * II Território — cartografia editorial.
  *
- * `comparacao` vem primeiro de propósito: São Cristóvão tem também
- * `pesquisa-campo`, e em nenhuma hipótese ele pode cair no recorte do Vale.
+ * Composição em duas colunas: o mapa emoldurado à esquerda, com nota
+ * cartográfica e legenda; o eixo editorial à direita, com a leitura em
+ * camadas, o painel contextual e os pontos de pesquisa. A leitura em texto dos
+ * municípios fecha a seção, em largura inteira, e é ela a alternativa completa
+ * quando não há JavaScript.
+ *
+ * A Home é a **síntese** da cartografia: dois alvos editoriais, não 75
+ * municípios clicáveis. A exploração profunda é de `/territorio`.
  */
-function recorteDoMunicipio(
-  relacoes: readonly RelacaoTerritorial[],
-): Recorte | undefined {
-  if (relacoes.includes("comparacao")) return "comparacao";
-  if (relacoes.includes("vale-rio-real")) return "vale";
-  return undefined;
-}
-
 export function Territorio() {
   return (
     <Capitulo
@@ -164,134 +168,152 @@ export function Territorio() {
       id="hl-territorio"
       numero="II"
       rotulo="Território"
-      titulo="Um recorte, não uma fronteira"
+      titulo="Cartografia viva do Vale do Rio Real"
     >
-      <div className="hl-territorio">
-        <div className="hl-texto">
+      <style>{CSS_CARTOGRAFICO}</style>
+
+      <div className={`${CLASSE_DO_MAPA} territorio-cartografico`}>
+        <div className="territorio-cartografico__grade">
+          <MapaDoRecorte />
+
+          <aside className="territorio-cartografico__editorial">
+            <div className="territorio-cartografico__introducao hl-texto">
+              <p className="meta-ficha">Leitura cartográfica</p>
+              <h3>Território em camadas</h3>
+              <p>
+                A cartografia apresenta os 75 municípios de Sergipe e distingue
+                as relações territoriais declaradas no projeto: o recorte do
+                Vale, os municípios com pesquisa de campo e a referência de
+                comparação.
+              </p>
+              <p>
+                {DEFINICAO_VALE_DO_RIO_REAL} O Observatório não cria fronteira
+                nova, destaca os municípios do recorte que utiliza.
+              </p>
+            </div>
+
+            {/*
+              Servidos com `hidden`. Quem revela é a ilha, ao montar: sem
+              JavaScript não há orientação prometendo exploração, nem botão que
+              não faz nada. Ver MapaInterativo.
+            */}
+            <section
+              aria-labelledby={ID_DO_TITULO_DA_LEITURA}
+              aria-live="polite"
+              className="territorio-cartografico__painel"
+              data-revelavel
+              hidden
+              id={ID_DO_PAINEL_DO_MAPA}
+            >
+              <p className="meta-ficha" id={ID_DO_TITULO_DA_LEITURA}>
+                Leitura do território
+              </p>
+
+              <p data-painel-vazio>
+                Selecione um recorte no mapa para ler o que ele reúne.
+              </p>
+
+              {DEFINICOES.map((definicao) => (
+                <div
+                  data-painel-de={definicao.chave}
+                  hidden
+                  key={definicao.chave}
+                >
+                  <h4>{definicao.titulo}</h4>
+                  <p>{definicao.resumo}</p>
+                  <p className="territorio-cartografico__painel-lista">
+                    {RECORTE_TERRITORIAL.filter(
+                      (municipio) =>
+                        recorteDoMunicipio(municipio.relacoesTerritoriais) ===
+                        definicao.chave,
+                    )
+                      .map((municipio) => municipio.nome)
+                      .join(" · ")}
+                  </p>
+                  <Link href="/territorio" prefetch={false}>
+                    Cartografia Viva
+                  </Link>
+                </div>
+              ))}
+
+              <button
+                className="territorio-cartografico__voltar"
+                id={ID_DO_BOTAO_VOLTAR}
+                type="button"
+              >
+                Ver Sergipe inteiro
+              </button>
+            </section>
+
+            <section
+              aria-labelledby={ID_DO_TITULO_DOS_PONTOS}
+              className="territorio-cartografico__pontos"
+            >
+              <h3 id={ID_DO_TITULO_DOS_PONTOS}>Pontos de pesquisa</h3>
+              <p>
+                Os quatro lugares visitados em campo, na posição confirmada pelo
+                responsável e desenhada no mapa.
+              </p>
+              <ul>
+                {REFERENCIAS_TERRITORIAIS.map((lugar) => (
+                  <li key={lugar.id}>
+                    <span className="territorio-cartografico__lugar-nome">
+                      {lugar.nome}
+                    </span>
+                    <span className="meta-ficha">
+                      {lugar.localidade} · {lugar.municipio}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          </aside>
+        </div>
+
+        <details className="territorio-cartografico__indice">
+          <summary>Leitura em texto — municípios do recorte</summary>
           <p>
-            O Vale do Rio Real é uma região socioeconômica associada ao curso
-            superior e médio do rio Real. Não é divisão administrativa oficial:
-            o Observatório não cria fronteira nova, destaca os municípios do
-            recorte que utiliza.
+            {MUNICIPIOS_DE_COMPARACAO.map((m) => m.nome).join(", ")} entra como
+            comparação de políticas públicas, não como parte do Vale. Ilha
+            Grande e Serra dos Macacos também fazem parte da pesquisa e aparecem
+            como lugares visitados no mapa.
           </p>
-
-          <ul className="hl-legenda-mapa" aria-label="Legenda do mapa">
-            <li>
-              <span aria-hidden="true" data-amostra="vale campo" />
-              Recorte do Vale, com pesquisa de campo
-            </li>
-            <li>
-              <span aria-hidden="true" data-amostra="vale" />
-              Recorte do Vale
-            </li>
-            <li>
-              <span aria-hidden="true" data-amostra="comparacao" />
-              Pesquisado como comparação, fora do Vale
-            </li>
-            <li>
-              <span aria-hidden="true" data-amostra="lugar" />
-              Lugar visitado, com posição confirmada
-            </li>
-          </ul>
-
-          <dl className="hl-municipios" id={ID_DA_LISTA_DO_RECORTE}>
+          <dl
+            className="territorio-cartografico__lista"
+            id={ID_DA_LISTA_DO_RECORTE}
+          >
             {RECORTE_TERRITORIAL.map((municipio) => (
               <div
+                className="territorio-cartografico__item"
                 data-recorte={recorteDoMunicipio(
                   municipio.relacoesTerritoriais,
                 )}
                 key={municipio.codigoIbge}
               >
                 <dt>{municipio.nome}</dt>
-                <dd>
+                <dd className="meta-ficha">
                   {municipio.relacoesTerritoriais
                     .map((relacao) => ROTULO_DA_RELACAO[relacao])
                     .join(" · ")}
-                  {municipio.nome === "Tobias Barreto" ? (
-                    <span className="hl-municipios__nota">
-                      onde ficam o Recanto da Serra e o Borda da Mata
-                    </span>
-                  ) : null}
                 </dd>
+                {municipio.nome === "Tobias Barreto" ? (
+                  <dd>onde ficam o Recanto da Serra e o Borda da Mata</dd>
+                ) : null}
               </div>
             ))}
           </dl>
+        </details>
 
-          <p className="hl-nota">
-            {MUNICIPIOS_DE_COMPARACAO.map((m) => m.nome).join(", ")} entra como
-            comparação de políticas públicas, não como parte do Vale. Ilha
-            Grande e Serra dos Macacos também fazem parte da pesquisa e aparecem
-            como lugares visitados quando o recorte correspondente é
-            selecionado.
-          </p>
-        </div>
-
-        <div className="hl-mapa" id={ID_DO_QUADRO_DO_MAPA}>
-          {/*
-            Servidos com `hidden`. Quem revela e' a ilha, ao montar: sem
-            JavaScript nao ha orientacao prometendo exploracao, nem botao que
-            nao faz nada. Ver MapaInterativo.
-          */}
-          <p className="hl-mapa__orientacao" data-revelavel hidden>
-            Selecione um recorte no mapa para ver os municipios que ele reune.
-          </p>
-
-          <MapaDoRecorte />
-
-          <div
-            aria-live="polite"
-            className="hl-mapa__painel"
-            data-revelavel
-            hidden
-            id={ID_DO_PAINEL_DO_MAPA}
-          >
-            <p data-painel-vazio>Nenhum recorte selecionado.</p>
-            {DEFINICOES.map((definicao) => (
-              <div
-                data-painel-de={definicao.chave}
-                hidden
-                key={definicao.chave}
-              >
-                <p className="hl-mapa__painel-titulo">{definicao.titulo}</p>
-                <p>{definicao.resumo}</p>
-                <p className="hl-mapa__painel-lista">
-                  {RECORTE_TERRITORIAL.filter(
-                    (municipio) =>
-                      recorteDoMunicipio(municipio.relacoesTerritoriais) ===
-                      definicao.chave,
-                  )
-                    .map((municipio) => municipio.nome)
-                    .join(" · ")}
-                </p>
-                <Link href="/territorio" prefetch={false}>
-                  Cartografia Viva
-                </Link>
-              </div>
-            ))}
-          </div>
-
-          <button
-            className="hl-mapa__voltar"
-            data-revelavel
-            hidden
-            id={ID_DO_BOTAO_VOLTAR}
-            type="button"
-          >
-            Ver Sergipe inteiro
-          </button>
-
-          <MapaInterativo
-            chave="recorte"
-            idDaLista={ID_DA_LISTA_DO_RECORTE}
-            idDoBotaoVoltar={ID_DO_BOTAO_VOLTAR}
-            idDoEstado={ID_DO_QUADRO_DO_MAPA}
-            idDoPainel={ID_DO_PAINEL_DO_MAPA}
-            idDoSvg={ID_DO_MAPA}
-            rotuloDaLista="Recortes do mapa"
-            seletorDasOpcoes="g[data-recorte]"
-            seletorDoQueRevelar={`#${ID_DO_QUADRO_DO_MAPA} [data-revelavel]`}
-          />
-        </div>
+        <MapaInterativo
+          chave="recorte"
+          idDaLista={ID_DA_LISTA_DO_RECORTE}
+          idDoBotaoVoltar={ID_DO_BOTAO_VOLTAR}
+          idDoPainel={ID_DO_PAINEL_DO_MAPA}
+          idDoSvg={ID_DO_MAPA}
+          rotuloDaLista="Recortes do mapa"
+          seletorDasOpcoes="g[data-recorte]"
+          seletorDoQueRevelar="#hl-territorio [data-revelavel]"
+        />
       </div>
     </Capitulo>
   );

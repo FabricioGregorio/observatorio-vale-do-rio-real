@@ -3,55 +3,64 @@ import {
   montarDadosDoMapa,
 } from "../../dados/territorio/mapa";
 import { posicaoNoSvg } from "../../dados/territorio/projecao";
-import type { RelacaoTerritorial } from "../../dados/territorio/tipos";
-import { REFERENCIAS_TERRITORIAIS } from "../prototipo/territoriovivo/local/referencias";
 import {
-  centroDoCaminho,
+  CLASSE_RAIZ,
+  CSS_DO_MAPA,
+  classesDoMunicipio,
+  temHachura,
+} from "../mapa/estilosDoMapa";
+import { REFERENCIAS_TERRITORIAIS } from "../prototipo/territoriovivo/local/referencias";
+import { CSS_DO_TERRITORIO } from "../territorio/estilosDoTerritorio";
+import {
   DEFINICOES,
-  enquadramentoDoRecorte,
   municipiosDoRecorte,
+  recorteDoMunicipio,
 } from "./recortes";
-
-const CLASSE_DA_RELACAO: Readonly<Record<RelacaoTerritorial, string>> = {
-  "vale-rio-real": "vale",
-  "pesquisa-campo": "campo",
-  comparacao: "comparacao",
-};
 
 export const ID_DO_MAPA = "hl-mapa";
 export const ID_DO_PAINEL_DO_MAPA = "hl-mapa-painel";
 export const ID_DA_LISTA_DO_RECORTE = "hl-municipios";
-export const ID_DO_QUADRO_DO_MAPA = "hl-mapa-quadro";
+export const ID_DA_HACHURA = "hl-mapa-hachura-pesquisa";
+
+/** Raio do marcador, em unidades do `viewBox`: acompanha a escala do mapa. */
+const RAIO_DO_LUGAR = 10;
 
 /**
  * Mapa do recorte — Server Component, sem ilha cliente própria.
  *
- * Desenha a malha oficial de Sergipe com a mesma projeção e os mesmos dados de
- * sempre. O estado inteiro é **contexto**: nenhum dos 75 municípios é opção, e
- * nenhum deles é nomeado no desenho.
+ * Desenha a malha oficial de Sergipe com a projeção e os dados de sempre, no
+ * tratamento cartográfico da composição original: quatro camadas visuais
+ * independentes, todas legíveis de uma vez, e nenhuma delas dependente de
+ * seleção.
  *
- * ## Estado inicial
+ * | camada | canal visual |
+ * |---|---|
+ * | Sergipe | preenchimento pedra, fronteira carvão-suave |
+ * | Vale do Rio Real | preenchimento milho, traço mata |
+ * | pesquisa de campo | hachura diagonal em mata, sobreposta |
+ * | comparação | traço tracejado em anil |
  *
- * Nada em destaque. Os dois recortes exploráveis existem no DOM como grupos,
- * mas sem preenchimento especial, sem contorno de seleção e sem rótulo — a
- * regra é que foco não é seleção, e que nada pode parecer já escolhido antes
- * de alguém escolher. O que revela o recorte é a seleção, e só ela.
+ * Os três canais — preenchimento, padrão e traço — são independentes, e é isso
+ * que faz Tobias Barreto ler como Vale *e* pesquisa, e São Cristóvão ler como
+ * pesquisa *e* comparação sem nunca ler como Vale. Nenhuma camada depende só
+ * de cor (WCAG 1.4.1). O tratamento vem de `CSS_DO_MAPA` e `CSS_DO_TERRITORIO`,
+ * que são a folha cartográfica compartilhada com o laboratório — a Home não
+ * tem uma segunda paleta de mapa.
+ *
+ * ## O que é opção, e o que é contexto
+ *
+ * Nenhum dos 75 municípios é opção. Os dois recortes que o Observatório
+ * declarou são grupos `<g data-recorte>`, e são eles que a ilha promove a
+ * opções de uma listbox. Selecionar um recorte reforça o traço, nomeia os
+ * lugares visitados que caem nele e abre a leitura em texto ao lado.
  *
  * ## Por que os atributos de interação não vêm daqui
  *
- * Mesmo princípio da cartografia anterior: `role="listbox"`, `tabindex` e
- * `aria-selected` entram depois da montagem da ilha. Vindo do servidor, o mapa
- * prometeria navegação por teclado antes de o JavaScript existir — e, para
- * quem o mantém desligado, prometeria para sempre. Sem JavaScript o desenho é
- * imagem, com `role="img"`, e a informação editorial está inteira na lista
- * textual ao lado.
- *
- * ## Reenquadramento
- *
- * Cada recorte traz a sua transformação já calculada em build, numa custom
- * property. Em runtime a ilha só troca `data-selecionado` na raiz; o CSS faz o
- * resto, com duração vinda de `--duracao-painel`, que a H0 zera sob
- * `prefers-reduced-motion`.
+ * `role="listbox"`, `tabindex` e `aria-selected` entram depois da montagem da
+ * ilha. Vindo do servidor, o mapa prometeria navegação por teclado antes de o
+ * JavaScript existir — e, para quem o mantém desligado, prometeria para
+ * sempre. Sem JavaScript o desenho é imagem, com `role="img"`, e a informação
+ * editorial continua inteira na leitura em texto abaixo.
  */
 export function MapaDoRecorte({
   dados = montarDadosDoMapa(),
@@ -64,122 +73,181 @@ export function MapaDoRecorte({
   const grupos = DEFINICOES.map((definicao) => {
     const membros = municipiosDoRecorte(municipios, definicao);
     for (const membro of membros) daqui.add(membro.codigoIbge);
-    return {
-      definicao,
-      membros,
-      enquadramento: enquadramentoDoRecorte(dados, definicao),
-    };
+    return { definicao, membros };
   });
 
   const contexto = municipios.filter(
     (municipio) => !daqui.has(municipio.codigoIbge),
   );
-
-  /*
-    As duas transformações entram como regra literal, e não como custom
-    property lida por `var()` dentro da folha: o valor é conhecido no build,
-    então não há nada a resolver em runtime, e uma regra literal se comporta
-    igual em qualquer motor. Continua sem cálculo geométrico no cliente.
-  */
-  const enquadramentos = grupos
-    .filter((grupo) => grupo.enquadramento !== null)
-    .map(
-      (grupo) =>
-        `#${ID_DO_QUADRO_DO_MAPA}[data-selecionado="${grupo.definicao.chave}"] .hl-mapa__palco{transform:${grupo.enquadramento?.transformacao}}`,
-    )
-    .join("\n");
+  const doVale = grupos[0]?.membros ?? [];
 
   return (
-    <div className="hl-mapa__janela">
-      <style>{enquadramentos}</style>
-      <div className="hl-mapa__palco">
+    <figure className="territorio-cartografico__mapa">
+      <div className="territorio-cartografico__moldura">
         <svg
           aria-labelledby="hl-mapa-titulo hl-mapa-descricao"
-          className="hl-mapa__svg"
+          className="territorio-cartografico__svg"
           id={ID_DO_MAPA}
           role="img"
           viewBox={`0 0 ${projecao.largura} ${Math.ceil(projecao.altura)}`}
+          xmlns="http://www.w3.org/2000/svg"
         >
           <title id="hl-mapa-titulo">
             Sergipe e o recorte do Vale do Rio Real
           </title>
           <desc id="hl-mapa-descricao">
-            {`Os ${municipios.length} municípios de Sergipe. Em destaque, quando selecionados, os municípios do recorte do Vale do Rio Real e São Cristóvão, pesquisado como referência de comparação. A lista ao lado descreve cada vínculo.`}
+            {`Os ${municipios.length} municípios de Sergipe. Em milho, os municípios do recorte do Vale do Rio Real; em hachura, os que foram objeto de pesquisa de campo; em traço tracejado, São Cristóvão, pesquisado como referência de comparação. A leitura em texto abaixo descreve cada vínculo.`}
           </desc>
 
-          <g>
-            {contexto.map((municipio) => (
-              <path d={municipio.caminho} key={municipio.codigoIbge} />
-            ))}
+          <defs>
+            <pattern
+              height={8}
+              id={ID_DA_HACHURA}
+              patternTransform="rotate(45)"
+              patternUnits="userSpaceOnUse"
+              width={8}
+            >
+              <line
+                stroke="var(--color-mata)"
+                strokeWidth={1.6}
+                x1={0}
+                x2={0}
+                y1={0}
+                y2={8}
+              />
+            </pattern>
+          </defs>
 
-            {grupos.map(({ definicao, membros, enquadramento }) => (
+          {contexto.map((municipio) => (
+            <path
+              className="m"
+              d={municipio.caminho}
+              key={municipio.codigoIbge}
+            />
+          ))}
+
+          {grupos.map(({ definicao, membros }) => (
+            <g
+              aria-label={definicao.rotulo}
+              className="territorio-cartografico__recorte"
+              data-recorte={definicao.chave}
+              key={definicao.chave}
+            >
+              {membros.map((municipio) => (
+                <path
+                  className={classesDoMunicipio(municipio.relacoesTerritoriais)}
+                  d={municipio.caminho}
+                  key={municipio.codigoIbge}
+                />
+              ))}
+
+              {membros.filter(temHachuraNoMunicipio).map((municipio) => (
+                <path
+                  className="h"
+                  d={municipio.caminho}
+                  key={`hachura-${municipio.codigoIbge}`}
+                  style={{ fill: `url(#${ID_DA_HACHURA})` }}
+                />
+              ))}
+            </g>
+          ))}
+
+          {/*
+            Os quatro lugares visitados, na posição confirmada pelo responsável
+            em 2026-09-14. O ponto aparece sempre — é a pesquisa no desenho; o
+            nome só aparece com o recorte correspondente selecionado, para que
+            a visão geral continue sendo a malha e não uma lista de etiquetas.
+            O nome de cada lugar está em texto no bloco Pontos de pesquisa, e a
+            subárvore é apresentacional enquanto o SVG for `role="img"`.
+          */}
+          {REFERENCIAS_TERRITORIAIS.map((lugar) => {
+            const [x, y] = posicaoNoSvg(
+              [lugar.longitude, lugar.latitude],
+              projecao,
+            );
+            const municipio = municipios.find(
+              (candidato) => candidato.codigoIbge === lugar.municipioIbge,
+            );
+            const recorte =
+              municipio === undefined
+                ? undefined
+                : recorteDoMunicipio(municipio.relacoesTerritoriais);
+
+            return (
               <g
-                aria-label={definicao.rotulo}
-                className="hl-mapa__recorte"
-                data-recorte={definicao.chave}
-                key={definicao.chave}
+                className="territorio-cartografico__lugar"
+                data-lugar-do-recorte={recorte}
+                key={lugar.id}
+                transform={`translate(${x} ${y})`}
               >
-                {membros.map((municipio) => (
-                  <path
-                    d={municipio.caminho}
-                    data-rel={municipio.relacoesTerritoriais
-                      .map((relacao) => CLASSE_DA_RELACAO[relacao])
-                      .join(" ")}
-                    key={municipio.codigoIbge}
-                  />
-                ))}
-
-                {/*
-              Rótulos do desenho: reforço visual do estado selecionado, e só
-              isso. Ficam invisíveis até a seleção. Não precisam de
-              `aria-hidden`: sem JavaScript o `role="img"` já torna a subárvore
-              apresentacional, e com a ilha montada o `aria-label` do grupo é o
-              nome acessível da opção. A informação em texto está na lista de
-              municípios e no painel.
-            */}
-                {membros.map((municipio) => {
-                  const centro = centroDoCaminho(municipio.caminho);
-                  if (centro === null || enquadramento === null) return null;
-                  return (
-                    <text
-                      className="hl-mapa__rotulo"
-                      fontSize={enquadramento.corpoDoRotulo}
-                      key={`rotulo-${municipio.codigoIbge}`}
-                      x={centro.x}
-                      y={centro.y}
-                    >
-                      {municipio.nome}
-                    </text>
-                  );
-                })}
+                <circle className="p" r={RAIO_DO_LUGAR} />
+                <text x={RAIO_DO_LUGAR + 8} y={6}>
+                  {lugar.nome}
+                </text>
               </g>
-            ))}
-
-            {REFERENCIAS_TERRITORIAIS.map((lugar) => {
-              const [x, y] = posicaoNoSvg(
-                [lugar.longitude, lugar.latitude],
-                projecao,
-              );
-              const recorte =
-                lugar.municipioIbge === "2806701" ? "comparacao" : "vale";
-              return (
-                <g
-                  className="hl-mapa__pin"
-                  data-pin-do-recorte={recorte}
-                  key={lugar.id}
-                  transform={`translate(${x} ${y})`}
-                >
-                  <circle r="11" />
-                  <circle className="hl-mapa__pin-miolo" r="3.5" />
-                  <text x="15" y="4">
-                    {lugar.nome}
-                  </text>
-                </g>
-              );
-            })}
-          </g>
+            );
+          })}
         </svg>
       </div>
-    </div>
+
+      <figcaption className="meta-ficha">
+        Nota cartográfica — IBGE, Malhas Territoriais, malha municipal. Sergipe
+        inteiro; {doVale.length} municípios no recorte do Vale.
+      </figcaption>
+
+      <ul
+        aria-label="Legenda do mapa"
+        className="territorio-cartografico__legenda"
+      >
+        <li>
+          <span
+            aria-hidden="true"
+            className="territorio-cartografico__amostra"
+          />
+          Sergipe
+        </li>
+        <li>
+          <span
+            aria-hidden="true"
+            className="territorio-cartografico__amostra territorio-cartografico__amostra--vale"
+          />
+          Vale
+        </li>
+        <li>
+          <span
+            aria-hidden="true"
+            className="territorio-cartografico__amostra territorio-cartografico__amostra--pesquisa"
+          />
+          Pesquisa
+        </li>
+        <li>
+          <span
+            aria-hidden="true"
+            className="territorio-cartografico__amostra territorio-cartografico__amostra--comparacao"
+          />
+          Comparação
+        </li>
+        <li>
+          <span
+            aria-hidden="true"
+            className="territorio-cartografico__amostra territorio-cartografico__amostra--lugar"
+          />
+          Lugar visitado
+        </li>
+      </ul>
+    </figure>
   );
 }
+
+/** A hachura é uma segunda passada sobre o mesmo caminho, e vem depois dele. */
+function temHachuraNoMunicipio(
+  municipio: DadosDoMapa["municipios"][number],
+): boolean {
+  return temHachura(municipio.relacoesTerritoriais);
+}
+
+/** Classe que escopa toda a folha cartográfica; a seção a veste. */
+export const CLASSE_DO_MAPA = CLASSE_RAIZ;
+
+/** Folha cartográfica compartilhada, servida junto da seção. */
+export const CSS_CARTOGRAFICO = `${CSS_DO_MAPA}\n${CSS_DO_TERRITORIO}`;
