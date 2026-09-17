@@ -2391,16 +2391,9 @@ renderizado acusa só o contêiner renomeado e um `<div>` vazio a menos.
 
 ### Desvios conhecidos, ainda abertos
 
-1. **`--color-milho` está com valor de teal** (`#2e8b89`, era `#e8b23a`) no
-   working tree, vindo da tarefa 25. Reprova cinco invariantes de contraste em
-   `testes/contraste.test.ts`: texto sobre marcador (4,32:1 e 4,32:1) e
-   destaque sobre superfície inversa (3,52:1 no claro, 2,62:1 no escuro),
-   contra o piso de 4,5:1. **Decisão humana pendente:** devolver o token ao
-   amarelo ou reescrever os invariantes. Não foi tocado na consolidação.
-2. **`tmp/a03-borda-da-mata-acessivel.md`**: derivado textual acessível de A03,
-   com procedência, `estado: PUBLICAVEL` e revisão de privacidade concluída,
-   morando numa pasta de trabalho descartável e agora ignorada pelo Git.
-   Precisa de lugar definitivo antes de ser citado como fonte.
+1. ~~`--color-milho` com valor de teal~~ — **resolvido**, ver abaixo.
+2. ~~`tmp/a03-borda-da-mata-acessivel.md` sem lugar definitivo~~ —
+   **resolvido**, ver abaixo.
 3. **Componentes órfãos do mapa SSR**: `MapaTerritorio`, `MunicipioNoMapa`,
    `Municipio`, `FichaMunicipio` e `MarcadorVisita` ficaram sem consumidor de
    produto com a saída de `SecaoMapa`, mas continuam cobertos por
@@ -2412,3 +2405,72 @@ renderizado acusa só o contêiner renomeado e um `<div>` vazio a menos.
 
 Estado: **uma Home só, em `/`, fora de `prototipo/`; sem push, sem Preview, sem
 Production, sem alteração de `main`.**
+
+---
+
+## 2026-09-17 — fechamento: semântica de tokens e arquivos duvidosos
+
+### `--color-milho` volta a ser milho
+
+A tarefa 25 reapontou `--color-milho` de `#e8b23a` para um verde-azulado
+(`#2e8b89`) para tingir o acento da abertura. Milho, porém, não alimenta só o
+Hero: ele é `--color-destaque` (marcador, seleção, ficha selecionada do mapa,
+numeral do capítulo IV) e, no tema escuro, `--color-foco`. A troca arrastou
+todos esses papéis junto e derrubou oito invariantes de acessibilidade.
+
+A correção separou os dois papéis em vez de escolher entre eles:
+
+- `--color-milho` volta a `#e8b23a`;
+- a abertura ganha token próprio, `--hero-acento-editorial`, apontando para
+  `--color-observatorio-claro` — a **assinatura institucional**, que já era o
+  acento do cabeçalho logo acima, na mesma tela;
+- `--hero-texto-sobre-acento` substitui `--color-texto-sobre-destaque` no
+  botão da abertura, porque aquele token descreve texto sobre marcador.
+
+Contraste do rótulo do botão: **4,32:1 → 5,32:1**. Ele reprovava AA e ninguém
+via, porque o único teste que o cobria o alcançava por acidente, via
+`--color-destaque`. Agora há cobertura explícita em `testes/contraste.test.ts`,
+mais duas travas: milho tem de continuar amarelo, e o acento da abertura tem de
+pedir a marca, nunca o destaque.
+
+O acento da abertura passou de `#2e8b89` para `#2a9d96`. O numeral do capítulo
+IV, a seleção e o contorno de foco no escuro voltam ao amarelo canhônico — eram
+efeito colateral da troca, não decisão de design.
+
+### A03 em `tmp/` — descartado, com prova
+
+`tmp/a03-borda-da-mata-acessivel.md` era **byte a byte** o objeto já publicado:
+sha256 `1fbaa91d0dd43da1992e22724b99112127316dfecbd3c7f4d9d85ba5f87e8799`,
+10.302 bytes, idêntico ao registrado em `src/dados/lote-publicacao-2026-09-16.json`
+e em `docs/carga/RECONCILIACAO_INDEPENDENTE_2026-09-16.json`
+(`problemas: []`), servido em
+`acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a03-relatorio-tecnico-borda-da-mata-texto-acessivel-v1.md`.
+
+A fonte canônica é `derivados/a03-borda-da-mata-ocr.md`, no corpus, fora do Git
+por decisão de arquitetura. Trazê-lo para o repositório criaria uma quarta
+cópia e contrariaria a regra de não versionar corpus. Não era fonte única.
+
+### `docs/handoff/` — descartado, com prova
+
+`HANDOFF_ARQUITETO_SENIOR_2026-09-12.md` (591 linhas) era snapshot de contexto
+entre agentes. Cada bloco foi conferido contra o registro canônico:
+
+| Seção do handoff | Onde já está |
+|---|---|
+| §2 estado Git (`feat/home-indicadores`, `98f5999`) | superado; Git tem o histórico |
+| §11 bloqueio do gate monoprincipal | **resolvido** por `db/migrations/0008_gate_pendencia_multiarquivo.sql` |
+| §19 inventário (28/3/2, categorias, status) | derivável do `inventario-de-anexos.xlsx` — reproduzido número a número |
+| §21 consentimento (11 participantes, 10 com evidência) | `ESTADO_ATUAL_PROJETO.md` e ADR-013 |
+| §36 variáveis de ambiente | `.env.example`, que lista mais do que o handoff |
+| §40 contradições | `docs/divida-documental.md` e ADRs |
+| §43 bootstrap prompt para novo chat | instrução de IA obsoleta — e o motivo principal do descarte |
+
+Nada era fonte única. E o documento era ativamente enganoso: afirmava branch e
+HEAD que não existem mais, `pnpm verificar` vermelho por uma view já corrigida,
+H4 restrito ao laboratório e produção anterior à reconstrução visual. O §43 pede
+explicitamente para um agente novo ler o handoff como instrução vigente —
+exatamente a hierarquia ambígua que a consolidação veio encerrar.
+
+Estado: **todos os gates verdes** (com `pnpm pendencias` sem `DATABASE_URL`);
+uma Home só, em `/`; sem push, sem Preview, sem Production, sem alteração de
+`main`.

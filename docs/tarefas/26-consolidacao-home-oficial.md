@@ -61,15 +61,27 @@ onde pertencem. A seleção editorial de indicadores foi para `src/dados/`.
 - `docs/frontend/README.md`, `docs/direcao-visual/README.md`,
   `ESTADO_ATUAL_PROJETO.md`, este registro.
 
-## Fora de escopo, auditado e devolvido ao humano
+## Fechamento (segunda rodada, 17/09/2026)
 
-- **`--color-milho` está com valor de teal** (`#2e8b89`, era `#e8b23a`) no
-  working tree, vindo da tarefa 25. Isso reprova cinco invariantes de contraste
-  em `testes/contraste.test.ts`. A cor não foi tocada aqui: ou o token volta ao
-  amarelo, ou os invariantes precisam ser reescritos por decisão humana.
-- **`tmp/a03-borda-da-mata-acessivel.md`** é um derivado textual acessível de
-  A03, com procedência, `estado: PUBLICAVEL` e revisão de privacidade
-  concluída, morando numa pasta de trabalho descartável.
+### 6. Semântica de tokens
+
+`--color-milho` volta a `#e8b23a`. A abertura ganha `--hero-acento-editorial`
+apontando para `--color-observatorio-claro` — a assinatura institucional, que o
+cabeçalho logo acima já usava — e `--hero-texto-sobre-acento` para o rótulo do
+botão. O contraste do botão sobe de 4,32:1 para 5,32:1; ele reprovava AA sem
+que nenhum teste o cobrisse diretamente. `testes/contraste.test.ts` ganhou o par
+explícito e duas travas semânticas.
+
+### 7. Arquivos duvidosos, resolvidos com prova
+
+- `tmp/a03-borda-da-mata-acessivel.md`: idêntico byte a byte ao objeto já
+  publicado e reconciliado. Fonte canônica no corpus, fora do Git. Descartado.
+- `docs/handoff/HANDOFF_ARQUITETO_SENIOR_2026-09-12.md`: snapshot superado,
+  sem informação única, com bootstrap prompt obsoleto. Descartado.
+
+Ambos com a conferência detalhada em `ESTADO_ATUAL_PROJETO.md`.
+
+## Fora de escopo, auditado e devolvido ao humano
 - As demais rotas `/dev/*` (estilos, hero, dados, dados-vivos,
   linguagem-visual, pesquisa, território, território-vivo) têm finalidade
   própria e não foram tocadas.

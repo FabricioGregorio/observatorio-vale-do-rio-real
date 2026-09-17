@@ -32,7 +32,7 @@
   --color-mata: #12301f;
   --color-anil: #1f3a5f;
   --color-pedra: #e7e5de;
-  --color-milho: #2e8b89;
+  --color-milho: #e8b23a;
   --color-barro: #8a4b2a;
   --color-carvao: #171a17;
 
@@ -135,7 +135,19 @@
   --hero-espaco-texto: 1.5rem;
   --hero-numero-editorial: clamp(2rem, 3vw, 3rem);
   --hero-filete: rgb(231 229 222 / 0.28);
-  --hero-acento-editorial: var(--color-milho);
+  /* Acento editorial da abertura: a **assinatura institucional**, não o
+     destaque. São papéis diferentes, e estavam colapsados no mesmo token até
+     2026-09-17, quando `--color-milho` foi reapontado para um verde-azulado
+     só para tingir o Hero. Isso arrastou junto marcador, seleção, contorno de
+     foco no escuro e o numeral do capítulo IV, e derrubou quatro invariantes
+     de contraste — milho é milho, e quem quer a marca pede a marca.
+
+     Invariante de tema, como o resto deste bloco: a abertura é sempre escura,
+     então a variante clara da marca vale nos dois temas. É a mesma cor que o
+     cabeçalho logo acima já usa como acento. Sobre a base do Hero dá 5,57:1;
+     com `--hero-texto-sobre-acento` por cima, 5,32:1. */
+  --hero-acento-editorial: var(--color-observatorio-claro);
+  --hero-texto-sobre-acento: var(--color-carvao);
   --topo-espaco-editorial: 1rem;
   --topo-padding-link: 0.75rem 0.5rem;
   --topo-padding-mobile: 0.75rem;

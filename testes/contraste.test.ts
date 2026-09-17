@@ -95,6 +95,11 @@ const PARES_DE_TEXTO: [string, string, string][] = [
   ["--color-marca", "--color-fundo", "assinatura do Observatório"],
   ["--color-texto-inverso", "--color-fundo-inverso", "cabeçalho e rodapé"],
   ["--color-texto-sobre-destaque", "--color-destaque", "texto sobre marcador"],
+  [
+    "--hero-texto-sobre-acento",
+    "--hero-acento-editorial",
+    "rótulo do botão da abertura",
+  ],
 ];
 
 /** Pares que precisam passar como componente ou fronteira, nos dois temas. */
@@ -152,6 +157,43 @@ describe("regras que dependem do tema", () => {
     expect(resolver(ESCURO, "--color-foco")).toBe(
       resolver(ESCURO, "--color-destaque"),
     );
+  });
+
+  /**
+   * A abertura da Home é sempre escura, nos dois temas, e seu acento é a
+   * **assinatura institucional** — não o destaque. Os dois papéis já
+   * estiveram colapsados no mesmo token: `--color-milho` chegou a ser
+   * reapontado para verde-azulado só para tingir o Hero, o que arrastou
+   * marcador, seleção e contorno de foco junto.
+   *
+   * Estes dois testes são a trava. O primeiro diz que milho continua milho; o
+   * segundo, que o acento da abertura pede a marca e não o destaque.
+   */
+  test("milho continua sendo a cor de milho, e não um verde-azulado", () => {
+    expect(resolver(CLARO, "--color-milho")).toBe("#e8b23a");
+    expect(resolver(CLARO, "--color-destaque")).toBe("#e8b23a");
+  });
+
+  test("o acento da abertura é a assinatura, e não o destaque", () => {
+    for (const tokens of [CLARO, ESCURO]) {
+      expect(resolver(tokens, "--hero-acento-editorial")).toBe(
+        resolver(tokens, "--color-observatorio-claro"),
+      );
+      expect(resolver(tokens, "--hero-acento-editorial")).not.toBe(
+        resolver(tokens, "--color-milho"),
+      );
+    }
+  });
+
+  /**
+   * O rótulo do botão da abertura pousa sobre o próprio acento, e o título
+   * `.ab-b2__t1` pousa sobre a base escura do Hero. Nenhum dos dois é coberto
+   * pelos pares de página: a abertura não usa `--color-fundo`.
+   */
+  test("o acento da abertura passa AA sobre a base escura do Hero", () => {
+    expect(
+      razao(CLARO, "--hero-acento-editorial", "--color-noite"),
+    ).toBeGreaterThanOrEqual(TEXTO);
   });
 
   /**
