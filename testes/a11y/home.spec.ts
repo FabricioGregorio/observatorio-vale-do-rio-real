@@ -356,14 +356,42 @@ test.describe("Home — apresentação", () => {
         await page.setViewportSize({ width: largura, height: 900 });
         await page.goto("/");
 
-        const medidas = await page.evaluate(() => ({
-          rolagem: document.documentElement.scrollWidth,
-          janela: window.innerWidth,
-          semAlt: [...document.images].filter((i) => !i.hasAttribute("alt"))
-            .length,
-        }));
+        const medidas = await page.evaluate(() => {
+          const foto =
+            document.querySelector<HTMLImageElement>(".ab-b2__foto img");
+          const folha = document.querySelector<HTMLElement>(".ab-b2__folha");
+          const numeros = document.querySelector<HTMLElement>(
+            ".ab-b2__provas-rotulo",
+          );
+          if (!foto || !folha || !numeros)
+            throw new Error("Abertura B2 incompleta");
+          const quadro = foto.getBoundingClientRect();
+          return {
+            rolagem: document.documentElement.scrollWidth,
+            janela: window.innerWidth,
+            semAlt: [...document.images].filter((i) => !i.hasAttribute("alt"))
+              .length,
+            foto: {
+              esquerda: quadro.left,
+              direita: quadro.right,
+              base: quadro.bottom,
+            },
+            folha: folha.getBoundingClientRect().top,
+            numeros: numeros.getBoundingClientRect().top,
+            recorte: getComputedStyle(foto).clipPath,
+          };
+        });
         expect(medidas.rolagem).toBeLessThanOrEqual(medidas.janela);
         expect(medidas.semAlt).toBe(0);
+        expect(medidas.foto.esquerda).toBe(0);
+        expect(medidas.foto.direita).toBe(largura);
+        expect(medidas.recorte).toBe("none");
+        expect(medidas.numeros).toBeGreaterThan(medidas.foto.base);
+        if (largura >= 960) {
+          expect(medidas.foto.base - medidas.folha).toBeCloseTo(108, 0);
+        } else {
+          expect(medidas.folha).toBeGreaterThanOrEqual(medidas.foto.base);
+        }
       });
     }
   }

@@ -71,29 +71,32 @@ export const CSS_DAS_ABERTURAS = `
 }
 
 /* ============================== B2 ============================== */
-/* A borda de conteúdo da página, medida no próprio container: é o que deixa
-   a folha nascer na borda da janela e ainda alinhar o texto com as seções. */
-.ab-b2{container-type:inline-size;position:relative;overflow-x:clip;padding-bottom:var(--hl-capitulo)}
+/* A foto mantém seu retângulo; só a folha editorial cruza sua base. */
+.ab-b2{container-type:inline-size;position:relative;overflow-x:clip;padding-bottom:var(--hl-capitulo);background:var(--color-fundo-inverso);color:var(--color-texto-inverso)}
 .ab-b2 *{--ab-b2-borda:max(var(--hl-margem),calc((100cqw - var(--largura-conteudo)) / 2 + var(--hl-margem)))}
 .ab-b2__foto{position:relative;margin:0}
+.ab-b2__foto picture{position:relative;display:block}
 .ab-b2__foto img{display:block;width:100%;height:clamp(15rem,36svh,18rem);object-fit:cover;object-position:50% 65%}
-.ab-b2__legenda{display:flex;flex-direction:column;padding:.5rem var(--hl-margem) 0;font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);line-height:1.5;color:var(--color-texto-suave)}
-.ab-b2__linha>span+span::before{content:" · ";color:var(--color-texto-suave)}
-.ab-b2__legenda-titulo{font-family:var(--font-display);font-weight:600;letter-spacing:0;color:var(--color-texto)}
+.ab-b2__foto picture::after{content:"";position:absolute;inset:auto 0 0;height:var(--hero-altura-transicao);background:linear-gradient(to bottom,transparent,var(--hero-meio));pointer-events:none}
+.ab-b2__legenda{display:flex;flex-direction:column;padding:.5rem var(--hl-margem) 0;font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);line-height:1.5;color:var(--color-texto-inverso)}
+.ab-b2__linha>span+span::before{content:" · ";color:var(--color-texto-inverso)}
+.ab-b2__legenda-titulo{font-family:var(--font-display);font-weight:600;letter-spacing:0;color:var(--color-texto-inverso)}
 .ab-b2__base{display:grid;gap:2rem}
-.ab-b2__folha{position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:flex-start;gap:1rem;padding:1.5rem var(--hl-margem) 0;background:var(--color-fundo)}
+.ab-b2__folha{position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:flex-start;gap:1rem;padding:1.5rem var(--hl-margem) 0;background:var(--color-fundo-inverso)}
 .ab-b2__folha::before{content:"";position:absolute;z-index:-1;inset:0;background:var(--color-grafismo-territorial);opacity:var(--opacidade-grafismo-topografia);pointer-events:none;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 720 360'%3E%3Cg fill='none' stroke='white' stroke-width='1.2'%3E%3Cpath d='M-30 71C81 6 166 26 222 83s119 63 188 3 181-76 340-8'/%3E%3Cpath d='M-44 112C72 41 163 57 216 109s120 59 191 7 181-61 354-9'/%3E%3Cpath d='M-55 157C62 84 154 90 211 138s124 56 196 15 181-48 365-14'/%3E%3Cpath d='M-61 207C54 132 147 126 209 168s128 54 201 24 180-36 373-21'/%3E%3Cpath d='M-66 263C50 181 143 166 210 202s132 55 207 36 180-22 378-25'/%3E%3Cpath d='M-72 325C48 232 140 207 213 237s136 57 214 49 181-6 381-31'/%3E%3C/g%3E%3C/svg%3E") center/cover no-repeat}
 .ab-b2__titulo{display:flex;flex-direction:column;gap:.15rem}
 .ab-b2__t1,.ab-b2__t3{font-size:clamp(var(--text-base),1.5vw,var(--text-lg));font-weight:600}
 .ab-b2__t2{font-size:clamp(2.1rem,4.6vw,4.25rem);line-height:.98;letter-spacing:-.035em;font-weight:700}
 .ab-b2__proposito{max-width:44ch;font-size:clamp(var(--text-base),1.4vw,var(--text-lg));line-height:1.45}
 .ab-b2__lado{display:flex;flex-direction:column;gap:1rem;padding:0 var(--hl-margem)}
-.ab-b2__provas-rotulo{margin:0;font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);text-transform:uppercase;color:var(--color-texto-suave)}
-.ab-b2__provas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--color-texto)}
+.ab-b2__provas-rotulo{margin:0;font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);text-transform:uppercase;color:var(--color-texto-inverso)}
+.ab-b2__provas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--color-texto-inverso)}
 .ab-b2__provas li{display:flex;flex-direction:column;gap:.25rem;padding:.7rem .75rem .7rem 0;border-bottom:1px solid var(--hl-fio)}
-.ab-b2__provas strong{font-family:var(--font-display);font-size:clamp(var(--text-xl),2vw,var(--text-2xl));font-weight:var(--peso-numeral);line-height:1;color:var(--color-marca)}
+.ab-b2__provas strong{font-family:var(--font-display);font-size:clamp(var(--text-xl),2vw,var(--text-2xl));font-weight:var(--peso-numeral);line-height:1;color:var(--color-texto-inverso)}
 .ab-b2__provas span{font-size:var(--text-xs);line-height:1.35}
-.ab-b2 .ab-b2__assinatura{font-size:var(--text-xs);color:var(--color-texto-suave)}
+.ab-b2 .ab-b2__assinatura{font-size:var(--text-xs);color:var(--color-texto-inverso)}
+.home-livre .ab-b2 .ab-botao{background:var(--color-texto-inverso);color:var(--color-fundo-inverso)}
+.home-livre .ab-b2 .ab-botao:hover{background:var(--color-fundo-inverso);color:var(--color-texto-inverso)}
 @media (max-width:767px){
   .ab-seletor{flex-wrap:nowrap}
   .ab-seletor ul{flex-wrap:nowrap;overflow-x:auto}
@@ -103,9 +106,9 @@ export const CSS_DAS_ABERTURAS = `
   .ab-b2__foto img{height:clamp(24rem,54svh,36rem);object-position:50% 73%}
   .ab-b2__legenda{position:absolute;top:100%;right:var(--ab-b2-borda);align-items:flex-end;padding:.6rem 0 0;text-align:right}
   .ab-b2__t2{max-width:13ch}
-  .ab-b2__base{grid-template-columns:calc(var(--ab-b2-borda) + (100cqw - 2 * var(--ab-b2-borda)) * .56) minmax(0,1fr);column-gap:clamp(2.5rem,5vw,4.5rem);margin-top:-8rem;padding-right:var(--ab-b2-borda)}
+  .ab-b2__base{position:relative;z-index:1;grid-template-columns:calc(var(--ab-b2-borda) + (100cqw - 2 * var(--ab-b2-borda)) * .56) minmax(0,1fr);column-gap:clamp(2.5rem,5vw,4.5rem);margin-top:calc(-1 * var(--hero-sobreposicao-editorial));padding-right:var(--ab-b2-borda)}
   .ab-b2__folha{padding:2.25rem clamp(2rem,4vw,3.5rem) 0 var(--ab-b2-borda)}
-  .ab-b2__lado{padding:11.5rem 0 0}
+  .ab-b2__lado{padding:calc(var(--hero-sobreposicao-editorial) + var(--hero-respiro-numeros)) 0 0}
 }
 
 /* ============================== C ============================== */

@@ -118,6 +118,9 @@
   --hero-base: rgb(14 22 17 / 0.9);
   --hero-texto: var(--color-pedra);
   --hero-metadado: rgb(231 229 222 / 0.82);
+  --hero-sobreposicao-editorial: 108px;
+  --hero-respiro-numeros: 4rem;
+  --hero-altura-transicao: 5rem;
 
   /* Texto por cima de um preenchimento de milho — marcador, tarja, seleção.
      **Invariante de tema, de propósito**: milho é a mesma cor nos dois temas,

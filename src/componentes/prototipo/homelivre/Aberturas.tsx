@@ -135,11 +135,9 @@ function CtaDaPesquisa() {
 /**
  * B2 — refinamento da B (rodada 3).
  *
- * Mesmos fatos, mesma hierarquia de título e mesma ausência de véu. O que muda
- * é o encaixe: a folha deixa de ser cartão sobre a foto e passa a ser o próprio
- * papel da página recortando a fotografia desde a borda esquerda da janela. A
- * legenda sai de cima da imagem e vira linha documental logo abaixo dela. As
- * contagens diminuem para prova rápida, e o parágrafo de apoio sai.
+ * A fotografia conserva o retângulo e o enquadramento documental. A folha
+ * editorial cruza somente sua base no desktop; no mobile, foto, conteúdo e
+ * números seguem em fluxo. A legenda fica fora da imagem.
  */
 export function AberturaB2({ contexto = "dev" }: PropsDeSecao) {
   const provas = [
