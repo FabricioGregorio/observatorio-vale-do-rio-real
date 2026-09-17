@@ -3,16 +3,26 @@
  *
  * ## Tokens locais da Cartografia
  *
- * Os papéis globais de `tokens.css` não mudam. Aqui nascem **nomes locais**
- * (`--tv-*`), escopados em `.tv`, todos derivados de papéis existentes por
- * `color-mix` — nenhuma cor literal. O bloco escuro repete a cascata do
- * `tokens.css` (sistema, `data-tema="escuro"`), porque o mapa perde definição
- * justamente onde o tema troca: a placa clara com sombra carvão some sobre a
- * noite.
+ * Os papéis globais de `tokens.css` não mudam. Os nomes locais (`--tv-*`)
+ * reutilizam a paleta da Home. A geometria mantém pedra, milho, mata, anil e
+ * barro nos dois temas; moldura, sombra e controles acompanham o tema.
  *
  * No escuro, a separação entre mapa e fundo **não depende de preto**: a placa
- * ganha borda mais clara e um filete interno claro; os limites municipais
- * sobem de contraste (melhoria aprovada na Tarefa 17).
+ * ganha borda mais clara e um filete interno claro.
+ *
+ * ## Placa e papel são coisas diferentes
+ *
+ * `--tv-plano` é a **placa** — o fundo do quadro, que acompanha o tema — e só
+ * o quadro pode usá-la. O que é vazado *sobre o mapa* (escudo de rodovia,
+ * quadrado de localidade, núcleo da referência, miolo do pin) é papel, não
+ * placa, e usa `--tv-sinal`. A distinção não existia enquanto a geometria
+ * também acompanhava o tema; passou a existir quando ela virou invariante,
+ * como em `estilosDoMapa.ts` (Fase H0). `--tv-sinal` é exatamente o valor que
+ * `--tv-plano` já resolvia no tema claro, então o claro não muda — o escuro
+ * deixa de pintar de noite os sinais que deveriam ser vazados.
+ *
+ * Pela mesma razão, a rosa dos ventos e a barra de escala ganham casco claro:
+ * elas são anotações da placa e podem cair fora da malha.
  *
  * ## Símbolos (Tarefas 18 e 19)
  *
@@ -31,29 +41,30 @@
 export const CSS_DO_TERRITORIO_VIVO = `
 .tv{
   --tv-plano:var(--color-fundo-elevado);
+  --tv-sinal:var(--color-branco);
   --tv-borda-plano:color-mix(in srgb,var(--color-texto) 22%,var(--color-fundo));
   --tv-filete:color-mix(in srgb,var(--color-texto) 0%,transparent);
   --tv-sombra:color-mix(in srgb,var(--color-carvao) 16%,transparent);
-  --tv-terra:color-mix(in srgb,var(--color-texto) 7%,var(--color-fundo-elevado));
-  --tv-vale:color-mix(in srgb,var(--color-marca) 26%,var(--color-fundo-elevado));
-  --tv-hachura:color-mix(in srgb,var(--color-marca) 70%,var(--color-texto));
-  --tv-limite:color-mix(in srgb,var(--color-texto) 62%,var(--color-fundo-elevado));
-  --tv-limite-externo:color-mix(in srgb,var(--color-texto) 26%,var(--color-fundo-elevado));
-  --tv-stroke-interno:var(--color-fundo-elevado);
-  --tv-rotulo:var(--color-texto);
-  --tv-pin:var(--color-texto);
-  --tv-pin-texto:var(--color-fundo-elevado);
+  --tv-terra:var(--color-pedra);
+  --tv-vale:var(--color-milho);
+  --tv-hachura:var(--color-mata);
+  --tv-limite:var(--color-mata);
+  --tv-limite-externo:var(--color-carvao-suave);
+  --tv-stroke-interno:var(--color-carvao-suave);
+  --tv-rotulo:var(--color-carvao);
+  --tv-pin:var(--color-barro);
+  --tv-pin-texto:var(--color-branco);
   --tv-pin-selecionado:var(--color-destaque);
   --tv-pin-selecionado-texto:var(--color-texto-sobre-destaque);
-  --tv-contorno-foco:var(--color-texto);
+  --tv-contorno-foco:var(--color-mata);
   --tv-hover:color-mix(in srgb,var(--color-marca) 14%,var(--color-fundo-elevado));
-  --tv-local-municipio:color-mix(in srgb,var(--color-marca) 9%,var(--color-fundo-elevado));
-  --tv-via-rodovia:color-mix(in srgb,var(--color-texto) 84%,var(--color-fundo-elevado));
-  --tv-via-casco:var(--tv-plano);
-  --tv-via-estrada:color-mix(in srgb,var(--color-texto) 36%,var(--color-fundo-elevado));
-  --tv-via-urbana:color-mix(in srgb,var(--color-texto) 24%,var(--color-fundo-elevado));
-  --tv-agua:color-mix(in srgb,var(--color-link) 62%,var(--color-fundo-elevado));
-  --tv-localidade:var(--color-texto);
+  --tv-local-municipio:color-mix(in srgb,var(--color-milho) 14%,var(--color-pedra));
+  --tv-via-rodovia:var(--color-carvao);
+  --tv-via-casco:var(--color-pedra);
+  --tv-via-estrada:var(--color-carvao-suave);
+  --tv-via-urbana:var(--color-carvao-suave);
+  --tv-agua:var(--color-anil);
+  --tv-localidade:var(--color-carvao);
   --tv-duracao:calc(var(--duracao-painel) * 2.75);
   --tv-duracao-local:calc(var(--duracao-painel) * 4.5);
   max-width:var(--largura-conteudo);margin-inline:auto;padding:clamp(1.5rem,4vw,3rem) clamp(1rem,4vw,3rem) clamp(3rem,7vw,6rem);
@@ -63,36 +74,14 @@ export const CSS_DO_TERRITORIO_VIVO = `
     --tv-borda-plano:color-mix(in srgb,var(--color-texto) 42%,var(--color-fundo));
     --tv-filete:color-mix(in srgb,var(--color-texto) 14%,transparent);
     --tv-sombra:color-mix(in srgb,var(--color-carvao) 70%,transparent);
-    --tv-terra:color-mix(in srgb,var(--color-texto) 10%,var(--color-fundo-elevado));
-    --tv-vale:color-mix(in srgb,var(--color-marca) 38%,var(--color-fundo-elevado));
-    --tv-hachura:color-mix(in srgb,var(--color-marca) 55%,var(--color-texto));
-    --tv-limite:color-mix(in srgb,var(--color-texto) 82%,var(--color-fundo-elevado));
-    --tv-limite-externo:color-mix(in srgb,var(--color-texto) 40%,var(--color-fundo-elevado));
-    --tv-stroke-interno:color-mix(in srgb,var(--color-texto) 30%,var(--color-fundo-elevado));
     --tv-hover:color-mix(in srgb,var(--color-marca) 24%,var(--color-fundo-elevado));
-    --tv-local-municipio:color-mix(in srgb,var(--color-marca) 14%,var(--color-fundo-elevado));
-    --tv-via-rodovia:color-mix(in srgb,var(--color-texto) 88%,var(--color-fundo-elevado));
-    --tv-via-estrada:color-mix(in srgb,var(--color-texto) 42%,var(--color-fundo-elevado));
-    --tv-via-urbana:color-mix(in srgb,var(--color-texto) 30%,var(--color-fundo-elevado));
-    --tv-agua:color-mix(in srgb,var(--color-link) 70%,var(--color-fundo-elevado));
   }
 }
 :root[data-tema="escuro"] .tv{
   --tv-borda-plano:color-mix(in srgb,var(--color-texto) 42%,var(--color-fundo));
   --tv-filete:color-mix(in srgb,var(--color-texto) 14%,transparent);
   --tv-sombra:color-mix(in srgb,var(--color-carvao) 70%,transparent);
-  --tv-terra:color-mix(in srgb,var(--color-texto) 10%,var(--color-fundo-elevado));
-  --tv-vale:color-mix(in srgb,var(--color-marca) 38%,var(--color-fundo-elevado));
-  --tv-hachura:color-mix(in srgb,var(--color-marca) 55%,var(--color-texto));
-  --tv-limite:color-mix(in srgb,var(--color-texto) 82%,var(--color-fundo-elevado));
-  --tv-limite-externo:color-mix(in srgb,var(--color-texto) 40%,var(--color-fundo-elevado));
-  --tv-stroke-interno:color-mix(in srgb,var(--color-texto) 30%,var(--color-fundo-elevado));
   --tv-hover:color-mix(in srgb,var(--color-marca) 24%,var(--color-fundo-elevado));
-  --tv-local-municipio:color-mix(in srgb,var(--color-marca) 14%,var(--color-fundo-elevado));
-  --tv-via-rodovia:color-mix(in srgb,var(--color-texto) 88%,var(--color-fundo-elevado));
-  --tv-via-estrada:color-mix(in srgb,var(--color-texto) 42%,var(--color-fundo-elevado));
-  --tv-via-urbana:color-mix(in srgb,var(--color-texto) 30%,var(--color-fundo-elevado));
-  --tv-agua:color-mix(in srgb,var(--color-link) 70%,var(--color-fundo-elevado));
 }
 
 .tv ul,.tv ol{list-style:none;margin:0;padding:0}
@@ -103,32 +92,46 @@ export const CSS_DO_TERRITORIO_VIVO = `
 .tv__contexto{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem;margin-top:.5rem;padding-top:1rem;border-top:1px solid var(--color-borda)}
 .tv__contexto p{font-size:var(--text-sm)}
 .tv__grade{display:grid;gap:1.5rem;margin-top:clamp(1.5rem,4vw,2.5rem)}
+.tv__escala-territorial{display:flex;align-items:center;gap:1rem;margin:0;padding:.75rem 1rem;border:1px solid var(--color-borda);border-radius:var(--radius-ficha);background:var(--color-fundo-elevado)}
+.tv__escala-territorial svg{display:block;flex:none;width:4.5rem;height:auto}
+.tv__escala-territorial p{display:grid;gap:.2rem;font-size:var(--text-sm)}
+.tv__escala-territorial strong{font-family:var(--font-display)}
+/* A referência estadual mostra 1000 unidades de projeção em 72 px: sem traço
+   de espessura de tela, o contorno do Vale e o tracejado de São Cristóvão
+   ficam abaixo de 0,2 px e o texto ao lado apontaria para o que não se vê. O
+   prefixo .tv é o que vence a especificidade das regras da placa. */
+.tv .tv__escala-territorial .m{stroke-width:.5;vector-effect:non-scaling-stroke}
+.tv .tv__escala-territorial .m.v{stroke-width:1}
+.tv .tv__escala-territorial .m.c{stroke-width:1.5;stroke-dasharray:2 1.5}
+.tv .tv__escala-territorial .h{fill:url(#tv-hachura-estado)}
 
 /* Placa do mapa */
 .tv__mapa{margin:0;display:grid;gap:.6rem;min-width:0}
 .tv__plano{position:relative;overflow:hidden;background:var(--tv-plano);border:1px solid var(--tv-borda-plano);border-radius:var(--radius-ficha);box-shadow:inset 0 1px 0 var(--tv-filete),0 1.25rem 2.5rem -1.5rem var(--tv-sombra)}
 .tv__plano svg{display:block;width:100%;height:auto;max-height:min(70svh,40rem)}
 .tv-mundo{transform-box:view-box;transform-origin:0 0;transform:translate(var(--tv-tx),var(--tv-ty)) scale(var(--tv-s));transition-property:transform,opacity;transition-duration:var(--tv-duracao);transition-timing-function:var(--easing-padrao),linear}
-.tv .m{fill:var(--tv-terra);stroke:var(--tv-stroke-interno);stroke-width:1;vector-effect:non-scaling-stroke;transition:opacity var(--tv-duracao) var(--easing-padrao)}
+.tv .m{fill:var(--tv-terra);stroke:var(--tv-stroke-interno);stroke-width:.5;vector-effect:non-scaling-stroke;transition:opacity var(--tv-duracao) var(--easing-padrao)}
 .tv .m.v{fill:var(--tv-vale);stroke:var(--tv-limite);stroke-width:1.4}
+.tv .m.c{stroke:var(--color-anil);stroke-width:1.4;stroke-dasharray:5 2.5}
 .tv .h{fill:url(#tv-hachura);stroke:none;pointer-events:none;transition:opacity var(--tv-duracao) var(--easing-padrao)}
 .tv #tv-hachura line{stroke:var(--tv-hachura)}
 .tv .anel{fill:none;stroke:var(--tv-contorno-foco);stroke-width:3;stroke-dasharray:7 4;vector-effect:non-scaling-stroke;opacity:0;transition:opacity var(--tv-duracao) var(--easing-padrao)}
 .tv-rot{opacity:0;transition:opacity var(--tv-duracao) var(--easing-padrao);pointer-events:none}
 .tv-rot text,.tv-fixo text,.tv-pin text{font-family:var(--font-display)}
-.tv-rot text{fill:var(--tv-rotulo);font-weight:600;paint-order:stroke;stroke:var(--tv-plano);stroke-linejoin:round}
+.tv-rot text{fill:var(--tv-rotulo);font-weight:600;paint-order:stroke;stroke:var(--color-pedra);stroke-linejoin:round}
 .tv-contagem text{font-family:var(--font-mono);font-weight:400}
-.tv-fixo text{fill:var(--tv-rotulo)}
+.tv-fixo text{fill:var(--tv-rotulo);paint-order:stroke;stroke:var(--tv-terra);stroke-width:.3em;stroke-linejoin:round}
 .tv-fixo line,.tv-fixo path{stroke:var(--tv-rotulo);fill:none}
+.tv-fixo .casco{stroke:var(--tv-terra);stroke-linecap:round;stroke-linejoin:round}
 .tv-fixo .escala{opacity:0}
 .tv-semlocal{opacity:0;transition:opacity var(--tv-duracao) var(--easing-padrao)}
-.tv-semlocal rect{fill:var(--tv-plano);stroke:var(--tv-borda-plano)}
+.tv-semlocal rect{fill:var(--tv-sinal);stroke:var(--tv-limite-externo)}
 
 /* Pins na malha: ponta exatamente na coordenada confirmada */
 .tv-pin{pointer-events:none}
-.tv-pin .forma{fill:var(--tv-pin);stroke:var(--tv-plano);stroke-width:1.5px;vector-effect:non-scaling-stroke}
-.tv-pin .miolo{fill:var(--tv-plano)}
-.tv-pin .nome{opacity:0;font-weight:600;fill:var(--tv-rotulo);paint-order:stroke;stroke:var(--tv-plano);stroke-linejoin:round;transition:opacity var(--tv-duracao) var(--easing-padrao)}
+.tv-pin .forma{fill:var(--tv-pin);stroke:var(--tv-pin-texto);stroke-width:1.5px;vector-effect:non-scaling-stroke}
+.tv-pin .miolo{fill:var(--tv-pin-texto)}
+.tv-pin .nome{opacity:0;font-weight:600;fill:var(--tv-rotulo);paint-order:stroke;stroke:var(--color-pedra);stroke-linejoin:round;transition:opacity var(--tv-duracao) var(--easing-padrao)}
 .tv-pin .sel{display:none}
 
 /* Camada local: outra representação, carregada sob demanda */
@@ -146,33 +149,41 @@ export const CSS_DO_TERRITORIO_VIVO = `
 .tv-local .casco{stroke:var(--tv-via-casco);stroke-width:6}
 .tv-local .rodovia{stroke:var(--tv-via-rodovia);stroke-width:2.8}
 .tv-local .rodovia.terra{stroke-dasharray:7 4}
-.tv-local .escudo rect{fill:var(--tv-plano);stroke:var(--tv-via-rodovia);stroke-width:1.2;vector-effect:non-scaling-stroke}
+.tv-local .escudo rect{fill:var(--tv-sinal);stroke:var(--tv-via-rodovia);stroke-width:1.2;vector-effect:non-scaling-stroke}
 .tv-local .escudo text{font-family:var(--font-mono);font-weight:500;fill:var(--tv-rotulo)}
-.tv-local .loc rect{fill:var(--tv-plano);stroke:var(--tv-localidade);stroke-width:1.4;vector-effect:non-scaling-stroke}
+.tv-local .loc rect{fill:var(--tv-sinal);stroke:var(--tv-localidade);stroke-width:1.4;vector-effect:non-scaling-stroke}
 .tv-local .loc.sede rect{fill:var(--tv-localidade)}
-.tv-local .loc text{font-family:var(--font-display);font-weight:500;fill:var(--tv-rotulo);paint-order:stroke;stroke:var(--tv-plano);stroke-width:.32em;stroke-linejoin:round}
+.tv-local .loc text{font-family:var(--font-display);font-weight:500;fill:var(--tv-rotulo);paint-order:stroke;stroke:var(--color-pedra);stroke-width:.32em;stroke-linejoin:round}
 .tv-local .loc.sede text{font-weight:700}
 .tv-local .loc.outra text{font-weight:400}
 .tv-local .loc.referencia-cartografica text{font-style:italic;font-weight:500}
 .tv-local .ref .anel-ref{fill:none;stroke:var(--tv-contorno-foco);stroke-width:1.6;stroke-dasharray:4 3;vector-effect:non-scaling-stroke}
-.tv-local .ref .nucleo-ref{fill:var(--tv-plano);stroke:var(--tv-localidade);stroke-width:1.4;vector-effect:non-scaling-stroke}
-.tv-local .ref-rotulo{font-family:var(--font-display);font-style:italic;font-weight:500;fill:var(--tv-rotulo);paint-order:stroke;stroke:var(--tv-plano);stroke-width:.32em;stroke-linejoin:round}
-.tv-local .pin .forma{fill:var(--tv-pin);stroke:var(--tv-plano);stroke-width:1.5;vector-effect:non-scaling-stroke}
-.tv-local .pin .miolo{fill:var(--tv-plano)}
+.tv-local .ref .nucleo-ref{fill:var(--tv-sinal);stroke:var(--tv-localidade);stroke-width:1.4;vector-effect:non-scaling-stroke}
+.tv-local .ref-rotulo{font-family:var(--font-display);font-style:italic;font-weight:500;fill:var(--tv-rotulo);paint-order:stroke;stroke:var(--color-pedra);stroke-width:.32em;stroke-linejoin:round}
+.tv-local .pin .forma{fill:var(--tv-pin);stroke:var(--tv-pin-texto);stroke-width:1.5;vector-effect:non-scaling-stroke}
+.tv-local .pin .miolo{fill:var(--tv-pin-texto)}
 .tv-local .pin[data-selecionado="true"] .forma{fill:var(--tv-pin-selecionado);stroke:var(--tv-contorno-foco);stroke-width:2.5}
 .tv-local .pin[data-selecionado="true"] .miolo{fill:var(--tv-contorno-foco)}
-.tv-local text.pin-rotulo{font-family:var(--font-display);font-weight:600;fill:var(--tv-rotulo);paint-order:stroke;stroke:var(--tv-plano);stroke-width:.3em;stroke-linejoin:round}
+.tv-local text.pin-rotulo{font-family:var(--font-display);font-weight:600;fill:var(--tv-rotulo);paint-order:stroke;stroke:var(--color-pedra);stroke-width:.3em;stroke-linejoin:round}
 .tv-local .pin-rotulo.selecionado rect{fill:var(--tv-pin-selecionado);stroke:var(--tv-contorno-foco);stroke-width:1.5;vector-effect:non-scaling-stroke}
 .tv-local .pin-rotulo.selecionado text{font-family:var(--font-display);font-weight:700;fill:var(--tv-pin-selecionado-texto)}
 
 .tv__legenda{display:flex;flex-wrap:wrap;gap:.4rem 1.1rem;font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);color:var(--color-texto-suave)}
 .tv__legenda li{display:flex;align-items:center;gap:.45rem}
+/* Cada amostra é um pedaço da folha, e leva o chão de papel junto — é o que a
+   legenda da Home já faz ao assentar toda amostra sobre pedra. Sem esse chão,
+   sinal em carvão, mata ou anil sumiria no tema escuro, porque a geometria do
+   mapa é invariante de tema e o fundo da página não. No claro o chão coincide
+   com o fundo e não se vê. */
+.tv__amostra,.tv__amostra--pin,.tv__traco{box-shadow:0 0 0 2px var(--tv-terra)}
 .tv__amostra{display:inline-block;width:1.1rem;height:.8rem;border:1px solid var(--tv-limite);background:var(--tv-vale)}
+.tv__amostra--estado{border-color:var(--color-carvao-suave);background:var(--color-pedra)}
 .tv__amostra--campo{background:repeating-linear-gradient(45deg,var(--tv-vale),var(--tv-vale) .15rem,var(--tv-hachura) .15rem,var(--tv-hachura) .25rem)}
+.tv__amostra--comparacao{border:2px dashed var(--color-anil);background:var(--color-pedra)}
 .tv__amostra--pin{display:inline-block;width:.7rem;height:.7rem;margin-inline:.2rem;background:var(--tv-pin);border-radius:50% 50% 50% 0;transform:rotate(-45deg)}
-.tv__amostra--referencia{width:.6rem;height:.6rem;background:var(--tv-plano);border:1.5px solid var(--tv-localidade);outline:1.5px dashed var(--tv-contorno-foco);outline-offset:2px}
+.tv__amostra--referencia{width:.6rem;height:.6rem;background:var(--tv-sinal);border:1.5px solid var(--tv-localidade);outline:1.5px dashed var(--tv-contorno-foco);outline-offset:2px}
 .tv__amostra--sede{width:.6rem;height:.6rem;background:var(--tv-localidade);border-color:var(--tv-localidade)}
-.tv__amostra--localidade{width:.6rem;height:.6rem;background:var(--tv-plano);border:1.5px solid var(--tv-localidade)}
+.tv__amostra--localidade{width:.6rem;height:.6rem;background:var(--tv-sinal);border:1.5px solid var(--tv-localidade)}
 .tv__traco{display:inline-block;width:1.5rem;height:0;border-top:3px solid var(--tv-via-rodovia)}
 .tv__traco--terra{border-top-style:dashed}
 .tv__traco--estrada{border-top:1px solid var(--tv-via-estrada)}

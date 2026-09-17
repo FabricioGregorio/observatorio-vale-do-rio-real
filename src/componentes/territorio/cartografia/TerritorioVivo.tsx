@@ -219,6 +219,56 @@ export function TerritorioVivo({
 
       <div className="tv__grade">
         <figure className="tv__mapa">
+          <div className="tv__escala-territorial">
+            <svg
+              aria-hidden="true"
+              viewBox={`0 0 ${dados.projecao.largura} ${Math.ceil(dados.projecao.altura)}`}
+            >
+              <defs>
+                <pattern
+                  height={8}
+                  id="tv-hachura-estado"
+                  patternTransform="rotate(45)"
+                  patternUnits="userSpaceOnUse"
+                  width={8}
+                >
+                  <line
+                    stroke="var(--color-mata)"
+                    strokeWidth={1.6}
+                    x1={0}
+                    x2={0}
+                    y1={0}
+                    y2={8}
+                  />
+                </pattern>
+              </defs>
+              {dados.municipios.map((m) => (
+                <path
+                  className={`m${m.relacoesTerritoriais.includes("vale-rio-real") ? " v" : ""}${m.relacoesTerritoriais.includes("comparacao") ? " c" : ""}`}
+                  d={m.caminho}
+                  key={m.codigoIbge}
+                />
+              ))}
+              {dados.municipios
+                .filter((m) =>
+                  m.relacoesTerritoriais.includes("pesquisa-campo"),
+                )
+                .map((m) => (
+                  <path
+                    className="h"
+                    d={m.caminho}
+                    key={`estado-h-${m.codigoIbge}`}
+                  />
+                ))}
+            </svg>
+            <p>
+              <strong>Sergipe → Vale do Rio Real</strong>
+              <span>
+                O mapa abaixo aproxima o recorte em milho. São Cristóvão, em
+                traço anil, fica fora dele.
+              </span>
+            </p>
+          </div>
           <div className="tv__plano">
             <svg
               aria-labelledby="tv-mapa-titulo"
@@ -245,31 +295,35 @@ export function TerritorioVivo({
                 </pattern>
               </defs>
 
-              <g className="tv-mundo">
+              <g className="tv-mundo" data-camada="malha-estadual">
                 {visiveis.map((m) => (
                   <path
                     className={
                       m.relacoesTerritoriais.includes("vale-rio-real")
                         ? "m v"
-                        : "m"
+                        : m.relacoesTerritoriais.includes("comparacao")
+                          ? "m c"
+                          : "m"
                     }
                     d={m.caminho}
                     data-codigo={m.codigoIbge}
                     key={m.codigoIbge}
                   />
                 ))}
-                {visiveis
-                  .filter((m) =>
-                    m.relacoesTerritoriais.includes("pesquisa-campo"),
-                  )
-                  .map((m) => (
-                    <path
-                      className="h"
-                      d={m.caminho}
-                      data-codigo={m.codigoIbge}
-                      key={`h-${m.codigoIbge}`}
-                    />
-                  ))}
+                <g data-camada="pesquisa-de-campo">
+                  {visiveis
+                    .filter((m) =>
+                      m.relacoesTerritoriais.includes("pesquisa-campo"),
+                    )
+                    .map((m) => (
+                      <path
+                        className="h"
+                        d={m.caminho}
+                        data-codigo={m.codigoIbge}
+                        key={`h-${m.codigoIbge}`}
+                      />
+                    ))}
+                </g>
                 {[...porMunicipio.keys()].map((codigo) => (
                   <path
                     className="anel"
@@ -383,10 +437,21 @@ export function TerritorioVivo({
                 <g
                   transform={`translate(${(vista.x1 - vw * 0.06).toFixed(1)} ${(vista.y0 + vh * 0.06).toFixed(1)})`}
                 >
-                  <path
-                    d={`M0 ${fs * 1.6} L0 0 M${-fs * 0.4} ${fs * 0.5} L0 0 L${fs * 0.4} ${fs * 0.5}`}
-                    strokeWidth={fs * 0.12}
-                  />
+                  {/*
+                    Casco claro antes do traço, como nas rodovias da camada
+                    local: a rosa e a barra de escala são anotações da placa,
+                    e a placa acompanha o tema enquanto a geometria do mapa é
+                    invariante. Sem o casco, o traço em carvão desaparecia
+                    sobre a placa escura.
+                  */}
+                  {[true, false].map((casco) => (
+                    <path
+                      className={casco ? "casco" : undefined}
+                      d={`M0 ${fs * 1.6} L0 0 M${-fs * 0.4} ${fs * 0.5} L0 0 L${fs * 0.4} ${fs * 0.5}`}
+                      key={casco ? "casco" : "traco"}
+                      strokeWidth={fs * (casco ? 0.42 : 0.12)}
+                    />
+                  ))}
                   <text fontSize={fs * 0.9} textAnchor="middle" y={fs * 2.6}>
                     N
                   </text>
@@ -400,10 +465,14 @@ export function TerritorioVivo({
                       data-foco={foco}
                       key={`escala-${foco}`}
                     >
-                      <path
-                        d={`M${x} ${y - fs * 0.35} L${x} ${y} L${x + barra.unidades} ${y} L${x + barra.unidades} ${y - fs * 0.35}`}
-                        strokeWidth={fs * 0.1}
-                      />
+                      {[true, false].map((casco) => (
+                        <path
+                          className={casco ? "casco" : undefined}
+                          d={`M${x} ${y - fs * 0.35} L${x} ${y} L${x + barra.unidades} ${y} L${x + barra.unidades} ${y - fs * 0.35}`}
+                          key={casco ? "casco" : "traco"}
+                          strokeWidth={fs * (casco ? 0.4 : 0.1)}
+                        />
+                      ))}
                       <text fontSize={fs * 0.8} x={x} y={y - fs * 0.6}>
                         {barra.km} km
                       </text>
@@ -448,15 +517,29 @@ export function TerritorioVivo({
             className="tv__legenda tv__legenda--geral"
           >
             <li>
+              <span
+                aria-hidden="true"
+                className="tv__amostra tv__amostra--estado"
+              />
+              Sergipe
+            </li>
+            <li>
               <span aria-hidden="true" className="tv__amostra" />
-              Recorte do Vale
+              Vale
             </li>
             <li>
               <span
                 aria-hidden="true"
                 className="tv__amostra tv__amostra--campo"
               />
-              Pesquisa de campo no município
+              Pesquisa
+            </li>
+            <li>
+              <span
+                aria-hidden="true"
+                className="tv__amostra tv__amostra--comparacao"
+              />
+              Comparação · São Cristóvão
             </li>
             <li>
               <span aria-hidden="true" className="tv__amostra--pin" />

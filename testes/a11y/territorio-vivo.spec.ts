@@ -444,12 +444,33 @@ test("tema escuro, quatro mapas detalhados: vias, limite, nomes e pin selecionad
         if (el === null) throw new Error(sel);
         return getComputedStyle(el);
       };
-      const placa = estilo(".tv__plano").backgroundColor;
       const fundo = estilo(`${escopo} .mun`).fill;
+      const escudo = document.querySelector(`${escopo} .escudo rect`);
+      const sede = document.querySelector(`${escopo} .loc.sede rect`);
       return {
         rodovia: contraste(estilo(`${escopo} .rodovia`).stroke, fundo),
         limite: contraste(estilo(`${escopo} .lim`).stroke, fundo),
-        nome: contraste(estilo(`${escopo} .loc text`).fill, placa),
+        nome: contraste(estilo(`${escopo} .loc text`).fill, fundo),
+        /*
+          O que é vazado sobre o mapa é papel, não placa. Enquanto estes
+          sinais herdavam o fundo da placa, o tema escuro pintava de noite o
+          escudo da rodovia — apagando o número — e enchia o quadrado da
+          localidade, que passava a ler como sede.
+        */
+        numeroDaRodovia:
+          escudo === null
+            ? null
+            : contraste(
+                estilo(`${escopo} .escudo text`).fill,
+                getComputedStyle(escudo).fill,
+              ),
+        sedeContraLocalidade:
+          sede === null
+            ? null
+            : contraste(
+                getComputedStyle(sede).fill,
+                estilo(`${escopo} .loc.outra rect`).fill,
+              ),
         contornoDoPin: contraste(
           estilo(`${escopo} .pin[data-selecionado="true"] .forma`).stroke,
           fundo,
@@ -479,6 +500,69 @@ test("tema escuro, quatro mapas detalhados: vias, limite, nomes e pin selecionad
     expect(r.etiqueta, lugar.id).toMatch(/^▸ /);
     expect(r.textoDoPin, lugar.id).toBeGreaterThanOrEqual(4.5);
     expect(r.borda, lugar.id).toBeGreaterThanOrEqual(1.8);
+    if (r.numeroDaRodovia !== null) {
+      expect(r.numeroDaRodovia, lugar.id).toBeGreaterThanOrEqual(4.5);
+    }
+    if (r.sedeContraLocalidade !== null) {
+      expect(r.sedeContraLocalidade, lugar.id).toBeGreaterThanOrEqual(3);
+    }
+  }
+});
+
+/*
+  A legenda fica fora da placa, sobre o fundo da página, que acompanha o tema —
+  mas descreve sinais de uma geometria que é invariante de tema. Sem o chão de
+  papel sob cada amostra, sede, localidade e rodovia sumiam no escuro: a
+  legenda continuava dizendo o nome de um sinal que ninguém via.
+*/
+test("tema escuro: toda amostra da legenda se separa do fundo da página", async ({
+  page,
+}) => {
+  await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
+  const raiz = await abrir(page);
+  await selecionar(page, LUGARES[0].aba);
+  await expect(raiz).toHaveAttribute("data-escala", "local");
+  const amostras = await page.evaluate(() => {
+    const canal = (css: string): number[] => {
+      const nums = (css.match(/-?\d*\.?\d+/g) ?? []).map(Number);
+      return css.startsWith("color(")
+        ? nums.slice(0, 3).map((n) => n * 255)
+        : nums.slice(0, 3);
+    };
+    const lum = (css: string) => {
+      const [r0, g0, b0] = canal(css).map((v) => {
+        const c = v / 255;
+        return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+      });
+      return 0.2126 * (r0 ?? 0) + 0.7152 * (g0 ?? 0) + 0.0722 * (b0 ?? 0);
+    };
+    const contraste = (a: string, b: string) => {
+      const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m);
+      return ((x ?? 0) + 0.05) / ((y ?? 0) + 0.05);
+    };
+    const fundo = getComputedStyle(document.body).backgroundColor;
+    return [...document.querySelectorAll(".tv__legenda li")].flatMap((li) => {
+      const amostra = li.querySelector("span");
+      if (amostra === null) return [];
+      const estilo = getComputedStyle(amostra);
+      // O chão vem do box-shadow; sem ele, o próprio sinal enfrenta o fundo.
+      const chao = /rgba?\([^)]+\)/.exec(estilo.boxShadow)?.[0];
+      const visivel =
+        chao ??
+        (estilo.backgroundColor === "rgba(0, 0, 0, 0)"
+          ? estilo.borderTopColor
+          : estilo.backgroundColor);
+      return [
+        {
+          rotulo: li.textContent?.trim() ?? "",
+          contraste: contraste(visivel, fundo),
+        },
+      ];
+    });
+  });
+  expect(amostras.length).toBeGreaterThanOrEqual(9);
+  for (const { rotulo, contraste } of amostras) {
+    expect(contraste, rotulo).toBeGreaterThanOrEqual(3);
   }
 });
 

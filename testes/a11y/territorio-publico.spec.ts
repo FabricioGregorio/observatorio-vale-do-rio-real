@@ -1,5 +1,47 @@
 import { expect, test } from "@playwright/test";
 
+test("Território aprofunda a malha e a legenda cartográfica da Home", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const coresDaHome = await page.evaluate(() => {
+    const base = document.querySelector("#hl-mapa > path.m");
+    const vale = document.querySelector("#hl-mapa .m.v");
+    return {
+      base: base === null ? null : getComputedStyle(base).fill,
+      vale: vale === null ? null : getComputedStyle(vale).fill,
+    };
+  });
+
+  await page.goto("/territorio");
+  await expect(page.locator(".tv__escala-territorial .m")).toHaveCount(75);
+  const legenda = page.getByRole("list", {
+    name: "Legenda do mapa",
+    exact: true,
+  });
+  for (const rotulo of [
+    "Sergipe",
+    "Vale",
+    "Pesquisa",
+    "Comparação · São Cristóvão",
+  ]) {
+    await expect(legenda).toContainText(rotulo);
+  }
+  const coresDoTerritorio = await page.evaluate(() => {
+    const base = document.querySelector(
+      '[data-camada="malha-estadual"] > .m:not(.v)',
+    );
+    const vale = document.querySelector(
+      '[data-camada="malha-estadual"] > .m.v',
+    );
+    return {
+      base: base === null ? null : getComputedStyle(base).fill,
+      vale: vale === null ? null : getComputedStyle(vale).fill,
+    };
+  });
+  expect(coresDoTerritorio).toEqual(coresDaHome);
+});
+
 test("Território público preserva quatro lugares e lazy loading das camadas", async ({
   page,
 }) => {
@@ -29,7 +71,7 @@ test("Território público preserva quatro lugares e lazy loading das camadas", 
   expect(camadas.every((url) => !url.includes("/dev/"))).toBe(true);
 });
 
-for (const largura of [375, 1440]) {
+for (const largura of [375, 768, 1024, 1280, 1440]) {
   test(`Território público sem overflow em ${largura}px`, async ({ page }) => {
     await page.setViewportSize({ width: largura, height: 900 });
     await page.goto("/territorio");
