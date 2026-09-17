@@ -4,7 +4,7 @@ import { carregarEntorno } from "./entorno";
 import { svgDaCamadaLocal } from "./svg";
 
 /**
- * Serviço das camadas locais sob demanda — usado só pela rota DEV.
+ * Serviço das camadas locais sob demanda — usado pelas rotas pública e DEV.
  *
  * Monta, para um lugar, o SVG do entorno: contexto de IBGE e OSM (derivado
  * local) mais os pins nas coordenadas confirmadas. A página nunca chama isto.

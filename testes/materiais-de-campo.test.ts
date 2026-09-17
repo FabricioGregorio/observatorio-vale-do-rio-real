@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { resolverEstadoDosProdutos } from "../src/componentes/home/Secoes";
-import { lugaresDeCampo } from "../src/componentes/prototipo/territoriovivo/lugares";
+import { lugaresDeCampo } from "../src/componentes/territorio/cartografia/lugares";
 import type { AnexoPublico } from "../src/dados/consultas/anexos";
 import { indexarPorDocumento } from "../src/dados/consultas/anexos";
 import {

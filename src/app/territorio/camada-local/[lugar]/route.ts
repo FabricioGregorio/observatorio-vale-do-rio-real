@@ -1,7 +1,7 @@
 import {
   lugaresComCamadaLocal,
   svgDoEntornoDoLugar,
-} from "../../../../componentes/prototipo/territoriovivo/local/servico";
+} from "../../../../componentes/territorio/cartografia/local/servico";
 
 /** Camadas SVG públicas, geradas no build e carregadas só após a seleção. */
 export const dynamic = "force-static";

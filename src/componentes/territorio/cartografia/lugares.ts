@@ -10,15 +10,18 @@ import {
   PASTA_PUBLICA_DA_PESQUISA,
 } from "../../../dados/pesquisa/derivados";
 import { PONTOS_DE_VISITA_PREVISTOS } from "../../../dados/territorio/pontos";
-import type { IdDoEntorno } from "./local/entornos";
 import {
   FONTE_DA_COORDENADA,
   type IdDoLugar,
   type ReferenciaCartografica,
   referenciaDe,
-} from "./local/referencias";
+} from "../../../dados/territorio/referencias";
+import type { IdDoEntorno } from "./local/entornos";
 
-export { IDS_DOS_LUGARES, type IdDoLugar } from "./local/referencias";
+export {
+  IDS_DOS_LUGARES,
+  type IdDoLugar,
+} from "../../../dados/territorio/referencias";
 
 /**
  * Lugares de campo do laboratório territorial.

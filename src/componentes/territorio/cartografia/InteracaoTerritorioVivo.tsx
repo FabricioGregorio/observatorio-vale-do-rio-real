@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 
 /**
- * Ilha de interação do laboratório territorial.
+ * Ilha de interação da página territorial.
  *
  * `"use client"` justificado: trocar de lugar muda estado (mapa, ficha,
  * anúncio e URL) sem recarregar, e a camada local de cada lugar é **buscada
@@ -13,7 +13,7 @@ import { useEffect } from "react";
  * ## Camada local sob demanda
  *
  * - Nada é buscado na visão geral.
- * - Ao selecionar um lugar com entorno, a ilha pede o SVG à rota DEV do
+ * - Ao selecionar um lugar com entorno, a ilha pede o SVG à rota local do
  *   próprio site **uma vez**; pedidos simultâneos compartilham a mesma
  *   promessa, e o resultado fica em memória. Voltar ao lugar não repete o
  *   pedido.

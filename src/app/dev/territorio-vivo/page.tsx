@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { TerritorioVivo } from "../../../componentes/prototipo/territoriovivo/TerritorioVivo";
+import { TerritorioVivo } from "../../../componentes/territorio/cartografia/TerritorioVivo";
 import { listarArquivosPorDocumento } from "../../../dados/consultas/anexos";
 
 /**
@@ -28,5 +28,10 @@ export function exigirDesenvolvimentoDoTerritorioVivo(
 export default async function LaboratorioTerritorioVivo() {
   exigirDesenvolvimentoDoTerritorioVivo(process.env.NODE_ENV);
 
-  return <TerritorioVivo publicados={await listarArquivosPorDocumento()} />;
+  return (
+    <TerritorioVivo
+      baseDasCamadas="/dev/territorio-vivo/camada-local"
+      publicados={await listarArquivosPorDocumento()}
+    />
+  );
 }

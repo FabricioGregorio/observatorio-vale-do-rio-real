@@ -1,4 +1,4 @@
-import type { PosicaoConfirmada } from "./referencias";
+import type { PosicaoConfirmada } from "../../../../dados/territorio/referencias";
 
 /**
  * Destinos de "Abrir rota" — arquitetura da ação (Tarefa 19).

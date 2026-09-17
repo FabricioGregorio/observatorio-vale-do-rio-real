@@ -6,6 +6,10 @@ import {
   montarDadosDoMapa,
 } from "../../../../dados/territorio/mapa";
 import {
+  carregarCoordenadasConfirmadas,
+  type PosicaoConfirmada,
+} from "../../../../dados/territorio/referencias";
+import {
   type Caixa,
   type CaixaComCentro,
   caixaDoCaminho,
@@ -24,13 +28,9 @@ import {
   definicaoDoEntorno,
   enquadramentoDoEntorno,
 } from "./entornos";
-import {
-  carregarCoordenadasConfirmadas,
-  type PosicaoConfirmada,
-} from "./referencias";
 
 /**
- * Base espacial do laboratório — compartilhada pela página e pela rota que
+ * Base espacial do Território — compartilhada pela página e pela rota que
  * serve as camadas locais sob demanda. Tempo de build; sem JSX.
  *
  * A página só precisa de números leves: vista do Vale, posição projetada de

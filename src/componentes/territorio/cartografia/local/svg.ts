@@ -1,10 +1,11 @@
+import { caminhoDoPin } from "../../../mapa/caminhoDoPin";
 import type { Caixa } from "../geometria";
 import type { CamadaLocal } from "./camada";
 
 /**
  * Serialização da camada local em SVG — Tarefa 19.
  *
- * A camada não vai no HTML inicial: a rota DEV
+ * A camada não vai no HTML inicial: a rota local
  * `/dev/territorio-vivo/camada-local/[lugar]` responde com este SVG, e a ilha
  * importa os nós para dentro do grupo vazio da página. Por isso o desenho é
  * uma string, e não JSX: um route handler não renderiza componente.
@@ -33,15 +34,6 @@ export function escapar(texto: string): string {
 }
 
 const n = (v: number) => v.toFixed(1);
-const d2 = (v: number) => Number(v.toFixed(2));
-
-/**
- * Pin em gota com a ponta exatamente em (0, 0) — a coordenada — e a cabeça
- * centrada em (0, −2r). Usado na página e na camada local.
- */
-export function caminhoDoPin(r: number): string {
-  return `M0 0C${d2(-0.45 * r)} ${d2(-0.9 * r)} ${d2(-r)} ${d2(-1.35 * r)} ${d2(-r)} ${d2(-2 * r)}A${d2(r)} ${d2(r)} 0 1 1 ${d2(r)} ${d2(-2 * r)}C${d2(r)} ${d2(-1.35 * r)} ${d2(0.45 * r)} ${d2(-0.9 * r)} 0 0Z`;
-}
 
 export function svgDaCamadaLocal(
   camada: CamadaLocal,

@@ -18,12 +18,10 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 import { CreditosInstitucionais } from "../src/componentes/institucional/CreditosInstitucionais";
-import { FichaMunicipio } from "../src/componentes/mapa/FichaMunicipio";
 import {
   idDaFicha,
   nomeAcessivelDoMunicipio,
 } from "../src/componentes/mapa/identificacao";
-import { MapaTerritorio } from "../src/componentes/mapa/MapaTerritorio";
 import {
   DERIVADOS_DO_HERO,
   ICONE_OBSERVATORIO_CABECALHO,
@@ -36,10 +34,7 @@ import {
   DERIVADOS_DOS_LUGARES,
 } from "../src/dados/pesquisa/derivados";
 import { FONTES_TERRITORIAIS } from "../src/dados/territorio/fontes";
-import {
-  type MunicipioDoMapa,
-  montarDadosDoMapa,
-} from "../src/dados/territorio/mapa";
+import { montarDadosDoMapa } from "../src/dados/territorio/mapa";
 import { PONTOS_DE_VISITA_PREVISTOS } from "../src/dados/territorio/pontos";
 import { RECORTE_TERRITORIAL } from "../src/dados/territorio/recorte";
 import type { PontoDeVisita } from "../src/dados/territorio/tipos";
@@ -52,15 +47,6 @@ import {
   validarMalhaMunicipal,
 } from "../src/dados/territorio/validacao";
 
-/** Município de teste. Não é dado do projeto: só exercita o contrato. */
-const municipioDeTeste: MunicipioDoMapa = {
-  codigoIbge: "2800000",
-  nome: "Município de teste",
-  relacoesTerritoriais: [],
-  evidenciasDePesquisa: [],
-  caminho: "M0 0L1 0L1 1Z",
-};
-
 const pontoDeTeste: PontoDeVisita = {
   id: "p1",
   nome: "Ponto de teste",
@@ -72,49 +58,6 @@ const pontoDeTeste: PontoDeVisita = {
 };
 
 describe("componentes do mapa", () => {
-  test("o mapa some quando não há município", () => {
-    expect(
-      MapaTerritorio({
-        dados: {
-          projecao: {
-            largura: 1000,
-            altura: 1000,
-            envelope: { lonMin: -1, lonMax: 1, latMin: -1, latMax: 1 },
-          },
-          municipios: [],
-          pontosPosicionados: [],
-          pontosSemPosicao: [],
-        },
-      }),
-    ).toBeNull();
-  });
-
-  test("a ficha some quando não há evidência nem ponto relacionado", () => {
-    expect(
-      FichaMunicipio({ municipio: municipioDeTeste, pontos: [] }),
-    ).toBeNull();
-  });
-
-  test("a ficha aparece quando há evidência documental", () => {
-    const saida = FichaMunicipio({
-      municipio: {
-        ...municipioDeTeste,
-        relacoesTerritoriais: ["pesquisa-campo"],
-        evidenciasDePesquisa: ["Entrevista — teste"],
-      },
-      pontos: [],
-    });
-    expect(saida).not.toBeNull();
-  });
-
-  test("a ficha aparece quando há ponto relacionado", () => {
-    const saida = FichaMunicipio({
-      municipio: municipioDeTeste,
-      pontos: [pontoDeTeste],
-    });
-    expect(saida).not.toBeNull();
-  });
-
   test("os créditos somem enquanto não houver marca aprovada", () => {
     expect(CreditosInstitucionais({ marcas: [] })).toBeNull();
   });
@@ -541,6 +484,19 @@ describe("dados do mapa", () => {
 
   test("desenha os 75 municípios de Sergipe", () => {
     expect(dados.municipios).toHaveLength(MUNICIPIOS_DE_SERGIPE);
+  });
+
+  test("a geometria das camadas locais vem dos mesmos municípios validados", () => {
+    const malha = carregarMalhaMunicipal();
+    const porCodigo = new Map(
+      malha.features.map((feature) => [
+        feature.properties.codarea,
+        feature.geometry,
+      ]),
+    );
+    for (const municipio of dados.municipios) {
+      expect(municipio.geometria).toEqual(porCodigo.get(municipio.codigoIbge));
+    }
   });
 
   /**

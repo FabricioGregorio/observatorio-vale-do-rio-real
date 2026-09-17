@@ -3,14 +3,14 @@ import {
   montarDadosDoMapa,
 } from "../../dados/territorio/mapa";
 import { posicaoNoSvg } from "../../dados/territorio/projecao";
+import { REFERENCIAS_TERRITORIAIS } from "../../dados/territorio/referencias";
+import { caminhoDoPin } from "../mapa/caminhoDoPin";
 import {
   CLASSE_RAIZ,
   CSS_DO_MAPA,
   classesDoMunicipio,
   temHachura,
 } from "../mapa/estilosDoMapa";
-import { REFERENCIAS_TERRITORIAIS } from "../prototipo/territoriovivo/local/referencias";
-import { caminhoDoPin } from "../prototipo/territoriovivo/local/svg";
 import { CSS_DO_TERRITORIO } from "../territorio/estilosDoTerritorio";
 import {
   DEFINICOES,

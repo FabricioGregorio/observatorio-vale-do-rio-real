@@ -7,8 +7,8 @@ import {
   caixaDoCaminho,
   enquadrar,
   kmPorUnidade,
-} from "../src/componentes/prototipo/territoriovivo/geometria";
-import { LUGARES_SEM_PUBLICACAO } from "../src/componentes/prototipo/territoriovivo/lugares";
+} from "../src/componentes/territorio/cartografia/geometria";
+import { LUGARES_SEM_PUBLICACAO } from "../src/componentes/territorio/cartografia/lugares";
 import { montarDadosDoMapa } from "../src/dados/territorio/mapa";
 import { PONTOS_DE_VISITA_PREVISTOS } from "../src/dados/territorio/pontos";
 

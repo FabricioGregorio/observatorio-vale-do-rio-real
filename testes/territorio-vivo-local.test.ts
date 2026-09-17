@@ -10,7 +10,7 @@ import {
   expandir,
   kmPorUnidade,
   unirCaixas,
-} from "../src/componentes/prototipo/territoriovivo/geometria";
+} from "../src/componentes/territorio/cartografia/geometria";
 import {
   CAMINHO_DO_ENTORNO_JACARE,
   CODIGO_DA_LOCALIDADE_JACARE,
@@ -19,10 +19,10 @@ import {
   ENQUADRAMENTO_DO_ENTORNO_JACARE,
   nomePodeEntrarNoEntorno,
   validarEntornoLocal,
-} from "../src/componentes/prototipo/territoriovivo/local/entorno";
-import { ENTORNOS } from "../src/componentes/prototipo/territoriovivo/local/entornos";
-import { PROCEDENCIA_DO_ENTORNO } from "../src/componentes/prototipo/territoriovivo/local/procedencia";
-import { LUGARES_SEM_PUBLICACAO } from "../src/componentes/prototipo/territoriovivo/lugares";
+} from "../src/componentes/territorio/cartografia/local/entorno";
+import { ENTORNOS } from "../src/componentes/territorio/cartografia/local/entornos";
+import { PROCEDENCIA_DO_ENTORNO } from "../src/componentes/territorio/cartografia/local/procedencia";
+import { LUGARES_SEM_PUBLICACAO } from "../src/componentes/territorio/cartografia/lugares";
 import { montarDadosDoMapa } from "../src/dados/territorio/mapa";
 import { PONTOS_DE_VISITA_PREVISTOS } from "../src/dados/territorio/pontos";
 import { carregarMalhaMunicipal } from "../src/dados/territorio/validacao";

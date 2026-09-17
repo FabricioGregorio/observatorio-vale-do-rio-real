@@ -1,7 +1,7 @@
 import {
   lugaresComCamadaLocal,
   svgDoEntornoDoLugar,
-} from "../../../../../componentes/prototipo/territoriovivo/local/servico";
+} from "../../../../../componentes/territorio/cartografia/local/servico";
 
 /**
  * Camada local sob demanda do laboratório territorial. **Rota DEV.**

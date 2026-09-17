@@ -53,15 +53,15 @@ import {
   FONTES_DAS_CAMADAS,
   nomePodeEntrarNoEntorno,
   validarEntornoLocal,
-} from "../src/componentes/prototipo/territoriovivo/local/entorno";
+} from "../src/componentes/territorio/cartografia/local/entorno";
 import {
   ENTORNOS,
   enquadramentoDoEntorno,
-} from "../src/componentes/prototipo/territoriovivo/local/entornos";
+} from "../src/componentes/territorio/cartografia/local/entornos";
 import {
   carregarCoordenadasConfirmadas,
   FONTE_DA_COORDENADA,
-} from "../src/componentes/prototipo/territoriovivo/local/referencias";
+} from "../src/dados/territorio/referencias";
 
 type Ponto = [number, number];
 

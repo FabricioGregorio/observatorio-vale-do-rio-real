@@ -1,5 +1,8 @@
 import type { FonteTerritorial } from "../../../../dados/territorio/fontes";
-import { FONTE_DA_COORDENADA, type IdDoLugar } from "./referencias";
+import {
+  FONTE_DA_COORDENADA,
+  type IdDoLugar,
+} from "../../../../dados/territorio/referencias";
 
 /**
  * Procedência das camadas geográficas locais — Tarefas 18, 19 e 20.

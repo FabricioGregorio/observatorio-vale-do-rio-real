@@ -1,5 +1,6 @@
 import type { ArquivosPublicados } from "../../../dados/materiais-de-campo";
 import { DEFINICAO_VALE_DO_RIO_REAL } from "../../../dados/territorio/recorte";
+import { caminhoDoPin } from "../../mapa/caminhoDoPin";
 import { CSS_DO_TERRITORIO_VIVO } from "./estilos";
 import {
   aplicar,
@@ -15,10 +16,9 @@ import {
 } from "./local/composicao";
 import { FONTES_DAS_CAMADAS } from "./local/entorno";
 import { destinosDeRota } from "./local/rota";
-import { caminhoDoPin } from "./local/svg";
 
 /**
- * Cartografia Viva — laboratório da experiência territorial.
+ * Cartografia Viva — apresentação pública aprofundada do território.
  *
  * Server Component. A malha, a projeção e o recorte são os da cartografia
  * pública; os lugares de campo têm **posição confirmada** e publicação
@@ -46,7 +46,6 @@ const SEM_LOCAL = "sem-local";
 const IDENTIDADE: Enquadramento = { s: 1, tx: 0, ty: 0 };
 
 const focoDoLugar = (id: string) => `lugar-${id}`;
-const BASE_DAS_CAMADAS_DEV = "/dev/territorio-vivo/camada-local";
 const urlDaCamada = (base: string, id: string) => `${base}/${id}`;
 const px = (n: number) => `${n.toFixed(2)}px`;
 const transformacao = (e: Enquadramento) =>
@@ -55,10 +54,10 @@ const varsDoMundo = (e: Enquadramento) =>
   `--tv-tx:${px(e.tx)};--tv-ty:${px(e.ty)};--tv-s:${e.s.toFixed(4)}`;
 
 export function TerritorioVivo({
-  baseDasCamadas = BASE_DAS_CAMADAS_DEV,
+  baseDasCamadas,
   publicados = new Map(),
 }: {
-  baseDasCamadas?: string;
+  baseDasCamadas: string;
   /** Arquivos públicos por documento, buscados pela rota em build. */
   publicados?: ArquivosPublicados;
 }) {

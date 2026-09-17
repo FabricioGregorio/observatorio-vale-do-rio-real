@@ -18,13 +18,13 @@ import {
   DEFINICAO_VALE_DO_RIO_REAL,
   RECORTE_TERRITORIAL,
 } from "../../dados/territorio/recorte";
+import { REFERENCIAS_TERRITORIAIS } from "../../dados/territorio/referencias";
 import { MENU_RODAPE } from "../../lib/navegacao";
 import {
   GrafismoRioReal,
   GrafismoSerra,
 } from "../grafismos/GrafismosTerritoriais";
 import { MapaInterativo } from "../mapa/MapaInterativo";
-import { REFERENCIAS_TERRITORIAIS } from "../prototipo/territoriovivo/local/referencias";
 import {
   ACOMPANHAMENTO,
   COLETIVO,

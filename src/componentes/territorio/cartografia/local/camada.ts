@@ -1,6 +1,6 @@
+import type { MunicipioDoMapa } from "../../../../dados/territorio/mapa";
 import type { Projecao } from "../../../../dados/territorio/projecao";
 import { aneisDaGeometria } from "../../../../dados/territorio/projecao";
-import { carregarMalhaMunicipal } from "../../../../dados/territorio/validacao";
 import {
   aplicar,
   type Caixa,
@@ -119,10 +119,7 @@ export function montarCamadaLocal(opcoes: {
   readonly raio: number;
   readonly entorno: EntornoLocal;
   readonly geografico: EnquadramentoGeografico;
-  readonly municipios: readonly {
-    readonly codigoIbge: string;
-    readonly relacoesTerritoriais: readonly string[];
-  }[];
+  readonly municipios: readonly MunicipioDoMapa[];
   readonly lugarSelecionado: string;
   readonly pins: readonly {
     readonly id: string;
@@ -151,13 +148,10 @@ export function montarCamadaLocal(opcoes: {
     lista.map((item) => linha(item.pontos)).join("");
 
   /* ---------- municípios que tocam o entorno ---------- */
-  const relacoes = new Map(
-    opcoes.municipios.map((m) => [m.codigoIbge, m.relacoesTerritoriais]),
-  );
   const folga = 0.02;
   const municipios: MunicipioNoEntorno[] = [];
-  for (const feature of carregarMalhaMunicipal().features) {
-    const aneis = aneisDaGeometria(feature.geometry);
+  for (const municipio of opcoes.municipios) {
+    const aneis = aneisDaGeometria(municipio.geometria);
     let lonMin = Number.POSITIVE_INFINITY;
     let lonMax = Number.NEGATIVE_INFINITY;
     let latMin = Number.POSITIVE_INFINITY;
@@ -178,9 +172,9 @@ export function montarCamadaLocal(opcoes: {
     ) {
       continue;
     }
-    const rel = relacoes.get(feature.properties.codarea) ?? [];
+    const rel = municipio.relacoesTerritoriais;
     municipios.push({
-      codigoIbge: feature.properties.codarea,
+      codigoIbge: municipio.codigoIbge,
       caminho: aneis.map((anel) => `${linha(anel)}Z`).join(""),
       doVale: rel.includes("vale-rio-real"),
       pesquisaDeCampo: rel.includes("pesquisa-campo"),

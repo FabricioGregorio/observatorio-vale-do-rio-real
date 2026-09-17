@@ -42,6 +42,8 @@ export type MunicipioDoMapa = {
   readonly evidenciasDePesquisa: readonly string[];
   /** Atributo `d` do `<path>`, já projetado. */
   readonly caminho: string;
+  /** Geometria validada para compor as camadas locais sem reler a malha. */
+  readonly geometria: GeometriaGeoJson;
 };
 
 /** Um ponto de visita que pode ser desenhado, porque tem coordenada. */
@@ -98,6 +100,7 @@ export function montarDadosDoMapa(
       relacoesTerritoriais: doRecorte?.relacoesTerritoriais ?? [],
       evidenciasDePesquisa: doRecorte?.evidenciasDePesquisa ?? [],
       caminho: caminhoDaGeometria(feature.geometry, projecao),
+      geometria: feature.geometry,
     };
   });
 

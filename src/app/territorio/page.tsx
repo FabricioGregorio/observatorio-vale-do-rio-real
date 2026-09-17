@@ -1,4 +1,4 @@
-import { TerritorioVivo } from "../../componentes/prototipo/territoriovivo/TerritorioVivo";
+import { TerritorioVivo } from "../../componentes/territorio/cartografia/TerritorioVivo";
 import { listarArquivosPorDocumento } from "../../dados/consultas/anexos";
 import { metadadosDaRota } from "../../lib/site-url";
 

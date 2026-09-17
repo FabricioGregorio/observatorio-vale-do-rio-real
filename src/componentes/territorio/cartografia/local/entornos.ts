@@ -1,18 +1,17 @@
 import { join } from "node:path";
-
-import {
-  CAMINHO_DO_ENTORNO_JACARE,
-  CODIGO_DA_SEDE_TOBIAS_BARRETO,
-  ENQUADRAMENTO_DO_ENTORNO_JACARE,
-  type EnquadramentoGeografico,
-} from "./entorno";
 import {
   CODIGO_DA_LOCALIDADE_JACARE,
   CODIGO_DA_VILA_SAMAMBAIA,
   CODIGO_DO_POVOADO_BORDA_DA_MATA,
   type IdDoLugar,
   type PosicaoConfirmada,
-} from "./referencias";
+} from "../../../../dados/territorio/referencias";
+import {
+  CAMINHO_DO_ENTORNO_JACARE,
+  CODIGO_DA_SEDE_TOBIAS_BARRETO,
+  ENQUADRAMENTO_DO_ENTORNO_JACARE,
+  type EnquadramentoGeografico,
+} from "./entorno";
 
 /**
  * Entornos locais — um por lugar de campo (Tarefas 19 e 20).
@@ -58,8 +57,8 @@ const caminhoDoEntorno = (id: IdDoEntorno) =>
   join(
     "src",
     "componentes",
-    "prototipo",
-    "territoriovivo",
+    "territorio",
+    "cartografia",
     "local",
     "entornos",
     `${id}.json`,

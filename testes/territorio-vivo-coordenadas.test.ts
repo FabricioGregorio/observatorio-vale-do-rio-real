@@ -5,24 +5,24 @@ import { describe, expect, test } from "vitest";
 import {
   aplicar,
   projetarContinuo,
-} from "../src/componentes/prototipo/territoriovivo/geometria";
+} from "../src/componentes/territorio/cartografia/geometria";
 import {
   estaPosicionado,
   montarBaseDoTerritorio,
-} from "../src/componentes/prototipo/territoriovivo/local/composicao";
-import { carregarEntorno } from "../src/componentes/prototipo/territoriovivo/local/entorno";
-import { ENTORNOS } from "../src/componentes/prototipo/territoriovivo/local/entornos";
+} from "../src/componentes/territorio/cartografia/local/composicao";
+import { carregarEntorno } from "../src/componentes/territorio/cartografia/local/entorno";
+import { ENTORNOS } from "../src/componentes/territorio/cartografia/local/entornos";
+import { destinosDeRota } from "../src/componentes/territorio/cartografia/local/rota";
+import { svgDoEntornoDoLugar } from "../src/componentes/territorio/cartografia/local/servico";
+import { LUGARES_SEM_PUBLICACAO } from "../src/componentes/territorio/cartografia/lugares";
+import { montarDadosDoMapa } from "../src/dados/territorio/mapa";
+import { PONTOS_DE_VISITA_PREVISTOS } from "../src/dados/territorio/pontos";
 import {
   FONTE_DA_COORDENADA,
   FONTE_DA_REFERENCIA_CARTOGRAFICA,
   REFERENCIAS_TERRITORIAIS,
   referenciaDe,
-} from "../src/componentes/prototipo/territoriovivo/local/referencias";
-import { destinosDeRota } from "../src/componentes/prototipo/territoriovivo/local/rota";
-import { svgDoEntornoDoLugar } from "../src/componentes/prototipo/territoriovivo/local/servico";
-import { LUGARES_SEM_PUBLICACAO } from "../src/componentes/prototipo/territoriovivo/lugares";
-import { montarDadosDoMapa } from "../src/dados/territorio/mapa";
-import { PONTOS_DE_VISITA_PREVISTOS } from "../src/dados/territorio/pontos";
+} from "../src/dados/territorio/referencias";
 
 /**
  * Referências territoriais públicas dos lugares de campo — Tarefa 20.
@@ -144,18 +144,19 @@ describe("dados territoriais públicos", () => {
     });
   });
 
-  test("os valores vivem numa fonte só dentro do laboratório", () => {
-    const raiz = "src/componentes/prototipo/territoriovivo";
+  test("os valores vivem numa fonte territorial compartilhada", () => {
+    const raiz = "src/componentes/territorio/cartografia";
     const arquivos = readdirSync(raiz, { recursive: true })
       .map(String)
       .map((relativo) => join(raiz, relativo))
       .filter((c) => statSync(c).isFile() && /\.(tsx?)$/.test(c));
+    arquivos.push("src/dados/territorio/referencias.ts");
     for (const esperado of Object.values(ESPERADO)) {
       const comValor = arquivos.filter((c) =>
         readFileSync(c, "utf8").includes(String(esperado.latitude)),
       );
       expect(comValor.map((c) => c.replaceAll("\\", "/"))).toEqual([
-        `${raiz}/local/referencias.ts`,
+        "src/dados/territorio/referencias.ts",
       ]);
     }
   });

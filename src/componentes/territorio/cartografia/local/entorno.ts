@@ -6,7 +6,7 @@ import { PONTOS_DE_VISITA_PREVISTOS } from "../../../../dados/territorio/pontos"
 import {
   CODIGO_DA_LOCALIDADE_JACARE,
   REFERENCIAS_TERRITORIAIS,
-} from "./referencias";
+} from "../../../../dados/territorio/referencias";
 
 export { CODIGO_DA_LOCALIDADE_JACARE };
 
@@ -130,8 +130,8 @@ export const CODIGO_DA_SEDE_TOBIAS_BARRETO = "2807402";
 export const CAMINHO_DO_ENTORNO_JACARE = join(
   "src",
   "componentes",
-  "prototipo",
-  "territoriovivo",
+  "territorio",
+  "cartografia",
   "local",
   "entorno-jacare.json",
 );
@@ -249,7 +249,7 @@ export function validarEntornoLocal(
   return entorno;
 }
 
-/** Lê e valida um derivado. Tempo de build ou rota DEV; nunca no cliente. */
+/** Lê e valida um derivado em build; nunca no cliente. */
 export function carregarEntorno(
   caminho: string,
   expectativa: ExpectativaDoEntorno,
