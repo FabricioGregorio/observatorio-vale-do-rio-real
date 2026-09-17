@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
-import robots from "../src/app/robots";
 import sitemap from "../src/app/sitemap";
 import { databaseUrlDisponivel } from "../src/dados/consultas/anexos";
+import { regrasDeRobots } from "../src/lib/indexacao";
 import { metadadosDaRota, obterSiteUrl, urlDoSite } from "../src/lib/site-url";
 
 describe("configuração de produção", () => {
@@ -72,7 +72,7 @@ describe("configuração de produção", () => {
   });
 
   test("robots referencia o sitemap canônico e exclui a área dev", () => {
-    const arquivo = robots();
+    const arquivo = regrasDeRobots(obterSiteUrl(), true);
 
     expect(arquivo.host).toBe("https://observatoriotobiassoueu.com.br");
     expect(arquivo.sitemap).toBe(
