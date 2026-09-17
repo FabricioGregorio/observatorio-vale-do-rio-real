@@ -65,7 +65,75 @@ export type IndicadorDerivado = {
   readonly procedencia: ProcedenciaDoIndicador;
 };
 
-const PERIODO = "21/07/2025 a 21/12/2025";
+/**
+ * Coleta de dados — as duas pontas, em forma estruturada.
+ *
+ * O período já existia aqui, mas só como texto de exibição. Ele passou a ser
+ * derivado destas duas datas porque a Home precisa do **número de meses**, e
+ * contar meses a partir de uma string formatada seria reabrir a mesma fonte
+ * duas vezes, com duas leituras que podem divergir.
+ *
+ * As datas são as que o relatório de diagnóstico analisa, e são as que todos
+ * os oito indicadores declaram como período (`docs/frontend/
+ * H4_DADOS_INDICADORES_PROTOTIPO.md` §5). A auditoria de fontes canônicas de
+ * 2026-09-05 §4 registra que o formulário de visitantes cobre uma janela
+ * menor, 26/07 a 10/12/2025; a janela adotada para publicação é a do
+ * relatório, e é esta.
+ */
+export const INICIO_DA_COLETA = "2025-07-21";
+export const FIM_DA_COLETA = "2025-12-21";
+
+/** `2025-07-21` → `21/07/2025`. Formato de exibição, não de armazenamento. */
+function exibirData(iso: string): string {
+  const [ano, mes, dia] = iso.split("-");
+  return `${dia}/${mes}/${ano}`;
+}
+
+/**
+ * Meses completos entre duas datas ISO.
+ *
+ * Aritmética sobre os campos da data, e não sobre `Date`: a construção de
+ * `Date` a partir de `YYYY-MM-DD` é interpretada em UTC e a leitura local
+ * pode cair no dia anterior, o que mudaria a contagem conforme o fuso da
+ * máquina que roda o build. Aqui o resultado é o mesmo em qualquer lugar.
+ *
+ * Mês só conta quando se completa: de 21/07 a 21/12 são cinco meses, porque o
+ * dia do fim alcança o dia do início. É a leitura que a documentação canônica
+ * adota — doc 01 §8 e doc 02 §7 declaram "5 meses de coleta" no painel de
+ * números. **Não** é o número de meses do calendário tocados pela janela, que
+ * é seis: julho e dezembro entram parciais, e é por isso que a série mensal
+ * tem seis linhas para cinco meses de coleta.
+ */
+function mesesCompletosEntre(inicioIso: string, fimIso: string): number {
+  const [anoInicio, mesInicio, diaInicio] = inicioIso.split("-").map(Number);
+  const [anoFim, mesFim, diaFim] = fimIso.split("-").map(Number);
+  if (
+    anoInicio === undefined ||
+    mesInicio === undefined ||
+    diaInicio === undefined ||
+    anoFim === undefined ||
+    mesFim === undefined ||
+    diaFim === undefined
+  ) {
+    throw new Error(`Data de coleta ilegível: ${inicioIso} a ${fimIso}.`);
+  }
+
+  const meses = (anoFim - anoInicio) * 12 + (mesFim - mesInicio);
+  return diaFim >= diaInicio ? meses : meses - 1;
+}
+
+/**
+ * Duração da coleta em meses completos, para a faixa "A pesquisa em números".
+ *
+ * Valor calculado, e não escrito: se a janela mudar, o número muda com ela e
+ * o texto publicado não fica para trás.
+ */
+export const MESES_DE_COLETA = mesesCompletosEntre(
+  INICIO_DA_COLETA,
+  FIM_DA_COLETA,
+);
+
+const PERIODO = `${exibirData(INICIO_DA_COLETA)} a ${exibirData(FIM_DA_COLETA)}`;
 const RECORTE =
   "Ecoparque e Museu Recanto da Serra e Centro Cultural e Museu Borda da Mata, em Tobias Barreto (SE)";
 const FONTE_PUBLICA = "Levantamento próprio do Observatório";

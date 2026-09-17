@@ -8,7 +8,10 @@ import {
   CONTEXTO_DOS_DADOS,
   DESPESA_IDENTIFICADA_NO_MUNICIPIO,
   DESPESA_IDENTIFICADA_TOTAL,
+  FIM_DA_COLETA,
   INDICADORES,
+  INICIO_DA_COLETA,
+  MESES_DE_COLETA,
   SERIE_MENSAL,
 } from "../src/dados/indicadores/derivados";
 import {
@@ -171,6 +174,49 @@ describe("integridade documental do dataset", () => {
     indicador.notaMetodologica ?? "",
     indicador.fontePublica,
   ]);
+
+  /**
+   * O período de exibição deriva das duas datas estruturadas, e não o
+   * contrário. Sem este teste, alguém pode corrigir a string e deixar as datas
+   * para trás — e a Home, que conta meses a partir delas, passaria a publicar
+   * um número que não corresponde ao período que os indicadores declaram.
+   */
+  test("o período exibido é o que as datas da coleta dizem", () => {
+    expect(INICIO_DA_COLETA).toBe("2025-07-21");
+    expect(FIM_DA_COLETA).toBe("2025-12-21");
+    expect(CONTEXTO_DOS_DADOS.periodo).toBe("21/07/2025 a 21/12/2025");
+    for (const indicador of INDICADORES) {
+      expect(indicador.periodo).toBe(CONTEXTO_DOS_DADOS.periodo);
+    }
+  });
+
+  /**
+   * Cinco, e não seis.
+   *
+   * Doc 01 §8 e doc 02 §7 declaram "5 meses de coleta" no painel de números do
+   * projeto — são as fontes canônicas, e estão acima do código na hierarquia
+   * do AGENTS.md. Seis é outra contagem: a de **linhas da série mensal**, que
+   * tem julho e dezembro parciais nas pontas. As duas leituras convivem e
+   * medem coisas diferentes; confundi-las publicaria um mês que não houve.
+   */
+  test("a coleta durou cinco meses completos, e a série tem seis linhas", () => {
+    expect(MESES_DE_COLETA).toBe(5);
+    expect(SERIE_MENSAL).toHaveLength(6);
+
+    const docDaInformacao = readFileSync(
+      "docs/01-arquitetura-informacao.md",
+      "utf8",
+    );
+    const docDoBanco = readFileSync("docs/02-arquitetura-banco.md", "utf8");
+    expect(docDaInformacao).toContain(`${MESES_DE_COLETA} meses de coleta`);
+    expect(docDoBanco).toContain(`${MESES_DE_COLETA} meses de coleta`);
+  });
+
+  /** A primeira e a última linha da série são as pontas declaradas do período. */
+  test("a série mensal começa e termina dentro da janela de coleta", () => {
+    expect(SERIE_MENSAL[0]?.rotulo).toBe("Jul/2025");
+    expect(SERIE_MENSAL.at(-1)?.rotulo).toBe("Dez/2025");
+  });
 
   test("todo indicador declara período, recorte, regra e fonte pública", () => {
     for (const indicador of INDICADORES) {

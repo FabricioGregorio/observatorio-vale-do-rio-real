@@ -4,7 +4,7 @@ import {
   DERIVADOS_DO_HERO,
   LARGURA_DA_COMPOSICAO_HORIZONTAL,
 } from "../../dados/hero/derivados";
-import { RECORTE_TERRITORIAL } from "../../dados/territorio/recorte";
+import { MESES_DE_COLETA } from "../../dados/indicadores/derivados";
 import {
   CTA_DA_PESQUISA,
   NOME_OFICIAL_EM_PARTES,
@@ -31,10 +31,6 @@ const VERTICAL = DERIVADOS_DO_HERO.find((d) =>
   d.arquivo.includes("mobile"),
 ) as (typeof DERIVADOS_DO_HERO)[number];
 
-const MUNICIPIOS_DO_VALE = RECORTE_TERRITORIAL.filter((m) =>
-  m.relacoesTerritoriais.includes("vale-rio-real"),
-).length;
-
 function CtaDaPesquisa() {
   return (
     <a className="hl-botao hl-botao--cheio ab-botao" href="#hl-lugares">
@@ -46,7 +42,19 @@ function CtaDaPesquisa() {
 
 /* -------------------------------------------------------------------------- */
 
-/** Síntese quantitativa após a apresentação institucional, fora da fotografia. */
+/**
+ * Síntese quantitativa após a apresentação institucional, fora da fotografia.
+ *
+ * Os três valores são derivados, nenhum é escrito aqui. `MESES_DE_COLETA` sai
+ * das duas datas da coleta declaradas em `dados/indicadores/derivados.ts`, que
+ * é o módulo que já era dono do período dos oito indicadores — a faixa não
+ * abre uma segunda leitura da mesma fonte.
+ *
+ * O recorte do Vale saiu desta faixa por decisão editorial de 2026-09-17. Ele
+ * continua apresentado onde é cartografia e não estatística: na nota do mapa,
+ * no painel de leitura, na leitura em texto dos municípios e no catálogo de
+ * produtos do capítulo VI.
+ */
 export function FaixaDaPesquisa() {
   const provas = [
     {
@@ -54,7 +62,7 @@ export function FaixaDaPesquisa() {
       rotulo: "equipamentos culturais acompanhados em Tobias Barreto",
     },
     { valor: ENTREVISTAS.length, rotulo: "entrevistas gravadas" },
-    { valor: MUNICIPIOS_DO_VALE, rotulo: "municípios no recorte do Vale" },
+    { valor: MESES_DE_COLETA, rotulo: "meses de coleta de dados" },
   ];
 
   return (

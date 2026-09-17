@@ -367,6 +367,17 @@ test.describe("Home — apresentação", () => {
       await expect(page.locator(".ab-b2__lado")).toHaveCount(0);
       const faixa = page.locator("#hl-numeros");
       await expect(faixa.locator("strong")).toHaveText(["2", "8", "5"]);
+      /*
+        O rótulo entra no contrato junto com o número. Os três valores são 2, 8
+        e 5, e o terceiro já foi "5 municípios no recorte do Vale" — trocar o
+        significado sem trocar o dígito não quebraria uma asserção só de
+        números. Desde 2026-09-17 o terceiro indicador é a duração da coleta.
+      */
+      await expect(faixa.locator("li span")).toHaveText([
+        "equipamentos culturais acompanhados em Tobias Barreto",
+        "entrevistas gravadas",
+        "meses de coleta de dados",
+      ]);
       expect(
         await faixa.evaluate((e) => getComputedStyle(e).backgroundColor),
       ).toBe("rgba(0, 0, 0, 0)");
@@ -386,6 +397,32 @@ test.describe("Home — apresentação", () => {
       }
     });
   }
+
+  /**
+   * O recorte saiu da faixa de números, não do site. Ele é cartografia, não
+   * estatística de execução, e continua dito onde significa alguma coisa: na
+   * nota do mapa e no catálogo de produtos. Este teste existe para que a
+   * remoção da faixa não vire, em silêncio, a remoção da informação.
+   */
+  test("o recorte do Vale continua apresentado fora da faixa de números", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    await expect(page.locator("#hl-numeros")).not.toContainText(
+      "recorte do Vale",
+    );
+    // Nota cartográfica, sob o mapa.
+    await expect(page.locator("#hl-territorio figcaption")).toContainText(
+      "municípios no recorte do Vale",
+    );
+    // Catálogo de produtos, capítulo VI.
+    await expect(
+      page.locator("#hl-produtos .hl-catalogo li", {
+        hasText: "Mapa do recorte",
+      }),
+    ).toContainText("municípios no recorte do Vale");
+  });
 
   for (const largura of [375, 1440]) {
     test(`Hero ocupa a tela e a próxima seção começa abaixo em ${largura}px`, async ({
