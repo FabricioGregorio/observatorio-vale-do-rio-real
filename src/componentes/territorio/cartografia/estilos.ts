@@ -236,6 +236,10 @@ export const CSS_DO_TERRITORIO_VIVO = `
 .tv .pendencia{display:inline-block;margin-top:.2rem;padding:.1rem .35rem;border:1px dashed var(--color-acento);color:var(--color-acento);font-family:var(--font-mono);font-size:var(--text-xs)}
 .tv .lacuna{padding:.75rem;border:1px dashed var(--color-borda-forte);border-radius:var(--radius-ficha);font-size:var(--text-sm)}
 .tv .chegar dd{margin:0}
+/* A coordenada é dado, e se lê como dado: monoespaçada, quebrando entre
+   latitude e longitude no celular em vez de estourar a linha. */
+.tv .coordenada{display:block;font-family:var(--font-mono);letter-spacing:var(--tracking-mono);overflow-wrap:anywhere}
+.tv__procedencia{display:block;margin-top:.15rem;font-size:var(--text-xs);line-height:1.45;color:var(--color-texto-suave)}
 .tv .chegar div{display:grid;gap:.1rem;padding:.35rem 0;border-bottom:1px solid var(--color-borda);font-size:var(--text-sm)}
 .tv__acesso{padding-top:.85rem;border-top:1px solid var(--color-borda)}
 .tv .rota{display:grid;gap:.45rem}

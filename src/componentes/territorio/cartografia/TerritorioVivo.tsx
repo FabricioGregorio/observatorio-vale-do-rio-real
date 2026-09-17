@@ -1,5 +1,6 @@
 import type { ArquivosPublicados } from "../../../dados/materiais-de-campo";
 import { DEFINICAO_VALE_DO_RIO_REAL } from "../../../dados/territorio/recorte";
+import type { PosicaoConfirmada } from "../../../dados/territorio/referencias";
 import { caminhoDoPin } from "../../mapa/caminhoDoPin";
 import { CSS_DO_TERRITORIO_VIVO } from "./estilos";
 import {
@@ -52,6 +53,17 @@ const transformacao = (e: Enquadramento) =>
   `translate(${px(e.tx)},${px(e.ty)}) scale(${e.s.toFixed(4)})`;
 const varsDoMundo = (e: Enquadramento) =>
   `--tv-tx:${px(e.tx)};--tv-ty:${px(e.ty)};--tv-s:${e.s.toFixed(4)}`;
+
+/**
+ * Coordenada para leitura, em grau decimal com seis casas — cerca de 11 cm.
+ *
+ * As quinze casas de `referencias.ts` são artefato de ponto flutuante, não
+ * precisão de campo: o ponto veio de confirmação humana sobre o mapa, e exibi-
+ * las declararia uma exatidão que a fonte não tem. Isto é formatação, e só:
+ * o destino das rotas externas continua saindo do valor canônico, intacto.
+ */
+const coordenada = (p: PosicaoConfirmada) =>
+  `${p.latitude.toFixed(6)}, ${p.longitude.toFixed(6)}`;
 
 export function TerritorioVivo({
   baseDasCamadas,
@@ -801,7 +813,19 @@ function FichaDoLugar({
         </section>
       ) : null}
 
-      {lugar.fotos.length > 0 ? (
+      {lugar.fotos.length === 0 ? (
+        /*
+          Ausência declarada, não falha de carregamento. A frase fala do
+          universo público e só dele: não afirma, nem insinua, que exista
+          fotografia fora dele. Serra dos Macacos é hoje o único caso.
+        */
+        <section>
+          <h3>Fotografias</h3>
+          <p className="lacuna">
+            Nenhuma fotografia pública está vinculada a este lugar.
+          </p>
+        </section>
+      ) : (
         <section>
           <h3>Fotografias</h3>
           <div className="fotos">
@@ -828,13 +852,34 @@ function FichaDoLugar({
             ))}
           </div>
         </section>
-      ) : null}
+      )}
 
       {temComoChegar ? (
         <section className="tv__acesso">
           <h3>Como chegar</h3>
           {lugar.localidade !== null || lugar.comoChegar?.referencia != null ? (
             <dl className="chegar">
+              {posicao !== null ? (
+                <div>
+                  <dt className="fonte">Coordenada do lugar</dt>
+                  <dd>
+                    <span className="coordenada">{coordenada(posicao)}</span>
+                    {/*
+                      Duas frases, e não uma. A primeira diz de que ponto se
+                      trata; a segunda prende a data ao que ela de fato
+                      data — a confirmação da coordenada, evento editorial.
+                      Emendadas, a data encostaria em "lugar" e se leria como
+                      data de visita, que este projeto não possui para
+                      nenhum dos quatro lugares.
+                    */}
+                    <span className="tv__procedencia">
+                      Ponto do próprio lugar, não do município.
+                      <br />
+                      {`Coordenada: ${posicao.fonteDaCoordenada}.`}
+                    </span>
+                  </dd>
+                </div>
+              ) : null}
               {lugar.localidade !== null ? (
                 <div>
                   <dt className="fonte">Localização documental</dt>

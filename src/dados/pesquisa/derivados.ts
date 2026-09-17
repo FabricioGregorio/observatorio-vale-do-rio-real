@@ -15,7 +15,42 @@
 export const PASTA_PUBLICA_DA_PESQUISA = "/media/pesquisa";
 export const PASTA_DOS_DERIVADOS_DA_PESQUISA = "public/media/pesquisa";
 
+import type { IdDoLugar } from "../territorio/referencias";
 import fotosDosLugares from "./lugares-derivados.json";
+
+/**
+ * Pasta do corpus → lugar de campo. **A identidade de uma fotografia vem daqui.**
+ *
+ * A pasta em que o original foi entregue é o único vínculo determinístico
+ * entre fotografia e lugar: ela descreve onde a fotografia foi feita, e
+ * `scripts/derivar-fotos-campo.py` já a usa para desempatar a deduplicação —
+ * a pasta de lugar vence a pasta de pessoa justamente por isso.
+ *
+ * A tabela é declarada, nunca inferida: `centro-cultural-museu-borda-da-mata`
+ * vira `borda-da-mata` porque esta linha diz, não porque os nomes se pareçam.
+ * Antes, a ficha filtrava por igualdade com o nome de exibição
+ * (`"Borda da Mata"`), e uma correção de grafia no manifesto deixaria a ficha
+ * silenciosamente sem fotografia nenhuma.
+ *
+ * `local` continua no manifesto como **rótulo de exibição**, e é só isso. Um
+ * teste confere que `lugar` e a pasta de origem concordam em todo item.
+ */
+export const LUGAR_DA_PASTA_DO_CORPUS = {
+  "recanto-da-serra": "recanto-da-serra",
+  "centro-cultural-museu-borda-da-mata": "borda-da-mata",
+  "serra-dos-macacos": "serra-dos-macacos",
+  "ilha-grande": "ilha-grande",
+} as const satisfies Readonly<Record<string, IdDoLugar>>;
+
+export type PastaDoCorpus = keyof typeof LUGAR_DA_PASTA_DO_CORPUS;
+
+/** Pasta de `fotos/<pasta>/<arquivo>`; `null` quando não é pasta de lugar. */
+export function pastaDoOriginal(caminho: string): PastaDoCorpus | null {
+  const pasta = caminho.split("/")[1];
+  return pasta !== undefined && pasta in LUGAR_DA_PASTA_DO_CORPUS
+    ? (pasta as PastaDoCorpus)
+    : null;
+}
 
 export type DerivadoDaPesquisa = {
   readonly id: "chegada-por-agua" | "forno-a-lenha" | "igrejinha";
@@ -28,6 +63,8 @@ export type DerivadoDaPesquisa = {
   readonly titulo: string;
   readonly alt: string;
   readonly local: "Ilha Grande";
+  /** Identidade do lugar; conferida contra `original.arquivo` por teste. */
+  readonly lugar: IdDoLugar;
   readonly data: null;
   readonly tipo: "registro fotográfico";
   readonly fonte: "B01 — fotografias de comprovação";
@@ -55,6 +92,7 @@ export const DERIVADOS_DA_PESQUISA = [
     titulo: "Chegada por água",
     alt: "Vista de construções e vegetação na margem, fotografada a partir de uma embarcação em movimento.",
     local: "Ilha Grande",
+    lugar: "ilha-grande",
     data: null,
     tipo: "registro fotográfico",
     fonte: "B01 — fotografias de comprovação",
@@ -82,6 +120,7 @@ export const DERIVADOS_DA_PESQUISA = [
     titulo: "Atividade no forno a lenha",
     alt: "Forno circular aquecido, com utensílios e porções de massa em uma área coberta.",
     local: "Ilha Grande",
+    lugar: "ilha-grande",
     data: null,
     tipo: "registro fotográfico",
     fonte: "B01 — fotografias de comprovação",
@@ -109,6 +148,7 @@ export const DERIVADOS_DA_PESQUISA = [
     titulo: "Fachada de igreja",
     alt: "Fachada branca e azul de uma igreja, com a inscrição 1933 na parte superior.",
     local: "Ilha Grande",
+    lugar: "ilha-grande",
     data: null,
     tipo: "registro fotográfico",
     fonte: "B01 — fotografias de comprovação",

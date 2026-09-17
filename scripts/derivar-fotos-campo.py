@@ -60,11 +60,26 @@ PASTAS_DE_LUGAR = (
 )
 
 # Pasta -> lugar de campo, quando a pasta corresponde a um lugar da pesquisa.
+#
+# Duas colunas, porque são duas coisas diferentes. `id` é a identidade do lugar
+# — a mesma de `IDS_DOS_LUGARES` em `src/dados/territorio/referencias.ts` — e é
+# por ela que a ficha territorial encontra suas fotografias. `rotulo` é texto de
+# exibição e pode ser reescrito sem quebrar vínculo nenhum.
+#
+# A correspondência é declarada, nunca inferida: `centro-cultural-museu-borda-
+# da-mata` vira `borda-da-mata` porque esta tabela diz. O espelho em TypeScript
+# é `LUGAR_DA_PASTA_DO_CORPUS`, e um teste confere que os dois concordam.
 LUGAR_DA_PASTA = {
-    "recanto-da-serra": "Recanto da Serra",
-    "centro-cultural-museu-borda-da-mata": "Borda da Mata",
-    "ilha-grande": "Ilha Grande",
-    "serra-dos-macacos": "Serra dos Macacos",
+    "recanto-da-serra": {"id": "recanto-da-serra", "rotulo": "Recanto da Serra"},
+    "centro-cultural-museu-borda-da-mata": {
+        "id": "borda-da-mata",
+        "rotulo": "Borda da Mata",
+    },
+    "ilha-grande": {"id": "ilha-grande", "rotulo": "Ilha Grande"},
+    "serra-dos-macacos": {
+        "id": "serra-dos-macacos",
+        "rotulo": "Serra dos Macacos",
+    },
 }
 
 # Fotografias de autoria de terceiro. A decisão humana de 2026-09-16 manteve
@@ -241,7 +256,8 @@ def principal() -> None:
             "altura": altura,
             "bytes": saida.stat().st_size,
             "sha256": sha256(saida),
-            "lugar": LUGAR_DA_PASTA.get(pasta),
+            "lugar": (LUGAR_DA_PASTA.get(pasta) or {}).get("id"),
+            "rotulo_do_lugar": (LUGAR_DA_PASTA.get(pasta) or {}).get("rotulo"),
             # Autoria de terceiro: `autor` é o nome, `credito` é a forma exata
             # de exibição, e `fonte` diz em que se apoia a atribuição.
             "autor": credito["autor"] if credito else None,
@@ -265,7 +281,10 @@ def principal() -> None:
                     "bytes": item["bytes"],
                     "sha256": item["sha256"],
                     "alt": alt,
-                    "local": LUGAR_DA_PASTA[pasta],
+                    # `local` é rótulo de exibição; `lugar` é a identidade
+                    # de que a ficha territorial depende.
+                    "local": LUGAR_DA_PASTA[pasta]["rotulo"],
+                    "lugar": LUGAR_DA_PASTA[pasta]["id"],
                     # Viaja junto com a foto: a Home não pode perder a
                     # atribuição que o Acervo conhece.
                     "autor": item["autor"],

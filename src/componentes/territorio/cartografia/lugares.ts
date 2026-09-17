@@ -132,18 +132,44 @@ function territorio(id: IdDoLugar, entorno: IdDoEntorno) {
   } as const;
 }
 
-function fotosDoLugar(local: "Recanto da Serra" | "Borda da Mata") {
-  return DERIVADOS_DOS_LUGARES.filter((foto) => foto.local === local).map(
-    (foto) => ({
-      src: `${PASTA_PUBLICA_DA_PESQUISA}/${foto.arquivo}`,
-      largura: foto.largura,
-      altura: foto.altura,
-      alt: foto.alt,
-      legenda: `${foto.local} · fotografia de campo`,
-      credito: foto.credito,
-      pendencia: null,
-    }),
-  );
+/**
+ * Fotografias públicas de um lugar, por identidade.
+ *
+ * As duas fontes de derivado são varridas com o mesmo critério — `lugar`, o id
+ * declarado no manifesto e conferido contra a pasta de origem do corpus. Antes,
+ * cada ficha citava o nome de exibição do lugar (`"Borda da Mata"`), Ilha
+ * Grande recebia a lista inteira dos derivados da pesquisa sem filtro algum, e
+ * Serra dos Macacos trazia `[]` escrito à mão. Nenhum dos três sobrevive a uma
+ * fotografia nova no corpus; este filtro sobrevive.
+ *
+ * Lugar sem fotografia pública devolve lista vazia, e a ficha diz isso. Não há
+ * substituição por fotografia de outro lugar, aqui nem em lugar nenhum.
+ */
+function fotografiasDoLugar(id: IdDoLugar): readonly FotoDoLugar[] {
+  const dasFichas = DERIVADOS_DOS_LUGARES.filter(
+    (foto) => foto.lugar === id,
+  ).map((foto) => ({
+    src: `${PASTA_PUBLICA_DA_PESQUISA}/${foto.arquivo}`,
+    largura: foto.largura,
+    altura: foto.altura,
+    alt: foto.alt,
+    legenda: `${foto.local} · fotografia de campo`,
+    credito: foto.credito,
+    pendencia: null,
+  }));
+  const daPesquisa = DERIVADOS_DA_PESQUISA.filter(
+    (foto) => foto.lugar === id,
+  ).map((foto) => ({
+    src: `${PASTA_PUBLICA_DA_PESQUISA}/${foto.arquivo}`,
+    largura: foto.largura,
+    altura: foto.altura,
+    alt: foto.alt,
+    // `data: null` é declarado na fonte: a ausência é dito, não esquecimento.
+    legenda: `${foto.titulo} · data não informada`,
+    credito: null,
+    pendencia: null,
+  }));
+  return [...dasFichas, ...daPesquisa];
 }
 
 /** Recorte dos indicadores H4: os dois equipamentos, com nome completo. */
@@ -195,7 +221,7 @@ export function lugaresDeCampo(
           fonte: A02_TITULO,
         },
       ],
-      fotos: fotosDoLugar("Recanto da Serra"),
+      fotos: fotografiasDoLugar("recanto-da-serra"),
       comoChegar: {
         referencia: {
           texto:
@@ -215,7 +241,7 @@ export function lugaresDeCampo(
       descricao: null,
       materiais: materiais("borda-da-mata"),
       dados: [],
-      fotos: fotosDoLugar("Borda da Mata"),
+      fotos: fotografiasDoLugar("borda-da-mata"),
       comoChegar: null,
       lacunaDeLocalizacao: null,
     },
@@ -226,7 +252,7 @@ export function lugaresDeCampo(
       descricao: null,
       materiais: materiais("serra-dos-macacos"),
       dados: [],
-      fotos: [],
+      fotos: fotografiasDoLugar("serra-dos-macacos"),
       comoChegar:
         REFERENCIA_DA_SERRA === null
           ? null
@@ -245,15 +271,7 @@ export function lugaresDeCampo(
       descricao: null,
       materiais: materiais("ilha-grande"),
       dados: [],
-      fotos: DERIVADOS_DA_PESQUISA.map((foto) => ({
-        src: `${PASTA_PUBLICA_DA_PESQUISA}/${foto.arquivo}`,
-        largura: foto.largura,
-        altura: foto.altura,
-        alt: foto.alt,
-        legenda: `${foto.titulo} · data não informada`,
-        credito: null,
-        pendencia: null,
-      })),
+      fotos: fotografiasDoLugar("ilha-grande"),
       comoChegar: null,
       lacunaDeLocalizacao: null,
     },
