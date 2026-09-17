@@ -24,7 +24,6 @@ import {
   nomeAcessivelDoMunicipio,
 } from "../src/componentes/mapa/identificacao";
 import { MapaTerritorio } from "../src/componentes/mapa/MapaTerritorio";
-import { GRAFISMOS_DA_IDENTIDADE } from "../src/dados/grafismos/derivados";
 import {
   DERIVADOS_DO_HERO,
   ICONE_OBSERVATORIO_CABECALHO,
@@ -199,7 +198,6 @@ describe("ausência de dado territorial inventado", () => {
       ...DERIVADOS_DO_HERO.map((d) => d.arquivo),
       ...DERIVADOS_DA_PESQUISA.map((d) => d.arquivo),
       ...DERIVADOS_DOS_LUGARES.map((d) => d.arquivo),
-      ...GRAFISMOS_DA_IDENTIDADE.map((g) => g.arquivo),
       MARCA_OBSERVATORIO.arquivo,
       SIMBOLO_OBSERVATORIO.arquivo,
       ICONE_OBSERVATORIO_CABECALHO.arquivo,
@@ -232,19 +230,16 @@ describe("ausência de dado territorial inventado", () => {
 
   /**
    * A lista cresce quando uma fase traz mídia de natureza nova, e só então.
-   * `pesquisa/` entrou na H3, com as fotografias de campo; `grafismos/` entrou
-   * na H3.5, com os elementos da identidade visual. Manter as duas coisas
-   * separadas importa: fotografia é registro de pesquisa e ilustração de marca
-   * não é, e o teste é o lugar onde essa distinção fica escrita.
+   * `pesquisa/` contém fotografias documentais de campo. Os grafismos
+   * territoriais abstratos são gerados por código e não exigem pasta de mídia.
    */
-  test("as sete pastas de mídia previstas existem", () => {
+  test("as seis pastas de mídia previstas existem", () => {
     const pastas = readdirSync("public/media", { withFileTypes: true })
       .filter((entrada) => entrada.isDirectory())
       .map((entrada) => entrada.name)
       .sort();
     expect(pastas).toEqual([
       "campo",
-      "grafismos",
       "logos",
       "mapa",
       "pesquisa",

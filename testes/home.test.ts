@@ -8,7 +8,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, test } from "vitest";
 import { CAMINHOS_PRIORITARIOS } from "../src/componentes/home/caminhos";
-import { GRAFISMOS_DA_IDENTIDADE } from "../src/dados/grafismos/derivados";
 import { MENU_PRINCIPAL, MENU_RODAPE } from "../src/lib/navegacao";
 
 const rotulosDoSite = new Map<string, string>(
@@ -226,30 +225,7 @@ describe("sistema gráfico territorial da Home v2", () => {
   });
 
   test("rio e serra são decorativos e não recebem foco", () => {
-    expect(grafismos.match(/aria-hidden="true"/g)).toHaveLength(3);
+    expect(grafismos.match(/aria-hidden="true"/g)).toHaveLength(2);
     expect(grafismos.match(/focusable="false"/g)).toHaveLength(2);
-  });
-
-  test("a segunda camada usa só os quatro derivados selecionados", () => {
-    for (const tipo of [
-      "carcara",
-      "cactus",
-      "bodega",
-      "igreja-serra-dos-macacos",
-    ]) {
-      expect(secoes).toContain(`tipo="${tipo}"`);
-    }
-    expect(secoes).not.toContain('tipo="rio"');
-    expect(secoes).not.toContain('tipo="logo-observatorio"');
-    expect(GRAFISMOS_DA_IDENTIDADE).toHaveLength(4);
-  });
-
-  test("o peso total dos grafismos publicados permanece contido", () => {
-    expect(
-      GRAFISMOS_DA_IDENTIDADE.reduce(
-        (total, grafismo) => total + grafismo.bytes,
-        0,
-      ),
-    ).toBeLessThan(170_000);
   });
 });

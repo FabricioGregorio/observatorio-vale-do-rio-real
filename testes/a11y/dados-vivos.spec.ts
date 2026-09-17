@@ -160,7 +160,7 @@ test("H4.5: teclado alcança o conteúdo, o foco aparece e os decorativos não i
     "3px",
   );
 
-  for (const seletor of [".lv-g-identidade", ".lv-fio"]) {
+  for (const seletor of [".lv-fio"]) {
     const decorativos = page.locator(seletor);
     await expect(decorativos.first()).toBeAttached();
     for (const decorativo of await decorativos.all()) {
@@ -472,40 +472,13 @@ test("H4.5.2: a seleção fechada é explicada fora da candidata", async ({
   await expect(page.locator(".dv-preview .lv-recomendado")).toHaveCount(0);
 });
 
-/**
- * A assinatura ficou ancorada na grade: a legenda é a régua em que ela se
- * apoia, e não um rótulo solto ao lado.
- */
-test("H4.5.1: a assinatura se apoia na régua da própria legenda", async ({
-  page,
-}) => {
+test("H4.5.1: a passagem usa só o fio cartográfico", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(ROTA);
-
-  const assinatura = page.locator(".dv-assinatura");
-  const ficha = page.locator(".dv-assinatura__ficha");
-  await assinatura.scrollIntoViewIfNeeded();
-
-  await expect(assinatura).toHaveCount(1);
-  await expect(ficha).toBeVisible();
-
-  const caixaDaAve = await assinatura.boundingBox();
-  const caixaDaFicha = await ficha.boundingBox();
-  expect(caixaDaAve).not.toBeNull();
-  expect(caixaDaFicha).not.toBeNull();
-
-  // A ficha vem logo abaixo da ave, e a distância é curta o bastante para as
-  // duas lerem como um registro só.
-  const folga =
-    (caixaDaFicha?.y ?? 0) - ((caixaDaAve?.y ?? 0) + (caixaDaAve?.height ?? 0));
-  expect(folga).toBeGreaterThanOrEqual(0);
-  expect(folga).toBeLessThan(40);
-
-  // A régua atravessa a ponte e a assinatura: ela é mais larga que a ave.
-  expect(caixaDaFicha?.width ?? 0).toBeGreaterThan(caixaDaAve?.width ?? 0);
-
-  // Continua uma por página, decorativa e com a legenda que a identifica.
-  await expect(page.locator(".lv-g-identidade")).toHaveCount(1);
-  await expect(assinatura).toHaveAttribute("aria-hidden", "true");
-  await expect(ficha).toContainText("grafismo da identidade");
+  const passagem = page.locator('[data-passagem="medida"]');
+  await expect(passagem.locator(".lv-fio")).toHaveCount(1);
+  await expect(passagem.locator(".lv-g-identidade")).toHaveCount(0);
+  await expect(passagem.locator('img[src*="/media/grafismos/"]')).toHaveCount(
+    0,
+  );
 });

@@ -94,12 +94,6 @@
   --opacidade-grafismo-topografia: 0.055;
   --opacidade-grafismo-rio: 0.12;
   --opacidade-grafismo-serra: 0.085;
-  --opacidade-grafismo-carcara: 0.16;
-  --opacidade-grafismo-cactus: 0.13;
-  --opacidade-grafismo-bodega: 0.13;
-  --opacidade-grafismo-patrimonio: 0.12;
-  --filtro-grafismo-arquitetura: none;
-  --mescla-grafismo-arquitetura: multiply;
 
   /* --- Hero — Fase H1 ------------------------------------------------------
      O Hero é escuro nos **dois** temas: fotografia documental com véu por
@@ -258,12 +252,6 @@
     --opacidade-grafismo-topografia: 0.075;
     --opacidade-grafismo-rio: 0.16;
     --opacidade-grafismo-serra: 0.12;
-    --opacidade-grafismo-carcara: 0.2;
-    --opacidade-grafismo-cactus: 0.17;
-    --opacidade-grafismo-bodega: 0.17;
-    --opacidade-grafismo-patrimonio: 0.12;
-    --filtro-grafismo-arquitetura: invert(1);
-    --mescla-grafismo-arquitetura: screen;
 
     /* No tema escuro o Hero adensa um pouco: uma fotografia clara demais no
        topo de uma pagina escura destoa da propria pagina. A fotografia
@@ -293,12 +281,6 @@
   --opacidade-grafismo-topografia: 0.075;
   --opacidade-grafismo-rio: 0.16;
   --opacidade-grafismo-serra: 0.12;
-  --opacidade-grafismo-carcara: 0.2;
-  --opacidade-grafismo-cactus: 0.17;
-  --opacidade-grafismo-bodega: 0.17;
-  --opacidade-grafismo-patrimonio: 0.12;
-  --filtro-grafismo-arquitetura: invert(1);
-  --mescla-grafismo-arquitetura: screen;
 
   /* No tema escuro o Hero adensa um pouco: uma fotografia clara demais no
      topo de uma pagina escura destoa da propria pagina. A fotografia
@@ -551,12 +533,6 @@
   --lv-margem: clamp(1rem, 4vw, 4rem);
   --lv-foto-largura: 26.25rem;
 
-  /* H3.5.1 — o carcará perdeu 28% de largura em relação à H3.5. Ele continua
-     claramente visível, e deixou de disputar hierarquia com o título e com a
-     fotografia. Assinatura, não mascote. */
-  --lv-ave-contida: 2.75rem;
-  --lv-ave-viva: 6.5rem;
-
   --lv-passagem: 15rem;
   --lv-passagem-curta: 9rem;
   --lv-cruz: 0.75rem;
@@ -581,7 +557,6 @@
 @media (max-width: 767px) {
   .linguagem-visual,
   .dados-vivos {
-    --lv-ave-viva: 2.75rem;
     --lv-passagem: 11rem;
     --lv-passagem-curta: 7rem;
     --lv-revelar-distancia: 8px;

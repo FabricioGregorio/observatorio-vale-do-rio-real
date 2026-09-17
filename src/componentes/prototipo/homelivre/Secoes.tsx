@@ -50,11 +50,7 @@ import {
   ROTULO_DO_ESTADO,
 } from "./conteudo";
 import { Capitulo, Fontes, Pendente, type PropsDeSecao } from "./Estrutura";
-import {
-  GrafismoRioReal,
-  GrafismoSerra,
-  GrafismoTerritorial,
-} from "./GrafismosTerritoriais";
+import { GrafismoRioReal, GrafismoSerra } from "./GrafismosTerritoriais";
 import {
   ID_DA_LISTA_DO_RECORTE,
   ID_DO_MAPA,
@@ -259,11 +255,6 @@ export function Origem({ contexto = "dev" }: PropsDeSecao) {
             feito.
           </p>
         </div>
-
-        <aside className="hl-assinatura" aria-label="Assinatura visual">
-          <GrafismoTerritorial tipo="carcara" variante="grande" />
-          <p className="meta-ficha">Carcará · grafismo da identidade</p>
-        </aside>
       </div>
 
       <ol className="hl-cadeia">
@@ -561,7 +552,6 @@ export function Lugares({
 
   return (
     <Capitulo
-      className="hl-capitulo--bodega"
       id="hl-lugares"
       numero="III"
       rotulo="Lugares"
@@ -642,7 +632,6 @@ export function Lugares({
       <p className="hl-ponte">Os números a seguir vêm destes dois lugares.</p>
 
       <Fontes contexto={contexto} itens={FONTES.equipamentos} />
-      <GrafismoTerritorial tipo="bodega" variante="fundo" />
     </Capitulo>
   );
 }
@@ -732,7 +721,6 @@ export function Leitura({ contexto = "dev" }: PropsDeSecao) {
 export function Escuta({ contexto = "dev" }: PropsDeSecao) {
   return (
     <Capitulo
-      className="hl-capitulo--cactus"
       id="hl-escuta"
       numero="V"
       rotulo="Escuta"
@@ -802,7 +790,6 @@ export function Escuta({ contexto = "dev" }: PropsDeSecao) {
       </div>
 
       <Fontes contexto={contexto} itens={FONTES.escuta} />
-      <GrafismoTerritorial tipo="cactus" variante="lateral" />
     </Capitulo>
   );
 }
@@ -834,7 +821,6 @@ export function Produtos({
 
   return (
     <Capitulo
-      className="hl-capitulo--patrimonio"
       id="hl-produtos"
       numero="VI"
       rotulo="Produtos"
@@ -990,7 +976,6 @@ export function Produtos({
       </nav>
 
       <Fontes contexto={contexto} itens={FONTES.produtos} />
-      <GrafismoTerritorial tipo="igreja-serra-dos-macacos" variante="canto" />
     </Capitulo>
   );
 }

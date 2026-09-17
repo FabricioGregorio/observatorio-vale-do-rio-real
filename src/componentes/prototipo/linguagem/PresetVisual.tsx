@@ -1,9 +1,5 @@
 import Image from "next/image";
 import {
-  CARCARA_DA_IDENTIDADE,
-  PASTA_PUBLICA_DOS_GRAFISMOS,
-} from "../../../dados/grafismos/derivados";
-import {
   DERIVADOS_DA_PESQUISA,
   PASTA_PUBLICA_DA_PESQUISA,
 } from "../../../dados/pesquisa/derivados";
@@ -98,11 +94,7 @@ export function PresetVisual({
         </div>
       </section>
 
-      {/*
-        Passagem 1 — a única da página que carrega assinatura de identidade.
-        A regra de frequência da H3.5.1 é um carcará em escala editorial por
-        página, e só em passagem: é o que separa assinatura de mascote.
-      */}
+      {/* Passagem cartográfica entre território e campo. */}
       <div
         className="lv-g-transicao"
         data-passagem="campo"
@@ -117,19 +109,6 @@ export function PresetVisual({
           <p className="meta-ficha lv-g-documental">Território → Campo</p>
           <p>Da abstração do mapa à materialidade do território</p>
         </div>
-        <div className="lv-g-identidade" aria-hidden="true">
-          <Image
-            alt={CARCARA_DA_IDENTIDADE.alt}
-            src={`${PASTA_PUBLICA_DOS_GRAFISMOS}/${CARCARA_DA_IDENTIDADE.arquivo}`}
-            width={CARCARA_DA_IDENTIDADE.largura}
-            height={CARCARA_DA_IDENTIDADE.altura}
-            unoptimized
-            loading="lazy"
-          />
-        </div>
-        <p className="lv-origem meta-ficha lv-g-documental">
-          {CARCARA_DA_IDENTIDADE.legenda}
-        </p>
       </div>
 
       <section
@@ -196,11 +175,7 @@ export function PresetVisual({
         </div>
       </section>
 
-      {/*
-        Passagem 2 — sem assinatura de identidade, por regra de frequência.
-        A ligação entre capítulos é feita só por grafismo cartográfico, e é
-        justamente isso que prova que a transição não depende do carcará.
-      */}
+      {/* Passagem cartográfica entre campo e leitura. */}
       <div
         className="lv-g-transicao"
         data-passagem="leitura"

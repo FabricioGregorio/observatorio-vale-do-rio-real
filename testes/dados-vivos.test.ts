@@ -553,9 +553,8 @@ describe("H4.5.2: nenhuma dependência e nenhuma ilha nova", () => {
 });
 
 describe("H4.5: a gramática da H3.5.1 vale também sobre números", () => {
-  test("as quatro famílias de grafismo aparecem", () => {
+  test("as três famílias abstratas de grafismo aparecem", () => {
     for (const familia of [
-      "lv-g-identidade",
       "lv-g-cartografico",
       "lv-g-documental",
       "lv-g-transicao",
@@ -564,24 +563,10 @@ describe("H4.5: a gramática da H3.5.1 vale também sobre números", () => {
     }
   });
 
-  /** Um carcará em escala editorial por página, e só em passagem. */
-  test("a assinatura aparece uma vez, na passagem de entrada", () => {
-    expect(ocorrencias(h45, "lv-g-identidade")).toBe(1);
+  test("as duas passagens não carregam imagem figurativa", () => {
+    expect(ocorrencias(h45, "lv-g-identidade")).toBe(0);
     expect(ocorrencias(h45, "lv-g-transicao")).toBe(2);
-
-    const saida = h45.slice(h45.indexOf('data-passagem="saida"'));
-    expect(saida).not.toContain("lv-g-identidade");
-
-    const assinatura = h45.slice(h45.indexOf("lv-g-identidade"));
-    expect(assinatura).toContain('aria-hidden="true"');
-    expect(assinatura.slice(0, 400)).toMatch(/alt=""/);
-  });
-
-  test("o carcará não é apresentado como dado territorial", () => {
-    expect(h45).toContain("Carcará · grafismo da identidade");
-    expect(h45).not.toMatch(
-      /carcará[^<]*(avistad|encontrad|espécie|fauna do território)/i,
-    );
+    expect(h45).not.toContain("/media/grafismos/");
   });
 });
 

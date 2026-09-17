@@ -65,21 +65,12 @@ export const CSS_DOS_DADOS_VIVOS = `
 .dv-artigo::before { content: ""; position: absolute; inset-block: 0; left: calc(var(--lv-margem) / 2); border-left: 1px solid var(--lv-linha); pointer-events: none; }
 .dv-passagem { border-left: calc(var(--spacing)) solid var(--color-marca); }
 .dv-passagem .lv-fio { border-color: var(--color-marca); }
-/* Sem altura fixa: a caixa abraça a imagem, e a ave passa a se apoiar na
-   régua da legenda em vez de flutuar 42 px acima dela. A altura herdada da
-   H3.5.1 existia para recortar um carcará maior, e aqui ele não é maior. */
-.dv-passagem .lv-g-identidade { width: var(--lv-ave-viva); align-self: end; }
 .dv-passagem { row-gap: calc(var(--spacing) * 4); }
 .dv-passagem[data-passagem="saida"] { min-height: var(--lv-passagem-curta); }
 /* A passagem de saída perdeu a coluna da direita quando a cruz saiu; sem isto
    a ponte continuaria comprimida contra um vazio. */
 .dv-passagem[data-passagem="saida"] { grid-template-columns: auto minmax(0, 1fr); }
 
-/* Assinatura: a legenda é a régua em que a ave se apoia, e não um rótulo
-   solto ao lado dela. O fio atravessa a ponte e a assinatura, então as duas
-   passam a pertencer à mesma linha da grade. */
-.dv-assinatura { align-self: end; }
-.dv-assinatura__ficha { border-top: 1px solid var(--lv-linha); padding-top: calc(var(--spacing) * 3); margin-top: calc(var(--spacing) * 2); }
 
 .dv-secao { display: flex; flex-direction: column; gap: var(--lv-capitulo); padding: var(--lv-capitulo) var(--lv-margem); background: var(--lv-superficie-ensaio); border-block: 1px solid var(--lv-linha); }
 .dv-abertura { display: flex; flex-direction: column; gap: calc(var(--spacing) * 4); max-width: 62ch; }
@@ -172,7 +163,6 @@ ${REALCE_POR_MES}
 
 @media (max-width: 767px) {
   .dv-artigo::before { content: none; }
-  .dv-passagem .lv-g-identidade { height: auto; }
   .dv-protagonista { grid-template-columns: minmax(0, 1fr); }
   .dv-protagonista__leitura { border-left: none; border-top: 1px solid var(--color-marca); padding-left: 0; padding-top: calc(var(--spacing) * 5); }
   .dv-ficha > div { grid-template-columns: minmax(0, 1fr); gap: calc(var(--spacing)); }

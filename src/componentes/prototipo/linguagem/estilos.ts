@@ -1,6 +1,6 @@
 /** Seletores DEV explícitos: o CSS não alcança Home nem os laboratórios H1–H4.
  *
- * A H3.5.1 organiza este arquivo pelas quatro famílias de grafismo declaradas
+ * A H3.5.1 organiza este arquivo pelas três famílias de grafismo declaradas
  * em `gramatica.ts`. Cada família tem uma classe-raiz `lv-g-*`, e é por ela que
  * os testes contam ocorrência — não por nome de elemento.
  */
@@ -54,15 +54,10 @@ export const CSS_DA_LINGUAGEM = `
 .lv-mapa figcaption { border-top: 1px solid var(--lv-linha); padding-top: calc(var(--spacing) * 3); }
 
 /* ---- família de transição ------------------------------------------------ */
-.lv-g-transicao { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--lv-respiro); align-items: center; min-height: var(--lv-passagem); padding: calc(var(--spacing) * 6) var(--lv-margem); border-block: 1px solid var(--lv-linha); }
+.lv-g-transicao { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--lv-respiro); align-items: center; min-height: var(--lv-passagem); padding: calc(var(--spacing) * 6) var(--lv-margem); border-block: 1px solid var(--lv-linha); }
 .lv-g-transicao[data-passagem="leitura"] { min-height: var(--lv-passagem-curta); }
 .lv-ponte { max-width: 40ch; }
 .lv-ponte > p:last-child { font-size: var(--text-xl); margin-top: calc(var(--spacing) * 3); }
-.lv-origem { grid-column: 2 / -1; font-size: var(--text-sm); }
-
-/* ---- família de identidade ----------------------------------------------- */
-.lv-g-identidade { width: var(--lv-ave-contida); pointer-events: none; }
-.lv-g-identidade img { width: 100%; height: auto; }
 
 /* ---- microinterações ----------------------------------------------------- */
 .lv-foto-link { display: block; overflow: clip; }
@@ -87,7 +82,6 @@ export const CSS_DA_LINGUAGEM = `
    e as passagens o engrossam, em vez de cada capítulo começar do zero. */
 [data-preset="B"]::before { content: ""; position: absolute; inset-block: 0; left: calc(var(--lv-margem) / 2); border-left: 1px solid var(--lv-linha); pointer-events: none; }
 [data-preset="B"] .lv-g-transicao { border-left: calc(var(--spacing)) solid var(--color-marca); }
-[data-preset="B"] .lv-g-identidade { width: var(--lv-ave-viva); height: var(--lv-passagem); overflow: clip; align-self: end; }
 [data-preset="B"] .lv-fio { border-color: var(--color-marca); }
 [data-preset="B"] .lv-registro { border-left: 1px solid var(--color-marca); padding-left: calc(var(--spacing) * 6); }
 [data-preset="B"] .lv-heading { border-left: 1px solid var(--color-marca); padding-left: calc(var(--spacing) * 6); }
@@ -104,7 +98,6 @@ export const CSS_DA_LINGUAGEM = `
   .lv-g-transicao { gap: calc(var(--spacing) * 3); }
   .lv-ponte > p:last-child { font-size: var(--text-lg); }
   [data-preset="B"]::before { content: none; }
-  [data-preset="B"] .lv-g-identidade { height: auto; }
   .lv-eixos { min-height: calc(var(--spacing) * 16); }
 }
 @media (prefers-reduced-motion: reduce) {

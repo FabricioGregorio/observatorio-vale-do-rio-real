@@ -74,28 +74,6 @@ test.describe("Home", () => {
       expect(estilo.opacidade).toBeGreaterThan(0);
       expect(estilo.opacidade).toBeLessThanOrEqual(0.16);
     }
-
-    const locais = page.locator("[data-grafismo-local]");
-    await expect(locais).toHaveCount(4);
-    const atributos = await locais.evaluateAll((elementos) =>
-      elementos.map((elemento) => {
-        const imagem = elemento as HTMLImageElement;
-        return {
-          alt: imagem.alt,
-          oculto: imagem.getAttribute("aria-hidden"),
-          foco: imagem.tabIndex,
-          eventos: getComputedStyle(imagem).pointerEvents,
-          carregamento: imagem.loading,
-        };
-      }),
-    );
-    for (const atributo of atributos) {
-      expect(atributo.alt).toBe("");
-      expect(atributo.oculto).toBe("true");
-      expect(atributo.foco).toBe(-1);
-      expect(atributo.eventos).toBe("none");
-      expect(atributo.carregamento).toBe("lazy");
-    }
   });
 
   test("mantém os sete capítulos na ordem narrativa aprovada", async ({
@@ -282,11 +260,9 @@ test.describe("Home", () => {
     await expect(page.locator('a[href="/anexos.json"]')).toHaveCount(1);
   });
 
-  test("a Home tem exatamente uma assinatura de identidade", async ({
-    page,
-  }) => {
+  test("a Home não carrega grafismo figurativo", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator('img[src*="carcara-identidade"]')).toHaveCount(1);
+    await expect(page.locator('img[src*="/media/grafismos/"]')).toHaveCount(0);
   });
 });
 

@@ -1,8 +1,3 @@
-import Image from "next/image";
-import {
-  CARCARA_DA_IDENTIDADE,
-  PASTA_PUBLICA_DOS_GRAFISMOS,
-} from "../../../dados/grafismos/derivados";
 import {
   CONTEXTO_DOS_DADOS,
   INDICADORES,
@@ -131,10 +126,6 @@ export function DadosVivos({
       data-testid={contexto === "home" ? "dados-home" : "dados-prototipo"}
     >
       {/*
-        Passagem H3 → H4. É a única da página que carrega assinatura de
-        identidade, pela regra de frequência da H3.5.1: um carcará em escala
-        editorial por página, e só em passagem.
-
         H4.5.2 — a copy mudou. A anterior dizia que o campo "volta aqui como
         quantidade declarada", e isso sugeria que os números derivam da
         observação de campo. Não derivam: eles saem de registros diários de
@@ -161,24 +152,6 @@ export function DadosVivos({
             território
           </p>
         </div>
-        <div className="lv-g-identidade dv-assinatura" aria-hidden="true">
-          <Image
-            alt={CARCARA_DA_IDENTIDADE.alt}
-            src={`${PASTA_PUBLICA_DOS_GRAFISMOS}/${CARCARA_DA_IDENTIDADE.arquivo}`}
-            width={CARCARA_DA_IDENTIDADE.largura}
-            height={CARCARA_DA_IDENTIDADE.altura}
-            unoptimized
-            loading="lazy"
-          />
-        </div>
-        {/*
-          A legenda atravessa a ponte e a assinatura, e o fio que a encima é a
-          linha em que a ave se apoia. Sem isso o carcará flutuava no canto
-          como adesivo; com isso ele fica dentro da mesma grade que o texto.
-        */}
-        <p className="lv-origem meta-ficha lv-g-documental dv-assinatura__ficha">
-          {CARCARA_DA_IDENTIDADE.legenda}
-        </p>
       </div>
 
       <section

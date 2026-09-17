@@ -298,10 +298,6 @@ export const FONTES = {
       afirmacao: "Publicar em domínio público; site como prova documental",
       base: "docs/01 §1 (objetivos O1 e O2) e §0. São objetivos do sistema: confirmar como texto institucional.",
     },
-    {
-      afirmacao: "Carcará",
-      base: "Grafismo da identidade (src/dados/grafismos/derivados.ts). Não é registro de fauna.",
-    },
   ],
   territorio: [
     {

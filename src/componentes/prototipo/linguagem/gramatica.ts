@@ -1,21 +1,16 @@
 /**
  * Gramática de grafismos — H3.5.1.
  *
- * A H3.5 mostrou que inserir um carcará não é ter linguagem visual. O que
- * sustenta a identidade é um conjunto pequeno de famílias com papel declarado,
+ * A linguagem visual usa famílias abstratas com papel declarado,
  * e uma regra de frequência que impede qualquer uma delas de virar maneirismo.
  *
- * Este módulo é a forma executável dessa gramática: ele nomeia as quatro
+ * Este módulo é a forma executável dessa gramática: ele nomeia as três
  * famílias, diz o que cada uma resolve e fixa quantas vezes cada uma pode
  * aparecer numa página. Os testes leem daqui, e não de um número repetido à
  * mão no componente.
  */
 
-export type IdDeGrafismo =
-  | "identidade"
-  | "cartografico"
-  | "documental"
-  | "transicao";
+export type IdDeGrafismo = "cartografico" | "documental" | "transicao";
 
 export type CategoriaDeGrafismo = {
   readonly id: IdDeGrafismo;
@@ -32,17 +27,6 @@ export type CategoriaDeGrafismo = {
 };
 
 export const GRAMATICA_DE_GRAFISMOS = [
-  {
-    id: "identidade",
-    classe: "lv-g-identidade",
-    papel:
-      "assinatura da identidade visual; aparece para lembrar de quem é a página, não para ilustrar o assunto",
-    // Um por página, e só em passagem. É o que separa assinatura de mascote:
-    // repetir o animal a cada seção transforma identidade em personagem, e
-    // personagem é exatamente o que este projeto não pode ter.
-    maximoEmEscalaEditorial: 1,
-    exemplos: ["carcará"],
-  },
   {
     id: "cartografico",
     classe: "lv-g-cartografico",
@@ -105,12 +89,7 @@ export const DENSIDADE_VISUAL = [
   {
     nivel: "alta",
     ondeSeAplica: "abertura, mapa e passagens entre capítulos",
-    grafismosPermitidos: [
-      "documental",
-      "cartografico",
-      "transicao",
-      "identidade",
-    ],
+    grafismosPermitidos: ["documental", "cartografico", "transicao"],
     movimento:
       "entrada única de bloco e, no mapa, interação de intensidade própria",
   },

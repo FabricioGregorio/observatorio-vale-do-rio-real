@@ -56,12 +56,7 @@ test("H3.5: teclado, disclosure, foco e decorativos sem interceptação", async 
   expect(await link.evaluate((e) => getComputedStyle(e).outlineWidth)).toBe(
     "3px",
   );
-  for (const seletor of [
-    ".lv-g-identidade",
-    ".lv-fio",
-    ".lv-eixos",
-    ".lv-cruz",
-  ]) {
+  for (const seletor of [".lv-fio", ".lv-eixos", ".lv-cruz"]) {
     const decorativos = artigo.locator(seletor);
     await expect(decorativos.first()).toBeAttached();
     for (const decorativo of await decorativos.all()) {
@@ -224,54 +219,18 @@ for (const tema of ["light", "dark"] as const) {
   });
 }
 
-/**
- * H3.5.1 — o carcará perdeu 28% de largura. O número sozinho não prova nada:
- * o que importa é que ele deixou de disputar hierarquia. O teste compara a
- * assinatura com a fotografia da mesma página, que é o elemento visual que
- * deve dominar.
- */
-test("H3.5.1: a assinatura é secundária em relação à fotografia", async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(ROTA);
-  await page.locator('input[value="B"]').check();
-
-  const assinatura = page.locator('[data-preset="B"] .lv-g-identidade');
-  const fotografia = page.locator('[data-preset="B"] .lv-fotografia');
-  await assinatura.scrollIntoViewIfNeeded();
-
-  const larguraDaAssinatura = (await assinatura.boundingBox())?.width ?? 0;
-  const larguraDaFotografia = (await fotografia.boundingBox())?.width ?? 0;
-
-  expect(larguraDaAssinatura).toBeGreaterThan(0);
-  expect(larguraDaAssinatura).toBeLessThan(larguraDaFotografia / 2);
-
-  // Continua claramente visível: reduzir não é esconder.
-  expect(larguraDaAssinatura).toBeGreaterThanOrEqual(80);
-});
-
-/**
- * A regra de frequência da H3.5.1 vale no navegador, e não só no HTML: uma
- * assinatura em escala editorial por página, e ela mora numa passagem.
- */
-test("H3.5.1: há uma assinatura por página, dentro de uma passagem", async ({
+test("H3.5.1: as passagens usam somente grafismos abstratos", async ({
   page,
 }) => {
   await page.goto(ROTA);
   for (const preset of ["A", "B"]) {
     await page.locator(`input[value="${preset}"]`).check();
     const artigo = page.locator(`[data-preset="${preset}"]`);
-    await expect(artigo.locator(".lv-g-identidade")).toHaveCount(1);
+    await expect(artigo.locator(".lv-g-identidade")).toHaveCount(0);
     await expect(artigo.locator(".lv-g-transicao")).toHaveCount(2);
-    await expect(
-      artigo.locator('.lv-g-transicao[data-passagem="campo"] .lv-g-identidade'),
-    ).toHaveCount(1);
-    await expect(
-      artigo.locator(
-        '.lv-g-transicao[data-passagem="leitura"] .lv-g-identidade',
-      ),
-    ).toHaveCount(0);
+    await expect(artigo.locator('img[src*="/media/grafismos/"]')).toHaveCount(
+      0,
+    );
   }
 });
 
@@ -384,7 +343,6 @@ test("H3.5.1: com movimento reduzido nada anima e nada some", async ({
  * não atravessa.
  */
 const FAMILIAS = [
-  "lv-g-identidade",
   "lv-g-cartografico",
   "lv-g-documental",
   "lv-g-transicao",
@@ -424,23 +382,12 @@ test("H4.1: nem a gramática nem a casca do laboratório chegam à Home", async 
     documento: se subissem para o `body`, alcançariam a Home por herança.
   */
   const noBody = await page.evaluate(() =>
-    getComputedStyle(document.body).getPropertyValue("--lv-ave-viva").trim(),
+    getComputedStyle(document.body).getPropertyValue("--lv-passagem").trim(),
   );
   expect(noBody).toBe("");
 
-  // A assinatura do carcará é única; a segunda camada contém só os três
-  // grafismos territoriais selecionados, sem a gramática do laboratório.
-  for (const tipo of [
-    "carcara",
-    "cactus",
-    "bodega",
-    "igreja-serra-dos-macacos",
-  ]) {
-    await expect(page.locator(`[data-grafismo-local="${tipo}"]`)).toHaveCount(
-      1,
-    );
-  }
-  await expect(page.locator('img[src*="/media/grafismos/"]')).toHaveCount(4);
+  // A Home pública usa somente a camada abstrata territorial.
+  await expect(page.locator('img[src*="/media/grafismos/"]')).toHaveCount(0);
 
   // Vocabulário de desenvolvimento, inclusive como regra morta no CSS.
   expect(await page.content()).not.toMatch(/proposta|somente DEV/i);
@@ -453,7 +400,7 @@ test("H3.5.1: o painel da H4.0 continua fora do alcance do laboratório", async 
   await expect(page.locator(".linguagem-visual")).toHaveCount(0);
   await expect(page.locator('[class*="lv-g-"]')).toHaveCount(0);
   const papel = await page.evaluate(() =>
-    getComputedStyle(document.body).getPropertyValue("--lv-ave-viva").trim(),
+    getComputedStyle(document.body).getPropertyValue("--lv-passagem").trim(),
   );
   expect(papel).toBe("");
 });
