@@ -26,7 +26,7 @@ const VALE = '#hl-mapa g[data-recorte="vale"]';
 const COMPARACAO = '#hl-mapa g[data-recorte="comparacao"]';
 const MARCADOS = "#hl-municipios [data-selecionado]";
 const PAINEL = "#hl-mapa-painel";
-const VOLTAR = "#hl-mapa-voltar";
+const PONTE = "#hl-territorio .territorio-cartografico__ir";
 
 const MUNICIPIOS_DO_VALE = [
   "Tobias Barreto",
@@ -102,7 +102,14 @@ test.describe("mapa da Home — camadas", () => {
     await expect(page.locator("#hl-mapa pattern")).toHaveCount(1);
   });
 
-  test("a legenda nomeia cada camada e a nota cartográfica declara a fonte", async ({
+  /**
+   * Legenda enxuta, por decisão editorial de 2026-09-17: só as três camadas de
+   * malha. A comparação continua desenhada e continua explicada — no parágrafo
+   * de abertura, no painel de leitura e na leitura em texto — e os lugares
+   * continuam nomeados no bloco Pontos de pesquisa. O que saiu foi a linha da
+   * legenda, não a informação.
+   */
+  test("a legenda nomeia as camadas de malha e a nota cartográfica declara a fonte", async ({
     page,
   }) => {
     await page.goto("/");
@@ -113,7 +120,7 @@ test.describe("mapa da Home — camadas", () => {
       await legenda
         .locator("li")
         .evaluateAll((itens) => itens.map((i) => i.textContent?.trim() ?? "")),
-    ).toEqual(["Sergipe", "Vale", "Pesquisa", "Comparação", "Lugar visitado"]);
+    ).toEqual(["Sergipe", "Vale", "Pesquisa"]);
 
     const nota = page.locator("#hl-territorio figcaption");
     await expect(nota).toContainText("IBGE, Malhas Territoriais");
@@ -122,12 +129,65 @@ test.describe("mapa da Home — camadas", () => {
     );
   });
 
-  /** Os quatro lugares de campo têm coordenada confirmada e são desenhados. */
-  test("os quatro lugares visitados aparecem no desenho", async ({ page }) => {
+  /**
+   * Os quatro lugares de campo têm coordenada confirmada e são desenhados com
+   * o **mesmo pin de `/territorio`**: `caminhoDoPin` é a única definição da
+   * gota no projeto, e a ponta cai exatamente sobre a coordenada.
+   */
+  test("os quatro lugares visitados aparecem com o pin de /territorio", async ({
+    page,
+  }) => {
     await page.goto("/");
-    await expect(
-      page.locator("#hl-mapa .territorio-cartografico__lugar"),
-    ).toHaveCount(LUGARES_DO_VALE + LUGARES_DA_COMPARACAO);
+    const lugares = page.locator("#hl-mapa .territorio-cartografico__lugar");
+    await expect(lugares).toHaveCount(LUGARES_DO_VALE + LUGARES_DA_COMPARACAO);
+    await expect(lugares.locator("path.forma")).toHaveCount(
+      LUGARES_DO_VALE + LUGARES_DA_COMPARACAO,
+    );
+
+    const formaDaHome = await lugares
+      .locator("path.forma")
+      .first()
+      .getAttribute("d");
+    await page.goto("/territorio");
+    const formaDoTerritorio = await page
+      .locator(".tv-pin path.forma")
+      .first()
+      .getAttribute("d");
+    // Mesmo gerador, mesma gota: o raio muda, a gramática do traço não.
+    expect(formaDaHome?.startsWith("M0 0C")).toBe(true);
+    expect(formaDoTerritorio?.startsWith("M0 0C")).toBe(true);
+  });
+
+  /**
+   * O desenho não é uma figura dentro de uma caixa: nem moldura, nem o
+   * contorno que o navegador daria ao SVG ao receber clique.
+   */
+  test("nenhuma borda externa contorna o mapa, em nenhum estado", async ({
+    page,
+  }) => {
+    await abrirMapa(page);
+
+    const moldura = page.locator(
+      "#hl-territorio .territorio-cartografico__moldura",
+    );
+    expect(
+      await moldura.evaluate((m) => getComputedStyle(m).borderTopWidth),
+    ).toBe("0px");
+
+    const contorno = () =>
+      page.locator(SVG).evaluate((s) => getComputedStyle(s).outlineStyle);
+    expect(await contorno()).toBe("none");
+
+    // Clique em área vazia do desenho: é o gesto que fazia o retângulo preto
+    // aparecer, porque no Chrome o SVG é alvo de foco por clique.
+    const caixa = await page.locator(SVG).boundingBox();
+    if (caixa !== null) await page.mouse.click(caixa.x + 6, caixa.y + 6);
+    expect(await contorno()).toBe("none");
+
+    await page.locator(VALE).focus();
+    expect(await contorno()).toBe("none");
+    await page.locator(`${VALE} path`).first().click({ force: true });
+    expect(await contorno()).toBe("none");
   });
 });
 
@@ -170,8 +230,6 @@ test.describe("mapa da Home — estado inicial", () => {
     await expect(
       page.locator(`${PAINEL} [data-painel-de]:visible`),
     ).toHaveCount(0);
-    // Sem seleção, voltar não teria a que voltar.
-    await expect(page.locator(VOLTAR)).toBeHidden();
   });
 
   test("os dois recortes são opções nomeadas de uma única listbox", async ({
@@ -227,7 +285,6 @@ test.describe("mapa da Home — seleção", () => {
     const painel = page.locator(`${PAINEL} [data-painel-de="vale"]`);
     await expect(painel).toBeVisible();
     await expect(painel).toContainText("Não é divisão administrativa oficial");
-    await expect(page.locator(VOLTAR)).toBeVisible();
   });
 
   test("clique em São Cristóvão destaca só ele, como referência de comparação", async ({
@@ -367,36 +424,53 @@ test.describe("mapa da Home — teclado", () => {
   });
 });
 
-test.describe("mapa da Home — volta à visão geral", () => {
-  test("voltar limpa a seleção e devolve o foco ao mapa", async ({ page }) => {
-    await abrirMapa(page);
-    await page.locator(`${VALE} path`).first().click({ force: true });
-    await expect(page.locator(VOLTAR)).toBeVisible();
+/**
+ * A ponte editorial: a Home mostra a síntese, `/territorio` tem a cartografia
+ * completa. É link, não botão — leva a outra página, existe sem JavaScript e
+ * não depende de seleção nenhuma.
+ */
+test.describe("mapa da Home — ponte para /territorio", () => {
+  test("a ponte é um link visível que leva à cartografia completa", async ({
+    page,
+  }) => {
+    await page.goto("/");
 
-    await page.locator(VOLTAR).click();
-
-    await expect(page.locator('#hl-mapa [aria-selected="true"]')).toHaveCount(
-      0,
-    );
-    await expect(page.locator(MARCADOS)).toHaveCount(0);
-    expect(
-      await page.evaluate(
-        () => document.activeElement?.closest("#hl-mapa") !== null,
-      ),
-    ).toBe(true);
+    const ponte = page.locator(PONTE);
+    await expect(ponte).toBeVisible();
+    await expect(ponte).toHaveAttribute("href", "/territorio");
+    await expect(ponte).toContainText("mapa interativo completo");
   });
 
-  test("Esc faz o mesmo que voltar", async ({ page }) => {
+  test("a ponte navega de fato, e a rota responde", async ({ page }) => {
+    await page.goto("/");
+    // A âncora que `/territorio` acrescenta ao montar é dela, não da ponte:
+    // o que importa aqui é o caminho. `waitForURL` espera a navegação de
+    // verdade, e não depende de a rota já estar compilada.
+    await Promise.all([
+      page.waitForURL((url) => url.pathname === "/territorio"),
+      page.locator(PONTE).click(),
+    ]);
+    await expect(page).toHaveTitle(
+      "Território — Observatório do Vale do Rio Real",
+    );
+  });
+
+  /**
+   * Nenhum controle de volta sobrou. Quem limpa a seleção é Esc, e nada fica
+   * escondido enquanto um recorte está escolhido: as quatro camadas continuam
+   * desenhadas, a seleção é ênfase. Não há estado do qual não se saia.
+   */
+  test("não existe mais botão de voltar à visão geral", async ({ page }) => {
     await abrirMapa(page);
+    await expect(page.locator("#hl-mapa-voltar")).toHaveCount(0);
+
     await page.locator(VALE).focus();
     await page.keyboard.press("Enter");
     await expect(page.locator(VALE)).toHaveAttribute("aria-selected", "true");
-
     await page.keyboard.press("Escape");
     await expect(page.locator('#hl-mapa [aria-selected="true"]')).toHaveCount(
       0,
     );
-    await expect(page.locator(VOLTAR)).toBeHidden();
   });
 });
 
@@ -441,11 +515,15 @@ test.describe("mapa da Home sem JavaScript", () => {
     await expect(page.getByLabel("Legenda do mapa")).toBeVisible();
   });
 
-  test("nenhum controle interativo é oferecido", async ({ page }) => {
+  test("o painel não é oferecido, mas a ponte continua sendo um link", async ({
+    page,
+  }) => {
     await page.goto("/");
 
-    await expect(page.locator(VOLTAR)).toBeHidden();
     await expect(page.locator(PAINEL)).toBeHidden();
+    // A ponte é navegação, não interação: funciona sem JavaScript.
+    await expect(page.locator(PONTE)).toBeVisible();
+    await expect(page.locator(PONTE)).toHaveAttribute("href", "/territorio");
   });
 
   test("o vínculo de cada município continua legível em texto", async ({

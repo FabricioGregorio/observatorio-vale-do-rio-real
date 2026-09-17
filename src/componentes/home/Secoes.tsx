@@ -145,7 +145,6 @@ const ROTULO_DA_RELACAO = {
   comparacao: "referência de comparação",
 } as const;
 
-const ID_DO_BOTAO_VOLTAR = "hl-mapa-voltar";
 const ID_DO_TITULO_DA_LEITURA = "hl-territorio-leitura";
 const ID_DO_TITULO_DOS_PONTOS = "hl-territorio-pontos";
 
@@ -193,9 +192,10 @@ export function Territorio() {
             </div>
 
             {/*
-              Servidos com `hidden`. Quem revela é a ilha, ao montar: sem
-              JavaScript não há orientação prometendo exploração, nem botão que
-              não faz nada. Ver MapaInterativo.
+              Servido com `hidden`. Quem revela é a ilha, ao montar: sem
+              JavaScript não há painel prometendo uma exploração que não
+              acontece. Ver MapaInterativo. A ponte para /territorio fica fora
+              dele, logo abaixo, porque é um link e funciona sem JavaScript.
             */}
             <section
               aria-labelledby={ID_DO_TITULO_DA_LEITURA}
@@ -230,20 +230,24 @@ export function Territorio() {
                       .map((municipio) => municipio.nome)
                       .join(" · ")}
                   </p>
-                  <Link href="/territorio" prefetch={false}>
-                    Cartografia Viva
-                  </Link>
                 </div>
               ))}
-
-              <button
-                className="territorio-cartografico__voltar"
-                id={ID_DO_BOTAO_VOLTAR}
-                type="button"
-              >
-                Ver Sergipe inteiro
-              </button>
             </section>
+
+            {/*
+              A Home mostra a síntese; a cartografia com camadas, zoom e fichas
+              é de /territorio. O destino é o mesmo que a navegação principal
+              oferece, dito aqui no ponto em que a leitura do mapa termina.
+            */}
+            <p className="territorio-cartografico__ponte">
+              <Link
+                className="territorio-cartografico__ir"
+                href="/territorio"
+                prefetch={false}
+              >
+                Ver o mapa interativo completo
+              </Link>
+            </p>
 
             <section
               aria-labelledby={ID_DO_TITULO_DOS_PONTOS}
@@ -307,7 +311,6 @@ export function Territorio() {
         <MapaInterativo
           chave="recorte"
           idDaLista={ID_DA_LISTA_DO_RECORTE}
-          idDoBotaoVoltar={ID_DO_BOTAO_VOLTAR}
           idDoPainel={ID_DO_PAINEL_DO_MAPA}
           idDoSvg={ID_DO_MAPA}
           rotuloDaLista="Recortes do mapa"

@@ -87,14 +87,25 @@ export const CSS_DA_HOME = `
 
    O tratamento visual base é a folha cartográfica compartilhada, servida pelo
    próprio mapa: CSS_DO_MAPA (as quatro camadas) e CSS_DO_TERRITORIO (a
-   moldura, o volume, a grade e a legenda). Aqui ficam só as regras do que a
-   Home tem e o laboratório não: o recorte como opção, os lugares confirmados,
-   o painel revelável e o controle de volta.
+   o volume, a grade e a legenda). Aqui ficam só as regras do que a Home tem e
+   o laboratório não: o desenho sem moldura, o recorte como opção, os pins dos
+   lugares confirmados, o painel revelável e a ponte para /territorio.
 
    Nada aqui repinta a malha. O mapa é invariante de tema de propósito — a
    camada cartográfica é lida sobre pedra nos dois temas, e trocar os valores
    junto com os papéis semânticos desfaria a legibilidade das fronteiras. */
 .hl-capitulo--territorio .territorio-cartografico{margin-top:2rem;padding-block:0;border-top:0}
+/* Sem moldura ao redor do desenho. São duas bordas, e as duas saem:
+
+   1. a do quadro, que a folha compartilhada desenha e faz o mapa parecer uma
+      figura dentro de uma caixa;
+   2. o contorno que o navegador dá ao próprio <svg>, que no Chrome é alvo de
+      foco por clique. Ele nunca foi indicador de nada aqui — quem recebe foco
+      de teclado são os dois grupos de recorte, que têm indicador próprio, e o
+      <svg> não tem tabindex, então nem entra na ordem de Tab. O que aparecia
+      era um retângulo preto em volta do mapa inteiro ao clicar em área vazia. */
+.hl-capitulo--territorio .territorio-cartografico__moldura{border:0;border-radius:0}
+.hl-capitulo--territorio .territorio-cartografico__svg:focus{outline:none}
 .hl-capitulo--territorio .territorio-cartografico__introducao h3{font-size:clamp(var(--text-xl),2.4vw,var(--text-2xl))}
 .hl-capitulo--territorio .territorio-cartografico__introducao h3+p{margin-top:.75rem}
 
@@ -119,10 +130,10 @@ export const CSS_DA_HOME = `
    selecionado. O irmão geral alcança o pin a partir do grupo escolhido —
    nenhum estado precisa subir para um invólucro. */
 .territorio-cartografico__lugar{pointer-events:none}
-.territorio-cartografico__lugar circle{stroke-width:2.5}
+.territorio-cartografico__lugar .forma{fill:var(--color-carvao);stroke:var(--color-branco);stroke-width:1.5;vector-effect:non-scaling-stroke}
+.territorio-cartografico__lugar .miolo{fill:var(--color-branco)}
 .territorio-cartografico__lugar text{fill:var(--color-carvao);font-family:var(--font-display);font-size:20px;font-weight:600;paint-order:stroke;stroke:var(--color-branco);stroke-width:5;opacity:0;transition:opacity var(--duracao-painel) var(--easing-padrao)}
 .territorio-cartografico g[data-recorte="vale"][aria-selected="true"]~.territorio-cartografico__lugar[data-lugar-do-recorte="vale"] text,.territorio-cartografico g[data-recorte="comparacao"][aria-selected="true"]~.territorio-cartografico__lugar[data-lugar-do-recorte="comparacao"] text{opacity:1}
-.territorio-cartografico__amostra--lugar{width:.85rem;height:.85rem;border:1px solid var(--color-branco);border-radius:50%;background:var(--color-barro)}
 
 /* O painel é servido com hidden; a folha compartilhada dá display:grid a ele,
    o que venceria a regra do agente do usuário e o deixaria visível sem
@@ -131,12 +142,12 @@ export const CSS_DA_HOME = `
 .territorio-cartografico__painel h4{font-family:var(--font-display);font-size:var(--text-base);font-weight:600}
 .territorio-cartografico__painel h4+p{margin-top:.35rem}
 .territorio-cartografico__painel-lista{margin-top:.35rem;font-size:var(--text-sm);color:var(--color-texto-suave)}
-/* Voltar só existe havendo a que voltar: com o painel no estado vazio, a
-   visão já é Sergipe inteiro e o botão seria um controle morto. Onde :has()
-   não resolver, ele aparece e continua correto — só é redundante. */
-.territorio-cartografico__painel:has([data-painel-vazio]:not([hidden])) .territorio-cartografico__voltar{display:none}
-.territorio-cartografico__voltar{justify-self:start;padding:.45rem .9rem;border:1px solid var(--color-texto);border-radius:var(--radius-ficha);background:none;color:var(--color-texto);font-family:var(--font-display);font-size:var(--text-sm);cursor:pointer}
-.territorio-cartografico__voltar:hover{background:var(--color-texto);color:var(--color-fundo)}
+/* Ponte para a cartografia completa. É link, não botão: leva a outra página,
+   existe sem JavaScript e não depende de seleção nenhuma. */
+.territorio-cartografico__ponte{margin:0}
+.home-observatorio .territorio-cartografico__ir{display:inline-flex;align-items:center;gap:.5rem;padding:.55rem 1rem;border:1px solid var(--color-texto);border-radius:var(--radius-ficha);color:var(--color-texto);font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;text-decoration:none;transition:background-color var(--duracao-hover) var(--easing-padrao),color var(--duracao-hover) var(--easing-padrao)}
+.home-observatorio .territorio-cartografico__ir::after{content:"→"}
+.home-observatorio .territorio-cartografico__ir:hover{background:var(--color-texto);color:var(--color-fundo)}
 .territorio-cartografico__pontos li{display:grid;gap:.1rem}
 .territorio-cartografico__lugar-nome{font-family:var(--font-display);font-weight:600;color:var(--color-texto)}
 

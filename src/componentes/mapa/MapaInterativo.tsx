@@ -46,7 +46,6 @@ export function MapaInterativo({
   chave = "codigo",
   rotuloDaLista = "Índice dos municípios de Sergipe",
   seletorDoQueRevelar,
-  idDoBotaoVoltar,
 }: {
   idDoSvg: string;
   idDaLista: string;
@@ -62,15 +61,12 @@ export function MapaInterativo({
   chave?: string;
   rotuloDaLista?: string;
   /**
-   * Elementos servidos com `hidden` que só fazem sentido havendo interação:
-   * a orientação de uso, o painel e a ação de voltar. A ilha os revela ao
-   * montar e os esconde ao desmontar. Sem JavaScript continuam fora da árvore
-   * de acessibilidade — nenhum botão morto, nenhuma promessa que ninguém pode
-   * cumprir.
+   * Elementos servidos com `hidden` que só fazem sentido havendo interação —
+   * hoje, o painel contextual. A ilha os revela ao montar e os esconde ao
+   * desmontar. Sem JavaScript continuam fora da árvore de acessibilidade:
+   * nenhuma promessa que ninguém pode cumprir.
    */
   seletorDoQueRevelar?: string;
-  /** Volta à visão geral, com o mesmo efeito de `Esc`. */
-  idDoBotaoVoltar?: string;
 }) {
   useEffect(() => {
     const svg = document.getElementById(idDoSvg);
@@ -377,21 +373,9 @@ export function MapaInterativo({
           ).filter((elemento) => elemento.hidden);
     for (const elemento of revelados) elemento.hidden = false;
 
-    const voltar =
-      idDoBotaoVoltar === undefined
-        ? null
-        : document.getElementById(idDoBotaoVoltar);
-
-    /** Voltar devolve o foco ao alvo ativo: ninguém fica perdido no documento. */
-    function aoVoltar() {
-      limparSelecao();
-      opcoes[ativo]?.focus();
-    }
-
     svg.addEventListener("keydown", aoTeclar);
     svg.addEventListener("click", aoClicar);
     svg.addEventListener("focusin", aoFocar);
-    voltar?.addEventListener("click", aoVoltar);
     if (promoverLista && lista !== null) {
       lista.addEventListener("keydown", aoTeclarLista);
       lista.addEventListener("click", aoClicarNaLista);
@@ -400,7 +384,6 @@ export function MapaInterativo({
 
     return () => {
       for (const elemento of revelados) elemento.hidden = true;
-      voltar?.removeEventListener("click", aoVoltar);
       svg.removeEventListener("keydown", aoTeclar);
       svg.removeEventListener("click", aoClicar);
       svg.removeEventListener("focusin", aoFocar);
@@ -436,7 +419,6 @@ export function MapaInterativo({
     chave,
     rotuloDaLista,
     seletorDoQueRevelar,
-    idDoBotaoVoltar,
   ]);
 
   return null;

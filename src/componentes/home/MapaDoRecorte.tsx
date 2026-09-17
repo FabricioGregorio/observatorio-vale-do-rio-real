@@ -10,6 +10,7 @@ import {
   temHachura,
 } from "../mapa/estilosDoMapa";
 import { REFERENCIAS_TERRITORIAIS } from "../prototipo/territoriovivo/local/referencias";
+import { caminhoDoPin } from "../prototipo/territoriovivo/local/svg";
 import { CSS_DO_TERRITORIO } from "../territorio/estilosDoTerritorio";
 import {
   DEFINICOES,
@@ -22,8 +23,13 @@ export const ID_DO_PAINEL_DO_MAPA = "hl-mapa-painel";
 export const ID_DA_LISTA_DO_RECORTE = "hl-municipios";
 export const ID_DA_HACHURA = "hl-mapa-hachura-pesquisa";
 
-/** Raio do marcador, em unidades do `viewBox`: acompanha a escala do mapa. */
-const RAIO_DO_LUGAR = 10;
+/**
+ * Raio do pin, em unidades do `viewBox`: acompanha a escala do mapa.
+ *
+ * O desenho é o mesmo de `/territorio` — `caminhoDoPin` é a única definição da
+ * gota no projeto, e a ponta cai exatamente sobre a coordenada confirmada.
+ */
+const RAIO_DO_LUGAR = 9;
 
 /**
  * Mapa do recorte — Server Component, sem ilha cliente própria.
@@ -180,8 +186,16 @@ export function MapaDoRecorte({
                 key={lugar.id}
                 transform={`translate(${x} ${y})`}
               >
-                <circle className="p" r={RAIO_DO_LUGAR} />
-                <text x={RAIO_DO_LUGAR + 8} y={6}>
+                <path className="forma" d={caminhoDoPin(RAIO_DO_LUGAR)} />
+                <circle
+                  className="miolo"
+                  cy={-2 * RAIO_DO_LUGAR}
+                  r={RAIO_DO_LUGAR * 0.38}
+                />
+                <text
+                  x={RAIO_DO_LUGAR * 1.5}
+                  y={-2 * RAIO_DO_LUGAR + RAIO_DO_LUGAR * 0.55}
+                >
                   {lugar.nome}
                 </text>
               </g>
@@ -219,20 +233,6 @@ export function MapaDoRecorte({
             className="territorio-cartografico__amostra territorio-cartografico__amostra--pesquisa"
           />
           Pesquisa
-        </li>
-        <li>
-          <span
-            aria-hidden="true"
-            className="territorio-cartografico__amostra territorio-cartografico__amostra--comparacao"
-          />
-          Comparação
-        </li>
-        <li>
-          <span
-            aria-hidden="true"
-            className="territorio-cartografico__amostra territorio-cartografico__amostra--lugar"
-          />
-          Lugar visitado
         </li>
       </ul>
     </figure>
