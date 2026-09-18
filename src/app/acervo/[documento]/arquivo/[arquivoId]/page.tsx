@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { createElement } from "react";
 
 import { InformacoesTecnicas } from "../../../../../componentes/acervo/InformacoesTecnicas";
+import { tamanhoLegivel } from "../../../../../componentes/acervo/TabelaAnexos";
 import {
   listarDocumentosPublicos,
   selecionarArquivoPublico,
@@ -11,7 +12,12 @@ import {
   tituloDoArquivoPublico,
 } from "../../../../../dados/consultas/acervo";
 import { mapaB01 } from "../../../../../dados/editorial/mapa-b01";
+import {
+  formatoPublico,
+  tipoPublico,
+} from "../../../../../dados/editorial/tipos-publicos";
 import { metadadosDaRota } from "../../../../../lib/site-url";
+import "../../../acervo.css";
 
 type Props = { params: Promise<{ documento: string; arquivoId: string }> };
 export const dynamicParams = false;
@@ -65,16 +71,29 @@ export default async function PaginaArquivo({ params }: Props) {
     : null;
 
   return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-8 px-4 py-12">
-      <nav aria-label="Caminho da página" className="meta-ficha">
-        <Link href="/acervo">Acervo</Link> /{" "}
-        <Link href={`/acervo/${slug}` as Route}>{documento.titulo}</Link> /{" "}
+    <div className="acervo mx-auto flex max-w-4xl flex-col gap-9 px-4 py-10 md:py-16">
+      <nav aria-label="Caminho da página" className="acervo-caminho text-sm">
+        <Link href="/acervo">Acervo</Link> <span aria-hidden="true">/</span>{" "}
+        <Link href={`/acervo/${slug}` as Route}>{documento.titulo}</Link>{" "}
+        <span aria-hidden="true">/</span>{" "}
         <span aria-current="page">{titulo}</span>
       </nav>
-      <header className="flex flex-col gap-3">
-        <p className="meta-ficha">{documento.titulo}</p>
-        <h1>{titulo}</h1>
-        <p className="meta-ficha">Formato: {arquivo.mimeType}</p>
+      <header className="acervo-abertura relative overflow-hidden border-b pb-8">
+        <div className="acervo-tracado" aria-hidden="true" />
+        <p className="meta-ficha relative">
+          {editorial
+            ? arquivo.mimeType === "image/svg+xml"
+              ? "Elemento gráfico"
+              : "Fotografia"
+            : tipoPublico(documento.tipo, slug)}
+        </p>
+        <h1 className="relative mt-4 text-3xl md:text-4xl">{titulo}</h1>
+        <p className="relative mt-5 text-sm">
+          Documento:{" "}
+          <Link className="acervo-link" href={`/acervo/${slug}` as Route}>
+            {documento.titulo}
+          </Link>
+        </p>
       </header>
       {imagemB01 && editorial ? (
         <figure className="flex flex-col gap-3">
@@ -84,10 +103,10 @@ export default async function PaginaArquivo({ params }: Props) {
             height={editorial.altura}
             alt={editorial.alt}
             loading="lazy"
-            className="h-auto max-w-full"
+            className="acervo-imagem"
           />
           {editorial.legenda || editorial.credito ? (
-            <figcaption>
+            <figcaption className="max-w-prose">
               {editorial.legenda ? <span>{editorial.legenda}</span> : null}
               {editorial.credito ? (
                 <span className="block meta-ficha">
@@ -98,34 +117,51 @@ export default async function PaginaArquivo({ params }: Props) {
           ) : null}
         </figure>
       ) : null}
-      {audio && transcricao ? (
+      {audio ? (
         <div className="flex flex-col gap-3">
           {createElement("audio", {
             controls: true,
             preload: "none",
             src: arquivo.linkPermanente,
             "aria-label": `Ouvir ${titulo}`,
-            "aria-describedby": "transcricao-publica",
+            className: "acervo-audio",
+            ...(transcricao
+              ? { "aria-describedby": "transcricao-publica" }
+              : {}),
           })}
-          <Link
-            id="transcricao-publica"
-            className="underline"
-            href={`/acervo/${slug}/arquivo/${transcricao.arquivoId}` as Route}
-          >
-            Abrir transcrição pública deste documento
-          </Link>
+          {transcricao ? (
+            <Link
+              id="transcricao-publica"
+              className="acervo-link"
+              href={`/acervo/${slug}/arquivo/${transcricao.arquivoId}` as Route}
+            >
+              Abrir transcrição pública deste documento
+            </Link>
+          ) : null}
         </div>
       ) : null}
-      <p>
-        <a
-          className="underline focus-visible:outline-destaque"
-          href={arquivo.linkPermanente}
-        >
-          Abrir arquivo público
+      {!imagemB01 && !audio ? (
+        <div className="acervo-ficha border p-6">
+          <p className="meta-ficha">Arquivo documental</p>
+          <p className="mt-2">
+            {formatoPublico(arquivo.mimeType)} · {tamanhoLegivel(arquivo.bytes)}
+          </p>
+        </div>
+      ) : null}
+      <p className="flex flex-wrap items-center gap-4">
+        <a className="acervo-link" href={arquivo.linkPermanente}>
+          Abrir arquivo público <span aria-hidden="true">↗</span>
         </a>
       </p>
-      <p className="meta-ficha">Licença: {documento.licenca}</p>
+      {documento.licenca ? (
+        <p className="text-sm">Licença: {documento.licenca}</p>
+      ) : null}
       <InformacoesTecnicas arquivo={arquivo} />
+      <p>
+        <Link href={`/acervo/${slug}` as Route} className="acervo-link">
+          ← Voltar ao documento
+        </Link>
+      </p>
     </div>
   );
 }

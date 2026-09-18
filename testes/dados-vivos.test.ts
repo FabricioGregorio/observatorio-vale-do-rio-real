@@ -522,6 +522,7 @@ describe("H4.5.2: nenhuma dependência e nenhuma ilha nova", () => {
       "zod",
     ]);
     expect(Object.keys(manifesto.devDependencies ?? {})).toEqual([
+      "@axe-core/playwright",
       "@biomejs/biome",
       "@playwright/test",
       "@types/node",

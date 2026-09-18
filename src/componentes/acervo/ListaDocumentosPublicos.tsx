@@ -1,47 +1,54 @@
 import type { Route } from "next";
 import Link from "next/link";
 
-import type { DocumentoDoAcervo } from "../../dados/consultas/acervo";
 import { tipoPublico } from "../../dados/editorial/tipos-publicos";
+
+export type DocumentoDoIndice = {
+  slug: string;
+  titulo: string;
+  tipo: string;
+  resumo: string | null;
+  quantidade: number;
+};
 
 export function ListaDocumentosPublicos({
   documentos,
 }: {
-  documentos: readonly DocumentoDoAcervo[];
+  documentos: readonly DocumentoDoIndice[];
 }) {
-  if (documentos.length === 0)
-    return <p>Não há documentos públicos disponíveis neste momento.</p>;
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      {documentos.map((documento) => (
-        <section
+    <div className="grid gap-5 md:grid-cols-2">
+      {documentos.map((documento, indice) => (
+        <article
           key={documento.slug}
-          className="flex flex-col gap-3 border p-6"
-          style={{
-            borderColor: "var(--color-borda)",
-            backgroundColor: "var(--color-fundo-elevado)",
-            borderRadius: "var(--radius-ficha)",
-          }}
+          className="acervo-card flex flex-col gap-3 border p-6"
         >
-          <p className="meta-ficha">
-            {tipoPublico(documento.tipo, documento.slug)}
-          </p>
-          <h2>
+          <div className="flex items-baseline justify-between gap-3">
+            <p className="meta-ficha">
+              {tipoPublico(documento.tipo, documento.slug)}
+            </p>
+            <span className="meta-ficha" aria-hidden="true">
+              {String(indice + 1).padStart(2, "0")}
+            </span>
+          </div>
+          <h3 className="text-xl">{documento.titulo}</h3>
+          {documento.resumo ? (
+            <p className="max-w-prose">{documento.resumo}</p>
+          ) : null}
+          <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-4">
+            <p className="meta-ficha">
+              {documento.quantidade}{" "}
+              {documento.quantidade === 1 ? "arquivo" : "arquivos"}
+            </p>
             <Link
               href={`/acervo/${documento.slug}` as Route}
-              className="underline focus-visible:outline-destaque"
+              className="acervo-link"
+              aria-label={`Explorar documento: ${documento.titulo}`}
             >
-              {documento.titulo}
+              Explorar documento <span aria-hidden="true">↗</span>
             </Link>
-          </h2>
-          {documento.resumo ? <p>{documento.resumo}</p> : null}
-          <p className="meta-ficha">
-            {documento.arquivos.length}{" "}
-            {documento.arquivos.length === 1
-              ? "arquivo público"
-              : "arquivos públicos"}
-          </p>
-        </section>
+          </div>
+        </article>
       ))}
     </div>
   );

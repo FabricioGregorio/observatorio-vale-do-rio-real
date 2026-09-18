@@ -48,3 +48,38 @@ test("UUID inválido, documento errado e arquivo desconhecido retornam o mesmo 4
     expect((await request.get(caminho)).status()).toBe(404);
   }
 });
+
+test("SVG e segundo crédito permanecem contextualizados sem otimização de imagem", async ({
+  page,
+}) => {
+  for (const [id, credito, extensao] of [
+    ["86e03efb-e3df-4d19-a922-2314c957943a", "", ".svg"],
+    [
+      "0780c902-bb26-4004-ac50-86247c139cc2",
+      "Foto: Iago de Andrade Santos",
+      ".webp",
+    ],
+  ]) {
+    await page.goto(`/acervo/${documento}/arquivo/${id}`);
+    const imagem = page.locator("main img");
+    await expect(imagem).toHaveCount(1);
+    expect(await imagem.getAttribute("src")).toContain(extensao);
+    expect(await imagem.getAttribute("alt")).not.toBe("");
+    if (credito) await expect(page.getByText(credito)).toBeVisible();
+  }
+});
+
+test("fotografia vertical conserva dimensões e não cria overflow em 375px", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto(
+    `/acervo/${documento}/arquivo/ed101d77-0437-439e-b353-3b9a25f6cf9f`,
+  );
+  await expect(page.locator("main img")).toHaveAttribute("height", "2302");
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+});

@@ -1,0 +1,138 @@
+.acervo {
+  --acervo-linha: color-mix(
+    in srgb,
+    var(--color-borda-forte) 48%,
+    var(--color-fundo)
+  );
+  --acervo-papel: color-mix(
+    in srgb,
+    var(--color-fundo-elevado) 94%,
+    var(--color-marca)
+  );
+}
+
+.acervo-abertura {
+  border-color: var(--acervo-linha);
+}
+.acervo-tracado {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: min(55%, 32rem);
+  opacity: 0.34;
+  background: repeating-radial-gradient(
+    ellipse at 88% 46%,
+    transparent 0 1.75rem,
+    var(--acervo-linha) 1.8rem 1.85rem,
+    transparent 1.9rem 3rem
+  );
+  mask-image: linear-gradient(to left, var(--color-carvao), transparent);
+  pointer-events: none;
+}
+.acervo-controles {
+  border-color: var(--acervo-linha);
+}
+.acervo-controles label {
+  font-family: var(--font-display);
+  font-weight: var(--peso-titulo);
+}
+.acervo-controles input,
+.acervo-controles select {
+  background: var(--color-fundo-elevado);
+  color: var(--color-texto);
+  border-color: var(--color-borda-forte);
+  border-radius: var(--radius-ficha);
+}
+.acervo-botao {
+  background: var(--color-fundo-inverso);
+  color: var(--color-texto-inverso);
+  border-radius: var(--radius-ficha);
+  font-family: var(--font-display);
+  cursor: pointer;
+}
+.acervo-botao:hover {
+  background: var(--color-mata-claro);
+}
+.acervo-link {
+  color: var(--color-link);
+  font-family: var(--font-display);
+  font-weight: var(--peso-titulo);
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+  cursor: pointer;
+}
+.acervo-link:hover {
+  color: var(--color-link-hover);
+}
+.acervo-card {
+  border-color: var(--acervo-linha);
+  border-radius: var(--radius-ficha);
+  background: var(--acervo-papel);
+  min-width: 0;
+  transition: border-color var(--duracao-hover) var(--easing-padrao);
+}
+.acervo-card:hover {
+  border-color: var(--color-borda-forte);
+}
+.acervo-nota {
+  border-color: var(--color-acento);
+}
+.acervo-inventario {
+  border-color: var(--acervo-linha);
+}
+.acervo-vazio {
+  border-color: var(--acervo-linha);
+  background: var(--acervo-papel);
+}
+.acervo-caminho {
+  color: var(--color-texto-suave);
+  overflow-wrap: anywhere;
+}
+.acervo-caminho a {
+  color: var(--color-link);
+  text-decoration: underline;
+}
+.acervo-ficha {
+  border-color: var(--acervo-linha);
+  background: var(--acervo-papel);
+}
+.acervo-secao {
+  border-color: var(--acervo-linha);
+}
+.acervo-numero {
+  color: var(--color-acento);
+  font-family: var(--font-mono);
+}
+.acervo-linha-arquivo {
+  border-color: var(--acervo-linha);
+}
+.acervo-imagem {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+.acervo-audio {
+  width: 100%;
+  max-width: 40rem;
+}
+.acervo-tecnico {
+  border-color: var(--acervo-linha);
+}
+.acervo-tecnico summary {
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-weight: var(--peso-titulo);
+}
+.acervo-tecnico dd {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 767px) {
+  .acervo-tracado {
+    width: 80%;
+    opacity: 0.18;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .acervo-card {
+    transition: none;
+  }
+}

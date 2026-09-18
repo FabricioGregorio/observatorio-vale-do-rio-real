@@ -24,7 +24,10 @@ test("Acervo responde 200, lista todo o acervo público e não baixa nada sozinh
   const resposta = await page.goto("/acervo");
   expect(resposta?.status()).toBe(200);
   await expect(
-    page.getByRole("heading", { level: 1, name: "Acervo" }),
+    page.getByRole("heading", {
+      level: 1,
+      name: "Documentos e registros da pesquisa",
+    }),
   ).toBeVisible();
 
   const links = page.locator('main a[href^="/acervo/"]');
@@ -63,7 +66,10 @@ for (const largura of [375, 1440]) {
     ).toBe(true);
     await page.emulateMedia({ colorScheme: "dark" });
     await expect(
-      page.getByRole("heading", { level: 1, name: "Acervo" }),
+      page.getByRole("heading", {
+        level: 1,
+        name: "Documentos e registros da pesquisa",
+      }),
     ).toBeVisible();
   });
 }
@@ -75,13 +81,63 @@ test("conteúdo essencial do Acervo permanece no HTML sem JavaScript", async ({
   const pagina = await contexto.newPage();
   await pagina.goto("/acervo");
   await expect(
-    pagina.getByRole("heading", { level: 1, name: "Acervo" }),
+    pagina.getByRole("heading", {
+      level: 1,
+      name: "Documentos e registros da pesquisa",
+    }),
   ).toBeVisible();
   await expect(
     pagina.locator('main a[href^="/acervo/"]').first(),
   ).toBeAttached();
-  expect(
-    await pagina.locator('main a[href^="/acervo/"]').count(),
-  ).toBeGreaterThan(8);
+  await expect(pagina.locator('main a[href^="/acervo/"]')).toHaveCount(16);
   await contexto.close();
 });
+
+test("busca, filtro, URL e histórico mantêm o índice navegável", async ({
+  page,
+}) => {
+  await page.goto("/acervo");
+  await expect(page.locator(".acervo-card")).toHaveCount(16);
+  await page
+    .getByRole("searchbox", { name: "Buscar documentos" })
+    .fill("serra");
+  await page.getByRole("button", { name: "Buscar", exact: true }).click();
+  await expect(page).toHaveURL(/\?q=serra$/);
+  await expect(page.locator(".acervo-card").first()).toBeVisible();
+  await page
+    .getByLabel("Tipo de documento")
+    .selectOption("entrevista_transcricao");
+  await expect(page).toHaveURL(/q=serra&tipo=entrevista_transcricao/);
+  await page.goBack();
+  await expect(
+    page.getByRole("searchbox", { name: "Buscar documentos" }),
+  ).toHaveValue("serra");
+  await page.goto("/acervo?q=algo-que-nao-existe");
+  await expect(page.getByText("Nenhum documento encontrado.")).toBeVisible();
+  await page.getByRole("button", { name: "Limpar busca e filtros" }).click();
+  await expect(page).toHaveURL(/\/acervo$/);
+  await expect(page.locator(".acervo-card")).toHaveCount(16);
+  await page.goto("/acervo?tipo=valor-invalido");
+  await expect(page.locator(".acervo-card")).toHaveCount(16);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    "https://observatoriotobiassoueu.com.br/acervo",
+  );
+});
+
+for (const largura of [375, 768, 1440]) {
+  test(`páginas documentais não excedem ${largura}px`, async ({ page }) => {
+    await page.setViewportSize({ width: largura, height: 900 });
+    for (const rota of [
+      "/acervo/fotografias-visitas-i-vii",
+      "/acervo/fotografias-visitas-i-vii/arquivo/d0af646c-e6b0-423d-9edc-d5ffc74b246a",
+    ]) {
+      await page.goto(rota);
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+      ).toBe(true);
+    }
+  });
+}

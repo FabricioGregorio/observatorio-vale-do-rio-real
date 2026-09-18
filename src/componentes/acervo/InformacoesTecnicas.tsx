@@ -3,10 +3,7 @@ import { tamanhoLegivel } from "./TabelaAnexos";
 
 export function InformacoesTecnicas({ arquivo }: { arquivo: AnexoPublico }) {
   return (
-    <details
-      className="border p-4"
-      style={{ borderColor: "var(--color-borda)" }}
-    >
+    <details className="acervo-tecnico border p-4">
       <summary>Informações técnicas</summary>
       <dl className="mt-4 grid gap-2">
         <div>
