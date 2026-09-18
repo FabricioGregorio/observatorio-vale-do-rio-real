@@ -137,9 +137,6 @@ export default async function PaginaArquivo({ params }: Props) {
               id="transcricao-publica"
               className="acervo-link"
               href={`/acervo/${slug}/arquivo/${transcricao.arquivoId}` as Route}
-              aria-describedby="acervo-arquivo-nova-guia"
-              target="_blank"
-              rel="noopener noreferrer"
             >
               Abrir transcrição pública deste documento
             </Link>

@@ -89,9 +89,6 @@ export default async function PaginaDocumento({ params }: Props) {
         ) : null}
       </header>
 
-      <span id="acervo-evidencias-nova-guia" className="sr-only">
-        Abre em nova guia.
-      </span>
       {b01 ? (
         <div className="flex flex-col gap-10">
           <div className="max-w-prose">
@@ -138,9 +135,6 @@ export default async function PaginaDocumento({ params }: Props) {
                           href={
                             `/acervo/${slug}/arquivo/${entrada.arquivoId}` as Route
                           }
-                          aria-describedby="acervo-evidencias-nova-guia"
-                          target="_blank"
-                          rel="noopener noreferrer"
                         >
                           {entrada.tituloPublico}
                         </Link>
@@ -185,9 +179,6 @@ export default async function PaginaDocumento({ params }: Props) {
                   href={`/acervo/${slug}/arquivo/${arquivo.arquivoId}` as Route}
                   id={`acervo-link-${arquivo.arquivoId}`}
                   aria-labelledby={`acervo-link-${arquivo.arquivoId} acervo-arquivo-${arquivo.arquivoId}`}
-                  aria-describedby="acervo-evidencias-nova-guia"
-                  target="_blank"
-                  rel="noopener noreferrer"
                 >
                   Ver arquivo e informações <span aria-hidden="true">↗</span>
                 </Link>

@@ -18,9 +18,6 @@ export function ListaDocumentosPublicos({
 }) {
   return (
     <div className="grid gap-5 md:grid-cols-2">
-      <span id="acervo-documentos-nova-guia" className="sr-only">
-        Abre em nova guia.
-      </span>
       {documentos.map((documento, indice) => (
         <article
           key={documento.slug}
@@ -50,9 +47,6 @@ export function ListaDocumentosPublicos({
               className="acervo-link"
               id={`acervo-link-${documento.slug}`}
               aria-labelledby={`acervo-link-${documento.slug} acervo-documento-${documento.slug}`}
-              aria-describedby="acervo-documentos-nova-guia"
-              target="_blank"
-              rel="noopener noreferrer"
             >
               Explorar documento <span aria-hidden="true">↗</span>
             </Link>
