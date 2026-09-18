@@ -88,28 +88,6 @@
     "transformacao": "orientação aplicada; imagem integral sem crop; largura máxima de 1280 px; conversão para WebP; metadados removidos"
   },
   {
-    "arquivo": "borda-frente-museu.webp",
-    "largura": 1280,
-    "altura": 1707,
-    "bytes": 230346,
-    "sha256": "4f17d17521069bd33986ae3e593f9ada5404d06a7cc4b01524e2e29e5756aae8",
-    "alt": "Fachada do Museu Borda da Mata, com objetos expostos.",
-    "local": "Borda da Mata",
-    "lugar": "borda-da-mata",
-    "autor": null,
-    "credito": null,
-    "principal": false,
-    "acervo": "b01-centro-cultural-museu-borda-da-mata-frente-do-museu-borda-da-mata-v1.webp",
-    "original": {
-      "arquivo": "fotos/centro-cultural-museu-borda-da-mata/frente-do-museu-borda-da-mata.heic",
-      "largura": 3024,
-      "altura": 4032,
-      "bytes": 2690038,
-      "sha256": "a34d4858b111bc8bb9ec86f75961d2ddc1a59085630ef3e892065516da42375c"
-    },
-    "transformacao": "orientação aplicada; imagem integral sem crop; largura máxima de 1280 px; conversão para WebP; metadados removidos"
-  },
-  {
     "arquivo": "borda-geladeira-discos.webp",
     "largura": 1280,
     "altura": 1707,

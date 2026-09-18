@@ -7,18 +7,23 @@ conjunto, nunca uma segunda codificação.
 
 ## O que entra
 
-Todo arquivo de `OBSERVATORIO_FONTES_DIR/fotos/`. São 63 arquivos com 59
-conteúdos distintos: quatro fotografias existem em duas pastas com os mesmos
+Todo arquivo de `OBSERVATORIO_FONTES_DIR/fotos/`. São 61 arquivos com 58
+conteúdos distintos: três fotografias existem em duas pastas com os mesmos
 bytes. A deduplicação é por SHA-256 do original, e o caminho canônico é o da
 pasta de lugar quando ela existe — a pasta de lugar descreve onde a fotografia
 foi feita, a pasta de pessoa descreve em qual visita.
 
+A árvore `fotos/` é a seleção editorial vigente, por decisão de 2026-09-18:
+o que está lá é o que pode ser publicado, e fotografia retirada de lá sai do
+Acervo. Quem declara o conjunto é `corpus-b01-autorizado.json`, por hash.
+
 ## O que o derivado preserva e o que perde
 
-Permitido, e é só isto: orientação EXIF aplicada, redimensionamento para no
-máximo 1280 px de largura, conversão para WebP e remoção de metadados. Sem
-recorte. Proibido, e o script não faz: acrescentar ou remover pessoas, alterar
-cenário, aplicar filtro ou gerar pixel por IA.
+Permitido, e é só isto: orientação EXIF aplicada, tarja de privacidade quando
+declarada, redimensionamento para no máximo 1280 px de largura, conversão para
+WebP e remoção de metadados. Sem recorte. Proibido, e o script não faz:
+acrescentar ou remover pessoas, alterar cenário, aplicar filtro ou gerar pixel
+por IA.
 
 O SVG da Bodega dos Tropeiros é ilustração vetorial, não fotografia: ele passa
 inteiro, sem recodificação, porque converter vetor em WebP destruiria o que ele
@@ -43,7 +48,7 @@ import unicodedata
 from pathlib import Path
 
 import pillow_heif
-from PIL import Image, ImageOps
+from PIL import Image, ImageDraw, ImageOps
 
 pillow_heif.register_heif_opener()
 
@@ -145,10 +150,6 @@ FICHAS = {
         "borda-frente-casa-de-taipa.webp",
         "Fachada da casa de taipa do Centro Cultural e Museu Borda da Mata.",
     ),
-    "centro-cultural-museu-borda-da-mata/frente-do-museu-borda-da-mata.heic": (
-        "borda-frente-museu.webp",
-        "Fachada do Museu Borda da Mata, com objetos expostos.",
-    ),
     "centro-cultural-museu-borda-da-mata/geladeira-em-conversa-com-discos-e-cds-dentro.heic": (
         "borda-geladeira-discos.webp",
         "Geladeira reutilizada como acervo de discos e CDs no Borda da Mata.",
@@ -183,6 +184,39 @@ TRANSFORMACAO = (
     f"{LARGURA_MAXIMA} px; conversão para WebP; metadados removidos"
 )
 
+# Originais que só podem ser publicados com tarja de privacidade.
+#
+# Declarado à parte de `TARJAS` de propósito: assim apagar as coordenadas por
+# acidente quebra a derivação em vez de publicar o que devia estar coberto.
+# Um `dict.get` que devolve `None` seria silencioso; esta lista não é.
+#
+# Decisão humana de 2026-09-17 (ADR-020): a placa do veículo em
+# `atravessando-a-ponte.jpg` fica ilegível **no derivado**, e o original nunca
+# é modificado.
+EXIGEM_TARJA = frozenset(
+    {
+        "serra-dos-macacos/atravessando-a-ponte.jpg",
+    }
+)
+
+# Retângulos opacos, em coordenadas do original **já orientado**, aplicados
+# antes do redimensionamento — o que torna a tarja parte do pixel e não uma
+# camada removível. Opaco, e não desfoque ou pixelização: as duas últimas
+# preservam informação e já foram revertidas em casos públicos.
+#
+# São duas regiões, não uma. A auditoria de 2026-09-18 encontrou o mesmo
+# emplacamento **refletido no capô do carro de onde a foto foi feita**, na
+# parte inferior do quadro, e parcialmente legível. Cobrir só a placa do
+# veículo à frente deixaria uma cópia espelhada recuperável.
+TARJAS: dict[str, tuple[tuple[int, int, int, int], ...]] = {
+    "serra-dos-macacos/atravessando-a-ponte.jpg": (
+        (1495, 2305, 1670, 2385),
+        (1500, 3250, 1710, 3375),
+    ),
+}
+
+COR_DA_TARJA = (0, 0, 0)
+
 
 def normalizar(texto: str) -> str:
     sem_acento = "".join(
@@ -196,6 +230,49 @@ def normalizar(texto: str) -> str:
 
 def sha256(caminho: Path) -> str:
     return hashlib.sha256(caminho.read_bytes()).hexdigest()
+
+
+def aplicar_tarjas(
+    imagem: Image.Image, relativo: str
+) -> tuple[tuple[int, int, int, int], ...]:
+    """Pinta as tarjas declaradas para este original e devolve as que aplicou.
+
+    Falha fechada em três frentes, porque tarja que não cobre é pior que tarja
+    nenhuma — ela dá a impressão de que o assunto foi tratado:
+
+    - original em ``EXIGEM_TARJA`` sem retângulo declarado interrompe tudo;
+    - retângulo fora dos limites da imagem interrompe tudo, em vez de pintar
+      no vazio: é o sintoma de coordenada medida noutra orientação;
+    - retângulo degenerado, com largura ou altura nula, também interrompe.
+
+    A tarja é pintada no original já orientado e **antes** do
+    redimensionamento, de modo que o pixel coberto não existe no derivado.
+    """
+    tarjas = TARJAS.get(relativo, ())
+    if relativo in EXIGEM_TARJA and not tarjas:
+        raise SystemExit(
+            f"{relativo} exige tarja de privacidade e nenhuma foi declarada.\n"
+            "    Nada foi gravado. Declare o retângulo em TARJAS."
+        )
+    if not tarjas:
+        return ()
+
+    largura, altura = imagem.size
+    pincel = ImageDraw.Draw(imagem)
+    for x0, y0, x1, y1 in tarjas:
+        if x1 <= x0 or y1 <= y0:
+            raise SystemExit(
+                f"{relativo}: tarja degenerada {(x0, y0, x1, y1)}. "
+                "Nada foi gravado."
+            )
+        if not (0 <= x0 < x1 <= largura and 0 <= y0 < y1 <= altura):
+            raise SystemExit(
+                f"{relativo}: tarja {(x0, y0, x1, y1)} cai fora de "
+                f"{largura}x{altura}. Coordenada é do original já orientado. "
+                "Nada foi gravado."
+            )
+        pincel.rectangle((x0, y0, x1 - 1, y1 - 1), fill=COR_DA_TARJA)
+    return tarjas
 
 
 def prioridade(relativo: str) -> tuple[int, str]:
@@ -302,6 +379,7 @@ def principal() -> None:
             with Image.open(origem) as aberta:
                 imagem = ImageOps.exif_transpose(aberta).convert("RGB")
                 original["largura"], original["altura"] = imagem.size
+                tarjas = aplicar_tarjas(imagem, relativo)
                 if imagem.width > LARGURA_MAXIMA:
                     nova = round(imagem.height * LARGURA_MAXIMA / imagem.width)
                     imagem = imagem.resize(
@@ -312,6 +390,12 @@ def principal() -> None:
                 largura, altura = imagem.size
             derivado = True
             transformacao = TRANSFORMACAO
+            if tarjas:
+                original["tarjas_aplicadas"] = [list(r) for r in tarjas]
+                transformacao = (
+                    f"{len(tarjas)} tarja(s) opaca(s) de privacidade aplicada(s) "
+                    f"antes do redimensionamento; {TRANSFORMACAO}"
+                )
 
         credito = CREDITO_DE_TERCEIRO.get(relativo)
         item = {
@@ -370,11 +454,18 @@ def principal() -> None:
     if len(recorte) != len(FICHAS):
         raise SystemExit("Recorte das fichas não bateu com a seleção declarada.")
 
+    # `newline="\n"` explícito: sem ele, o Python no Windows grava CRLF, o
+    # `.gitattributes` normaliza para LF no commit e o working tree fica
+    # divergente do índice — que é a origem dos avisos de fim de linha no lint.
     (destino / "manifesto-b01.json").write_text(
-        json.dumps(itens, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        json.dumps(itens, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+        newline="\n",
     )
     Path("src/dados/pesquisa/lugares-derivados.json").write_text(
-        json.dumps(recorte, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        json.dumps(recorte, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+        newline="\n",
     )
     print(f"{len(itens)} derivados em {destino}; {len(recorte)} arquivos de ficha.")
 

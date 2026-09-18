@@ -1,5 +1,9 @@
 [
   {
+    "arquivo": "fotos/centro-cultural-museu-borda-da-mata/capa-principal.jpg",
+    "sha256": "fb61c6c9b13ba80b0cdf06c78f8bf679520282b191cb0e99d7a601f30c0582a4"
+  },
+  {
     "arquivo": "fotos/centro-cultural-museu-borda-da-mata/conversa-com-oviedo-dentro-da-casa-de-taipa.heic",
     "sha256": "73d9aa2fddc8fa00663de6720428c023c85fa48d6b55bdb2cc0e9a0a2e4b3bc6"
   },
@@ -16,16 +20,16 @@
     "sha256": "e56e29065948c94f14f00f7ecdc278c1846d4036038efa5841ceb837f35b7143"
   },
   {
-    "arquivo": "fotos/centro-cultural-museu-borda-da-mata/frente-do-museu-borda-da-mata.heic",
-    "sha256": "a34d4858b111bc8bb9ec86f75961d2ddc1a59085630ef3e892065516da42375c"
-  },
-  {
     "arquivo": "fotos/centro-cultural-museu-borda-da-mata/geladeira-em-conversa-com-discos-e-cds-dentro.heic",
     "sha256": "4cfec584e3a0d0e03f5698e19b80bd85be9b74df019d59725e77feada2de5bea"
   },
   {
     "arquivo": "fotos/centro-cultural-museu-borda-da-mata/lhucas-concedendo-entrevista-a-pedro.heic",
     "sha256": "2131371f46e35733f01cdeb0ad86b38d17f4069425529b104d195650ea9c5ea3"
+  },
+  {
+    "arquivo": "fotos/centro-cultural-museu-borda-da-mata/placa-com-frase.heic",
+    "sha256": "20d90951a856b0facdbe13f4dde2e3a25bca4635d87992e50c57bf4a76989971"
   },
   {
     "arquivo": "fotos/dilson-de-agripino/durante-entrevista.jpg",
@@ -64,48 +68,36 @@
     "sha256": "088874e85a372a281ebf0f92dd07719fb6e244eb4c97a8b0ba0b5d460d8fca1a"
   },
   {
-    "arquivo": "fotos/ilha-grande/cais-ou-pier-ilha-grande.png",
-    "sha256": "188ae9071d1c8a661a108afe0b4595753e6c1aa9d2f7be158848be23da79d0c7"
+    "arquivo": "fotos/ilha-grande/cais-ou-pier-ilha-grande.jpg",
+    "sha256": "21e0ab2cd424bcf470250873f499a2c38b45fc1ef107a5294e4f873bce1d678e"
   },
   {
-    "arquivo": "fotos/ilha-grande/campo-verde-de-grama-e-arvores.png",
-    "sha256": "defb34f4f8756b651ee1682759db0386f4a627a9cb11919ecf6dd9765395be9e"
+    "arquivo": "fotos/ilha-grande/campo-verde-de-grama-e-arvores.jpg",
+    "sha256": "cf84dafaa7647d86eb43336fa68704cb517dd057e61e742c4c4cddf43298910c"
   },
   {
-    "arquivo": "fotos/ilha-grande/chegando-a-ilha-grande-de-barco.png",
-    "sha256": "00415cefdbd2a3954bf2717fe4886aa69ba62ab2815bbf58b1aedb8a3a4c1e89"
+    "arquivo": "fotos/ilha-grande/dona-mada.jpg",
+    "sha256": "774c566f7a1aa821f015a537fab169684d71189d842a6bc67d66b87388ea9083"
   },
   {
-    "arquivo": "fotos/ilha-grande/dona-mada.png",
-    "sha256": "2272f64414f56217333b717cba406f51ff69abcbba55f6976254b3e72864cc09"
+    "arquivo": "fotos/ilha-grande/forno-a-lenha.jpg",
+    "sha256": "fa048f0477bfdf2e3ef6fc3cec19c6c336353b848649553489159c19e4c964b9"
   },
   {
-    "arquivo": "fotos/ilha-grande/forno-a-lenha.png",
-    "sha256": "f9218275a2102074b6b81f52142b374bce86e9f38b5540075c51e54c0d867c61"
-  },
-  {
-    "arquivo": "fotos/ilha-grande/forno-a-lenha2.png",
-    "sha256": "25475b5fa02d2aa4d3e70f07580c01ffe32910b11f39bc91d5cb71cfe7f43aa9"
+    "arquivo": "fotos/ilha-grande/forno-a-lenha2.jpg",
+    "sha256": "551c673fc088aa1c84d4f3e307836343c2dfcb06779a5df77a0c6111f1f9cfd4"
   },
   {
     "arquivo": "fotos/ilha-grande/igrejinha.jpg",
-    "sha256": "2746986d0351640c3ba4e0b78fec0276cacd828039317638c3d4e9f7d6f8a4c0"
+    "sha256": "9b2bfd32e919b8797b1430b41407502ef23f824fc7e4c2eabfc11511ad2c4d06"
   },
   {
-    "arquivo": "fotos/ilha-grande/placa-bem-vindos-a-pedreiras.jpg",
-    "sha256": "5fa96abae987ca25278eb819df1852d5a1cd770e182dbeadd67b352f22083441"
-  },
-  {
-    "arquivo": "fotos/ilha-grande/rio.png",
-    "sha256": "a8ce4e12de35cd444b2a3ff74667075b079e9dfd4014963dc0556f400a52ea21"
+    "arquivo": "fotos/ilha-grande/principal-capa.jpg",
+    "sha256": "faf06f4d3f82ebd62d72ce1b74bff770f12d3a96fb9cdf2ce50a599dd633d5de"
   },
   {
     "arquivo": "fotos/josenilson-bispo/antes-da-entrevista.jpg",
     "sha256": "57988d915c2ed5545398e5ad7d4bafe76987d9cf6f0b4898fc1a84fdc577a364"
-  },
-  {
-    "arquivo": "fotos/josenilson-bispo/antes-da-entrevista2.jpg",
-    "sha256": "4ed98b551fa8eeb2370674e4b7b33874a5cc35956cf622b537ff4731172c5106"
   },
   {
     "arquivo": "fotos/josenilson-bispo/biblioteca-da-sala-de-nilsinho-com-equipe-lendo-e-pegando-livros.jpg",
@@ -114,10 +106,6 @@
   {
     "arquivo": "fotos/josenilson-bispo/bodega-dos-tropeiros-e-mensagem-de-silo-no-memorial-tobias-barreto-homenagem-ao-recanto-da-serra.jpg",
     "sha256": "8affa12b68f568f5bba2109f324a26f682daa83136abacd0e88f7c13e53a7b47"
-  },
-  {
-    "arquivo": "fotos/josenilson-bispo/bodega-dos-tropeiros-no-memorial-tobias-barreto-homenagem-ao-recanto-da-serra.jpg",
-    "sha256": "c2b1b977c2d741c381fa8583b493e16f8b051294b4fb69337792d913f7b42097"
   },
   {
     "arquivo": "fotos/josenilson-bispo/foto-com-todos-pos-entrevista.jpg",
@@ -132,24 +120,12 @@
     "sha256": "f5c9a4adf29c55d5ed6a56a08d9239d552889b943ce193df707930a084cb6a7c"
   },
   {
-    "arquivo": "fotos/josenilson-bispo/mensagem-de-silo-no-memorial-tobias-barreto-homenagem-ao-recanto-da-serra.jpg",
-    "sha256": "f353f09372a9fa6a7ae5694da2d53e44bb079366848932fa4fc4a6cda203c82e"
-  },
-  {
     "arquivo": "fotos/josenilson-bispo/nilsinho-apresentando-mural-do-memorial-tobias-barreto.jpg",
     "sha256": "336b683851d0186472af5f6ce244f0f88274348407f060c7dd343efa110ef0cd"
   },
   {
     "arquivo": "fotos/josenilson-bispo/nilsinho-mostrando-banner-do-tobiarte.jpg",
     "sha256": "1e380f6d77efdf93a51e1339548ce1fa390aea5e6433ddf7edc4699bdc6a239d"
-  },
-  {
-    "arquivo": "fotos/josenilson-bispo/nilsinho-mostrando-banner-do-tobiarte2.jpg",
-    "sha256": "da4c81fe7873aacacd91b5cf2fb89cd186cc0bdb315d1da72474298740ca3dba"
-  },
-  {
-    "arquivo": "fotos/josenilson-bispo/nilsinho-mostrando-banner-do-tobiarte3.jpg",
-    "sha256": "f91edb27f52d5f29e33a1ea10b1eabc58c5af0d8b7a2f8cff5ebf0ca1d5002e3"
   },
   {
     "arquivo": "fotos/laerte-aguiar/equipe-com-laerte-aguiar.heic",
@@ -172,16 +148,8 @@
     "sha256": "8ce4e25eecd195f7e8b175f8fafb061eb2df375273ee07542b08c7aa99d1fffc"
   },
   {
-    "arquivo": "fotos/pedro-menezes/budega-dos-tropeiros-por-dentro.jpg",
-    "sha256": "0560f013200e9c63ab331b05f55f2bcd8b8fecc8e45c2780e397dcff7d706a07"
-  },
-  {
     "arquivo": "fotos/pedro-menezes/chegada-ao-recanto-placa-oxente-nao-se-avexe-nao.jpg",
     "sha256": "37cf8d2ee72d41756b41f1b027ca241c4cbc17d9a654addc2d9f5412fd7ca866"
-  },
-  {
-    "arquivo": "fotos/pedro-menezes/conhecendo-o-museu-e-memorial-epifanio-doria.heic",
-    "sha256": "fa8e01be6792d3160c1fe7ba612a89f72e2c29f810c6bf80f862463d9bc1f4e7"
   },
   {
     "arquivo": "fotos/pedro-menezes/frente-budega-dos-tropeiros.jpg",
@@ -196,20 +164,12 @@
     "sha256": "34693372f4d5012d79880c09c6e5fa573a91fc40920a2490c2c920f7f9da1b50"
   },
   {
-    "arquivo": "fotos/pedro-menezes/visita-a-mensagem-de-silo2.heic",
-    "sha256": "15231a6d695e0b276b49c670e505f036842e69395c860bdd063c60e9dd7f46d9"
-  },
-  {
     "arquivo": "fotos/pedro-menezes/visita-da-equipe-com-oviedo-e-neide-ao-recanto-da-serra.heic",
     "sha256": "b2273bfd331f5fda6682f220d94dcea57a0128d9626361895b99cba279234843"
   },
   {
-    "arquivo": "fotos/pedro-menezes/visita-na-mensagem-de-silo.png",
-    "sha256": "7deb206e317aa3fd92c8d64fa245b5516956fe972ab6d88d357f25de9075fd11"
-  },
-  {
-    "arquivo": "fotos/recanto-da-serra/bodega dos tropeiros.svg",
-    "sha256": "13d14523624cfe0a7505962282b59032f13d7a039c822cda0d0b710940c5d758"
+    "arquivo": "fotos/recanto-da-serra/chegada-ao-recanto.jpg",
+    "sha256": "8ce811df60c36700d0857bb415be167d623d1f668880fad6d9641bfa565c4c85"
   },
   {
     "arquivo": "fotos/recanto-da-serra/estufa.jpg",
@@ -232,7 +192,43 @@
     "sha256": "6bc9b831dd4a96b975ee6c5c2557a0a6e887a4550dece6fa54fde92fbf6f2f7e"
   },
   {
+    "arquivo": "fotos/recanto-da-serra/visita-ao-recanto.jpg",
+    "sha256": "264e549d317e3512f0ed2a6db18a8f18e0bbac3e49f34c4e8e8dec343cf8c26d"
+  },
+  {
     "arquivo": "fotos/recanto-da-serra/volte-sempre.jpg",
     "sha256": "fb03f333043f5ce8d802c6a9fe1107796667d1ae525d7ab445eb7c932c074ffb"
+  },
+  {
+    "arquivo": "fotos/serra-dos-macacos/atravessando-a-ponte.jpg",
+    "sha256": "d5683e3b98523d36c81e7f2bb9bf8020c361393dc416b6af27fcffd0eccb225c"
+  },
+  {
+    "arquivo": "fotos/serra-dos-macacos/cafe-na-casa-de-um-dos-moradores.jpg",
+    "sha256": "50578c10ad8e377c27de652a259876108f380266f6ef20d318f33e08cb0a4213"
+  },
+  {
+    "arquivo": "fotos/serra-dos-macacos/dentro-da-igreja-do-mata-7.jpg",
+    "sha256": "9f03299d8b43dcb9d2837e1a1ca0d0ba229ede07933b1ca5ffb75755890b81c4"
+  },
+  {
+    "arquivo": "fotos/serra-dos-macacos/igreja-do-mata-7.jpg",
+    "sha256": "bf2d1ce07e38dc8e971b10113b141b4ed16bf95eded2a5c9220f1a5754e5456c"
+  },
+  {
+    "arquivo": "fotos/serra-dos-macacos/igreja-serra-dos-macacos.jpg",
+    "sha256": "72cbc3ebf172f8b184ed09fb1b0493bb12cbf06252b14147183435dc7d52b203"
+  },
+  {
+    "arquivo": "fotos/serra-dos-macacos/principal-capa.jpg",
+    "sha256": "17bbd985205f34fcc98463d15e541f1540fd682e65d07c8517959d26ef7eae9b"
+  },
+  {
+    "arquivo": "fotos/serra-dos-macacos/serra-na-serra-dos-macacos.jpg",
+    "sha256": "e3b152b07215f93f7dc8fc935410b57dbd740f472213cf95abb8b26d77159202"
+  },
+  {
+    "arquivo": "fotos/serra-dos-macacos/serras-da-serra-dos-macacos.jpg",
+    "sha256": "522709b1ad54639ed569301ca70eddd54d1b8cd1d4e3552c0e9200171843f623"
   }
 ]

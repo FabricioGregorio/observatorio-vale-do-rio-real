@@ -28,9 +28,9 @@ const GERADOR = "scripts/derivar-fotos-campo.py";
  * `derivar-pesquisa-campo.ts`, que já conferia hash antes de transformar.
  */
 describe("declaração do corpus autorizado", () => {
-  test("declara 59 conteúdos, sem hash repetido", () => {
-    expect(corpusAutorizado).toHaveLength(59);
-    expect(new Set(corpusAutorizado.map((c) => c.sha256)).size).toBe(59);
+  test("declara 58 conteúdos, sem hash repetido", () => {
+    expect(corpusAutorizado).toHaveLength(58);
+    expect(new Set(corpusAutorizado.map((c) => c.sha256)).size).toBe(58);
   });
 
   test("todo caminho é de pasta do corpus e todo hash é sha256", () => {
@@ -73,8 +73,8 @@ describe("declaração do corpus autorizado", () => {
 describe("o que a interface consome está declarado", () => {
   const declarados = new Set(corpusAutorizado.map((c) => c.sha256));
 
-  test("os 13 derivados das fichas vêm do corpus autorizado", () => {
-    expect(DERIVADOS_DOS_LUGARES).toHaveLength(13);
+  test("os 12 derivados das fichas vêm do corpus autorizado", () => {
+    expect(DERIVADOS_DOS_LUGARES).toHaveLength(12);
     for (const foto of DERIVADOS_DOS_LUGARES) {
       expect(declarados.has(foto.original.sha256), foto.arquivo).toBe(true);
     }
@@ -173,6 +173,56 @@ describe("ADR-020 registra as decisões desta curadoria", () => {
     // Uma capa por lugar: nada de duas decisões para o mesmo.
     const lugares = [...bloco.matchAll(/"([^/]+)\//g)].map((m) => m[1]);
     expect(new Set(lugares).size).toBe(lugares.length);
+  });
+
+  /*
+    A tarja da placa é regra de pipeline, não zelo de quem roda o script.
+    Um `dict.get` que devolve vazio publicaria a placa em silêncio; por isso a
+    obrigação vive numa lista própria e a ausência de coordenada interrompe.
+  */
+  test("a placa a tarjar é regra do gerador, com falha fechada", () => {
+    const script = readFileSync(GERADOR, "utf8");
+    const original = "serra-dos-macacos/atravessando-a-ponte.jpg";
+
+    const exigem = /EXIGEM_TARJA = frozenset\(([\s\S]*?)\n\)/.exec(script)?.[1];
+    expect(exigem, "EXIGEM_TARJA declarada").toBeDefined();
+    expect(exigem).toContain(original);
+
+    const tarjas = /TARJAS: dict\[[\s\S]*?\n\}/.exec(script)?.[0] ?? "";
+    expect(tarjas, "coordenadas declaradas").toContain(original);
+    // Duas regiões: a placa do veículo e o mesmo emplacamento refletido.
+    expect([...tarjas.matchAll(/\(\d+, \d+, \d+, \d+\)/g)]).toHaveLength(2);
+
+    expect(script).toContain(
+      "exige tarja de privacidade e nenhuma foi declarada",
+    );
+    expect(script).toContain("cai fora de");
+  });
+
+  /*
+    Opaco, e não desfoque nem pixelização: as duas preservam informação e já
+    foram revertidas em casos públicos. E antes do redimensionamento, para que
+    o pixel coberto não exista no derivado.
+  */
+  test("a tarja é opaca e anterior ao redimensionamento", () => {
+    const script = readFileSync(GERADOR, "utf8");
+    expect(script).toContain("COR_DA_TARJA");
+    expect(script).not.toMatch(/GaussianBlur|BoxBlur|filter\(ImageFilter/);
+
+    const corpo = script.slice(script.indexOf("def principal"));
+    const tarja = corpo.indexOf("aplicar_tarjas(imagem");
+    const resize = corpo.indexOf("imagem.resize(");
+    expect(tarja, "tarja aplicada no laço").toBeGreaterThan(-1);
+    expect(tarja).toBeLessThan(resize);
+  });
+
+  test("o original da placa continua declarado no corpus", () => {
+    const declarados = new Set(corpusAutorizado.map((c) => c.sha256));
+    expect(
+      declarados.has(
+        "d5683e3b98523d36c81e7f2bb9bf8020c361393dc416b6af27fcffd0eccb225c",
+      ),
+    ).toBe(true);
   });
 
   test("declara o escopo da autorização e não a generaliza", () => {

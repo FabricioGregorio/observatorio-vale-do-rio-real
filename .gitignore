@@ -27,3 +27,6 @@ inventario-de-anexos.csv.origem
 
 # Vínculo local com a Vercel; nunca versionar.
 .vercel/
+
+# Bytecode dos scripts Python; nunca versionar.
+__pycache__/

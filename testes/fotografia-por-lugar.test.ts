@@ -103,9 +103,14 @@ describe("identidade entre fotografia e lugar", () => {
 describe("recorte das fichas por lugar", () => {
   const porId = new Map(lugaresDeCampo(new Map()).map((l) => [l.id, l]));
 
+  /*
+    Borda da Mata caiu de 7 para 6 na sincronização de 2026-09-18: o original
+    de `frente-do-museu-borda-da-mata.heic` saiu da seleção do responsável, e
+    a ficha não guarda fotografia cuja fonte não está mais no corpus.
+  */
   test.each([
     ["recanto-da-serra", 6],
-    ["borda-da-mata", 7],
+    ["borda-da-mata", 6],
     ["serra-dos-macacos", 0],
     ["ilha-grande", 3],
   ] as const)("%s leva %i fotografias à ficha", (id, quantas) => {
