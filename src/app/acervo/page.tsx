@@ -1,5 +1,5 @@
-import { ListaMateriaisPublicos } from "../../componentes/acervo/ListaMateriaisPublicos";
-import { listarAnexosPublicos } from "../../dados/consultas/anexos";
+import { ListaDocumentosPublicos } from "../../componentes/acervo/ListaDocumentosPublicos";
+import { listarDocumentosPublicos } from "../../dados/consultas/acervo";
 import { metadadosDaRota } from "../../lib/site-url";
 
 export const metadata = metadadosDaRota({
@@ -9,7 +9,7 @@ export const metadata = metadadosDaRota({
 });
 
 export default async function PaginaAcervo() {
-  const anexos = await listarAnexosPublicos();
+  const documentos = await listarDocumentosPublicos();
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-12">
@@ -22,7 +22,7 @@ export default async function PaginaAcervo() {
         </p>
       </header>
 
-      <ListaMateriaisPublicos anexos={anexos} />
+      <ListaDocumentosPublicos documentos={documentos} />
 
       <aside
         className="border-l-4 p-5"

@@ -27,6 +27,7 @@ import type {
  */
 
 export type AnexoPublico = {
+  arquivoId: string;
   codigo: string;
   estado: "PUBLICAVEL";
   revisaoPrivacidade: "concluida";
@@ -110,6 +111,7 @@ export function adaptarLinhasDaView(
       !l.linkPermanente ||
       !l.mimeType ||
       !l.sha256 ||
+      !l.arquivoId ||
       l.bytes === null ||
       l.natureza === null ||
       l.obrigatorio === null ||
@@ -146,6 +148,7 @@ export function adaptarLinhasDaView(
           arquivo_existe: true,
         }),
         anexo: {
+          arquivoId: l.arquivoId,
           ordemAnexo: l.ordemAnexo,
           slug: l.slug,
           rotuloArquivo: l.rotuloArquivo,

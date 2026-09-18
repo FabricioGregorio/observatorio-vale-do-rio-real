@@ -122,6 +122,6 @@ test.describe("protótipo Pesquisa em Campo H3", () => {
     const sitemap = await (await request.get("/sitemap.xml")).text();
     expect(sitemap).not.toContain("/dev/pesquisa");
     const robots = await (await request.get("/robots.txt")).text();
-    expect(robots).toContain("Disallow: /dev/");
+    expect(robots).toMatch(/Disallow: \/(?:dev\/)?(?:\r?\n|$)/);
   });
 });

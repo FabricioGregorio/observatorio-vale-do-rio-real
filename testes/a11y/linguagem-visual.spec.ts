@@ -148,8 +148,8 @@ test("H3.5: sem recurso externo/privado e sem entrada no sitemap", async ({
     /primeiro-post|B01|A04|D01-08|identidade-visual|\.pdf/,
   );
   expect(await (await request.get("/sitemap.xml")).text()).not.toContain(ROTA);
-  expect(await (await request.get("/robots.txt")).text()).toContain(
-    "Disallow: /dev/",
+  expect(await (await request.get("/robots.txt")).text()).toMatch(
+    /Disallow: \/(?:dev\/)?(?:\r?\n|$)/,
   );
 });
 

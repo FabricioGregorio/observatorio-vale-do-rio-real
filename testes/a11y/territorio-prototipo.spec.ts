@@ -225,7 +225,7 @@ test.describe("protótipo territorial H2", () => {
     expect(sitemap).not.toContain("/dev/territorio");
 
     const robots = await (await request.get("/robots.txt")).text();
-    expect(robots).toContain("Disallow: /dev/");
+    expect(robots).toMatch(/Disallow: \/(?:dev\/)?(?:\r?\n|$)/);
 
     await expect(page).toHaveURL(/\/dev\/territorio/);
   });

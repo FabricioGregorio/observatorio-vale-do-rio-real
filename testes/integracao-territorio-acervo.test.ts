@@ -11,6 +11,7 @@ import type { AnexoPublico } from "../src/dados/consultas/anexos";
 
 function anexo(slug: string, indice: number): AnexoPublico {
   return {
+    arquivoId: `00000000-0000-4000-8000-${String(indice).padStart(12, "0")}`,
     codigo: String(indice),
     estado: "PUBLICAVEL",
     revisaoPrivacidade: "concluida",

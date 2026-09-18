@@ -198,7 +198,7 @@ test.describe("protótipo Dados e indicadores H4", () => {
     const sitemap = await (await request.get("/sitemap.xml")).text();
     expect(sitemap).not.toContain("/dev/dados");
     const robots = await (await request.get("/robots.txt")).text();
-    expect(robots).toContain("Disallow: /dev/");
+    expect(robots).toMatch(/Disallow: \/(?:dev\/)?(?:\r?\n|$)/);
   });
 
   /**

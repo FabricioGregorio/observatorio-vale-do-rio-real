@@ -51,10 +51,10 @@ describe("configuração de produção", () => {
     );
   });
 
-  test("sitemap contém as treze páginas públicas canônicas", () => {
-    const urls = sitemap().map((item) => item.url);
+  test("sitemap contém páginas institucionais, documentos e evidências públicas", async () => {
+    const urls = (await sitemap()).map((item) => item.url);
 
-    expect(urls).toHaveLength(13);
+    expect(urls).toHaveLength(138);
     expect(urls).toContain("https://observatoriotobiassoueu.com.br/");
     expect(urls).toContain("https://observatoriotobiassoueu.com.br/territorio");
     expect(urls).toContain("https://observatoriotobiassoueu.com.br/acervo");

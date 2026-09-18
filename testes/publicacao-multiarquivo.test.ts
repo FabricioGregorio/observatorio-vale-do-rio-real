@@ -149,7 +149,8 @@ async function linhasPublicas(cliente: PoolClient) {
            rotulo_arquivo as "rotuloArquivo",
            arquivo_origem_id as "arquivoOrigemId",
            arquivo_relacao as "arquivoRelacao",
-           arquivo_derivacao_metodo as "arquivoDerivacaoMetodo"
+           arquivo_derivacao_metodo as "arquivoDerivacaoMetodo",
+           arquivo_id as "arquivoId"
       from vw_anexo_publico
      where slug in ('identidade-visual', 'relatorio-tecnico-recanto-da-serra')
      order by slug, link_permanente

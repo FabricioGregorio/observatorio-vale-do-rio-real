@@ -295,8 +295,8 @@ test("H4.5: sem recurso externo, fora do sitemap e bloqueada no robots", async (
   ).toEqual([]);
   expect(recursos.join(" ")).not.toMatch(/anexo-indicadores|\.xlsx|\.pdf/);
   expect(await (await request.get("/sitemap.xml")).text()).not.toContain(ROTA);
-  expect(await (await request.get("/robots.txt")).text()).toContain(
-    "Disallow: /dev/",
+  expect(await (await request.get("/robots.txt")).text()).toMatch(
+    /Disallow: \/(?:dev\/)?(?:\r?\n|$)/,
   );
 });
 

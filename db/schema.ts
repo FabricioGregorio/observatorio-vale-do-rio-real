@@ -624,6 +624,8 @@ export const vwAnexoPublico = pgView("vw_anexo_publico", {
   arquivoOrigemId: uuid("arquivo_origem_id"),
   arquivoRelacao: text("arquivo_relacao"),
   arquivoDerivacaoMetodo: metodoDerivacao("arquivo_derivacao_metodo"),
+  /** Identidade do objeto que já passou pelo gate da view (migração 0009). */
+  arquivoId: uuid("arquivo_id"),
 }).existing();
 
 /**

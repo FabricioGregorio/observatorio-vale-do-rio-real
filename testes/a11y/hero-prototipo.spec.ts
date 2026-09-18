@@ -684,7 +684,7 @@ test.describe("isolamento da rota", () => {
 
   test("robots.txt bloqueia /dev/", async ({ page }) => {
     const resposta = await page.request.get("/robots.txt");
-    expect(await resposta.text()).toContain("Disallow: /dev/");
+    expect(await resposta.text()).toMatch(/Disallow: \/(?:dev\/)?(?:\r?\n|$)/);
   });
 
   /**

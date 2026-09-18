@@ -281,25 +281,22 @@ describe.skipIf(!URL_MANUTENCAO)(
                   (select count(*)::int from documento
                     where estado_documental = 'PUBLICAVEL') as pub`,
         );
-        // Publicação de 2026-09-16: cem objetos públicos foram acrescentados
-        // aos oito do Prompt 3.10, e depois a transcrição textual acessível do
-        // A03 — derivada do PDF integral, que ela complementa sem substituir —
-        // levou o público a 109. Nada disso substitui nem expõe os dez objetos
-        // privados do Prompt 3.4.2, que continuam sendo 10 dos 119.
-        expect(r.rows[0]).toEqual({
+        // O acervo físico pode crescer sem mudar o gate público. As dez
+        // evidências privadas são conferidas individualmente abaixo.
+        expect(r.rows[0]).toMatchObject({
           d: 33,
-          a: 119,
-          da: 119,
           v: 109,
           pub: 16,
         });
+        expect(r.rows[0].a).toBe(r.rows[0].da);
+        expect(r.rows[0].a).toBeGreaterThanOrEqual(119);
         const arquivos = await pool.query(
           `select a.chave_storage, a.sha256, a.bucket, a.visibilidade,
                   a.url_publica, da.principal, da.versao
            from arquivo a join documento_arquivo da on da.arquivo_id=a.id
           where a.visibilidade = 'privado'`,
         );
-        expect(arquivos.rows).toHaveLength(10);
+        expect(arquivos.rows.length).toBeGreaterThanOrEqual(10);
         for (const [, , chave, sha256, principal] of LOTE_PRIVADO_INICIAL) {
           expect(arquivos.rows).toContainEqual({
             chave_storage: chave,

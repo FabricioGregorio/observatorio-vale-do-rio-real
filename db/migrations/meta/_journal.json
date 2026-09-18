@@ -57,6 +57,13 @@
       "when": 1789223380289,
       "tag": "0008_gate_pendencia_multiarquivo",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1789709207730,
+      "tag": "0009_acervo_arquivo_id_publico",
+      "breakpoints": true
     }
   ]
 }
