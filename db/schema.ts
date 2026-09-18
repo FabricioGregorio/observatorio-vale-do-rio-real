@@ -581,6 +581,101 @@ export const documentoArquivo = pgTable(
   ],
 );
 
+// ─── 8. temporada — PodObservar (doc 02 §9) ────────────────────────
+
+/**
+ * Temporada do PodObservar. Depende de `arquivo` (capa).
+ *
+ * Doc 02 §9 não declara `criado_em`/`atualizado_em` para esta tabela — ela
+ * portanto **não** recebe `trg_atualizado_em` (doc 02 §4, mesma razão de
+ * `consentimento` e `documento_arquivo`). Não acrescentar timestamps por
+ * simetria: o documento é a especificação, e ele não os pede aqui.
+ *
+ * `numero` é único no projeto inteiro, e não por ano: é ele que a rota
+ * `/podobservar/t1/[episodio]` carrega em `t1`.
+ */
+export const temporada = pgTable("temporada", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  numero: integer("numero").notNull().unique(),
+  titulo: text("titulo").notNull(),
+  descricao: text("descricao"),
+  ano: integer("ano"),
+  capaId: uuid("capa_id").references(() => arquivo.id, {
+    onDelete: "set null",
+  }),
+});
+
+// ─── 9. episodio — PodObservar (doc 02 §9) ─────────────────────────
+
+/**
+ * Episódio do PodObservar. Depende de `temporada` e de `arquivo`.
+ *
+ * Três obrigatoriedades do doc 02 §9 são o contrato desta tabela, e nenhuma
+ * delas é conveniência:
+ *
+ * - `audio_id NOT NULL` — o site é dono do áudio final canônico. Spotify e
+ *   YouTube são distribuição, nunca fonte única; um episódio sem binário
+ *   próprio não é representável.
+ * - `transcricao NOT NULL` — acessibilidade. O podcast é a audiodescrição da
+ *   pesquisa para quem não lê o documento; a transcrição é o inverso, para
+ *   quem não ouve o áudio. `AGENTS.md` proíbe áudio sem transcrição vinculada.
+ * - `status` com default `rascunho` — nada nasce público.
+ *
+ * `ON DELETE RESTRICT` no áudio e na temporada segue `documento_arquivo`:
+ * evidência de edital não some por efeito colateral.
+ *
+ * **Não há CHECK `publicado_exige_data` aqui**, ao contrário de `documento`.
+ * Doc 02 §9 não o especifica para `episodio`, e a hierarquia de fontes manda
+ * seguir o documento. A consequência é deliberada: o estado incoerente
+ * `publicado` sem `publicado_em` é representável na tabela e fica retido pelo
+ * gate de `vw_episodio_publico`, que exige a data explicitamente.
+ */
+export const episodio = pgTable(
+  "episodio",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    slug: citext("slug").notNull().unique(),
+    temporadaId: uuid("temporada_id")
+      .notNull()
+      .references(() => temporada.id, { onDelete: "restrict" }),
+    numero: integer("numero").notNull(),
+    titulo: text("titulo").notNull(),
+    /** vira <description> no RSS */
+    resumo: text("resumo").notNull(),
+    audioId: uuid("audio_id")
+      .notNull()
+      .references(() => arquivo.id, { onDelete: "restrict" }),
+    duracaoSeg: integer("duracao_seg").notNull(),
+    /** acessibilidade: obrigatória, e do áudio final publicado */
+    transcricao: text("transcricao").notNull(),
+    capaId: uuid("capa_id").references(() => arquivo.id, {
+      onDelete: "set null",
+    }),
+    explicito: boolean("explicito").notNull().default(false),
+    urlSpotify: text("url_spotify"),
+    urlYoutube: text("url_youtube"),
+    status: statusPublicacao("status").notNull().default("rascunho"),
+    publicadoEm: timestamp("publicado_em", { withTimezone: true }),
+    criadoEm: timestamp("criado_em", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    atualizadoEm: timestamp("atualizado_em", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    busca: tsvector("busca").generatedAlwaysAs(
+      sql`to_tsvector('portuguese', sem_acento(coalesce(titulo,'') || ' ' || coalesce(resumo,'') || ' ' || coalesce(transcricao,'')))`,
+    ),
+  },
+  (t) => [
+    unique("episodio_temporada_id_numero_key").on(t.temporadaId, t.numero),
+    index("idx_episodio_busca").using("gin", t.busca),
+    /** Sustenta o gate público e a primitiva "episódio mais recente". */
+    index("idx_episodio_publicado")
+      .on(t.publicadoEm)
+      .where(sql`${t.status} = 'publicado'`),
+  ],
+);
+
 // ─── View de consumo (doc 02 §13) ──────────────────────────────────
 
 /**
@@ -651,4 +746,54 @@ export const vwPendenciaPublicacao = pgView("vw_pendencia_publicacao", {
   slug: citext("slug"),
   titulo: text("titulo"),
   pendencia: text("pendencia"),
+}).existing();
+
+/**
+ * `vw_episodio_publico` — gate público do PodObservar (migração 0010).
+ *
+ * Criada em SQL bruto dentro da migração, como toda view do projeto; aqui só
+ * é **declarada como existente** (`.existing()`), sem gerar DDL (doc 03 §6.7).
+ *
+ * O gate é fail-closed, no mesmo princípio de `vw_anexo_publico`. São seis
+ * condições, e nenhuma é dispensável:
+ *
+ * 1. `status = 'publicado'` — rascunho e em_revisao não vazam;
+ * 2. `publicado_em IS NOT NULL` — sem data declarada não há publicação;
+ * 3. `publicado_em <= now()` — episódio datado no futuro ainda não é público;
+ * 4. o áudio é `visibilidade = 'publico'`,
+ * 5. com `url_publica` presente,
+ * 6. e `espelhado_em` preenchido.
+ *
+ * As três últimas são JOIN interno, não filtro opcional: um episódio cujo
+ * áudio ainda está no bucket privado simplesmente não tem linha pública. É a
+ * mesma recusa de `vw_anexo_publico` a emitir `link_permanente` nulo — o site
+ * não inventa URL por concatenação, ele lê a URL que o objeto declara.
+ *
+ * A capa entra por LEFT JOIN com os mesmos predicados públicos: capa privada
+ * apaga `capa_url`, e não o episódio.
+ *
+ * A view não expõe `id`, `temporada_id`, `audio_id`, `capa_id`, `status`,
+ * `criado_em`, `atualizado_em`, `busca`, bucket nem chave de storage.
+ * `temporada_numero` está aqui porque é ele que a rota carrega em `t1`: a
+ * consulta valida temporada e slug juntos, e a divergência vira inexistência.
+ */
+export const vwEpisodioPublico = pgView("vw_episodio_publico", {
+  slug: citext("slug"),
+  temporadaNumero: integer("temporada_numero"),
+  temporadaTitulo: text("temporada_titulo"),
+  numero: integer("numero"),
+  titulo: text("titulo"),
+  resumo: text("resumo"),
+  publicadoEm: timestamp("publicado_em", { withTimezone: true }),
+  duracaoSeg: integer("duracao_seg"),
+  transcricao: text("transcricao"),
+  explicito: boolean("explicito"),
+  urlSpotify: text("url_spotify"),
+  urlYoutube: text("url_youtube"),
+  audioUrl: text("audio_url"),
+  audioMimeType: text("audio_mime_type"),
+  audioBytes: bigint("audio_bytes", { mode: "number" }),
+  capaUrl: text("capa_url"),
+  capaLarguraPx: integer("capa_largura_px"),
+  capaAlturaPx: integer("capa_altura_px"),
 }).existing();
