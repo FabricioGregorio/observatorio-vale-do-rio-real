@@ -84,7 +84,16 @@ export default async function PaginaAcervo() {
             formato estruturado.
           </p>
         </div>
-        <a href="/anexos.json" className="acervo-link">
+        <span id="acervo-inventario-nova-guia" className="sr-only">
+          Abre em nova guia.
+        </span>
+        <a
+          href="/anexos.json"
+          className="acervo-link"
+          aria-describedby="acervo-inventario-nova-guia"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Consultar inventário em JSON <span aria-hidden="true">↗</span>
         </a>
       </section>

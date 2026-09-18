@@ -95,6 +95,9 @@ export default async function PaginaArquivo({ params }: Props) {
           </Link>
         </p>
       </header>
+      <span id="acervo-arquivo-nova-guia" className="sr-only">
+        Abre em nova guia.
+      </span>
       {imagemB01 && editorial ? (
         <figure className="flex flex-col gap-3">
           <img
@@ -134,6 +137,9 @@ export default async function PaginaArquivo({ params }: Props) {
               id="transcricao-publica"
               className="acervo-link"
               href={`/acervo/${slug}/arquivo/${transcricao.arquivoId}` as Route}
+              aria-describedby="acervo-arquivo-nova-guia"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               Abrir transcrição pública deste documento
             </Link>
@@ -149,7 +155,13 @@ export default async function PaginaArquivo({ params }: Props) {
         </div>
       ) : null}
       <p className="flex flex-wrap items-center gap-4">
-        <a className="acervo-link" href={arquivo.linkPermanente}>
+        <a
+          className="acervo-link"
+          href={arquivo.linkPermanente}
+          aria-describedby="acervo-arquivo-nova-guia"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Abrir arquivo público <span aria-hidden="true">↗</span>
         </a>
       </p>

@@ -89,6 +89,9 @@ export default async function PaginaDocumento({ params }: Props) {
         ) : null}
       </header>
 
+      <span id="acervo-evidencias-nova-guia" className="sr-only">
+        Abre em nova guia.
+      </span>
       {b01 ? (
         <div className="flex flex-col gap-10">
           <div className="max-w-prose">
@@ -135,6 +138,9 @@ export default async function PaginaDocumento({ params }: Props) {
                           href={
                             `/acervo/${slug}/arquivo/${entrada.arquivoId}` as Route
                           }
+                          aria-describedby="acervo-evidencias-nova-guia"
+                          target="_blank"
+                          rel="noopener noreferrer"
                         >
                           {entrada.tituloPublico}
                         </Link>
@@ -164,7 +170,12 @@ export default async function PaginaDocumento({ params }: Props) {
                 key={arquivo.arquivoId}
                 className="acervo-ficha min-w-0 border p-5"
               >
-                <h3 className="text-lg">{tituloDoArquivoPublico(arquivo)}</h3>
+                <h3
+                  id={`acervo-arquivo-${arquivo.arquivoId}`}
+                  className="text-lg"
+                >
+                  {tituloDoArquivoPublico(arquivo)}
+                </h3>
                 <p className="meta-ficha mt-2">
                   {formatoPublico(arquivo.mimeType)} ·{" "}
                   {tamanhoLegivel(arquivo.bytes)}
@@ -172,7 +183,11 @@ export default async function PaginaDocumento({ params }: Props) {
                 <Link
                   className="acervo-link mt-4 inline-block"
                   href={`/acervo/${slug}/arquivo/${arquivo.arquivoId}` as Route}
-                  aria-label={`Ver arquivo e informações: ${tituloDoArquivoPublico(arquivo)}`}
+                  id={`acervo-link-${arquivo.arquivoId}`}
+                  aria-labelledby={`acervo-link-${arquivo.arquivoId} acervo-arquivo-${arquivo.arquivoId}`}
+                  aria-describedby="acervo-evidencias-nova-guia"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   Ver arquivo e informações <span aria-hidden="true">↗</span>
                 </Link>

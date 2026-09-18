@@ -18,6 +18,9 @@ export function ListaDocumentosPublicos({
 }) {
   return (
     <div className="grid gap-5 md:grid-cols-2">
+      <span id="acervo-documentos-nova-guia" className="sr-only">
+        Abre em nova guia.
+      </span>
       {documentos.map((documento, indice) => (
         <article
           key={documento.slug}
@@ -31,7 +34,9 @@ export function ListaDocumentosPublicos({
               {String(indice + 1).padStart(2, "0")}
             </span>
           </div>
-          <h3 className="text-xl">{documento.titulo}</h3>
+          <h3 id={`acervo-documento-${documento.slug}`} className="text-xl">
+            {documento.titulo}
+          </h3>
           {documento.resumo ? (
             <p className="max-w-prose">{documento.resumo}</p>
           ) : null}
@@ -43,7 +48,11 @@ export function ListaDocumentosPublicos({
             <Link
               href={`/acervo/${documento.slug}` as Route}
               className="acervo-link"
-              aria-label={`Explorar documento: ${documento.titulo}`}
+              id={`acervo-link-${documento.slug}`}
+              aria-labelledby={`acervo-link-${documento.slug} acervo-documento-${documento.slug}`}
+              aria-describedby="acervo-documentos-nova-guia"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               Explorar documento <span aria-hidden="true">↗</span>
             </Link>
