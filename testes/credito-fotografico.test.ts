@@ -36,6 +36,7 @@ const AUTORIA = [
 
 function anexo(over: Partial<AnexoPublico> = {}): AnexoPublico {
   return {
+    arquivoId: "11111111-1111-4111-8111-111111111111",
     codigo: "12",
     estado: "PUBLICAVEL",
     revisaoPrivacidade: "concluida",

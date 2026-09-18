@@ -18,6 +18,7 @@ const FORMATOS_PUBLICOS: Record<string, string> = {
     "Planilha XLSX",
   "text/markdown": "Markdown",
   "image/webp": "Fotografia WebP",
+  "image/png": "Imagem PNG",
   "image/svg+xml": "Elemento gráfico SVG",
   "audio/mp4": "Áudio M4A",
   "audio/x-m4a": "Áudio M4A",

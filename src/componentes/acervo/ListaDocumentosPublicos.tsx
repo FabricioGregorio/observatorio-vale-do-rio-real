@@ -48,7 +48,7 @@ export function ListaDocumentosPublicos({
               id={`acervo-link-${documento.slug}`}
               aria-labelledby={`acervo-link-${documento.slug} acervo-documento-${documento.slug}`}
             >
-              Explorar documento <span aria-hidden="true">↗</span>
+              Explorar documento
             </Link>
           </div>
         </article>

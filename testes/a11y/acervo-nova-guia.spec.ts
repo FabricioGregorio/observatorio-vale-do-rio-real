@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 
 const b01 = "/acervo/fotografias-visitas-i-vii";
 const relatorio = "/acervo/relatorio-tecnico-recanto-da-serra";
@@ -14,6 +14,7 @@ async function conferirMesmaGuia(page: Page, seletor: string, total: number) {
       target: elemento.getAttribute("target"),
       rel: elemento.getAttribute("rel"),
       aviso: elemento.getAttribute("aria-describedby"),
+      texto: elemento.textContent ?? "",
     })),
   );
   expect(
@@ -22,6 +23,10 @@ async function conferirMesmaGuia(page: Page, seletor: string, total: number) {
         target === null && rel === null && aviso === null,
     ),
   ).toBe(true);
+  // A seta anuncia saída. Link que fica na mesma guia não pode exibi-la:
+  // era o sinal falso que a revisão A4 encontrou em 16 links do índice e em
+  // todos os links de evidência.
+  expect(atributos.every(({ texto }) => !texto.includes("↗"))).toBe(true);
 }
 
 async function conferirNovaGuia(page: Page, seletor: string, total: number) {
@@ -32,12 +37,22 @@ async function conferirNovaGuia(page: Page, seletor: string, total: number) {
       target: elemento.getAttribute("target"),
       rel: elemento.getAttribute("rel"),
       aviso: elemento.getAttribute("aria-describedby"),
+      texto: elemento.textContent ?? "",
+      setaEscondida:
+        elemento.querySelector("[aria-hidden='true']")?.textContent === "↗",
     })),
   );
   expect(
     atributos.every(
       ({ target, rel, aviso }) =>
         target === "_blank" && rel === "noopener noreferrer" && Boolean(aviso),
+    ),
+  ).toBe(true);
+  // Aqui a seta é legítima — e continua decorativa: quem anuncia a saída para
+  // tecnologia assistiva é o aviso, nunca o caractere.
+  expect(
+    atributos.every(
+      ({ texto, setaEscondida }) => texto.includes("↗") && setaEscondida,
     ),
   ).toBe(true);
   const aviso = atributos[0]?.aviso;

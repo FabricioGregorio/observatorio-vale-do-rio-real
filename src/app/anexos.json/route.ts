@@ -1,6 +1,7 @@
 import type { AnexoPublico } from "../../dados/consultas/anexos";
 import { listarAnexosPublicos } from "../../dados/consultas/anexos";
 import { separarCredito } from "../../dados/pesquisa/credito-fotografico";
+import { urlDoSite } from "../../lib/site-url";
 
 /**
  * `/anexos.json` — o mesmo conjunto da Sala do Avaliador, legível por máquina
@@ -24,6 +25,14 @@ export function serializarAnexos(anexos: readonly AnexoPublico[]) {
     anexos: anexos.map((a) => ({
       ordem: a.ordemAnexo,
       slug: a.slug,
+      /**
+       * UUID público do arquivo, o mesmo já usado na rota contextual
+       * `/acervo/[documento]/arquivo/[arquivoId]`. Vem da projeção pública
+       * `vw_anexo_publico`, nunca de tabela privada: é o identificador que
+       * permite relacionar deterministicamente cada item desta lista à sua
+       * página HTML.
+       */
+      arquivo_id: a.arquivoId,
       titulo: a.titulo,
       rotulo_arquivo: separarCredito(a.rotuloArquivo).rotulo || null,
       /** Crédito de autoria de terceiro, já na forma de exibição. */
@@ -33,6 +42,17 @@ export function serializarAnexos(anexos: readonly AnexoPublico[]) {
       resumo: a.resumo,
       data_referencia: a.dataReferencia,
       licenca: a.licenca,
+      /**
+       * Página HTML contextual do arquivo, para leitura humana. Não confundir
+       * com `link_permanente`, que continua sendo o binário público: um leva à
+       * ficha com contexto, crédito e informações técnicas; o outro entrega o
+       * objeto. Derivada da origem canônica (`SITE_URL`) com o slug do
+       * documento e o `arquivo_id` — nunca escrita à mão, e por isso nunca
+       * aponta para homologação.
+       */
+      pagina_url: urlDoSite(
+        `/acervo/${a.slug}/arquivo/${a.arquivoId}`,
+      ).toString(),
       link_permanente: a.linkPermanente,
       link_origem: a.linkOrigem,
       mime_type: a.mimeType,

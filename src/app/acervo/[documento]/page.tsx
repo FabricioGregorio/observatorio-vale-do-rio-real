@@ -180,7 +180,7 @@ export default async function PaginaDocumento({ params }: Props) {
                   id={`acervo-link-${arquivo.arquivoId}`}
                   aria-labelledby={`acervo-link-${arquivo.arquivoId} acervo-arquivo-${arquivo.arquivoId}`}
                 >
-                  Ver arquivo e informações <span aria-hidden="true">↗</span>
+                  Ver arquivo e informações
                 </Link>
               </li>
             ))}

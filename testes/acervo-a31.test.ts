@@ -3,19 +3,55 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test } from "vitest";
 
 import PaginaArquivo from "../src/app/acervo/[documento]/arquivo/[arquivoId]/page";
+import { serializarAnexos } from "../src/app/anexos.json/route";
 import sitemap from "../src/app/sitemap";
 import {
   organizarDocumentosPublicos,
   selecionarArquivoPublico,
   validarAcervoPublico,
 } from "../src/dados/consultas/acervo";
-import { listarAnexosPublicos } from "../src/dados/consultas/anexos";
+import {
+  type AnexoPublico,
+  listarAnexosPublicos,
+} from "../src/dados/consultas/anexos";
 import {
   gruposB01NaOrdemTerritorial,
   mapaB01,
   reconciliarMapaB01,
 } from "../src/dados/editorial/mapa-b01";
+import { formatoPublico } from "../src/dados/editorial/tipos-publicos";
 import { IDS_DOS_LUGARES } from "../src/dados/territorio/referencias";
+
+/** Anexo sintético: só para exercitar a serialização sem tocar o banco. */
+function exemploDeAnexo(over: Partial<AnexoPublico> = {}): AnexoPublico {
+  return {
+    arquivoId: "00000000-0000-4000-8000-000000000000",
+    codigo: "02",
+    estado: "PUBLICAVEL",
+    revisaoPrivacidade: "concluida",
+    derivadoDe: [],
+    derivadoDeDocumento: null,
+    arquivoOrigemId: null,
+    arquivoRelacao: null,
+    arquivoDerivacaoMetodo: null,
+    ordemAnexo: 2,
+    slug: "relatorio-tecnico-recanto-da-serra",
+    rotuloArquivo: null,
+    principal: true,
+    titulo: "Relatório Técnico — Recanto da Serra",
+    tipo: "relatorio_tecnico",
+    resumo: null,
+    dataReferencia: null,
+    licenca: "CC BY-SA 4.0",
+    linkPermanente: "https://acervo.exemplo/a02.pdf",
+    linkOrigem: null,
+    mimeType: "application/pdf",
+    bytes: 1000,
+    sha256: "0".repeat(64),
+    publicadoEm: null,
+    ...over,
+  };
+}
 
 describe("fundação do Acervo A3.1", () => {
   test("mapa versionado conserva os quatro lugares na ordem canônica e os dois créditos", () => {
@@ -158,6 +194,112 @@ describe("fundação do Acervo A3.1", () => {
         }
       } finally {
         await pool.end();
+      }
+    },
+  );
+});
+
+describe("contrato machine-readable do inventário público", () => {
+  const CAMPOS_PROIBIDOS = [
+    "chave_storage",
+    "documento_id",
+    "visibilidade",
+    "url_privada",
+    "espelhado_em",
+    "estado_documental",
+    "revisao_privacidade",
+  ];
+
+  test("pagina_url e link_permanente são coisas diferentes, e nenhuma é escrita à mão", () => {
+    const [item] = serializarAnexos([
+      exemploDeAnexo({
+        slug: "relatorio-tecnico-recanto-da-serra",
+        arquivoId: "b3962918-8248-45b9-92f2-5fab3ff53751",
+        linkPermanente:
+          "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a02.pdf",
+      }),
+    ]).anexos;
+    if (!item) throw new Error("Serialização vazia");
+
+    // A ficha HTML para humanos…
+    expect(item.pagina_url).toBe(
+      "https://observatoriotobiassoueu.com.br/acervo/relatorio-tecnico-recanto-da-serra/arquivo/b3962918-8248-45b9-92f2-5fab3ff53751",
+    );
+    // …e o objeto binário, que continua intocado.
+    expect(item.link_permanente).toBe(
+      "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a02.pdf",
+    );
+    expect(item.arquivo_id).toBe("b3962918-8248-45b9-92f2-5fab3ff53751");
+    expect(item.pagina_url).not.toBe(item.link_permanente);
+  });
+
+  test.skipIf(!process.env.DATABASE_URL)(
+    "os 109 itens trazem arquivo_id e pagina_url, e nenhum campo privado",
+    async () => {
+      const inventario = serializarAnexos(await listarAnexosPublicos());
+      expect(inventario.total).toBe(109);
+      expect(inventario.anexos).toHaveLength(109);
+
+      const oficial = "https://observatoriotobiassoueu.com.br";
+      const uuid =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+
+      for (const item of inventario.anexos) {
+        expect(item.arquivo_id, item.slug).toMatch(uuid);
+        // A página contextual é exatamente a rota que o Acervo publica.
+        expect(item.pagina_url, item.arquivo_id).toBe(
+          `${oficial}/acervo/${item.slug}/arquivo/${item.arquivo_id}`,
+        );
+        expect(item.link_permanente, item.arquivo_id).toMatch(/^https:\/\//);
+        for (const proibido of CAMPOS_PROIBIDOS) {
+          expect(proibido in item, `${proibido} vazou`).toBe(false);
+        }
+      }
+
+      // Um UUID por arquivo: sem isso a relação com a página não é determinística.
+      expect(new Set(inventario.anexos.map((a) => a.arquivo_id)).size).toBe(
+        109,
+      );
+      // Homologação nunca entra no inventário público.
+      expect(
+        inventario.anexos.some((a) => a.pagina_url.includes("homologacao")),
+      ).toBe(false);
+
+      // Cada pagina_url resolve para o arquivo certo do documento certo.
+      const documentos = organizarDocumentosPublicos(
+        await listarAnexosPublicos(),
+      );
+      for (const item of inventario.anexos) {
+        expect(
+          selecionarArquivoPublico(documentos, item.slug, item.arquivo_id),
+          item.pagina_url,
+        ).not.toBeNull();
+      }
+    },
+  );
+
+  test("PNG deixou de vazar o MIME cru, e os demais rótulos não mudaram", () => {
+    expect(formatoPublico("image/png")).toBe("Imagem PNG");
+    expect(formatoPublico("application/pdf")).toBe("PDF");
+    expect(
+      formatoPublico(
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      ),
+    ).toBe("Planilha XLSX");
+    expect(formatoPublico("text/markdown")).toBe("Markdown");
+    expect(formatoPublico("image/webp")).toBe("Fotografia WebP");
+    expect(formatoPublico("image/svg+xml")).toBe("Elemento gráfico SVG");
+    expect(formatoPublico("audio/mp4")).toBe("Áudio M4A");
+    expect(formatoPublico("audio/x-m4a")).toBe("Áudio M4A");
+    expect(formatoPublico("audio/mpeg")).toBe("Áudio MP3");
+  });
+
+  test.skipIf(!process.env.DATABASE_URL)(
+    "nenhum MIME publicado cai no fallback técnico",
+    async () => {
+      const anexos = await listarAnexosPublicos();
+      for (const mime of new Set(anexos.map((a) => a.mimeType))) {
+        expect(formatoPublico(mime), mime).not.toBe(mime);
       }
     },
   );
