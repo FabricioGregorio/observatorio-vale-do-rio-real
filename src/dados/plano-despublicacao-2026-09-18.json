@@ -1,0 +1,192 @@
+[
+  {
+    "arquivoId": "58cb6b14-35c2-4dfc-b0b0-f29c3fc8fd69",
+    "chave": "arquivos/comprovacao-de-campo/b01-centro-cultural-museu-borda-da-mata-frente-do-museu-borda-da-mata-v1.webp",
+    "urlPublica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-centro-cultural-museu-borda-da-mata-frente-do-museu-borda-da-mata-v1.webp",
+    "sha256": "4f17d17521069bd33986ae3e593f9ada5404d06a7cc4b01524e2e29e5756aae8",
+    "bytes": 230346,
+    "mimeType": "image/webp",
+    "documento": "fotografias-visitas-i-vii",
+    "motivo": "fonte retirada da selecao atual pelo responsavel"
+  },
+  {
+    "arquivoId": "7ae760f3-5a83-48a6-9c1f-2eaabc9415a6",
+    "chave": "arquivos/comprovacao-de-campo/b01-ilha-grande-cais-ou-pier-ilha-grande-v1.webp",
+    "urlPublica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-ilha-grande-cais-ou-pier-ilha-grande-v1.webp",
+    "sha256": "6683fb1348891399d61046f32df1e38a680ba050cbd97a362ae435a29fee1f8e",
+    "bytes": 35500,
+    "mimeType": "image/webp",
+    "documento": "fotografias-visitas-i-vii",
+    "motivo": "substituido por fotografia nova da selecao atual"
+  },
+  {
+    "arquivoId": "0c27ab01-f6d3-4bb2-a42e-1c0cccb4cbd3",
+    "chave": "arquivos/comprovacao-de-campo/b01-ilha-grande-campo-verde-de-grama-e-arvores-v1.webp",
+    "urlPublica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-ilha-grande-campo-verde-de-grama-e-arvores-v1.webp",
+    "sha256": "0ae97eadadf94f23c6e1fbb50f7d3f2bb8583e43ea97d2f21c5e97efae9034f9",
+    "bytes": 85970,
+    "mimeType": "image/webp",
+    "documento": "fotografias-visitas-i-vii",
+    "motivo": "substituido por fotografia nova da selecao atual"
+  },
+  {
+    "arquivoId": "bb8e116e-3794-4832-a4f6-7ba4e4015544",
+    "chave": "arquivos/comprovacao-de-campo/b01-ilha-grande-chegando-a-ilha-grande-de-barco-v1.webp",
+    "urlPublica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-ilha-grande-chegando-a-ilha-grande-de-barco-v1.webp",
+    "sha256": "0e14cb19abe159a875b5bfe6486d6591cfc9a24d4ef19115ea7daa19c5421ab0",
+    "bytes": 30226,
+    "mimeType": "image/webp",
+    "documento": "fotografias-visitas-i-vii",
+    "motivo": "fonte retirada da selecao atual pelo responsavel"
+  },
+  {
+    "arquivoId": "bb3ea840-b687-47eb-b13e-31ba2be790dd",
+    "chave": "arquivos/comprovacao-de-campo/b01-ilha-grande-dona-mada-v1.webp",
+    "urlPublica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-ilha-grande-dona-mada-v1.webp",
+    "sha256": "349c2879540a0c76ad007bc0d52463ebe34b7515ec0708ba11ee93f041fcf045",
+    "bytes": 13818,
+    "mimeType": "image/webp",
+    "documento": "fotografias-visitas-i-vii",
+    "motivo": "substituido por fotografia nova da selecao atual"
+  },
+  {
+    "arquivoId": "f9d4766c-1806-42f0-859f-cc75c6a150ab",
+    "chave": "arquivos/comprovacao-de-campo/b01-ilha-grande-forno-a-lenha-v1.webp",
+    "urlPublica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-ilha-grande-forno-a-lenha-v1.webp",
+    "sha256": "b269d5763ab2d8c673caa80ac2020d08d1e19e6561cd7a28946fa15e1d28f61c",
+    "bytes": 41888,
+    "mimeType": "image/webp",
+    "documento": "fotografias-visitas-i-vii",
+    "motivo": "substituido por fotografia nova da selecao atual"
+  },
+  {
+    "arquivoId": "1f8fef44-b5da-4cf9-941a-aeae200796ff",
+    "chave": "arquivos/comprovacao-de-campo/b01-ilha-grande-forno-a-lenha2-v1.webp",
+    "urlPublica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-ilha-grande-forno-a-lenha2-v1.webp",
+    "sha256": "a12b913038fbea7c215eec856d05349ac3ac778735abe58c5cb8fa81591521fd",
+    "bytes": 39102,
+    "mimeType": "image/webp",
+    "documento": "fotografias-visitas-i-vii",
+    "motivo": "substituido por fotografia nova da selecao atual"
+  },
+  {
+    "arquivoId": "103ea1e5-3a15-4b67-9264-0388e6d9841f",
+    "chave": "arquivos/comprovacao-de-campo/b01-ilha-grande-igrejinha-v1.webp",
+    "urlPublica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-ilha-grande-igrejinha-v1.webp",
+    "sha256": "9d0ab7a31168856140ef35d0b5b6d56dbf7d46948c3d09397feeb8d95e6078c5",
+    "bytes": 223968,
+    "mimeType": "image/webp",
+    "documento": "fotografias-visitas-i-vii",
+    "motivo": "substituido por fotografia nova da selecao atual"
+  },
+  {
+    "arquivoId": "f96d7990-fd68-4fa0-be3a-37c47b50010c",
+    "chave": "arquivos/comprovacao-de-campo/b01-ilha-grande-placa-bem-vindos-a-pedreiras-v1.webp",
+    "urlPublica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-ilha-grande-placa-bem-vindos-a-pedreiras-v1.webp",
+    "sha256": "8e4beb2c284e7ec1aea9a98d576fa46ce3021db47b76a39b77cf30bd4f148ce3",
+    "bytes": 149636,
+    "mimeType": "image/webp",
+    "documento": "fotografias-visitas-i-vii",
+    "motivo": "fonte retirada da selecao atual pelo responsavel"
+  },
+  {
+    "arquivoId": "7f440b7c-7bc4-497b-abc9-4e3dfe5cf2da",
+    "chave": "arquivos/comprovacao-de-campo/b01-ilha-grande-rio-v1.webp",
+    "urlPublica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-ilha-grande-rio-v1.webp",
+    "sha256": "be134855802bb381130ff605d3c26773286830337bd74e96ea34acc997965a38",
+    "bytes": 25012,
+    "mimeType": "image/webp",
+    "documento": "fotografias-visitas-i-vii",
+    "motivo": "fonte retirada da selecao atual pelo responsavel"
+  },
+  {
+    "arquivoId": "d464f7da-e79d-4646-b69c-6e0ede977b0c",
+    "chave": "arquivos/comprovacao-de-campo/b01-josenilson-bispo-antes-da-entrevista2-v1.webp",
+    "urlPublica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-josenilson-bispo-antes-da-entrevista2-v1.webp",
+    "sha256": "add716346c5a5b9b6e184a263f5438fafefc5d4915510a51b2d73295d1a318aa",
+    "bytes": 171630,
+    "mimeType": "image/webp",
+    "documento": "fotografias-visitas-i-vii",
+    "motivo": "fonte retirada da selecao atual pelo responsavel"
+  },
+  {
+    "arquivoId": "a5281550-f775-4158-8d4c-28aec997f047",
+    "chave": "arquivos/comprovacao-de-campo/b01-josenilson-bispo-bodega-dos-tropeiros-no-memorial-tobias-barreto-homenagem-ao-recanto-da-serra-v1.webp",
+    "urlPublica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-josenilson-bispo-bodega-dos-tropeiros-no-memorial-tobias-barreto-homenagem-ao-recanto-da-serra-v1.webp",
+    "sha256": "e758a6ca8e0e402ee283a7c5c5747497ab4f76a3891db48d3cc61e25649045ec",
+    "bytes": 96412,
+    "mimeType": "image/webp",
+    "documento": "fotografias-visitas-i-vii",
+    "motivo": "fonte retirada da selecao atual pelo responsavel"
+  },
+  {
+    "arquivoId": "4c822860-2fed-42c4-bbeb-dc6864142356",
+    "chave": "arquivos/comprovacao-de-campo/b01-josenilson-bispo-mensagem-de-silo-no-memorial-tobias-barreto-homenagem-ao-recanto-da-serra-v1.webp",
+    "urlPublica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-josenilson-bispo-mensagem-de-silo-no-memorial-tobias-barreto-homenagem-ao-recanto-da-serra-v1.webp",
+    "sha256": "b8a9bce0561eeec69230a6535764f401e2bfdb5aba2d5e3f5b066c7fddff19b8",
+    "bytes": 84652,
+    "mimeType": "image/webp",
+    "documento": "fotografias-visitas-i-vii",
+    "motivo": "fonte retirada da selecao atual pelo responsavel"
+  },
+  {
+    "arquivoId": "ab404ad4-30b9-4e63-b3b4-9ee3fb846a5d",
+    "chave": "arquivos/comprovacao-de-campo/b01-josenilson-bispo-nilsinho-mostrando-banner-do-tobiarte2-v1.webp",
+    "urlPublica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-josenilson-bispo-nilsinho-mostrando-banner-do-tobiarte2-v1.webp",
+    "sha256": "0cbbc7f642bcc5c9b7188b724f1438d07ab165ff6f5ed7b418762e9024da2bcf",
+    "bytes": 243572,
+    "mimeType": "image/webp",
+    "documento": "fotografias-visitas-i-vii",
+    "motivo": "fonte retirada da selecao atual pelo responsavel"
+  },
+  {
+    "arquivoId": "1c046392-e71a-4d96-a689-0add4fbfc8a3",
+    "chave": "arquivos/comprovacao-de-campo/b01-josenilson-bispo-nilsinho-mostrando-banner-do-tobiarte3-v1.webp",
+    "urlPublica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-josenilson-bispo-nilsinho-mostrando-banner-do-tobiarte3-v1.webp",
+    "sha256": "c645b76b7459264b4d526c2d117a9edb5bb0d7b1b31e79788c8a8e7f609263cb",
+    "bytes": 142406,
+    "mimeType": "image/webp",
+    "documento": "fotografias-visitas-i-vii",
+    "motivo": "fonte retirada da selecao atual pelo responsavel"
+  },
+  {
+    "arquivoId": "c3589b16-0071-4d5b-b4c2-41189aa406d9",
+    "chave": "arquivos/comprovacao-de-campo/b01-pedro-menezes-budega-dos-tropeiros-por-dentro-v1.webp",
+    "urlPublica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-pedro-menezes-budega-dos-tropeiros-por-dentro-v1.webp",
+    "sha256": "6c16546d7962e2c2ef1f870194e92010ffa235cccac5b5d0097e9cfc2e8f3d29",
+    "bytes": 373114,
+    "mimeType": "image/webp",
+    "documento": "fotografias-visitas-i-vii",
+    "motivo": "fonte retirada da selecao atual pelo responsavel"
+  },
+  {
+    "arquivoId": "a11e2754-cb88-4f42-aa8b-fd3f173d14ce",
+    "chave": "arquivos/comprovacao-de-campo/b01-pedro-menezes-conhecendo-o-museu-e-memorial-epifanio-doria-v1.webp",
+    "urlPublica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-pedro-menezes-conhecendo-o-museu-e-memorial-epifanio-doria-v1.webp",
+    "sha256": "21cd06e76d998a4c3433e289961d6b583757988fcb8ec9b77d7b0dc2ebbd649d",
+    "bytes": 198960,
+    "mimeType": "image/webp",
+    "documento": "fotografias-visitas-i-vii",
+    "motivo": "fonte retirada da selecao atual pelo responsavel"
+  },
+  {
+    "arquivoId": "a4bccdfc-3fe6-42fa-abe9-f1d15b13fbad",
+    "chave": "arquivos/comprovacao-de-campo/b01-pedro-menezes-visita-a-mensagem-de-silo2-v1.webp",
+    "urlPublica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-pedro-menezes-visita-a-mensagem-de-silo2-v1.webp",
+    "sha256": "6d57a380f4fc14cb9d8e2c4a7b8a18a18ad729374049648d3e2bebf8ecebe2de",
+    "bytes": 170588,
+    "mimeType": "image/webp",
+    "documento": "fotografias-visitas-i-vii",
+    "motivo": "fonte retirada da selecao atual pelo responsavel"
+  },
+  {
+    "arquivoId": "ef4ecdc6-0d45-4a76-844a-acaa8a275550",
+    "chave": "arquivos/comprovacao-de-campo/b01-pedro-menezes-visita-na-mensagem-de-silo-v1.webp",
+    "urlPublica": "https://acervo.observatoriotobiassoueu.com.br/arquivos/comprovacao-de-campo/b01-pedro-menezes-visita-na-mensagem-de-silo-v1.webp",
+    "sha256": "dff74fdf4595bbdde5786246b1480b6f08e60a421064691980db0deca136469b",
+    "bytes": 278658,
+    "mimeType": "image/webp",
+    "documento": "fotografias-visitas-i-vii",
+    "motivo": "fonte retirada da selecao atual pelo responsavel"
+  }
+]

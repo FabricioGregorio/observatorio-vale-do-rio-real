@@ -36,10 +36,19 @@ import { z } from "zod";
 
 import bruto from "./lote-publicacao-2026-09-16.json";
 
-const chavePublicaSchema = z
+/**
+ * Chave pública de um objeto do acervo.
+ *
+ * O sufixo de versão passou de `-v1` fixo para `-v\d+` na sincronização de
+ * 2026-09-18. Quando uma fotografia é **substituída** por outra, o objeto novo
+ * precisa de chave própria: a antiga vai ser apagada do bucket, e reaproveitar
+ * a mesma chave faria o novo correr o risco de sair junto. `-v2` é a menor
+ * convenção coerente com o `-v1` que o projeto já usava.
+ */
+export const chavePublicaSchema = z
   .string()
   .regex(
-    /^arquivos\/[a-z0-9-]+\/[a-z0-9-]+-v1\.(pdf|webp|svg|xlsx|m4a|mp3|md)$/,
+    /^arquivos\/[a-z0-9-]+\/[a-z0-9-]+-v\d+\.(pdf|webp|svg|xlsx|m4a|mp3|md)$/,
   );
 
 export const entradaDoLoteSchema = z

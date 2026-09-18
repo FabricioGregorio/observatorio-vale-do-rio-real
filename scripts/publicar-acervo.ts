@@ -24,8 +24,11 @@
  *
  * ## Uso
  *
- *     node --import tsx scripts/publicar-acervo.ts
- *     node --import tsx scripts/publicar-acervo.ts --executar
+ * O lote é obrigatório e explícito. Não há padrão, não há "último lote" e não
+ * há detecção por data: ver `src/dados/lotes-de-publicacao.ts`.
+ *
+ *     node --import tsx scripts/publicar-acervo.ts --lote 2026-09-18
+ *     node --import tsx scripts/publicar-acervo.ts --lote 2026-09-18 --executar
  */
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
@@ -40,11 +43,12 @@ import {
 } from "@aws-sdk/client-s3";
 import { z } from "zod";
 
+import type { EntradaDoLote } from "../src/dados/lote-publicacao";
 import {
-  CODIGOS_DO_LOTE,
-  type EntradaDoLote,
-  LOTE_PUBLICACAO,
-} from "../src/dados/lote-publicacao";
+  exigirLote,
+  idDoLoteEmArgv,
+  type LoteDeclarado,
+} from "../src/dados/lotes-de-publicacao";
 import { montarRotulo } from "../src/dados/pesquisa/credito-fotografico";
 import { lerInventario, slugDoItem } from "../src/lib/espelhamento";
 import {
@@ -63,6 +67,28 @@ export function modoReal(argv: string[]): boolean {
     .max(1)
     .parse(argv);
   return flags[0] === "--executar";
+}
+
+/**
+ * Opções da execução. O lote é obrigatório e não tem padrão.
+ *
+ * `--lote` e seu valor são retirados antes de `modoReal`, que continua
+ * recusando qualquer argumento que não conheça — argumento estranho aqui
+ * costuma ser erro de digitação em algo que publica.
+ */
+export function opcoes(argv: readonly string[]): {
+  executar: boolean;
+  lote: LoteDeclarado;
+} {
+  const posicao = argv.indexOf("--lote");
+  const restante =
+    posicao === -1
+      ? [...argv]
+      : [...argv.slice(0, posicao), ...argv.slice(posicao + 2)];
+  return {
+    executar: modoReal(restante),
+    lote: exigirLote(idDoLoteEmArgv(argv)),
+  };
 }
 
 /** Impede escape por `..`, caminho absoluto ou link para fora da fonte. */
@@ -146,9 +172,10 @@ const arquivoPrivadoSchema = z.object({ id: z.string() });
 async function documentosDoLote(
   c: Conexao,
   slugs: ReadonlyMap<string, string>,
+  codigos: readonly string[],
 ): Promise<Map<string, { id: string; slug: string }>> {
   const mapa = new Map<string, { id: string; slug: string }>();
-  for (const codigo of CODIGOS_DO_LOTE) {
+  for (const codigo of codigos) {
     const slug = slugs.get(codigo);
     if (slug === undefined)
       throw new FalhaPublicacao(`Sem slug de inventário para ${codigo}.`);
@@ -210,12 +237,12 @@ async function idDaOrigemPublica(c: Conexao, chave: string): Promise<string> {
 
 async function persistir(
   c: Conexao,
-  lote: readonly EntradaDoLote[],
+  lote: LoteDeclarado,
   slugs: ReadonlyMap<string, string>,
 ): Promise<{ inseridos: number; promovidos: number }> {
-  const documentos = await documentosDoLote(c, slugs);
+  const documentos = await documentosDoLote(c, slugs, lote.codigos);
   let inseridos = 0;
-  for (const entrada of lote) {
+  for (const entrada of lote.entradas) {
     const documento = documentos.get(entrada.codigo);
     if (!documento)
       throw new FalhaPublicacao(`Documento ausente para ${entrada.codigo}.`);
@@ -288,7 +315,7 @@ async function persistir(
         where slug = any($1::citext[])
           and (estado_documental <> 'PUBLICAVEL' or status <> 'publicado')
         returning id`,
-      [CODIGOS_DO_LOTE.map((codigo) => slugs.get(codigo))],
+      [lote.codigos.map((codigo) => slugs.get(codigo))],
     )
   ).rows.length;
   return { inseridos, promovidos };
@@ -303,7 +330,7 @@ export function slugsDoInventario(csv: string): Map<string, string> {
 }
 
 async function principal(): Promise<void> {
-  const executar = modoReal(process.argv.slice(2));
+  const { executar, lote } = opcoes(process.argv.slice(2));
   if (existsSync(".env.local")) loadEnvFile(".env.local");
   if (exigir("STORAGE_PUBLIC_BUCKET") !== "observatorio-publico")
     throw new FalhaPublicacao("Bucket público inesperado.");
@@ -330,7 +357,7 @@ async function principal(): Promise<void> {
 
   let enviados = 0;
   let reaproveitados = 0;
-  for (const entrada of LOTE_PUBLICACAO) {
+  for (const entrada of lote.entradas) {
     const corpo = await lerFonte(raiz, entrada.origem);
     const sha256 = createHash("sha256").update(corpo).digest("hex");
     if (sha256 !== entrada.sha256 || corpo.byteLength !== entrada.bytes)
@@ -357,6 +384,7 @@ async function principal(): Promise<void> {
     }
     console.log(
       JSON.stringify({
+        lote: lote.id,
         codigo: entrada.codigo,
         origem: entrada.origem,
         chave: entrada.chave,
@@ -376,7 +404,7 @@ async function principal(): Promise<void> {
 
   if (!executar) {
     console.log(
-      `DRY-RUN: ${LOTE_PUBLICACAO.length} objetos planejados; ` +
+      `DRY-RUN lote ${lote.id}: ${lote.entradas.length} objetos planejados; ` +
         `${reaproveitados} já no bucket. Nenhum upload, nenhum INSERT.`,
     );
     return;
@@ -400,11 +428,7 @@ async function principal(): Promise<void> {
       );
     if (!trava?.obtido)
       throw new FalhaPublicacao("Outro executor já está publicando.");
-    const { inseridos, promovidos } = await persistir(
-      conexao,
-      LOTE_PUBLICACAO,
-      slugs,
-    );
+    const { inseridos, promovidos } = await persistir(conexao, lote, slugs);
     const [total] = z
       .array(z.object({ n: z.coerce.number() }))
       .parse(
@@ -413,7 +437,7 @@ async function principal(): Promise<void> {
       );
     await conexao.query("commit");
     console.log(
-      `EXECUÇÃO: ${enviados} enviados, ${reaproveitados} reaproveitados, ` +
+      `EXECUÇÃO lote ${lote.id}: ${enviados} enviados, ${reaproveitados} reaproveitados, ` +
         `${inseridos} arquivos inseridos, ${promovidos} documentos promovidos, ` +
         `vw_anexo_publico = ${total?.n}.`,
     );
