@@ -32,6 +32,15 @@ export const ID_DA_HACHURA = "hl-mapa-hachura-pesquisa";
 const RAIO_DO_LUGAR = 9;
 
 /**
+ * Semântica explícita dos dois recortes rotulados dentro do SVG.
+ *
+ * O atributo agrupado evita que o analisador JSX trate `<g>` como um controle
+ * HTML convertido, sem mudar o markup entregue: o DOM continua recebendo
+ * exatamente `role="group"`, como o axe exige para aceitar `aria-label`.
+ */
+const SEMANTICA_DO_RECORTE = { role: "group" } as const;
+
+/**
  * Mapa do recorte — Server Component, sem ilha cliente própria.
  *
  * Desenha a malha oficial de Sergipe com a projeção e os dados de sempre, no
@@ -134,6 +143,7 @@ export function MapaDoRecorte({
 
           {grupos.map(({ definicao, membros }) => (
             <g
+              {...SEMANTICA_DO_RECORTE}
               aria-label={definicao.rotulo}
               className="territorio-cartografico__recorte"
               data-recorte={definicao.chave}
