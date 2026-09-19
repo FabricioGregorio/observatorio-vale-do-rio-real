@@ -276,6 +276,8 @@ describe.skipIf(!URL_MANUTENCAO)(
         const r = await pool.query(
           `select (select count(*)::int from documento) as d,
                   (select count(*)::int from arquivo) as a,
+                  (select count(*)::int from arquivo
+                    where chave_storage not like 'arquivos/podobservar/%') as a_acervo,
                   (select count(*)::int from documento_arquivo) as da,
                   (select count(*)::int from vw_anexo_publico) as v,
                   (select count(*)::int from documento
@@ -288,8 +290,24 @@ describe.skipIf(!URL_MANUTENCAO)(
           v: 109,
           pub: 16,
         });
-        expect(r.rows[0].a).toBe(r.rows[0].da);
-        expect(r.rows[0].a).toBeGreaterThanOrEqual(119);
+        /**
+         * A igualdade é do **acervo documental**, não de `arquivo` inteiro.
+         *
+         * Até a P0.2B2 todo `arquivo` pertencia a um `documento`, e a asserção
+         * podia comparar os totais. Os masters do PodObservar quebram isso de
+         * propósito: eles existem sem `documento_arquivo`, porque vincular um
+         * master a documento o faria entrar no Acervo público por
+         * `vw_anexo_publico` — outro gate, com outras regras. Ver ADR-021 e o
+         * ramo correspondente de `vw_pendencia_publicacao` na migração 0012.
+         */
+        expect(r.rows[0].a_acervo).toBe(r.rows[0].da);
+        expect(r.rows[0].a_acervo).toBeGreaterThanOrEqual(119);
+        const semVinculo = await pool.query(
+          `select count(*)::int as n from arquivo a
+           where a.chave_storage like 'arquivos/podobservar/%'
+             and exists (select 1 from documento_arquivo da where da.arquivo_id = a.id)`,
+        );
+        expect(semVinculo.rows[0].n).toBe(0);
         const arquivos = await pool.query(
           `select a.chave_storage, a.sha256, a.bucket, a.visibilidade,
                   a.url_publica, da.principal, da.versao

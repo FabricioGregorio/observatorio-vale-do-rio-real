@@ -511,6 +511,19 @@ describe("H4.5.2: nenhuma dependência e nenhuma ilha nova", () => {
     const manifesto = JSON.parse(readFileSync("package.json", "utf8"));
     expect(Object.keys(manifesto.dependencies ?? {})).toEqual([
       "@aws-sdk/client-s3",
+      /**
+       * Acrescentada na P0.2B2, deliberadamente e com justificativa.
+       *
+       * Os masters do PodObservar têm 379–513 MB. O caminho privado existente
+       * carrega o arquivo inteiro em `Buffer` e faz um `PutObject` único, e o
+       * maior objeto já ingerido pelo projeto tinha 108 MB. `Upload` do
+       * `lib-storage` é o mecanismo oficial do próprio SDK já instalado: faz
+       * multipart por streaming, com memória limitada e abort automático da
+       * parte pendente em caso de falha. A alternativa seria reescrever
+       * multipart à mão sobre `@aws-sdk/client-s3` — mais código, mesmo
+       * fornecedor, menos revisado.
+       */
+      "@aws-sdk/lib-storage",
       "@tailwindcss/postcss",
       "drizzle-orm",
       "fflate",

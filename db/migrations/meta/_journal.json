@@ -78,6 +78,13 @@
       "when": 1789811782468,
       "tag": "0011_politica_distribuicao_podobservar",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1789813719174,
+      "tag": "0012_tripwire_podobservar",
+      "breakpoints": true
     }
   ]
 }
