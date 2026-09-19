@@ -9,10 +9,13 @@
  *   mock provaria só que o mock funciona. Sem credencial o Vitest marca o bloco
  *   como skipped, e a ausência de cobertura fica visível em vez de silenciosa.
  */
+import { spawnSync } from "node:child_process";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 import {
-  emCi,
   formatarTabela,
   resultado,
   semCredencial,
@@ -101,33 +104,60 @@ describe("decisão do gate após consultar", () => {
 });
 
 describe("decisão do gate sem credencial", () => {
-  test("fora do CI: sai com 0, mas não afirma que está limpo", () => {
-    const { codigo, mensagem } = semCredencial(false);
-
-    expect(codigo).toBe(0);
-    expect(mensagem).toContain("NÃO foram verificadas");
-    expect(mensagem).toContain("não atesta nada");
-    expect(mensagem).not.toContain("Nenhuma pendência");
-  });
-
-  test("em CI: sai com 1", () => {
-    const { codigo, mensagem } = semCredencial(true);
+  test("falha, em qualquer ambiente, e não afirma que está limpo", () => {
+    const { codigo, mensagem } = semCredencial();
 
     expect(codigo).toBe(1);
-    expect(mensagem).toContain("erro de configuração");
+    expect(mensagem).toContain("NÃO foram verificadas");
+    expect(mensagem).toContain("o gate falha");
+    expect(mensagem).not.toContain("Nenhuma pendência");
   });
 });
 
-describe("detecção de CI", () => {
-  test("reconhece a variável que todo provedor define", () => {
-    expect(emCi("true")).toBe(true);
-    expect(emCi("1")).toBe(true);
-  });
+/**
+ * Prova negativa do gate, de fora do processo.
+ *
+ * A decisão pura acima diz o que a função devolve; esta diz o que o comando
+ * faz. São coisas diferentes, e a que autoriza liberação é a segunda — foi
+ * pelo caminho entre as duas que a garantia falsa passou antes, quando o
+ * script terminava com sucesso fora do CI.
+ *
+ * O filho roda num diretório temporário e sem `DATABASE_URL`: nenhum
+ * `.env.local` para achar, nenhuma credencial herdada. A falha tem que ser
+ * imediata e legível — se ela dependesse de tentar conectar, o gate estaria
+ * trocando uma garantia falsa por um timeout de rede.
+ */
+describe("o comando falha onde não há configuração", () => {
+  test("sem DATABASE_URL e sem .env.local: sai diferente de zero, e rápido", () => {
+    const vazio = mkdtempSync(join(tmpdir(), "gate-pendencias-"));
+    const ambiente = { ...process.env };
+    delete ambiente.DATABASE_URL;
 
-  test("ausente ou desligada não é CI", () => {
-    expect(emCi(undefined)).toBe(false);
-    expect(emCi("")).toBe(false);
-    expect(emCi("false")).toBe(false);
+    const inicio = Date.now();
+    const filho = spawnSync(
+      process.execPath,
+      [
+        resolve("node_modules/tsx/dist/cli.mjs"),
+        resolve("scripts/verificar-pendencias.ts"),
+      ],
+      { cwd: vazio, env: ambiente, encoding: "utf8", timeout: 60_000 },
+    );
+    const duracao = Date.now() - inicio;
+
+    expect(filho.status).not.toBe(0);
+
+    const saida = `${filho.stdout}${filho.stderr}`;
+    expect(saida).toContain("DATABASE_URL ausente");
+    expect(saida).toContain("o gate falha");
+    expect(saida).not.toContain("Nenhuma pendência");
+
+    // Recusa por configuração, não por rede: nunca chegou a discar.
+    expect(duracao).toBeLessThan(30_000);
+
+    // A recusa nomeia a variável; nunca imprime o valor de nenhuma.
+    expect(saida).not.toMatch(/postgres(ql)?:\/\//);
+
+    rmSync(vazio, { recursive: true, force: true });
   });
 });
 

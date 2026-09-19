@@ -12,19 +12,30 @@
  * o script não interpreta o texto da pendência: ele imprime o que a view disser.
  * Ver docs/tarefas/09-gate-de-pendencias.md.
  *
- * Sem `DATABASE_URL`:
+ * Sem `DATABASE_URL`: erro, com código 1, em qualquer ambiente.
  *
- * - fora do CI: informa "não verificado" e termina com sucesso, para não
- *   quebrar o `pnpm verificar` de quem não tem credencial;
- * - em CI: erro, com código 1. Ali a ausência da variável é defeito de
- *   configuração, e um gate que não conseguiu verificar nunca deve dizer
- *   "limpo" — garantia falsa é pior do que gate nenhum.
+ * Até aqui o script distinguia CI de máquina local e, fora do CI, terminava
+ * com sucesso dizendo que não havia verificado nada. A intenção era não
+ * quebrar o `pnpm verificar` de quem não tem credencial; o efeito foi um gate
+ * obrigatório capaz de sair verde sem ter consultado o banco. Como
+ * `pnpm verificar` é o gate que autoriza liberação, "não consultei, portanto
+ * zero" passou a valer como atestado — que é exatamente a garantia falsa que
+ * o desenho original queria evitar.
+ *
+ * A credencial vem do ambiente ou de `.env.local`, na mesma convenção do
+ * `vitest.config.ts`: o que o ambiente já definiu tem precedência, então o CI,
+ * que injeta a variável pelo serviço de banco, não é afetado. Quem tem a
+ * máquina configurada passa a ser verificado de verdade — antes o arquivo
+ * existia, e o script simplesmente não olhava para ele.
  *
  * O script apenas denuncia. Corrigir a pendência está fora do escopo.
  *
  * Uso:
  *   pnpm pendencias
  */
+
+import { existsSync } from "node:fs";
+import { loadEnvFile } from "node:process";
 
 import type { Pendencia } from "../src/dados/consultas/pendencias";
 
@@ -89,40 +100,43 @@ export function resultado(linhas: Pendencia[]): Diagnostico {
   };
 }
 
-/** Decisão do gate quando não há credencial para consultar. */
-export function semCredencial(ehCi: boolean): Diagnostico {
-  const recado =
-    "DATABASE_URL ausente: as pendências de publicação NÃO foram verificadas.";
-
-  return ehCi
-    ? {
-        codigo: 1,
-        mensagem:
-          `${recado} Em CI isso é erro de configuração — o workflow define a ` +
-          "variável no serviço de banco. Um gate que não consultou não pode " +
-          "reportar que está limpo.",
-      }
-    : {
-        codigo: 0,
-        mensagem:
-          `${recado} Seguindo assim fora do CI, onde nem toda máquina tem ` +
-          "credencial. Nada foi consultado: este resultado não atesta nada.",
-      };
+/**
+ * Decisão do gate quando não há credencial para consultar.
+ *
+ * Sempre 1. Um gate obrigatório que não conseguiu executar a verificação não
+ * tem resultado para dar — e "sem resultado" não é "limpo".
+ */
+export function semCredencial(): Diagnostico {
+  return {
+    codigo: 1,
+    mensagem:
+      "DATABASE_URL ausente: as pendências de publicação NÃO foram " +
+      "verificadas, e por isso o gate falha. Defina a credencial de leitura " +
+      "da aplicação no ambiente ou em `.env.local` — ver `.env.example`. Em " +
+      "CI a variável vem do serviço de banco do workflow. Nada foi " +
+      "consultado: nenhum resultado aqui atestaria coisa alguma.",
+  };
 }
 
 /**
- * `CI` é definida por todo provedor de integração contínua, GitHub incluído.
+ * Carrega `.env.local` quando ele existe, como faz o `vitest.config.ts`.
  *
- * Recebe o valor, e não o ambiente inteiro: `NodeJS.ProcessEnv` obriga quem
- * chama a satisfazer as chaves que o Next declara como obrigatórias, o que
- * complicaria o teste sem ganhar nada — a função lê uma variável só.
+ * O `tsx` não lê arquivo de ambiente sozinho — o Next e o Vitest leem, e era
+ * só por isso que este gate se dizia "sem credencial" numa máquina que tinha
+ * a credencial ali do lado. `loadEnvFile` não sobrescreve o que o ambiente já
+ * definiu, então o CI continua mandando no valor.
+ *
+ * O caminho é relativo ao diretório de trabalho, e não ao arquivo: é assim
+ * que o resto do projeto o resolve, e é o que torna possível provar, de fora,
+ * que o gate falha onde não há configuração nenhuma.
  */
-export function emCi(ci: string | undefined): boolean {
-  return Boolean(ci) && ci !== "false";
+function carregarAmbienteLocal(): void {
+  if (existsSync(".env.local")) loadEnvFile(".env.local");
 }
 
 async function principal(): Promise<Diagnostico> {
-  if (!process.env.DATABASE_URL) return semCredencial(emCi(process.env.CI));
+  carregarAmbienteLocal();
+  if (!process.env.DATABASE_URL) return semCredencial();
 
   const { listarPendenciasDePublicacao } = await import(
     "../src/dados/consultas/pendencias"
