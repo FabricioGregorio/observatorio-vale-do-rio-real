@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import type { EpisodioPublico } from "../../dados/consultas/podobservar";
@@ -49,6 +50,7 @@ const CSS = `
   margin-top:2rem;padding-top:1rem;border-top:1px solid color-mix(in srgb,var(--color-texto-inverso) 35%,var(--color-fundo-inverso))}
 
 .hl-pod-recente{border:1px solid color-mix(in srgb,var(--color-texto-inverso) 38%,var(--color-fundo-inverso));padding:1.5rem}
+.hl-pod-recente__capa{display:block;width:calc(100% + 3rem);height:auto;margin:-1.5rem -1.5rem 1.5rem;border-bottom:1px solid color-mix(in srgb,var(--color-texto-inverso) 38%,var(--color-fundo-inverso))}
 .hl-pod-recente__rotulo{font-size:var(--text-sm);letter-spacing:.08em;text-transform:uppercase;
   color:color-mix(in srgb,var(--color-texto-inverso) 82%,var(--color-fundo-inverso))}
 .hl-pod-recente__numero{font-family:var(--font-display);font-size:clamp(var(--text-3xl),6vw,var(--text-5xl));line-height:1;margin-top:.75rem}
@@ -96,6 +98,19 @@ export function PodObservarNaHome({
             aria-labelledby="hl-pod-recente-titulo"
             className="hl-pod-recente"
           >
+            {recente.capaUrl &&
+            recente.capaLarguraPx &&
+            recente.capaAlturaPx ? (
+              <Image
+                alt=""
+                className="hl-pod-recente__capa"
+                height={recente.capaAlturaPx}
+                loading="lazy"
+                sizes="(min-width: 960px) 22rem, 100vw"
+                src={recente.capaUrl}
+                width={recente.capaLarguraPx}
+              />
+            ) : null}
             <p className="hl-pod-recente__rotulo">Episódio mais recente</p>
             <p aria-hidden="true" className="hl-pod-recente__numero">
               {numeroDoEpisodio(recente.numero)}

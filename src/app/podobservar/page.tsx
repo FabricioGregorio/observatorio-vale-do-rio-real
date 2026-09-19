@@ -1,4 +1,5 @@
 import type { Route } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
 import {
@@ -13,6 +14,7 @@ import {
   OuvirNoSpotify,
 } from "../../componentes/podobservar/LinkDeEscuta";
 import { listarEpisodiosPublicos } from "../../dados/consultas/podobservar";
+import { LOGO_PODOBSERVAR } from "../../dados/podobservar-artes";
 import { metadadosDaRota } from "../../lib/site-url";
 import "./podobservar.css";
 
@@ -22,6 +24,7 @@ export const metadata = metadadosDaRota({
   descricao:
     "O podcast do Observatório do Vale do Rio Real: vozes, entrevistas, " +
     "dados e experiências do território, com transcrição de cada episódio.",
+  imagens: [LOGO_PODOBSERVAR.src],
 });
 
 /**
@@ -45,24 +48,36 @@ export default async function PaginaPodObservar() {
     <div className="pod mx-auto flex max-w-5xl flex-col gap-12 px-4 py-10 md:py-16">
       <header className="pod-abertura">
         <div aria-hidden="true" className="pod-abertura__tracado" />
-        <p className="meta-ficha">PodObservar</p>
-        <h1 className="mt-5 max-w-3xl text-4xl md:text-5xl">
-          A pesquisa também se escuta.
-        </h1>
-        <p className="mt-5 max-w-prose text-lg">
-          O PodObservar leva a pesquisa do Observatório para o áudio, reunindo
-          vozes, entrevistas, dados e experiências do território em uma
-          linguagem clara e acessível.
-        </p>
-        <p className="mt-4 max-w-prose">
-          Os episódios são ouvidos no Spotify. Aqui ficam a apresentação de cada
-          um e a transcrição revisada completa, para quem prefere ler ou não
-          pode ouvir.
-        </p>
-        <p className="pod-abertura__selos">
-          <span>{temporada}</span>
-          <span>Novo episódio toda segunda-feira</span>
-        </p>
+        <div className="pod-abertura__composicao">
+          <Image
+            alt=""
+            className="pod-abertura__logo"
+            height={LOGO_PODOBSERVAR.altura}
+            priority
+            src={LOGO_PODOBSERVAR.src}
+            width={LOGO_PODOBSERVAR.largura}
+          />
+          <div>
+            <p className="meta-ficha">PodObservar</p>
+            <h1 className="mt-5 max-w-3xl text-4xl md:text-5xl">
+              A pesquisa também se escuta.
+            </h1>
+            <p className="mt-5 max-w-prose text-lg">
+              O PodObservar leva a pesquisa do Observatório para o áudio,
+              reunindo vozes, entrevistas, dados e experiências do território em
+              uma linguagem clara e acessível.
+            </p>
+            <p className="mt-4 max-w-prose">
+              Os episódios são ouvidos no Spotify. Aqui ficam a apresentação de
+              cada um e a transcrição revisada completa, para quem prefere ler
+              ou não pode ouvir.
+            </p>
+            <p className="pod-abertura__selos">
+              <span>{temporada}</span>
+              <span>Novo episódio toda segunda-feira</span>
+            </p>
+          </div>
+        </div>
       </header>
 
       <section aria-labelledby="pod-episodios-titulo">
@@ -79,42 +94,59 @@ export default async function PaginaPodObservar() {
           <ol className="pod-lista mt-6">
             {episodios.map((episodio) => (
               <li className="pod-episodio" key={episodio.slug}>
-                <p aria-hidden="true" className="pod-episodio__numero">
-                  {numeroDoEpisodio(episodio.numero)}
-                </p>
-                <h3>
-                  <span className="sr-only">Episódio {episodio.numero}: </span>
-                  {episodio.titulo}
-                </h3>
-                <p className="pod-episodio__meta">
-                  <time dateTime={dataMaquina(episodio.publicadoEm)}>
-                    {dataCurta(episodio.publicadoEm)}
-                  </time>
-                  {" · "}
-                  <time dateTime={duracaoMaquina(episodio.duracaoSeg)}>
-                    {duracaoLegivel(episodio.duracaoSeg)}
-                  </time>
-                </p>
-                <p className="pod-episodio__resumo">{episodio.resumo}</p>
-                <p className="pod-acoes">
-                  <OuvirNoSpotify
-                    href={episodio.urlSpotify}
-                    id={`pod-spotify-${episodio.slug}`}
+                {episodio.capaUrl &&
+                episodio.capaLarguraPx &&
+                episodio.capaAlturaPx ? (
+                  <Image
+                    alt=""
+                    className="pod-episodio__capa"
+                    height={episodio.capaAlturaPx}
+                    loading="lazy"
+                    sizes="(min-width: 768px) 18rem, 100vw"
+                    src={episodio.capaUrl}
+                    width={episodio.capaLarguraPx}
                   />
-                  <AssistirNoYoutube
-                    href={episodio.urlYoutube}
-                    id={`pod-youtube-${episodio.slug}`}
-                  />
-                  <Link
-                    /* Mesmo padrão do Acervo para rota dinâmica com typedRoutes. */
-                    href={
-                      `/podobservar/t${episodio.temporadaNumero}/${episodio.slug}` as Route
-                    }
-                  >
-                    <span className="sr-only">{episodio.titulo}: </span>
-                    Ler transcrição e detalhes →
-                  </Link>
-                </p>
+                ) : null}
+                <div className="pod-episodio__conteudo">
+                  <p aria-hidden="true" className="pod-episodio__numero">
+                    {numeroDoEpisodio(episodio.numero)}
+                  </p>
+                  <h3>
+                    <span className="sr-only">
+                      Episódio {episodio.numero}:{" "}
+                    </span>
+                    {episodio.titulo}
+                  </h3>
+                  <p className="pod-episodio__meta">
+                    <time dateTime={dataMaquina(episodio.publicadoEm)}>
+                      {dataCurta(episodio.publicadoEm)}
+                    </time>
+                    {" · "}
+                    <time dateTime={duracaoMaquina(episodio.duracaoSeg)}>
+                      {duracaoLegivel(episodio.duracaoSeg)}
+                    </time>
+                  </p>
+                  <p className="pod-episodio__resumo">{episodio.resumo}</p>
+                  <p className="pod-acoes">
+                    <OuvirNoSpotify
+                      href={episodio.urlSpotify}
+                      id={`pod-spotify-${episodio.slug}`}
+                    />
+                    <AssistirNoYoutube
+                      href={episodio.urlYoutube}
+                      id={`pod-youtube-${episodio.slug}`}
+                    />
+                    <Link
+                      /* Mesmo padrão do Acervo para rota dinâmica com typedRoutes. */
+                      href={
+                        `/podobservar/t${episodio.temporadaNumero}/${episodio.slug}` as Route
+                      }
+                    >
+                      <span className="sr-only">{episodio.titulo}: </span>
+                      Ler transcrição e detalhes →
+                    </Link>
+                  </p>
+                </div>
               </li>
             ))}
           </ol>

@@ -54,10 +54,20 @@ describe("configuração de produção", () => {
   test("sitemap contém páginas institucionais, documentos e evidências públicas", async () => {
     const urls = (await sitemap()).map((item) => item.url);
 
-    expect(urls).toHaveLength(138);
+    expect(urls).toHaveLength(141);
     expect(urls).toContain("https://observatoriotobiassoueu.com.br/");
     expect(urls).toContain("https://observatoriotobiassoueu.com.br/territorio");
     expect(urls).toContain("https://observatoriotobiassoueu.com.br/acervo");
+    expect(urls).toContain(
+      "https://observatoriotobiassoueu.com.br/podobservar/t1/01-o-que-e-o-vale-do-rio-real",
+    );
+    expect(urls).toContain(
+      "https://observatoriotobiassoueu.com.br/podobservar/t1/02-conheca-o-recanto-da-serra",
+    );
+    expect(urls).toContain(
+      "https://observatoriotobiassoueu.com.br/podobservar/t1/03-conheca-o-museu-borda-da-mata",
+    );
+    expect(urls.some((url) => url.includes("open.spotify.com"))).toBe(false);
     expect(urls).not.toContain(
       "https://observatoriotobiassoueu.com.br/educacao",
     );

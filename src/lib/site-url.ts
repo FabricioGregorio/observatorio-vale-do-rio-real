@@ -43,6 +43,7 @@ type OpcoesMetadados = {
   titulo: string;
   descricao?: string;
   robots?: Metadata["robots"];
+  imagens?: string[];
 };
 
 /** Metadados absolutos de uma rota, sempre derivados da mesma SITE_URL. */
@@ -51,6 +52,7 @@ export function metadadosDaRota({
   titulo,
   descricao,
   robots,
+  imagens,
 }: OpcoesMetadados): Metadata {
   const url = urlDoSite(pathname);
 
@@ -64,6 +66,7 @@ export function metadadosDaRota({
       siteName: "Observatório do Vale do Rio Real",
       title: titulo,
       ...(descricao ? { description: descricao } : {}),
+      ...(imagens?.length ? { images: imagens } : {}),
       url,
     },
     ...(robots ? { robots } : {}),

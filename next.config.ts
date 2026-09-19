@@ -8,6 +8,17 @@ import {
 
 const nextConfig: NextConfig = {
   typedRoutes: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "acervo.observatoriotobiassoueu.com.br",
+        port: "",
+        pathname: "/arquivos/podobservar/artes/**",
+        search: "",
+      },
+    ],
+  },
 
   /**
    * `X-Robots-Tag: noindex` em todo ambiente que não seja o deployment de

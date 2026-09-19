@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -82,6 +83,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     pathname: `/podobservar/${temporada}/${slug}`,
     titulo: `${episodio.titulo} — PodObservar`,
     descricao: episodio.resumo,
+    imagens: episodio.capaUrl ? [episodio.capaUrl] : undefined,
   });
 }
 
@@ -99,6 +101,17 @@ export default async function PaginaEpisodio({ params }: Props) {
       </nav>
 
       <header className="flex flex-col gap-4">
+        {episodio.capaUrl && episodio.capaLarguraPx && episodio.capaAlturaPx ? (
+          <Image
+            alt=""
+            className="pod-episodio-pagina__capa"
+            height={episodio.capaAlturaPx}
+            priority
+            sizes="(min-width: 768px) 42rem, 100vw"
+            src={episodio.capaUrl}
+            width={episodio.capaLarguraPx}
+          />
+        ) : null}
         <p className="meta-ficha">
           Episódio {numeroDoEpisodio(episodio.numero)} ·{" "}
           {episodio.temporadaTitulo}

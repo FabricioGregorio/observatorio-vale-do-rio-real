@@ -11,6 +11,7 @@ media/
 ├── campo/       2 derivados do Hero          → src/dados/hero/derivados.ts
 ├── logos/       3 marcas institucionais      → src/dados/hero/derivados.ts
 ├── mapa/        vazia (.gitkeep)
+├── podobservar/  logo oficial derivado       → src/dados/podobservar-artes.ts
 ├── pesquisa/    3 fotografias de campo       → src/dados/pesquisa/derivados.ts
 ├── pessoas/     vazia (.gitkeep)
 └── territorio/  vazia (.gitkeep)
@@ -21,6 +22,7 @@ media/
 | `campo/` | fotografia do Hero, nas duas composições servidas por art direction | `hero-observatorio-desktop-1440.webp`, `hero-observatorio-mobile-540.webp` |
 | `logos/` | marcas institucionais, de fomento e de parceiros | marca e símbolo do Observatório, marca do Coletivo |
 | `mapa/` | recursos do mapa territorial | vazia; a malha é GeoJSON e vive em `src/dados/territorio/` |
+| `podobservar/` | identidade geral do podcast | logo oficial em WebP 1200 px; capas chegam pelo gate público do banco |
 | `pesquisa/` | fotografias das visitas de campo, com procedência documental | três derivados de Ilha Grande |
 | `pessoas/` | retratos e ilustrações de participantes | vazia; depende de consentimento verificado |
 | `territorio/` | imagens por município | vazia |

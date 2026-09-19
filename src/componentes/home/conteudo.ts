@@ -1,11 +1,3 @@
-import type { Route } from "next";
-
-import {
-  CAMINHO_DAS_MARCAS,
-  MARCA_COLETIVO,
-  SIMBOLO_OBSERVATORIO,
-} from "../../dados/hero/derivados";
-
 /**
  * Conteúdo da Home.
  *

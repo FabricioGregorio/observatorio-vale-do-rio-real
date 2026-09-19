@@ -33,6 +33,7 @@ import {
   DERIVADOS_DA_PESQUISA,
   DERIVADOS_DOS_LUGARES,
 } from "../src/dados/pesquisa/derivados";
+import { ARTES_PODOBSERVAR } from "../src/dados/podobservar-artes";
 import { FONTES_TERRITORIAIS } from "../src/dados/territorio/fontes";
 import { montarDadosDoMapa } from "../src/dados/territorio/mapa";
 import { PONTOS_DE_VISITA_PREVISTOS } from "../src/dados/territorio/pontos";
@@ -145,6 +146,9 @@ describe("ausência de dado territorial inventado", () => {
       SIMBOLO_OBSERVATORIO.arquivo,
       ICONE_OBSERVATORIO_CABECALHO.arquivo,
       MARCA_COLETIVO.arquivo,
+      ...ARTES_PODOBSERVAR.filter((arte) => arte.papel === "logo").map(
+        (arte) => arte.arquivo,
+      ),
     ]);
 
     const semProcedencia = encontrados.filter((nome) => !declarados.has(nome));
@@ -176,7 +180,7 @@ describe("ausência de dado territorial inventado", () => {
    * `pesquisa/` contém fotografias documentais de campo. Os grafismos
    * territoriais abstratos são gerados por código e não exigem pasta de mídia.
    */
-  test("as seis pastas de mídia previstas existem", () => {
+  test("as sete pastas de mídia previstas existem", () => {
     const pastas = readdirSync("public/media", { withFileTypes: true })
       .filter((entrada) => entrada.isDirectory())
       .map((entrada) => entrada.name)
@@ -187,6 +191,7 @@ describe("ausência de dado territorial inventado", () => {
       "mapa",
       "pesquisa",
       "pessoas",
+      "podobservar",
       "territorio",
     ]);
   });

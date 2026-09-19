@@ -18,6 +18,7 @@
     "seed": "node -e \"console.log('Sem seed: banco ainda fora do escopo do bootstrap.')\"",
     "derivar-hero": "tsx scripts/derivar-hero.ts",
     "derivar-fotos": "uv run --with pillow --with pillow-heif python scripts/derivar-fotos-campo.py",
+    "derivar-artes-podobservar": "uv run --with pillow python scripts/derivar-artes-podobservar.py",
     "screenshots-hero": "tsx scripts/screenshots-hero.ts",
     "derivar-inventario": "python scripts/derivar-inventario.py",
     "conferir-inventario": "python scripts/derivar-inventario.py --verificar",
