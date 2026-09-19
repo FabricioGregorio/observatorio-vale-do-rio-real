@@ -9,7 +9,7 @@
  * O original **não é versionado**. Ele tem 6,86 MB e vive no corpus, fora do
  * repositório. Os derivados são produzidos por `pnpm derivar-hero`, que lê o
  * original, aplica a orientação do EXIF, recorta, redimensiona e codifica em
- * WebP — descartando todo metadado no caminho.
+ * AVIF — descartando todo metadado no caminho.
  *
  * ## A orientação
  *
@@ -81,29 +81,28 @@ export const ORIGINAL_DO_HERO = {
 /**
  * Os derivados publicados.
  *
- * **Conjunto de protótipo.** Uma largura por composição, o suficiente para
- * avaliar a composição em 1440 e em 375. O conjunto de produção precisa de
- * `srcset` por densidade e de um orçamento de peso resolvido — ver
- * `docs/frontend/H1_HERO_MANIFESTO_PROTOTIPO.md`.
+ * Conjunto de produção: uma largura por composição, servida por `<picture>`
+ * conforme o viewport. Os arquivos AVIF foram derivados diretamente do JPEG
+ * original e calibrados junto ao orçamento inicial de 500 kB da Home.
  */
 export const DERIVADOS_DO_HERO: readonly DerivadoDoHero[] = [
   {
-    arquivo: "hero-observatorio-desktop-1440.webp",
+    arquivo: "hero-observatorio-desktop-1440.avif",
     largura: 1440,
     altura: 936,
     recorte: { x: 0, y: 750, largura: 3000, altura: 1950 },
-    qualidade: 0.55,
-    sha256: "a19d4b4b400451e7",
-    tetoBytes: 300_000,
+    qualidade: 32,
+    sha256: "e78062f6eb31dbe41825bf30633cd9f6f6a9a5ab4f15c3c293a1224832996dbf",
+    tetoBytes: 125_000,
   },
   {
-    arquivo: "hero-observatorio-mobile-540.webp",
+    arquivo: "hero-observatorio-mobile-540.avif",
     largura: 540,
     altura: 1024,
     recorte: { x: 895, y: 0, largura: 2105, altura: 3990 },
-    qualidade: 0.55,
-    sha256: "0ed8f04252058b71",
-    tetoBytes: 200_000,
+    qualidade: 35,
+    sha256: "cdb8ef715a185b418767de39df52ebfb98131478f654fd0879e1a4432787d445",
+    tetoBytes: 70_000,
   },
 ];
 
@@ -179,13 +178,30 @@ export const ICONE_OBSERVATORIO_CABECALHO = {
  * da borda esquerda do arquivo original é preservada.
  */
 export const MARCA_COLETIVO = {
-  arquivo: "coletivo-tobias-sou-eu-640.webp",
-  largura: 640,
-  altura: 512,
-  bytes: 35_934,
-  sha256: "813561906f5654cf",
+  arquivo: "coletivo-tobias-sou-eu-128.webp",
+  /**
+   * A marca é servida num selo circular de 3,5rem com `object-fit: cover` —
+   * 56 px de caixa. O derivado de 640 px que estava publicado cobria essa
+   * caixa onze vezes e custava 35.934 B da Home. O de 128 px ainda cobre o
+   * selo com folga em telas de densidade dupla, por 2.810 B.
+   *
+   * Ele saiu do derivado de 640 px, e não do original, porque o caminho
+   * declarado no corpus (`identidade-visual/coletivo-tobias-sou-eu/
+   * logo-oficial-tobias-sou-eu.png`) não existe mais. O que há hoje naquela
+   * pasta é `logo-coletivo.png`, com a **mesma arte em disco circular
+   * 1024x1024** — outro enquadramento, não o painel retangular que está no
+   * ar. Trocar de fonte mudaria o que o selo mostra, e isso é decisão
+   * editorial, não consequência de uma otimização de peso. Até que ela seja
+   * tomada, o derivado de 640 px permanece versionado como **fonte** desta
+   * marca: é o que mantém `pnpm derivar-hero` capaz de reproduzi-la.
+   */
+  fonteVersionada: "coletivo-tobias-sou-eu-640.webp",
+  largura: 128,
+  altura: 102,
+  bytes: 2_810,
+  sha256: "35662eefa8be6a2020b41272d532d3ef88da6f28ed787284388d683b98b9c39e",
   transformacao:
-    "redimensionamento de 1280x1024 para 640x512 e conversão para WebP",
+    "redimensionamento do derivado versionado 640x512 para 128x102 e recodificação WebP",
   alt: 'Coletivo Cultural "Tobias, sou Eu!"',
 } as const;
 

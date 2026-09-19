@@ -146,6 +146,15 @@ describe("ausência de dado territorial inventado", () => {
       SIMBOLO_OBSERVATORIO.arquivo,
       ICONE_OBSERVATORIO_CABECALHO.arquivo,
       MARCA_COLETIVO.arquivo,
+      /*
+        Fonte versionada, não peça publicada: o derivado de 640 px deixou de
+        ser servido quando a marca desceu para 128 px, mas continua sendo o
+        arquivo do qual `pnpm derivar-hero` reproduz a que está no ar — o
+        original correspondente não está mais no caminho declarado do corpus.
+        Ele tem procedência registrada, que é o que esta regra exige; o que
+        ela proíbe é mídia que ninguém sabe de onde veio.
+      */
+      MARCA_COLETIVO.fonteVersionada,
       ...ARTES_PODOBSERVAR.filter((arte) => arte.papel === "logo").map(
         (arte) => arte.arquivo,
       ),

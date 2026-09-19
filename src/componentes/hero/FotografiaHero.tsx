@@ -19,12 +19,12 @@ import {
  * densidade e largura; quem faz troca por *composição* é `<picture>` com
  * `media`, que é o elemento que o HTML tem para isso.
  *
- * Há um segundo motivo, e ele é prático: a otimização do `next/image` depende
- * de `sharp`, que é dependência opcional do Next e **não está instalada** nesta
- * máquina. Os derivados já vêm otimizados de `pnpm derivar-hero`, então não há
- * o que otimizar em tempo de requisição. A própria documentação do Next indica
- * `unoptimized` para esse caso; usar `<picture>` diretamente é o mesmo
- * resultado com menos indireção.
+ * Há um segundo motivo, e ele é prático: os derivados já saem otimizados de
+ * `pnpm derivar-hero`, que codifica o AVIF a partir do original e calibra o
+ * peso junto do orçamento da Home. Não há o que o otimizador do Next faça em
+ * tempo de requisição além de recodificar o que já está no ponto. A própria
+ * documentação do Next indica `unoptimized` para esse caso; usar `<picture>`
+ * diretamente é o mesmo resultado com menos indireção.
  *
  * `CreditosInstitucionais` já abre precedente para `<img>` no projeto, pelo
  * mesmo tipo de razão.

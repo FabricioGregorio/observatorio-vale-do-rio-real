@@ -34,26 +34,18 @@ test("o símbolo de apoio conserva o derivado conferido e seu orçamento", () =>
   expect(bytes.readUInt32BE(20)).toBe(simbolo.altura);
 });
 
-/** Lê os "chunks" de um contêiner RIFF/WebP. */
-function chunksDoWebp(bytes: Buffer): { nome: string; tamanho: number }[] {
-  expect(bytes.subarray(0, 4).toString("latin1")).toBe("RIFF");
-  expect(bytes.subarray(8, 12).toString("latin1")).toBe("WEBP");
-
-  const chunks: { nome: string; tamanho: number }[] = [];
-  let i = 12;
-  while (i + 8 <= bytes.length) {
-    const nome = bytes.subarray(i, i + 4).toString("latin1");
-    const tamanho = bytes.readUInt32LE(i + 4);
-    chunks.push({ nome, tamanho });
-    i += 8 + tamanho + (tamanho % 2);
-  }
-  return chunks;
-}
-
 describe("derivados do Hero", () => {
   test.each(DERIVADOS_DO_HERO)("$arquivo existe", ({ arquivo }) => {
     expect(statSync(join(PASTA, arquivo)).isFile()).toBe(true);
   });
+
+  test.each(DERIVADOS_DO_HERO)(
+    "$arquivo conserva o hash declarado",
+    ({ arquivo, sha256 }) => {
+      const bytes = readFileSync(join(PASTA, arquivo));
+      expect(createHash("sha256").update(bytes).digest("hex")).toBe(sha256);
+    },
+  );
 
   /**
    * O original tem 6,86 MB. Ele mora no corpus, fora do repositório, e é o
@@ -73,10 +65,9 @@ describe("derivados do Hero", () => {
     "$arquivo não carrega EXIF nem XMP",
     ({ arquivo }) => {
       const bytes = readFileSync(join(PASTA, arquivo));
-      const nomes = chunksDoWebp(bytes).map((c) => c.nome);
-
-      expect(nomes).not.toContain("EXIF");
-      expect(nomes).not.toContain("XMP ");
+      expect(bytes.subarray(4, 12).toString("latin1")).toContain("ftyp");
+      expect(bytes.toString("latin1")).not.toContain("Exif");
+      expect(bytes.toString("latin1")).not.toContain("xmpmeta");
     },
   );
 
@@ -105,22 +96,6 @@ describe("derivados do Hero", () => {
   );
 
   /**
-   * O único metadado tolerado é o perfil de cor, e ele é tolerado porque não
-   * identifica nada: é um sRGB mínimo, sem fabricante e sem nome de
-   * dispositivo. Sem ele a fotografia mudaria de cor entre navegadores.
-   */
-  test.each(DERIVADOS_DO_HERO)(
-    "$arquivo carrega no máximo um perfil de cor pequeno",
-    ({ arquivo }) => {
-      const bytes = readFileSync(join(PASTA, arquivo));
-      const icc = chunksDoWebp(bytes).filter((c) => c.nome === "ICCP");
-
-      expect(icc.length).toBeLessThanOrEqual(1);
-      for (const c of icc) expect(c.tamanho).toBeLessThan(2000);
-    },
-  );
-
-  /**
    * O teto não é estético: a Home tem orçamento de 500 kB (doc 01 §7). Estes
    * derivados são de **protótipo** e já ocupam boa parte dele — o que está
    * registrado como bloqueio na H1. O teto impede que a situação piore sem
@@ -136,8 +111,14 @@ describe("derivados do Hero", () => {
   );
 
   test("nenhum derivado listado ficou de fora da pasta, e vice-versa", () => {
+    /*
+      Qualquer mídia, não só a extensão do formato atual: a regra é que a
+      pasta contenha exatamente os derivados declarados. Filtrar pelo formato
+      corrente faria a troca de codec deixar o formato anterior para trás sem
+      que ninguém notasse — foi o que quase aconteceu na passagem para AVIF.
+    */
     const naPasta = readdirSync(PASTA)
-      .filter((n) => n.endsWith(".webp"))
+      .filter((n) => /\.(avif|webp|png|jpe?g)$/i.test(n))
       .sort();
     const declarados = DERIVADOS_DO_HERO.map((d) => d.arquivo).sort();
     expect(naPasta).toEqual(declarados);

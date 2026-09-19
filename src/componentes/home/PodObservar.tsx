@@ -106,7 +106,7 @@ export function PodObservarNaHome({
                 className="hl-pod-recente__capa"
                 height={recente.capaAlturaPx}
                 loading="lazy"
-                sizes="(min-width: 960px) 22rem, 100vw"
+                sizes="(min-width: 960px) 352px, (min-width: 600px) 704px, 352px"
                 src={recente.capaUrl}
                 width={recente.capaLarguraPx}
               />

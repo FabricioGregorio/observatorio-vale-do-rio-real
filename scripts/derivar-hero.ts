@@ -7,15 +7,14 @@
  *
  * ## Por que o navegador faz a codificação
  *
- * O projeto não tem `sharp`, `jimp` nem qualquer biblioteca de imagem, e a
- * máquina não tem ImageMagick, `cwebp`, `avifenc` nem `ffmpeg`. A instrução da
- * H1 é explícita: parar antes de instalar dependência nova e não usar serviço
- * externo.
+ * O projeto não instala codificador de imagem separado. Para AVIF, reutiliza
+ * o Sharp que o próprio Next mantém no lockfile para otimização em produção;
+ * para a marca WebP, reutiliza o Chromium do Playwright. Nada depende de
+ * binário global, serviço externo ou ferramenta baixada à parte.
  *
- * O que existe é o **Chromium do Playwright**, já instalado como dependência
- * de desenvolvimento. Ele traz um codificador WebP de qualidade, e um `canvas`
- * faz recorte e redimensionamento no mesmo passo. Tudo local, nada de rede,
- * nenhuma dependência nova.
+ * O Sharp aplica orientação, recorte e redimensionamento antes de codificar o
+ * AVIF. O Chromium faz redimensionamento e WebP da marca por `canvas`. Tudo é
+ * local e parte das dependências já travadas do projeto.
  *
  * O codificador do `System.Drawing` foi medido antes desta escolha e
  * descartado: 4:4:4 sem controle de subamostragem, produzindo 283 kB para
@@ -53,12 +52,14 @@
  * ## Uso
  *
  *     pnpm derivar-hero -- "<caminho absoluto do home.jpg>"
+ *     pnpm derivar-hero -- --medir-avif "<caminho absoluto do home.jpg>"
  *
  * Sem argumento, usa `OBSERVATORIO_FONTES_DIR` do ambiente.
  */
 
 import { createHash } from "node:crypto";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { join, resolve } from "node:path";
 import { chromium } from "@playwright/test";
 
@@ -95,7 +96,7 @@ const RECORTES: readonly Recorte[] = [
     largura: 3000,
     altura: 1950,
     saidas: [1440],
-    qualidade: 0.55,
+    qualidade: 32,
     nota: "Deslocado para cima na Tarefa 23 para preservar as cabeças das pessoas, mantendo pessoas e placas juntas e faixa de grama para o texto.",
   },
   {
@@ -105,7 +106,7 @@ const RECORTES: readonly Recorte[] = [
     largura: 2105,
     altura: 3990,
     saidas: [540],
-    qualidade: 0.55,
+    qualidade: 35,
     nota: "Em retrato não cabem as duas coisas: o conteúdo útil ocupa 2670 px de largura, e uma janela 1:1.9 tirada de 4000 px de altura tem no máximo 2105 px. A escolha preserva as placas inteiras, que carregam a linguagem local e são o elemento insubstituível da cena; as figuras entram pela borda esquerda. Cortar as placas no meio das palavras seria pior.",
   },
 ];
@@ -136,7 +137,7 @@ const MARCAS: readonly Marca[] = [
       "coletivo-tobias-sou-eu",
       "logo-oficial-tobias-sou-eu.png",
     ],
-    largura: 640,
+    largura: 128,
     qualidade: 0.85,
     nota: "O arquivo oficial é um painel magenta opaco com o lettering em amarelo — a marca traz o próprio fundo. Por isso ela não precisa de placa clara de apoio sobre o Hero escuro: o contraste do lettering acontece dentro do próprio painel. A faixa transparente da borda esquerda é preservada.",
   },
@@ -156,8 +157,48 @@ function sha256(bytes: Buffer): string {
  */
 const QUALIDADES_DA_VARREDURA = [0.4, 0.5, 0.55, 0.6, 0.65, 0.72] as const;
 
+type PipelineSharp = {
+  autoOrient(): PipelineSharp;
+  extract(opcoes: {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+  }): PipelineSharp;
+  resize(opcoes: { width: number; height: number; fit: "fill" }): PipelineSharp;
+  avif(opcoes: {
+    quality: number;
+    effort: number;
+    chromaSubsampling: "4:2:0";
+  }): PipelineSharp;
+  toBuffer(): Promise<Buffer>;
+};
+
+type FabricaSharp = (entrada: Buffer) => PipelineSharp;
+
+/**
+ * O Next já instala Sharp como dependência opcional para seu otimizador de
+ * imagens em produção. O pnpm o mantém junto do pacote que o declarou, não na
+ * raiz; por isso a resolução parte do próprio `next/package.json`. Assim o
+ * pipeline reutiliza exatamente o codificador travado no lockfile, sem baixar
+ * ferramenta paralela nem depender de binário global da máquina.
+ */
+function carregarSharpDoNext(): FabricaSharp {
+  const requererDoNext: (id: string) => unknown = createRequire(
+    createRequire(import.meta.url).resolve("next/package.json"),
+  );
+  const modulo = requererDoNext("sharp");
+  if (typeof modulo !== "function") {
+    throw new Error("O Sharp fornecido pelo Next não pôde ser carregado.");
+  }
+  return modulo as FabricaSharp;
+}
+
+const QUALIDADES_AVIF_DA_VARREDURA = [30, 32, 35, 40, 45, 50] as const;
+
 async function principal(): Promise<void> {
   const medir = process.argv.includes("--medir");
+  const medirAvif = process.argv.includes("--medir-avif");
   const argumento = process.argv.find((a, i) => i >= 2 && !a.startsWith("--"));
   const corpus = process.env.OBSERVATORIO_FONTES_DIR;
   const origem =
@@ -183,8 +224,37 @@ async function principal(): Promise<void> {
   console.log(`sha-256  ${sha256(bruto)}`);
   console.log("");
 
+  if (medirAvif) {
+    const sharp = carregarSharpDoNext();
+    for (const recorte of RECORTES) {
+      for (const largura of recorte.saidas) {
+        const altura = Math.round((largura * recorte.altura) / recorte.largura);
+        const medidas: string[] = [];
+        for (const qualidade of QUALIDADES_AVIF_DA_VARREDURA) {
+          const bytes = await sharp(bruto)
+            .autoOrient()
+            .extract({
+              left: recorte.x,
+              top: recorte.y,
+              width: recorte.largura,
+              height: recorte.altura,
+            })
+            .resize({ width: largura, height: altura, fit: "fill" })
+            .avif({ quality: qualidade, effort: 6, chromaSubsampling: "4:2:0" })
+            .toBuffer();
+          medidas.push(`q${qualidade}=${(bytes.length / 1024).toFixed(0)}kB`);
+        }
+        console.log(
+          `${`${recorte.nome}-${largura}`.padEnd(40)} ${String(largura).padStart(4)}x${String(altura).padEnd(4)} ${medidas.join("  ")}`,
+        );
+      }
+    }
+    return;
+  }
+
   const destino = resolve("public", "media", "campo");
   mkdirSync(destino, { recursive: true });
+  const sharp = carregarSharpDoNext();
 
   const navegador = await chromium.launch();
   const pagina = await navegador.newPage();
@@ -261,53 +331,26 @@ async function principal(): Promise<void> {
         continue;
       }
 
-      const base64 = await pagina.evaluate(
-        async ({ url, r, w, h, q }) => {
-          const img = new Image();
-          img.src = url;
-          await img.decode();
-
-          const tela = document.createElement("canvas");
-          tela.width = w;
-          tela.height = h;
-          const ctx = tela.getContext("2d");
-          if (ctx === null) throw new Error("canvas 2d indisponível");
-          ctx.imageSmoothingEnabled = true;
-          ctx.imageSmoothingQuality = "high";
-          ctx.drawImage(img, r.x, r.y, r.largura, r.altura, 0, 0, w, h);
-
-          const blob = await new Promise<Blob | null>((ok) =>
-            tela.toBlob(ok, "image/webp", q),
-          );
-          if (blob === null) throw new Error("falha ao codificar WebP");
-          const buffer = await blob.arrayBuffer();
-          let binario = "";
-          const bytes = new Uint8Array(buffer);
-          for (let i = 0; i < bytes.length; i += 1) {
-            binario += String.fromCharCode(bytes[i] as number);
-          }
-          return btoa(binario);
-        },
-        {
-          url: dataUrl,
-          r: {
-            x: recorte.x,
-            y: recorte.y,
-            largura: recorte.largura,
-            altura: recorte.altura,
-          },
-          w: largura,
-          h: altura,
-          q: recorte.qualidade,
-        },
-      );
-
-      const saida = Buffer.from(base64, "base64");
-      const caminho = join(destino, `${recorte.nome}-${largura}.webp`);
+      const saida = await sharp(bruto)
+        .autoOrient()
+        .extract({
+          left: recorte.x,
+          top: recorte.y,
+          width: recorte.largura,
+          height: recorte.altura,
+        })
+        .resize({ width: largura, height: altura, fit: "fill" })
+        .avif({
+          quality: recorte.qualidade,
+          effort: 6,
+          chromaSubsampling: "4:2:0",
+        })
+        .toBuffer();
+      const caminho = join(destino, `${recorte.nome}-${largura}.avif`);
       writeFileSync(caminho, saida);
 
       console.log(
-        `${`${recorte.nome}-${largura}.webp`.padEnd(40)} ` +
+        `${`${recorte.nome}-${largura}.avif`.padEnd(40)} ` +
           `${String(largura).padStart(4)}x${String(altura).padEnd(4)} ` +
           `${String(saida.length).padStart(7)} B  ` +
           `${(saida.length / 1024).toFixed(1).padStart(6)} kB  ` +
@@ -328,20 +371,35 @@ async function principal(): Promise<void> {
         "observatorio",
         "horizontal-monocromatica-escura.svg",
       );
-      const bytes = readFileSync(vetor);
       const saida = join(pastaLogos, "observatorio-monocromatica-escura.svg");
-      writeFileSync(saida, bytes);
-      console.log("");
-      console.log(
-        `${"observatorio-monocromatica-escura.svg".padEnd(40)} ${"copia literal".padEnd(11)} ${String(bytes.length).padStart(7)} B  ${(bytes.length / 1024).toFixed(1).padStart(6)} kB  ${sha256(bytes).slice(0, 16)}`,
-      );
+      if (existsSync(vetor)) {
+        const bytes = readFileSync(vetor);
+        writeFileSync(saida, bytes);
+        console.log("");
+        console.log(
+          `${"observatorio-monocromatica-escura.svg".padEnd(40)} ${"copia literal".padEnd(11)} ${String(bytes.length).padStart(7)} B  ${(bytes.length / 1024).toFixed(1).padStart(6)} kB  ${sha256(bytes).slice(0, 16)}`,
+        );
+      } else if (!existsSync(saida)) {
+        throw new Error(
+          `Marca oficial ausente no corpus e no destino: ${vetor}`,
+        );
+      }
     }
 
     for (const marca of MARCAS) {
       if (corpus === undefined) break;
-      const caminho = join(corpus, ...marca.caminhoNoCorpus);
+      const originalNoCorpus = join(corpus, ...marca.caminhoNoCorpus);
+      const caminho = existsSync(originalNoCorpus)
+        ? originalNoCorpus
+        : join(pastaLogos, "coletivo-tobias-sou-eu-640.webp");
+      if (!existsSync(caminho)) {
+        throw new Error(
+          `Marca do Coletivo ausente no corpus e nos derivados locais: ${originalNoCorpus}`,
+        );
+      }
       const original = readFileSync(caminho);
-      const url = `data:image/png;base64,${original.toString("base64")}`;
+      const mime = caminho.endsWith(".webp") ? "image/webp" : "image/png";
+      const url = `data:${mime};base64,${original.toString("base64")}`;
 
       const base64 = await pagina.evaluate(
         async ({ url: u, w, q }) => {
