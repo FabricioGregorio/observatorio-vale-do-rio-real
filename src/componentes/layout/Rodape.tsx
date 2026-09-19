@@ -57,7 +57,7 @@ export function Rodape() {
           Não preencher por estimativa: proporção, ordem e texto vêm do manual.
         */}
         <section aria-labelledby="creditos-fomento">
-          <h2 id="creditos-fomento" className="meta-ficha">
+          <h2 id="creditos-fomento" className="meta-ficha meta-ficha--inversa">
             Créditos de fomento
           </h2>
           <p style={{ color: "var(--color-texto-inverso)" }}>

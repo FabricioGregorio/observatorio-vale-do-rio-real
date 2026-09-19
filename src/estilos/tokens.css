@@ -447,6 +447,14 @@
     color: var(--color-texto-suave);
   }
 
+  /* Metadado sobre a superfície inversa. O papel suave da página comum não
+     pode atravessar essa fronteira: no tema claro, carvão suave sobre mata
+     tem apenas 1,73:1. A superfície inversa reutiliza seu próprio texto, que
+     passa AA nos dois temas sem alterar as fichas das superfícies normais. */
+  .meta-ficha--inversa {
+    color: var(--color-texto-inverso);
+  }
+
   /* Numeral de ficha: I..VII das visitas, M01 das metas, nº do episódio.
      A numeração é real e informativa — nunca decorativa. */
   .numeral-ficha {
