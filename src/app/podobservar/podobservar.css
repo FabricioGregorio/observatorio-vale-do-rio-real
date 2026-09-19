@@ -1,0 +1,208 @@
+/*
+  PodObservar — superfícies públicas.
+
+  Identidade cromática própria, derivada dos papéis semânticos: nenhum valor
+  literal de cor entra aqui (tokens.css é a fonte única). A abertura usa o
+  verde profundo institucional, e o traçado é a mesma família gráfica da
+  cartografia do Território — curva de nível que também lê como onda. Puro
+  CSS: sem imagem, sem JS, sem player.
+*/
+
+.pod {
+  --pod-linha: color-mix(
+    in srgb,
+    var(--color-borda-forte) 48%,
+    var(--color-fundo)
+  );
+  --pod-papel: color-mix(
+    in srgb,
+    var(--color-fundo-elevado) 94%,
+    var(--color-marca)
+  );
+}
+
+/* --- Abertura ----------------------------------------------------------- */
+
+.pod-abertura {
+  position: relative;
+  overflow: clip;
+  background: var(--color-fundo-inverso);
+  color: var(--color-texto-inverso);
+  padding: clamp(2rem, 6vw, 4.5rem) clamp(1rem, 4vw, 3rem);
+}
+.pod-abertura > * {
+  position: relative;
+}
+.pod-abertura .meta-ficha {
+  color: color-mix(
+    in srgb,
+    var(--color-texto-inverso) 85%,
+    var(--color-fundo-inverso)
+  );
+}
+.pod-abertura__tracado {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: min(64%, 46rem);
+  opacity: 0.22;
+  pointer-events: none;
+  background: repeating-radial-gradient(
+    ellipse at 96% 40%,
+    transparent 0 2.4rem,
+    var(--color-texto-inverso) 2.45rem 2.5rem,
+    transparent 2.55rem 4.2rem
+  );
+  mask-image: linear-gradient(to left, #000 10%, transparent 78%);
+}
+.pod-abertura__selos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid
+    color-mix(
+      in srgb,
+      var(--color-texto-inverso) 35%,
+      var(--color-fundo-inverso)
+    );
+  font-size: var(--text-sm);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* --- Lista de episódios -------------------------------------------------- */
+
+.pod-lista {
+  display: grid;
+  gap: 1.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.pod-episodio {
+  display: grid;
+  gap: 0.75rem;
+  border: 1px solid var(--pod-linha);
+  background: var(--pod-papel);
+  padding: clamp(1.25rem, 3vw, 2rem);
+}
+.pod-episodio__numero {
+  font-family: var(--font-display);
+  font-weight: var(--peso-numeral);
+  font-size: var(--text-3xl);
+  line-height: 1;
+  color: var(--color-marca);
+}
+.pod-episodio h3 {
+  font-size: clamp(var(--text-xl), 3vw, var(--text-2xl));
+  text-wrap: balance;
+}
+.pod-episodio__meta {
+  font-size: var(--text-sm);
+  color: var(--color-texto-suave);
+}
+.pod-episodio__resumo {
+  max-width: 68ch;
+}
+.pod-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.75rem;
+  margin-top: 0.5rem;
+}
+
+/* --- Vazio --------------------------------------------------------------- */
+
+.pod-vazio {
+  border: 1px dashed var(--color-borda-forte);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  color: var(--color-texto-suave);
+}
+
+/* --- Página do episódio -------------------------------------------------- */
+
+.pod-episodio-pagina {
+  max-width: 44rem;
+}
+.pod-migalha {
+  font-size: var(--text-sm);
+  color: var(--color-texto-suave);
+}
+.pod-nota {
+  border-left: 4px solid var(--color-marca);
+  padding: 1rem 0 1rem 1.25rem;
+  color: var(--color-texto-suave);
+  font-size: var(--text-sm);
+  max-width: 68ch;
+}
+.pod-nota__titulo {
+  font-size: var(--text-base);
+  margin-bottom: 0.5rem;
+}
+
+/* --- Transcrição --------------------------------------------------------- */
+
+.pod-transcricao {
+  /* Medida de leitura confortável: a transcrição é texto longo, e é para ler. */
+  max-width: 68ch;
+}
+.pod-transcricao__tempo {
+  margin-top: 2rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-mono);
+  color: var(--color-texto-suave);
+}
+.pod-transcricao__tempo::before {
+  content: "[";
+}
+.pod-transcricao__tempo::after {
+  content: "]";
+}
+.pod-transcricao__som {
+  margin-top: 0.75rem;
+  font-style: italic;
+  color: var(--color-texto-suave);
+}
+.pod-transcricao__som::before {
+  content: "[";
+}
+.pod-transcricao__som::after {
+  content: "]";
+}
+.pod-transcricao__locutor {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  margin-top: 1.25rem;
+}
+.pod-transcricao__nome {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.pod-transcricao__funcao {
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+}
+.pod-transcricao__fala {
+  margin-top: 0.5rem;
+}
+
+/* URL longa em link externo não pode estourar o layout em 375px. */
+.pod a {
+  overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pod-episodio {
+    transition: border-color var(--motion-rapido, 150ms) ease;
+  }
+}
+.pod-episodio:hover {
+  border-color: var(--color-borda-forte);
+}

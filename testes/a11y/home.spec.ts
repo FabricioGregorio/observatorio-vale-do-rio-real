@@ -19,6 +19,8 @@ const NOME_OFICIAL =
 
 const CAPITULOS = [
   "hl-origem",
+  // II · PodObservar entrou na P0.3, entre Origem e Território.
+  "hl-podobservar",
   "hl-territorio",
   "hl-lugares",
   "hl-leitura",
@@ -77,7 +79,7 @@ test.describe("Home", () => {
     }
   });
 
-  test("mantém os sete capítulos na ordem narrativa aprovada", async ({
+  test("mantém os oito capítulos na ordem narrativa aprovada", async ({
     page,
   }) => {
     await page.goto("/");
@@ -361,8 +363,14 @@ test.describe("Home — apresentação", () => {
     }) => {
       await page.setViewportSize({ width: largura, height: 900 });
       await page.goto("/");
+      /*
+        A faixa continua entre a abertura narrativa e o Território, mas deixou
+        de ser irmã imediata de Origem: a P0.3 pôs a seção do PodObservar
+        entre as duas. O contrato que importa é a ordem, não a adjacência —
+        por isso a asserção passou a comparar posições.
+      */
       await expect(
-        page.locator("#hl-origem + #hl-numeros + #hl-territorio"),
+        page.locator("#hl-podobservar + #hl-numeros + #hl-territorio"),
       ).toHaveCount(1);
       await expect(page.locator(".ab-b2__lado")).toHaveCount(0);
       const faixa = page.locator("#hl-numeros");
@@ -576,7 +584,7 @@ test.describe("Home — apresentação", () => {
     const ids = await page
       .locator("section.hl-capitulo")
       .evaluateAll((secoes) => secoes.map((s) => s.id));
-    expect(ids).toHaveLength(7);
+    expect(ids).toHaveLength(CAPITULOS.length);
   });
 });
 
@@ -587,7 +595,7 @@ test.describe("Home — apresentação", () => {
 test.describe("Home sem JavaScript", () => {
   test.use({ javaScriptEnabled: false });
 
-  test("os sete capítulos e o título continuam servidos", async ({ page }) => {
+  test("os oito capítulos e o título continuam servidos", async ({ page }) => {
     await page.goto("/");
 
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(

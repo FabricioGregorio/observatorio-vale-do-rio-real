@@ -221,15 +221,6 @@ export const CSS_DA_HOME = `
 .hl-ilha__fotos figcaption{display:flex;flex-direction:column;margin-top:.4rem;font-size:var(--text-xs);line-height:1.4}
 
 /* VI Produtos */
-.hl-pod{display:grid;gap:2rem;margin-top:3rem;padding:clamp(1.5rem,4vw,3rem);background:var(--color-fundo-elevado);border:1px solid var(--color-borda);border-left:6px solid var(--color-marca);border-radius:var(--radius-ficha)}
-@media (min-width:960px){.hl-pod{grid-template-columns:minmax(0,5fr) minmax(0,6fr);align-items:center}}
-.hl-pod h3{margin-top:.5rem;font-size:clamp(var(--text-2xl),4.5vw,var(--text-4xl))}
-.hl-pod__fato{margin-top:.75rem;font-size:var(--text-lg);font-weight:600}
-.hl-pod p+p{margin-top:.5rem}
-.hl-episodios{display:grid;gap:.75rem}
-.hl-episodio{display:flex;align-items:center;gap:1rem;padding:1rem;border:1px dashed var(--color-borda-forte);border-radius:var(--radius-ficha)}
-.hl-episodio__n{font-family:var(--font-display);font-weight:var(--peso-numeral);font-stretch:125%;font-size:var(--text-2xl);line-height:1;color:var(--color-marca)}
-.hl-episodio__vazio{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);color:var(--color-texto-suave)}
 .hl-catalogo{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));margin-top:3rem;border-top:2px solid var(--color-texto)}
 .hl-catalogo li{display:flex;flex-direction:column;align-items:flex-start;gap:.45rem;padding:1.25rem 1.5rem 1.25rem 0;border-bottom:1px solid var(--hl-fio)}
 .hl-catalogo h3{font-size:var(--text-lg)}

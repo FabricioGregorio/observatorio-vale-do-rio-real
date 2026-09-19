@@ -11,7 +11,7 @@
  */
 import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, test } from "vitest";
-import { ENTREVISTAS, PODOBSERVAR } from "../src/componentes/home/conteudo";
+import { ENTREVISTAS } from "../src/componentes/home/conteudo";
 import { MENU_PRINCIPAL } from "../src/lib/navegacao";
 
 describe("navegação do site", () => {
@@ -156,15 +156,14 @@ describe("sistema gráfico territorial", () => {
  * placeholder plausível.
  */
 describe("limites de conteúdo da Home", () => {
-  test("PodObservar não traz título, duração, link ou transcrição sugeridos", () => {
-    expect(PODOBSERVAR.episodios).toHaveLength(PODOBSERVAR.episodiosPublicados);
-    for (const episodio of PODOBSERVAR.episodios) {
-      expect(episodio.titulo).toBeNull();
-      expect(episodio.duracao).toBeNull();
-      expect(episodio.url).toBeNull();
-      expect(episodio.transcricao).toBeNull();
-    }
-  });
+  /*
+   * O teste que vivia aqui protegia o bloco antigo do PodObservar, que
+   * declarava três episódios sem título, duração, link nem transcrição — a
+   * forma honesta de mostrar estrutura quando não havia material. O material
+   * existe desde a P0.2B2, o bloco saiu na P0.3, e a Home passou a ler a view
+   * pública. O contrato equivalente agora é `testes/podobservar-publico.test.ts`:
+   * a Home não conhece quantidade de episódios e não inventa nenhum.
+   */
 
   test("as entrevistas são identificadas por instituição ou lugar", () => {
     expect(ENTREVISTAS.map((e) => e.numero)).toEqual([

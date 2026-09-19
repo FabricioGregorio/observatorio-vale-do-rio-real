@@ -133,33 +133,3 @@ export const ENTREVISTAS: readonly Entrevista[] = [
   },
   { numero: "08", onde: "Ilha Grande", municipio: null },
 ];
-
-export type EpisodioPendente = {
-  readonly numero: number;
-  readonly titulo: null;
-  readonly duracao: null;
-  readonly url: null;
-  readonly transcricao: null;
-};
-
-/**
- * PodObservar.
- *
- * `episodiosPublicados` e `plataformas` vêm da instrução do responsável em
- * 2026-09-13. Títulos, capas, durações, links e transcrições **não** estão no
- * repositório, e por isso são `null`: a Home mostra a estrutura, nunca
- * conteúdo sugerido.
- */
-export const PODOBSERVAR = {
-  episodiosPublicados: 3,
-  plataformas: ["Spotify", "YouTube"],
-  episodios: [1, 2, 3].map(
-    (numero): EpisodioPendente => ({
-      numero,
-      titulo: null,
-      duracao: null,
-      url: null,
-      transcricao: null,
-    }),
-  ),
-} as const;

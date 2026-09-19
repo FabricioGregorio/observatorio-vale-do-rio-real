@@ -36,11 +36,10 @@ import {
   FOTOGRAFIAS_DO_BORDA_NO_ACERVO,
   LINHA_DO_EDITAL,
   NOME_OFICIAL,
-  PODOBSERVAR,
   RELATORIO_DO_RECANTO,
   ROTULO_DO_ESTADO,
 } from "./conteudo";
-import { Capitulo, Pendente } from "./Estrutura";
+import { Capitulo } from "./Estrutura";
 import {
   CLASSE_DO_MAPA,
   CSS_CARTOGRAFICO,
@@ -54,8 +53,11 @@ import { DEFINICOES, recorteDoMunicipio } from "./recortes";
 /**
  * Seções da Home, na ordem narrativa:
  *
- *   I Origem → II Território → III Lugares → IV Leitura → V Escuta →
- *   VI Produtos → VII Conferência
+ *   I Origem → II PodObservar → III Território → IV Lugares → V Leitura →
+ *   VI Escuta → VII Produtos → VIII Conferência
+ *
+ * II vive em `PodObservar.tsx`, porque depende da view pública e recebe o
+ * episódio mais recente por prop. As demais são estáticas e ficam aqui.
  *
  * Todas são Server Components. A única ilha cliente da página é o mapa do
  * recorte; o cabeçalho e a Central de Acessibilidade vivem no layout raiz.
@@ -149,7 +151,7 @@ const ID_DO_TITULO_DA_LEITURA = "hl-territorio-leitura";
 const ID_DO_TITULO_DOS_PONTOS = "hl-territorio-pontos";
 
 /**
- * II Território — cartografia editorial.
+ * III Território — cartografia editorial.
  *
  * Composição em duas colunas: o mapa emoldurado à esquerda, com nota
  * cartográfica e legenda; o eixo editorial à direita, com a leitura em
@@ -165,7 +167,7 @@ export function Territorio() {
     <Capitulo
       className="hl-capitulo--territorio"
       id="hl-territorio"
-      numero="II"
+      numero="III"
       rotulo="Território"
       titulo="Cartografia viva do Vale do Rio Real"
     >
@@ -414,7 +416,7 @@ export function Lugares({
   return (
     <Capitulo
       id="hl-lugares"
-      numero="III"
+      numero="IV"
       rotulo="Lugares"
       titulo="Dois lugares no centro da pesquisa"
     >
@@ -505,7 +507,7 @@ export function Leitura() {
       antes="Os registros da pesquisa também permitem uma leitura quantitativa do território"
       className="hl-leitura"
       id="hl-leitura"
-      numero="IV"
+      numero="V"
       rotulo="Leitura"
       titulo="Onde o recurso circula"
     >
@@ -579,7 +581,7 @@ export function Escuta() {
   return (
     <Capitulo
       id="hl-escuta"
-      numero="V"
+      numero="VI"
       rotulo="Escuta"
       titulo="Quem a pesquisa ouviu"
     >
@@ -678,42 +680,17 @@ export function Produtos({
   return (
     <Capitulo
       id="hl-produtos"
-      numero="VI"
+      numero="VII"
       rotulo="Produtos"
       titulo="O que o Observatório produziu"
     >
-      <article aria-labelledby="hl-pod" className="hl-pod">
-        <div>
-          <p className="meta-ficha">Podcast</p>
-          <h3 id="hl-pod">PodObservar</h3>
-          <p className="hl-pod__fato">
-            {PODOBSERVAR.episodiosPublicados} episódios publicados no{" "}
-            {PODOBSERVAR.plataformas.join(" e no ")}.
-          </p>
-          <p>No site, cada episódio precisará vir com transcrição integral.</p>
-          <Pendente>
-            Informação do responsável · títulos, capas e links ainda não estão
-            no repositório
-          </Pendente>
-        </div>
-
-        <ol className="hl-episodios" aria-label="Episódios do PodObservar">
-          {PODOBSERVAR.episodios.map((episodio) => (
-            <li className="hl-episodio" key={episodio.numero}>
-              <span className="hl-episodio__n" aria-hidden="true">
-                {String(episodio.numero).padStart(2, "0")}
-              </span>
-              <span>
-                <span className="sr-only">Episódio {episodio.numero}: </span>
-                <span className="hl-episodio__vazio">
-                  Título, duração, link e transcrição a inserir
-                </span>
-              </span>
-            </li>
-          ))}
-        </ol>
-      </article>
-
+      {/*
+        O bloco do PodObservar saiu daqui na P0.3.
+        Ele repetia "3 episódios publicados" como literal e prometia títulos,
+        durações e links que não existiam no repositório. O podcast passou a
+        ser a seção II da Home, alimentada pela view pública — aparece uma vez
+        só, na narrativa, e com dado real.
+      */}
       <ul className="hl-catalogo">
         <li>
           <span className="hl-estado" data-estado="publicado">
@@ -841,7 +818,7 @@ export function Conferencia() {
     <Capitulo
       className="hl-capitulo--serra"
       id="hl-conferencia"
-      numero="VII"
+      numero="VIII"
       rotulo="Conferência"
       titulo="Tudo o que está aqui pode ser conferido"
     >
