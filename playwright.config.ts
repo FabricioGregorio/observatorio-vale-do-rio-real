@@ -2,23 +2,30 @@ import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./testes/a11y",
+  /* Laboratórios que, por contrato, respondem 404 em produção. Seus testes
+     continuam no repositório, mas não pertencem ao gate da superfície pública. */
+  testIgnore: [
+    "**/dados-prototipo.spec.ts",
+    "**/dados-vivos.spec.ts",
+    "**/hero-prototipo.spec.ts",
+    "**/linguagem-visual.spec.ts",
+    "**/pesquisa-prototipo.spec.ts",
+    "**/rota-estilos.spec.ts",
+    "**/territorio-prototipo.spec.ts",
+    "**/territorio-vivo.spec.ts",
+  ],
+  fullyParallel: true,
+  workers: 4,
+  retries: 0,
   use: {
-    /*
-      `localhost`, e não `127.0.0.1`, de propósito.
-
-      O `next dev` bloqueia acesso cross-origin aos seus recursos de
-      desenvolvimento, e considera `localhost` a sua origem. Apontando para
-      `127.0.0.1`, o HMR era bloqueado e **a página nunca hidratava**: todo
-      Client Component ficava inerte nos testes. Passou despercebido enquanto
-      nenhum teste dependia de comportamento no navegador; apareceu na primeira
-      vez que um dependeu, na navegação por teclado do mapa.
-    */
-    baseURL: "http://localhost:3000",
+    baseURL: "http://localhost:3100",
     ...devices["Desktop Chrome"],
+    trace: "retain-on-failure",
   },
   webServer: {
-    command: "pnpm dev",
-    url: "http://localhost:3000",
-    reuseExistingServer: true,
+    command: "pnpm start:e2e",
+    url: "http://localhost:3100",
+    reuseExistingServer: false,
+    timeout: 120_000,
   },
 });

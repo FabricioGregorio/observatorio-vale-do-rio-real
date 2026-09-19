@@ -138,11 +138,15 @@ test.describe("Home", () => {
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");
-    await expect(
-      page
-        .locator("#cabecalho-home")
-        .getByRole("link", { name: /Prestação de contas/ }),
-    ).toBeVisible();
+    const prestacao = page
+      .locator("#cabecalho-home")
+      .getByRole("link", { name: /Prestação de contas/ });
+    await expect(prestacao).toBeVisible();
+    await Promise.all([
+      page.waitForURL((url) => url.pathname === "/prestacao-de-contas"),
+      prestacao.click(),
+    ]);
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   });
 
   test("usa o ícone oficial escolhido e não a assinatura anterior", async ({
