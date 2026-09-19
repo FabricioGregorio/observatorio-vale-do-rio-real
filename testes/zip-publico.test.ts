@@ -7,6 +7,14 @@ import { evidenciaManifestoSchema } from "../src/lib/manifesto-evidencias";
 import { gerarZipPublico } from "../src/lib/zip-publico";
 
 const hash = "a".repeat(64);
+
+/**
+ * Identidade do objeto físico exigida por `AnexoPublico` desde a migração
+ * 0009. Estática e única porque toda chamada de `evidencia()` descreve o
+ * mesmo objeto `a01`: o que varia entre os casos é o estado documental e a
+ * revisão de privacidade, nunca o binário.
+ */
+const ARQUIVO_ID_A01 = "00000000-0000-4000-8000-000000000a01";
 function evidencia(
   estado:
     | "PUBLICAVEL"
@@ -33,6 +41,7 @@ function evidencia(
       arquivo_existe: true,
     }),
     anexo: {
+      arquivoId: ARQUIVO_ID_A01,
       ordemAnexo: 1,
       slug: "a01",
       rotuloArquivo: "Arquivo de teste",

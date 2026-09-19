@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { describe, expect, test } from "vitest";
 import { resolverEstadoDosProdutos } from "../src/componentes/home/Secoes";
 import { lugaresDeCampo } from "../src/componentes/territorio/cartografia/lugares";
@@ -24,8 +25,33 @@ import {
  * verifica que a função não tem outra saída.
  */
 
+/**
+ * `arquivoId` de fixture, derivado do link permanente.
+ *
+ * Determinístico e sem aleatoriedade, e reproduz a invariante real do schema:
+ * `arquivo.url_publica` é UNIQUE, então uma URL pública corresponde a
+ * exatamente um objeto físico. Importa porque vários testes abaixo montam
+ * dois anexos do **mesmo** documento — o caso multiarquivo da migração 0007.
+ * Um id constante faria dois objetos distintos compartilharem a identidade
+ * que a migração 0009 passou a exigir, e o fixture passaria a afirmar algo
+ * que o banco não permite.
+ */
+function arquivoIdDeFixture(link: string): string {
+  const h = createHash("sha256").update(link).digest("hex");
+  return [
+    h.slice(0, 8),
+    h.slice(8, 12),
+    `4${h.slice(13, 16)}`,
+    `8${h.slice(17, 20)}`,
+    h.slice(20, 32),
+  ].join("-");
+}
+
 function anexo(slug: string, over: Partial<AnexoPublico> = {}): AnexoPublico {
+  const linkPermanente =
+    over.linkPermanente ?? `https://acervo.exemplo/${slug}.pdf`;
   return {
+    arquivoId: arquivoIdDeFixture(linkPermanente),
     codigo: "1",
     estado: "PUBLICAVEL",
     revisaoPrivacidade: "concluida",
@@ -43,7 +69,7 @@ function anexo(slug: string, over: Partial<AnexoPublico> = {}): AnexoPublico {
     resumo: null,
     dataReferencia: null,
     licenca: "CC BY-SA 4.0",
-    linkPermanente: `https://acervo.exemplo/${slug}.pdf`,
+    linkPermanente,
     linkOrigem: null,
     mimeType: "application/pdf",
     bytes: 1,
