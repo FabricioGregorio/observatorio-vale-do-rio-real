@@ -749,28 +749,35 @@ export const vwPendenciaPublicacao = pgView("vw_pendencia_publicacao", {
 }).existing();
 
 /**
- * `vw_episodio_publico` — gate público do PodObservar (migração 0010).
+ * `vw_episodio_publico` — gate público do PodObservar.
  *
- * Criada em SQL bruto dentro da migração, como toda view do projeto; aqui só
- * é **declarada como existente** (`.existing()`), sem gerar DDL (doc 03 §6.7).
+ * Criada pela migração 0010 e **substituída** pela 0011 (ADR-021), em SQL
+ * bruto dentro da migração, como toda view do projeto; aqui só é declarada
+ * como existente (`.existing()`), sem gerar DDL (doc 03 §6.7).
  *
- * O gate é fail-closed, no mesmo princípio de `vw_anexo_publico`. São seis
+ * A 0011 registra a decisão humana de concentrar a escuta no Spotify: o site
+ * não reproduz, não oferece download e não expõe URL de áudio. A view perdeu
+ * `audio_url`, `audio_mime_type` e `audio_bytes`, e deixou de juntar
+ * `arquivo` pelo áudio — não é omissão de colunas, é a remoção do caminho.
+ * A partir daqui não existe rota até o master.
+ *
+ * O gate é fail-closed, no mesmo princípio de `vw_anexo_publico`. São cinco
  * condições, e nenhuma é dispensável:
  *
- * 1. `status = 'publicado'` — rascunho e em_revisao não vazam;
+ * 1. `status = 'publicado'` — rascunho, em_revisao e arquivado não vazam;
  * 2. `publicado_em IS NOT NULL` — sem data declarada não há publicação;
  * 3. `publicado_em <= now()` — episódio datado no futuro ainda não é público;
- * 4. o áudio é `visibilidade = 'publico'`,
- * 5. com `url_publica` presente,
- * 6. e `espelhado_em` preenchido.
+ * 4. `transcricao` não vazia — a coluna ser NOT NULL não impede string em
+ *    branco, e acessibilidade é pré-requisito de publicação;
+ * 5. `url_spotify` presente e não vazia — sem player próprio, episódio
+ *    publicado sem destino de escuta seria anúncio sem objeto.
  *
- * As três últimas são JOIN interno, não filtro opcional: um episódio cujo
- * áudio ainda está no bucket privado simplesmente não tem linha pública. É a
- * mesma recusa de `vw_anexo_publico` a emitir `link_permanente` nulo — o site
- * não inventa URL por concatenação, ele lê a URL que o objeto declara.
+ * `episodio.audio_id` continua NOT NULL: o Observatório segue dono do master,
+ * para custódia, integridade, hash, duração e cadeia documental. Áudio
+ * privado deixou de bloquear o episódio, e continua inalcançável pela view.
  *
- * A capa entra por LEFT JOIN com os mesmos predicados públicos: capa privada
- * apaga `capa_url`, e não o episódio.
+ * A capa entra por LEFT JOIN com os predicados públicos de `arquivo`: capa
+ * privada apaga `capa_url`, e não o episódio.
  *
  * A view não expõe `id`, `temporada_id`, `audio_id`, `capa_id`, `status`,
  * `criado_em`, `atualizado_em`, `busca`, bucket nem chave de storage.
@@ -790,9 +797,6 @@ export const vwEpisodioPublico = pgView("vw_episodio_publico", {
   explicito: boolean("explicito"),
   urlSpotify: text("url_spotify"),
   urlYoutube: text("url_youtube"),
-  audioUrl: text("audio_url"),
-  audioMimeType: text("audio_mime_type"),
-  audioBytes: bigint("audio_bytes", { mode: "number" }),
   capaUrl: text("capa_url"),
   capaLarguraPx: integer("capa_largura_px"),
   capaAlturaPx: integer("capa_altura_px"),

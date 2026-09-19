@@ -7,28 +7,59 @@ import { databaseUrlDisponivel } from "./anexos";
 /**
  * Consulta pública do PodObservar — fundação da futura seção `/podobservar`.
  *
- * Lê **somente** `vw_episodio_publico` (migração 0010). A view é o gate: ela
- * já exclui rascunho, em_revisão, arquivado, episódio sem `publicado_em`,
- * episódio datado no futuro e episódio cujo áudio ainda não é público. Nada
- * aqui repete esse filtro, e nada aqui pode afrouxá-lo — as tabelas privadas
- * `episodio` e `temporada` não são consultadas por este módulo.
+ * Lê **somente** `vw_episodio_publico` (migração 0010, substituída pela
+ * 0011). A view é o gate: ela já exclui rascunho, em_revisão, arquivado,
+ * episódio sem `publicado_em`, episódio datado no futuro, transcrição em
+ * branco e episódio sem destino de escuta no Spotify. Nada aqui repete esse
+ * filtro, e nada aqui pode afrouxá-lo — as tabelas privadas `episodio` e
+ * `temporada` não são consultadas por este módulo.
+ *
+ * **Este módulo não devolve áudio.** Por decisão humana registrada na
+ * ADR-021, o site é descoberta, apresentação editorial, metadata e
+ * transcrição; a escuta acontece no Spotify. Não há `audioUrl`,
+ * `audioMimeType` nem `audioBytes` — e a ausência é arquitetura, não lacuna
+ * temporária a ser preenchida depois. O master continua existindo e
+ * referenciado por `episodio.audio_id`, do lado privado.
  *
  * Sem `DATABASE_URL` — máquina de desenvolvimento sem credencial — as funções
  * devolvem lista vazia, como em `anexos.ts`. Em produção a ausência é erro
  * explícito, levantado por `databaseUrlDisponivel`.
  *
  * Este módulo não renderiza nada e não conhece rota: ele oferece as primitivas
- * que a Home, `/podobservar`, `/podobservar/t1/[episodio]`, o sitemap e o RSS
- * vão consumir depois.
+ * que a Home, `/podobservar`, `/podobservar/t1/[episodio]` e o sitemap vão
+ * consumir depois. RSS não está entre elas: a ADR-021 o suspendeu.
  */
 
 /** Uma linha crua da view, como o Drizzle a tipa (todas as colunas anuláveis). */
 export type LinhaEpisodioPublico = typeof vwEpisodioPublico.$inferSelect;
 
 /**
+ * Destino primário de escuta (ADR-021, item 4).
+ *
+ * Escopado por domínio, como `plano-de-despublicacao.ts` faz com
+ * `https://acervo.`. Não é decoração: o gate da view só sabe que a coluna não
+ * está vazia, e é aqui que se verifica que o valor é mesmo um link do
+ * Spotify. Publicar um CTA "Ouvir no Spotify ↗" apontando para outro lugar
+ * seria afirmação falsa na superfície pública.
+ *
+ * Nenhuma requisição externa é feita: valida-se a forma do valor existente,
+ * nunca a existência remota do episódio.
+ */
+const urlSpotify = z.url().startsWith("https://open.spotify.com/");
+
+/**
  * Fronteira pública validada. As colunas da view são `NOT NULL` na origem,
  * mas o Drizzle tipa view como tudo anulável: a validação aqui é o que
  * transforma essa promessa em garantia, sem `as` e sem `!`.
+ *
+ * `urlSpotify` não é anulável: a view já recusa episódio sem ele, então uma
+ * linha pública sem Spotify não deveria existir — e, se existir, esta
+ * validação a descarta em vez de renderizar um episódio sem como ouvir.
+ *
+ * `urlYoutube` continua opcional e fora do gate. É `z.url()` genérica, sem
+ * escopo de domínio, para que `youtu.be` e endereços de canal também passem:
+ * ele é CTA secundário, e estreitar o formato aqui derrubaria o episódio
+ * inteiro por causa de um link acessório.
  */
 export const episodioPublicoSchema = z.object({
   slug: z.string().min(1),
@@ -41,11 +72,8 @@ export const episodioPublicoSchema = z.object({
   duracaoSeg: z.number().int().positive(),
   transcricao: z.string().min(1),
   explicito: z.boolean(),
-  urlSpotify: z.url().nullable(),
+  urlSpotify,
   urlYoutube: z.url().nullable(),
-  audioUrl: z.url(),
-  audioMimeType: z.string().min(1),
-  audioBytes: z.number().int().positive(),
   capaUrl: z.url().nullable(),
   capaLarguraPx: z.number().int().positive().nullable(),
   capaAlturaPx: z.number().int().positive().nullable(),
@@ -55,8 +83,9 @@ export type EpisodioPublico = z.infer<typeof episodioPublicoSchema>;
 
 /**
  * Linha incompleta é descartada, nunca completada por suposição — mesma
- * postura de `adaptarLinhasDaView` em `anexos.ts`. Um episódio sem áudio
- * público, sem transcrição ou sem data não vira entrada meia-boca: some.
+ * postura de `adaptarLinhasDaView` em `anexos.ts`. Um episódio sem
+ * transcrição, sem data ou sem destino de escuta não vira entrada
+ * meia-boca: some.
  */
 export function adaptarLinhasDaView(
   linhas: readonly LinhaEpisodioPublico[],
