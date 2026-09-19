@@ -276,8 +276,8 @@ describe.skipIf(!URL_MANUTENCAO)(
         const r = await pool.query(
           `select (select count(*)::int from documento) as d,
                   (select count(*)::int from arquivo) as a,
-                  (select count(*)::int from arquivo
-                    where chave_storage not like 'arquivos/podobservar/%') as a_acervo,
+                  (select count(*)::int from arquivo a
+                    where exists (select 1 from documento_arquivo da where da.arquivo_id = a.id)) as a_acervo,
                   (select count(*)::int from documento_arquivo) as da,
                   (select count(*)::int from vw_anexo_publico) as v,
                   (select count(*)::int from documento
@@ -308,6 +308,13 @@ describe.skipIf(!URL_MANUTENCAO)(
              and exists (select 1 from documento_arquivo da where da.arquivo_id = a.id)`,
         );
         expect(semVinculo.rows[0].n).toBe(0);
+        const artesSemVinculo = await pool.query(
+          `select count(*)::int as n from arquivo a
+           where (a.chave_storage like 'originais/podobservar/%'
+                  or a.chave_storage like 'arquivos/podobservar-artes/%')
+             and exists (select 1 from documento_arquivo da where da.arquivo_id = a.id)`,
+        );
+        expect(artesSemVinculo.rows[0].n).toBe(0);
         const arquivos = await pool.query(
           `select a.chave_storage, a.sha256, a.bucket, a.visibilidade,
                   a.url_publica, da.principal, da.versao

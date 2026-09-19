@@ -28,7 +28,7 @@ ARTES = (
         "sha256_original": "da90f55bf3970ffb989878259335032369838b6cf35c0bbe4e8b2072879867f6",
         "arquivo": "podobservar-logo-1200.webp",
         "chave_privada": "originais/podobservar/podobservar-logo.jpg",
-        "chave_publica": "arquivos/podobservar/artes/podobservar-logo-v1.webp",
+        "chave_publica": "arquivos/podobservar-artes/podobservar-logo-v1.webp",
         "slug_episodio": None,
     },
     {
@@ -38,7 +38,7 @@ ARTES = (
         "sha256_original": "5251f72f54102a8985d6df3acdbe34ce68ea7d2fdb1179ff9140f122d3033c2c",
         "arquivo": "podobservar-ep01-1200.webp",
         "chave_privada": "originais/podobservar/t1-ep-01-capa.jpg",
-        "chave_publica": "arquivos/podobservar/artes/t1-ep-01-capa-v1.webp",
+        "chave_publica": "arquivos/podobservar-artes/t1-ep-01-capa-v1.webp",
         "slug_episodio": "01-o-que-e-o-vale-do-rio-real",
     },
     {
@@ -48,7 +48,7 @@ ARTES = (
         "sha256_original": "017270453a2d330e536369b41469971aea6b38fd0af932302ed7aa8392b280b8",
         "arquivo": "podobservar-ep02-1200.webp",
         "chave_privada": "originais/podobservar/t1-ep-02-capa.jpg",
-        "chave_publica": "arquivos/podobservar/artes/t1-ep-02-capa-v1.webp",
+        "chave_publica": "arquivos/podobservar-artes/t1-ep-02-capa-v1.webp",
         "slug_episodio": "02-conheca-o-recanto-da-serra",
     },
     {
@@ -58,7 +58,7 @@ ARTES = (
         "sha256_original": "13a85a6b2a7fef265767b5cca6bbd3c6e0c711996187535653f33ff4e8621bab",
         "arquivo": "podobservar-ep03-1200.webp",
         "chave_privada": "originais/podobservar/t1-ep-03-capa.jpg",
-        "chave_publica": "arquivos/podobservar/artes/t1-ep-03-capa-v1.webp",
+        "chave_publica": "arquivos/podobservar-artes/t1-ep-03-capa-v1.webp",
         "slug_episodio": "03-conheca-o-museu-borda-da-mata",
     },
 )

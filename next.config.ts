@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "acervo.observatoriotobiassoueu.com.br",
         port: "",
-        pathname: "/arquivos/podobservar/artes/**",
+        pathname: "/arquivos/podobservar-artes/**",
         search: "",
       },
     ],
