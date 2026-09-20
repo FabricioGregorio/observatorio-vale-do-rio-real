@@ -203,17 +203,16 @@ export default async function PaginaPesquisa() {
             ))}
           </div>
           {/*
-            As duas pranchas desta página são fotografias sem pessoa
-            identificável. Não é exigência do gate — as 59 fotografias de B01
-            estão públicas no acervo, com revisão de privacidade concluída,
-            e várias delas mostram a equipe em campo. É a mesma linha
-            editorial que a Home já segue nas fichas dos lugares: no corpo das
-            páginas entram o lugar e o acervo; as pessoas aparecem no acervo,
-            onde cada arquivo tem ficha e procedência.
+            Fotografia do trabalho de campo, autorizada pelo responsável em
+            2026-09-20 por ser a mais adequada para ilustrar o método. Ela é
+            derivado já público do corpus B01, com revisão de privacidade
+            concluída, e está servida no acervo desde a publicação de
+            2026-09-16 — esta página não amplia o que já é público, só o usa
+            onde ele explica.
           */}
           <Prancha
-            arquivo="borda-geladeira-discos.webp"
-            legenda="Acervo de discos guardado no equipamento acompanhado"
+            arquivo="borda-entrevista-campo.webp"
+            legenda="Entrevista de campo no equipamento acompanhado"
           />
         </div>
 
