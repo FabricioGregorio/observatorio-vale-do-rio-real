@@ -319,7 +319,7 @@ export const IMPRENSA_DESCRICAO =
   "“Tobias, sou Eu!”, financiada por edital público da Política Nacional " +
   "Aldir Blanc. Entre julho e dezembro de 2025, a pesquisa acompanhou dois " +
   "equipamentos culturais de Tobias Barreto em seu funcionamento diário, " +
-  "visitou quatro lugares do recorte, gravou entrevistas com responsáveis por " +
+  "esteve em campo em quatro lugares, gravou entrevistas com responsáveis por " +
   "equipamentos e por políticas públicas de cultura e reuniu registros " +
   "fotográficos, relatórios técnicos e indicadores econômicos. Todo o " +
   "material autorizado está publicado em endereço permanente, com hash de " +

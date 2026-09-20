@@ -182,6 +182,11 @@ export function montarEntregas({
  * é escrita: não há previsão documentada no corpus, e inventar uma seria pior
  * do que a ausência. Uma prestação de contas que omite a própria lacuna é o
  * que produz ressalva.
+ *
+ * O manual de aplicação de marcas saiu desta lista em 2026-09-20: os três
+ * manuais oficiais foram localizados, lidos e aplicados, e a régua de marcas
+ * que esta mesma página exibe desmentia, na tela seguinte, a pendência
+ * declarada aqui. Ver `institucional/creditos.ts`.
  */
 export const PENDENCIAS_DECLARADAS: readonly {
   readonly item: string;
@@ -191,11 +196,6 @@ export const PENDENCIAS_DECLARADAS: readonly {
     item: "Caderno de Estudos",
     texto:
       "Entregável administrativo previsto e ainda não produzido. Não recebe link provisório nem versão de ocasião, e nenhuma data de entrega está declarada no material do projeto.",
-  },
-  {
-    item: "Manual de aplicação de marcas",
-    texto:
-      "O manual do edital que fixa proporção, ordem gráfica e área de reserva das marcas de fomento segue pendente. Por isso os créditos são publicados em texto, e nenhuma marca oficial é aplicada nesta página.",
   },
 ];
 

@@ -23,7 +23,7 @@ import { type ItemNavegacao, MENU_PRINCIPAL } from "../../lib/navegacao";
 
 const DESCRICOES_DE_CONTEUDO = {
   "/campo": "Registros das visitas e do trabalho em território",
-  "/podobservar": "Conversas e narrativas do Vale",
+  "/podobservar": "A pesquisa em áudio, com transcrição de cada episódio",
   "/acervo": "Fotografias, documentos e memória",
 } as const;
 

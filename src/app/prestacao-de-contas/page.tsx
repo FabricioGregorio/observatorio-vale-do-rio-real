@@ -158,9 +158,9 @@ export default async function SalaDoAvaliador() {
           <h2 id="pc-conjunto-titulo">O acervo, por natureza de documento</h2>
           {grupos.length === 0 ? (
             <p className="pc-leitura">
-              Esta compilação foi gerada sem acesso ao registro de publicação, e
-              por isso o conjunto não é exibido. A ausência é de compilação, não
-              do acervo: a tabela oficial é a do site publicado.
+              Esta versão da página foi gerada sem acesso ao registro de
+              publicação, e por isso o quadro por natureza não aparece. Falta o
+              quadro, não os documentos: a lista oficial é a do site publicado.
             </p>
           ) : (
             <>

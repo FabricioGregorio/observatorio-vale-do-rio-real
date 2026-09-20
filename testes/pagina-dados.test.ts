@@ -61,23 +61,32 @@ describe("a amostra é declarada antes de qualquer número", () => {
   });
 
   test("nenhum limite ficou sem corpo", () => {
-    expect(LIMITES.length).toBeGreaterThanOrEqual(4);
+    expect(LIMITES.length).toBeGreaterThanOrEqual(3);
     for (const limite of LIMITES) {
       expect(limite.titulo.length, limite.titulo).toBeGreaterThan(8);
       expect(limite.texto.length, limite.titulo).toBeGreaterThan(80);
     }
   });
 
-  test("a orientação editorial de leitura substitui a ressalva antiga", () => {
-    const orientacao = LIMITES.find(
-      (limite) => limite.titulo === "Como ler estes dados",
-    );
-    expect(orientacao?.texto).toBe(
-      "Os indicadores apresentam um retrato do período e do recorte pesquisado pelo Observatório. Eles foram construídos a partir dos registros reunidos durante o trabalho de campo e devem ser lidos em conjunto com a metodologia, as entrevistas e os demais materiais publicados. Não representam um censo de todo o Vale do Rio Real, mas evidências produzidas dentro do percurso desta pesquisa.",
-    );
-    expect(LIMITES.map((limite) => limite.titulo)).not.toContain(
+  /*
+    Guarda de conteúdo rejeitado, e não de redação aprovada. A revisão
+    editorial de 2026-09-20 tirou daqui um item genérico — "Como ler estes
+    dados" — que repetia, em linguagem vaga, o que os outros três dizem com
+    precisão. Travar o texto dele palavra por palavra prenderia a página a uma
+    formulação que a própria equipe recusou; o que precisa ficar travado é o
+    que não pode voltar.
+  */
+  test("os limites nomeiam o recorte, e o item genérico não volta", () => {
+    const titulos = LIMITES.map((limite) => limite.titulo);
+    expect(titulos).not.toContain("Como ler estes dados");
+    expect(titulos).not.toContain(
       "Nem tudo o que a fonte calcula foi publicado",
     );
+
+    const corpo = LIMITES.map((limite) => limite.texto).join(" ");
+    expect(corpo).toContain("Recanto da Serra");
+    expect(corpo).toContain("Borda da Mata");
+    expect(corpo).toContain("baixa visitação");
   });
 });
 

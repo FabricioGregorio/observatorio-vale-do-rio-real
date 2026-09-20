@@ -139,10 +139,17 @@ describe("ausência de texto provisório", () => {
 });
 
 describe("a leitura de dados permanece ligada à escuta", () => {
+  /*
+    O primeiro parágrafo é redação aprovada e continua travado. O resto da
+    seção é aberto de propósito: a revisão editorial de 2026-09-20 acrescentou
+    um segundo parágrafo com o que as transcrições sustentam, e uma igualdade
+    exata da lista inteira impediria qualquer acréscimo sustentado por fonte.
+    O que a guarda trava é o texto rejeitado.
+  */
   test("o texto editorial final substitui a abordagem anterior", () => {
-    expect(LEITURA).toEqual([
+    expect(LEITURA[0]).toBe(
       "A leitura quantitativa não aparece isolada do campo. Os registros, formulários e indicadores foram analisados junto às entrevistas, às visitas e à observação dos lugares pesquisados. Essa combinação permite compreender não apenas números, mas também trajetórias, práticas culturais e relações construídas no território.",
-    ]);
+    );
     expect(ler(FONTES.rotaPesquisa)).toContain(
       "Dados e escuta fazem parte da mesma pesquisa",
     );
