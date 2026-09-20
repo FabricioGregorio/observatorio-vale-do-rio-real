@@ -153,25 +153,80 @@ test.describe("as marcas institucionais na tela", () => {
     }
   });
 
-  /*
-    O crédito institucional não pode existir só dentro da imagem: o `alt` é
-    vazio de propósito, e o nome de cada entidade vem em texto ao lado.
-  */
-  test("as entidades são nomeadas em texto, não só na imagem", async ({
+  test("as marcas preservam nomes acessíveis sem lista visual redundante", async ({
     page,
   }) => {
-    const texto = await page.locator("body > footer .regua").innerText();
-    for (const entidade of [
-      "Governo do Estado de Sergipe",
-      "Secretaria Especial da Cultura",
-      "FUNCAP",
-      "Sistema Nacional de Cultura",
-      "Política Nacional Aldir Blanc",
-      "Ministério da Cultura",
-      "Governo do Brasil",
-    ]) {
-      expect(texto, entidade).toContain(entidade);
+    await expect(page.locator(".regua__instituicoes")).toHaveCount(0);
+    await expect(page.locator('.regua__marca[alt=""]')).toHaveCount(0);
+    await expect(
+      page.getByAltText(
+        "Secretaria Especial da Cultura · Governo do Estado de Sergipe",
+      ),
+    ).toHaveCount(1);
+    await expect(
+      page.getByAltText("Ministério da Cultura · Governo do Brasil"),
+    ).toHaveCount(1);
+  });
+
+  test("desktop distribui Apoio e Realização na mesma linha", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ height: 900, width: 1440 });
+    const niveis = await page.locator(".regua__nivel").evaluateAll((itens) =>
+      itens.map((item) => {
+        const caixa = item.getBoundingClientRect();
+        return { esquerda: caixa.left, topo: caixa.top };
+      }),
+    );
+    expect(niveis).toHaveLength(2);
+    expect(
+      Math.abs((niveis[0]?.topo ?? 0) - (niveis[1]?.topo ?? 0)),
+    ).toBeLessThan(1);
+    expect(niveis[1]?.esquerda ?? 0).toBeGreaterThan(niveis[0]?.esquerda ?? 0);
+  });
+
+  test("mobile empilha as assinaturas na ordem institucional", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ height: 900, width: 375 });
+    await page.reload();
+    await page.locator("body > footer").scrollIntoViewIfNeeded();
+    const marcas = await page.locator(".regua__marca").evaluateAll((imagens) =>
+      imagens.map((imagem) => {
+        const caixa = imagem.getBoundingClientRect();
+        return {
+          src: imagem.getAttribute("src") ?? "?",
+          topo: caixa.top,
+          base: caixa.bottom,
+        };
+      }),
+    );
+    expect(marcas.map((marca) => marca.src)).toEqual([
+      "/media/marcas/funcap.webp",
+      "/media/marcas/secretaria-especial-governo-sergipe.webp",
+      "/media/marcas/sistema-nacional-de-cultura.webp",
+      "/media/marcas/pnab.webp",
+      "/media/marcas/minc-governo-federal.webp",
+    ]);
+    for (let indice = 1; indice < marcas.length; indice += 1) {
+      expect(marcas[indice]?.topo ?? 0).toBeGreaterThan(
+        marcas[indice - 1]?.base ?? 0,
+      );
     }
+  });
+
+  test("a frase obrigatória permanece separada por filete", async ({
+    page,
+  }) => {
+    const assinatura = page.locator(".regua__assinatura");
+    await expect(assinatura).toContainText(
+      "Este projeto foi contemplado nos Editais da Política Nacional Aldir Blanc Sergipe",
+    );
+    expect(
+      await assinatura.evaluate((elemento) =>
+        Number.parseFloat(getComputedStyle(elemento).borderTopWidth),
+      ),
+    ).toBeGreaterThan(0);
   });
 });
 

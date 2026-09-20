@@ -82,9 +82,9 @@ test.describe("estrutura da página de comprovação", () => {
     await expect(regua).toHaveCount(1);
     expect(await regua.evaluate((el) => el.tagName)).toBe("OL");
     await expect(regua.locator("> li")).toHaveCount(2);
-    await expect(regua.locator("> li").last()).toContainText(
-      "Governo do Brasil",
-    );
+    await expect(
+      regua.locator("> li").last().locator("img").last(),
+    ).toHaveAttribute("alt", "Ministério da Cultura · Governo do Brasil");
   });
 
   /**

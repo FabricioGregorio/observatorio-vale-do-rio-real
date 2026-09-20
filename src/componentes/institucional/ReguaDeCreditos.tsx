@@ -36,10 +36,10 @@ import {
  *
  * ## Texto alternativo
  *
- * Cada marca traz o nome da entidade em texto ao lado, na lista de
- * instituições do nível. O `alt` da imagem fica vazio de propósito: repetir o
- * mesmo nome faria o leitor de tela anunciar a entidade duas vezes seguidas.
- * A informação institucional **não** está só dentro da imagem.
+ * A régua gráfica não repete os nomes escritos dentro dos logotipos. Cada
+ * imagem recebe, por isso, o nome institucional no `alt`; a frase obrigatória
+ * permanece visível abaixo do conjunto. Assim a simplificação visual não
+ * remove informação de quem usa leitor de tela.
  *
  * Sem `"use client"`, sem estado, sem biblioteca. As marcas carregam com
  * `loading="lazy"`: a régua fica no fim de toda página, muito abaixo da
@@ -78,7 +78,7 @@ export function ReguaDeCreditos({
                       <span aria-hidden="true" className="regua__traco" />
                     ) : null}
                     <img
-                      alt=""
+                      alt={marca.entidade}
                       className="regua__marca"
                       decoding="async"
                       height={marca.altura}
@@ -90,11 +90,6 @@ export function ReguaDeCreditos({
                 ))}
               </div>
             )}
-            <ul className="regua__instituicoes">
-              {nivel.instituicoes.map((instituicao) => (
-                <li key={instituicao}>{instituicao}</li>
-              ))}
-            </ul>
           </li>
         ))}
       </ol>

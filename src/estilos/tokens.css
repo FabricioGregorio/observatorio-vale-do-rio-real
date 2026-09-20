@@ -678,16 +678,17 @@
    proíbem, e um `filter` de CSS é alteração de cor como qualquer outra. */
 
 .regua {
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
-  gap: 1.35rem;
+  gap: clamp(1.5rem, 3vw, 2.25rem);
 }
 
 .regua__niveis {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 1.75rem 2.5rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: end;
+  gap: 2rem;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -696,8 +697,14 @@
 .regua__nivel {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.9rem;
+  min-width: 0;
   position: relative;
+}
+
+.regua__nivel + .regua__nivel {
+  padding-top: 2rem;
+  border-top: 1px solid var(--regua-filete);
 }
 
 .regua__papel {
@@ -709,9 +716,11 @@
    mudar a proporção declarada, que o manual proíbe. */
 .regua__marcas {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 1.25rem 1.5rem;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-height: 3.875rem;
 }
 
 /* Largura e altura vêm dos atributos da imagem, que vêm do manifesto. O CSS
@@ -729,19 +738,6 @@
   height: auto;
 }
 
-.regua__instituicoes {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font-size: var(--text-sm);
-  line-height: 1.45;
-  max-width: 34ch;
-  color: var(--regua-tinta);
-}
-
 /* O traço que o manual da PNAB desenha entre a marca da política e a
    assinatura conjunta do Ministério da Cultura / Governo Federal. Ele fica
    dentro do bloco, entre as duas marcas — é literalmente o que o manual
@@ -753,7 +749,14 @@
   min-height: 2.5rem;
 }
 
-@media (width < 30rem) {
+@container (width < 35rem) {
+  .regua__marcas {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 1.25rem;
+  }
+
   .regua__traco {
     align-self: auto;
     width: 100%;
@@ -763,9 +766,23 @@
   }
 }
 
+@container (width >= 58rem) {
+  .regua__niveis {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    column-gap: clamp(3rem, 6vw, 6rem);
+  }
+
+  .regua__nivel + .regua__nivel {
+    padding-top: 0;
+    border-top: 0;
+  }
+}
+
 .regua__assinatura {
   margin: 0;
-  max-width: 78ch;
+  width: 100%;
+  padding-top: clamp(1rem, 2.5vw, 1.5rem);
+  border-top: 1px solid var(--regua-filete);
   font-size: var(--text-sm);
   line-height: 1.55;
   color: var(--regua-tinta);
@@ -793,8 +810,5 @@
 }
 
 .regua--destaque {
-  gap: 1.75rem;
-}
-.regua--destaque .regua__niveis {
-  gap: 2rem 3rem;
+  gap: clamp(1.75rem, 3vw, 2.5rem);
 }
