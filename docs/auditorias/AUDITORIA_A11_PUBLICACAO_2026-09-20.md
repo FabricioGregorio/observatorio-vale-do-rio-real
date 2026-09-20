@@ -24,9 +24,15 @@ lugares independentes:
 | `docs/carga/PUBLICACAO_ACERVO_2026-09-16.md`, "A decisão que autorizou" | mesma formulação, com o inventário arquivo por arquivo |
 | `src/dados/classificacao-documental.ts` | `A11: { estado: "PUBLICAVEL", revisao: "concluida", razao: "conjunto autorizado; nomes comuns não impedem publicação" }` |
 
-A `ADR-019` (2026-09-17) confirma que a decisão continua de pé: "Não reabre
-classificação documental: a decisão de 2026-09-16 sobre publicação do acervo
-permanece como está."
+Nenhuma decisão posterior a reabriu. A instrução do responsável nesta sessão,
+em 2026-09-20, foi explícita: **não despublicar o A11 nesta entrega**, porque
+existe decisão humana posterior e expressa de 16/09 autorizando a publicação
+depois da revisão de privacidade. O A11 não é bloqueador de entrega.
+
+> As três fontes acima são as **versionadas**. O responsável mantém registros
+> locais adicionais sobre prazo e prioridade — entre eles uma ADR de 2026-09-17
+> — que não estão sob controle de versão e, por isso, não são citados aqui como
+> prova. Esta auditoria se apoia apenas no que a branch carrega.
 
 O comentário de `derivados.ts` é **anterior** à decisão — ele descreve a fase
 H4.0, de 2026-09-10. Ele ficou para trás e foi corrigido nesta rodada.
@@ -119,10 +125,15 @@ impedem publicação" —, o que indica que a questão foi considerada. Vale
 registrar que **foi**, e não presumir que não foi: a decisão é explícita,
 posterior, e revogou expressamente as classificações anteriores.
 
-**Encaminhamento:** nenhuma ação técnica. Se o responsável quiser reavaliar
-esses três à luz do critério de reidentificação (e não só dos três
-marcadores), a decisão é dele, e a remediação está descrita na §5 — que
-permanece **não executada**.
+**Encaminhamento decidido em 2026-09-20: nenhuma ação.** O responsável
+determinou que o A11 **não será despublicado nesta entrega** — a decisão de
+16/09 é posterior, explícita e cobre o conjunto. Banco, storage e URLs
+públicas ficam como estão.
+
+Fica registrado como **nota futura**, sem prazo e sem bloqueio: *reavaliação
+de risco de reidentificação em A11-06, A11-07 e A11-08*. A remediação da §5
+existe para o dia em que essa reavaliação acontecer, e permanece **não
+executada**.
 
 ## 5. Remediação, caso uma reavaliação humana a peça — NÃO EXECUTADA
 
@@ -183,4 +194,5 @@ Respondendo à pergunta em forma direta: **sim**. `ESTADO_ATUAL_PROJETO.md`,
 `docs/carga/FECHAMENTO_INTEGRIDADE_PUBLICACAO_2026-09-16.md` e
 `RECONCILIACAO_INDEPENDENTE_2026-09-16.json` provam que os 18 objetos do A11
 são exatamente os esperados, com 108 de 108 conferindo na reconciliação
-independente daquela data. A `ADR-019` mantém a decisão de pé.
+independente daquela data. Todas essas fontes estão versionadas na branch; a
+auditoria não depende de nenhum documento fora do controle de versão.

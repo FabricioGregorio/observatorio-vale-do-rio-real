@@ -37,10 +37,10 @@ import "./prestacao.css";
  * está vendo: quem executou, com que recurso, em que período, o que foi
  * entregue e o que ainda falta.
  *
- * A ADR-019 é o que autoriza isso. O site voltou a ser também peça de
- * divulgação, e uma página de comprovação legível por quem não conhece o
- * edital não conflita com rastreabilidade: os mesmos endereços permanentes,
- * os mesmos hashes, a mesma tabela.
+ * A decisão humana de 2026-09-17 é o que autoriza isso: o site voltou a ser
+ * também peça de divulgação, e não só repositório. Uma página de comprovação
+ * legível por quem não conhece o edital não conflita com rastreabilidade —
+ * são os mesmos endereços permanentes, os mesmos hashes, a mesma tabela.
  *
  * ## Nada é digitado que possa ser contado
  *
