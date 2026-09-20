@@ -112,10 +112,44 @@ export function PodObservarNaHome({
 
       <div className="hl-pod-grade">
         <div className="hl-texto">
+          {/*
+           * Síntese da chamada e do EP01 — as transcrições revisadas
+           * apresentam o Observatório, o coletivo, a primeira pesquisa e a
+           * linguagem que o podcast escolheu, e é de lá que sai o vocabulário
+           * destes parágrafos. Nada é cópia da transcrição, e nada antecipa
+           * episódio não publicado: a seção descreve o que o podcast **é**,
+           * não o que ele vai cobrir.
+           *
+           * A última linha é afirmação verificável, não promessa editorial: o
+           * gate público exige `transcricao` não vazia, e a página de cada
+           * episódio publica o texto inteiro. Ver `consultas/podobservar.ts`.
+           *
+           * Nenhuma pessoa é nomeada aqui, como em toda a Home: o vínculo
+           * entre participante, episódio e consentimento não é assunto de
+           * página pública.
+           */}
           <p>
-            O PodObservar leva a pesquisa do Observatório para o áudio, reunindo
-            vozes, entrevistas, dados e experiências do território em uma
-            linguagem clara e acessível.
+            O PodObservar é o podcast do Observatório — uma realização do mesmo
+            coletivo que o idealizou, apresentada por quem esteve em campo. Ele
+            leva ao áudio a pesquisa que este site documenta.
+          </p>
+          <p>
+            A temporada investiga os potenciais ecoturísticos e culturais do
+            Vale do Rio Real pela economia solidária, pela preservação ambiental
+            e pela cultura local — e conta isso em linguagem de comunicação
+            popular, para quem nunca abriu um relatório de pesquisa.
+          </p>
+          <p>
+            Cada episódio junta três camadas: o percurso, com as estradas, os
+            povoados e as travessias que a pesquisa exigiu; as entrevistas com
+            quem mantém os equipamentos culturais e com quem responde pelas
+            políticas públicas; e a leitura dos dados que o levantamento reuniu.
+          </p>
+          <p>
+            Começa pelo Observatório e pelo coletivo e segue pelos lugares
+            acompanhados de perto. É a porta de entrada mais acessível do
+            projeto — e todo episódio publicado tem transcrição revisada, de
+            modo que quem não pode ouvir, lê.
           </p>
           <p className="hl-pod-secao__chamada">{CADENCIA}</p>
           <p className="hl-pod-recente__acoes">
@@ -152,6 +186,14 @@ export function PodObservarNaHome({
                    * mais na carga inicial, orçamento que a Home não tem.
                    * Em medidas fixas ele considera também os `imageSizes`.
                    */
+                  /*
+                   * 65 em vez do padrão 75. A arte é chapada e decorativa
+                   * (`alt=""`), fica abaixo da dobra e é exibida a 350 px;
+                   * em AVIF a diferença medida é 11.555 B contra 8.639 B, e
+                   * nesse tamanho ela não aparece. A faixa permitida está
+                   * declarada em `next.config.ts`.
+                   */
+                  quality={65}
                   sizes="(min-width: 60rem) 352px, (min-width: 26rem) 416px, 352px"
                   src={recente.capaUrl as string}
                   width={recente.capaLarguraPx as number}

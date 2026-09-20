@@ -71,9 +71,13 @@ export type Equipamento = {
  * Os dois equipamentos de Tobias Barreto — identidade apenas.
  *
  * Nomes completos: recorte dos indicadores (`indicadores/derivados.ts`).
- * “Povoado Jacaré”: resumo executivo do A02 público. O que a pesquisa reuniu
- * sobre cada um **não** está aqui: é resolvido contra `vw_anexo_publico` por
- * `resolverMateriaisDoLugar`, e o `id` é a chave dessa resolução.
+ * “Povoado Jacaré”: resumo executivo do A02 público. “Povoado Borda da Mata”
+ * entrou em 2026-09-19: a ficha dizia só “Tobias Barreto (SE)”, e as três
+ * transcrições do PodObservar localizam o equipamento no povoado — a mesma
+ * localidade que `territorio/referencias.ts` já publicava em `/territorio`.
+ * O que a pesquisa reuniu sobre cada um **não** está aqui: é resolvido contra
+ * `vw_anexo_publico` por `resolverMateriaisDoLugar`, e o `id` é a chave dessa
+ * resolução.
  */
 export const EQUIPAMENTOS: readonly Equipamento[] = [
   {
@@ -84,7 +88,7 @@ export const EQUIPAMENTOS: readonly Equipamento[] = [
   {
     id: "borda-da-mata",
     nome: "Centro Cultural e Museu Borda da Mata",
-    lugar: "Tobias Barreto (SE)",
+    lugar: "Povoado Borda da Mata · Tobias Barreto (SE)",
   },
 ];
 
@@ -98,14 +102,24 @@ export const FOTOGRAFIAS_DO_BORDA_NO_ACERVO = 7;
 export type Entrevista = {
   readonly numero: string;
   readonly onde: string;
-  /** `null` quando o município não está consolidado em documento. */
+  /**
+   * `null` quando o município não está consolidado em documento. Hoje as oito
+   * estão consolidadas; o campo continua anulável porque é ele o mecanismo de
+   * lacuna explícita — uma entrevista futura sem município documentado aparece
+   * como lacuna, não como suposição.
+   */
   readonly municipio: string | null;
 };
 
 /**
  * As oito entrevistas, identificadas por instituição ou lugar — nunca por
  * pessoa. Numeração e rótulos: `MAPA_FONTES_CANONICAS_2026-09-05.md` §4.
- * Município de Ilha Grande segue não consolidado (`pontos.ts`).
+ *
+ * A 08 mostrava “município não consolidado”. A transcrição do EP01 do
+ * PodObservar diz, sem ambiguidade, que Ilha Grande é povoação de São
+ * Cristóvão — e é o mesmo município que `territorio/referencias.ts` publica
+ * desde 2026-09-14 e que `/territorio` exibe na ficha do lugar. Corrigido em
+ * 2026-09-19.
  */
 export const ENTREVISTAS: readonly Entrevista[] = [
   { numero: "01", onde: "Secretaria de Cultura", municipio: "Tobias Barreto" },
@@ -123,5 +137,5 @@ export const ENTREVISTAS: readonly Entrevista[] = [
     onde: "Secretaria Municipal de Cultura",
     municipio: "Tomar do Geru",
   },
-  { numero: "08", onde: "Ilha Grande", municipio: null },
+  { numero: "08", onde: "Ilha Grande", municipio: "São Cristóvão" },
 ];
