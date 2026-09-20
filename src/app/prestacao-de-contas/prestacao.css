@@ -1,0 +1,301 @@
+/*
+  `/prestacao-de-contas` — a comprovação como documento.
+
+  Cor, família, raio e espessura saem de `tokens.css`; nenhum hex entra aqui.
+
+  ## A composição, e por que ela é esta
+
+  Margem de ficha à esquerda nas larguras de desktop — rótulo em mono de um
+  lado, texto do outro —, a mesma de `/observatorio`. Numa página de
+  comprovação a margem não é estilo: ela dá ao leitor uma coluna de varredura,
+  que é como se lê uma pasta de documentação quando se procura uma coisa
+  específica.
+
+  ## O que esta folha recusa
+
+  Cartão com sombra, selo de "aprovado", barra de progresso de execução,
+  medalha e cor de status. Nenhum desses elementos corresponde a um fato que o
+  projeto possa provar, e todos eles sugerem um. O que separa blocos é filete,
+  como nas demais superfícies do site.
+
+  ## A tabela de anexos manda na largura
+
+  A seção de evidências abre para a largura cheia: a `TabelaAnexos` tem seis
+  colunas e já traz a sua própria estratégia de estreitamento. Enquadrá-la na
+  coluna de leitura dobraria o trabalho dela.
+*/
+
+.pc {
+  --pc-fio: color-mix(
+    in srgb,
+    var(--color-borda-forte) 45%,
+    var(--color-fundo)
+  );
+  --pc-papel: color-mix(in srgb, var(--color-fundo-elevado) 72%, transparent);
+  --pc-respiro: clamp(2.5rem, 5.5vw, 4rem);
+  margin-inline: auto;
+  width: min(100% - 2rem, var(--largura-conteudo));
+  display: flex;
+  flex-direction: column;
+  padding-bottom: clamp(3rem, 7vw, 5rem);
+}
+
+.pc a {
+  color: var(--color-link);
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+}
+.pc a:hover {
+  color: var(--color-link-hover);
+}
+
+.pc h2 {
+  margin: 0;
+  max-width: 24ch;
+  font-size: clamp(var(--text-xl), 4vw, var(--text-3xl));
+}
+.pc h3 {
+  margin: 0;
+  font-size: var(--text-lg);
+}
+
+/* ---------------------------------------------------------------- abertura */
+
+.pc-abertura {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-block: clamp(2.5rem, 6vw, 4rem) var(--pc-respiro);
+  border-bottom: 1px solid var(--pc-fio);
+}
+
+.pc-abertura h1 {
+  margin: 0;
+}
+
+.pc-abertura__sintese {
+  margin: 0;
+  max-width: 54ch;
+  font-size: clamp(var(--text-lg), 2.4vw, var(--text-xl));
+  line-height: 1.45;
+}
+
+/* Ficha de identificação: pares termo/valor em duas colunas quando cabe.
+   O termo fica em mono maiúsculo — é rótulo de campo, não título. */
+.pc-identificacao {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.9rem 2.5rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+}
+
+.pc-identificacao > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  border-top: 1px solid var(--pc-fio);
+  padding-top: 0.6rem;
+}
+
+.pc-identificacao dt {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+}
+
+.pc-identificacao dd {
+  margin: 0;
+  max-width: 48ch;
+  line-height: 1.45;
+}
+
+@media (width >= 48rem) {
+  .pc-identificacao {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ------------------------------------------------------------------ seções */
+
+.pc-secao {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  padding-block: var(--pc-respiro);
+  border-bottom: 1px solid var(--pc-fio);
+}
+
+.pc-secao:last-of-type {
+  border-bottom: 0;
+}
+
+.pc-secao__rotulo {
+  margin: 0;
+}
+
+.pc-secao__corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  min-width: 0;
+}
+
+@media (width >= 60rem) {
+  .pc-secao {
+    grid-template-columns: 10rem minmax(0, 1fr);
+    gap: 0 2.5rem;
+  }
+  .pc-secao__rotulo {
+    padding-top: 0.35rem;
+  }
+}
+
+.pc-leitura {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.pc-leitura p,
+.pc-guia {
+  margin: 0;
+  max-width: 66ch;
+  line-height: 1.6;
+}
+
+.pc-guia {
+  color: var(--color-texto-suave);
+}
+
+/* ---------------------------------------------------------------- entregas */
+
+.pc-entregas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: 1px;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  list-style: none;
+  background-color: var(--pc-fio);
+  border: 1px solid var(--pc-fio);
+  border-radius: var(--radius-ficha);
+  overflow: hidden;
+}
+
+/* Filete entre fichas, e não moldura em cada uma: o `gap: 1px` sobre o fundo
+   de filete desenha a grade inteira com uma regra só, e ela se reorganiza
+   sozinha quando a contagem de colunas muda. */
+.pc-entrega {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1.15rem 1.25rem 1.35rem;
+  background-color: var(--color-fundo);
+}
+
+.pc-entrega__medida {
+  margin: 0;
+}
+
+.pc-entrega p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.pc-entrega__acao {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  font-size: var(--text-sm);
+}
+
+/* ---------------------------------------------------- conjunto documental */
+
+.pc-conjunto {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.pc-conjunto caption {
+  text-align: left;
+  padding-bottom: 0.6rem;
+}
+
+.pc-conjunto th,
+.pc-conjunto td {
+  border-bottom: 1px solid var(--pc-fio);
+  padding: 0.55rem 0.75rem 0.55rem 0;
+  vertical-align: baseline;
+}
+
+.pc-conjunto thead th {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+  font-weight: 400;
+}
+
+.pc-conjunto tbody th {
+  font-weight: 500;
+}
+
+.pc-conjunto td {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* -------------------------------------------------------------- pendências */
+
+.pc-pendencias {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 0.2rem 0 0;
+  padding: 0;
+}
+
+.pc-pendencias > div {
+  border-inline-start: 2px solid var(--color-borda-forte);
+  padding-inline-start: 1rem;
+}
+
+.pc-pendencias dt {
+  font-weight: 500;
+}
+
+.pc-pendencias dd {
+  margin: 0.2rem 0 0;
+  max-width: 62ch;
+  line-height: 1.55;
+  color: var(--color-texto-suave);
+}
+
+/* -------------------------------------------------------------- evidências */
+
+.pc-secao--larga .pc-secao__corpo {
+  gap: 1.35rem;
+}
+
+.pc-recursos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-sm);
+}
+
+@media (width >= 60rem) {
+  /* A tabela de anexos usa a largura inteira da página: nesta seção a coluna
+     de rótulo deixa de reservar espaço à esquerda. */
+  .pc-secao--larga {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+}
