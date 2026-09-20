@@ -2,19 +2,31 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page, test } from "@playwright/test";
 
 /**
- * `/observatorio` e `/pesquisa` — as duas páginas do Lote 1, renderizadas.
+ * As páginas editoriais concluídas, renderizadas.
  *
- * A suíte cobre o que a auditoria de completude editorial cobrava das duas
+ * A suíte cobre o que a auditoria de completude editorial cobrava destas
  * rotas: que respondam 200 com conteúdo real, que a hierarquia de títulos seja
  * navegável, que os links internos levem a algum lugar, que funcionem no
  * estreito e no largo, nos dois temas e por teclado, e que nenhuma delas volte
  * a servir a frase de ausência do stub.
+ *
+ * `/observatorio` e `/pesquisa` entraram no Lote 1; `/dados`, no Lote 2. Uma
+ * rota nova se acrescenta a esta lista, e não a uma suíte paralela: o contrato
+ * é o mesmo para todas.
  */
 
 const ROTAS = [
   { rota: "/observatorio", h1: "O Observatório" },
   { rota: "/pesquisa", h1: "A Pesquisa" },
+  { rota: "/dados", h1: "Dados" },
 ] as const;
+
+/** Rotas que se apontam mutuamente como par institucional. */
+const PAR_INSTITUCIONAL: Readonly<Record<string, string>> = {
+  "/observatorio": "/pesquisa",
+  "/pesquisa": "/observatorio",
+  "/dados": "/pesquisa",
+};
 
 /** Níveis dos títulos do conteúdo principal, na ordem do documento. */
 async function hierarquiaDeTitulos(pagina: Page): Promise<number[]> {
@@ -107,7 +119,7 @@ for (const { rota, h1 } of ROTAS) {
       page,
     }) => {
       await page.goto(rota);
-      const outra = rota === "/observatorio" ? "/pesquisa" : "/observatorio";
+      const outra = PAR_INSTITUCIONAL[rota] ?? "/pesquisa";
       /*
         Mais de um link para o mesmo destino é leitura, não defeito: em
         `/observatorio` a pesquisa aparece como produto no catálogo e de novo
@@ -177,6 +189,67 @@ for (const { rota, h1 } of ROTAS) {
     });
   });
 }
+
+/**
+ * As pranchas de `/pesquisa` carregam de verdade.
+ *
+ * A dúvida que originou este teste veio de uma captura de página inteira, em
+ * que as duas apareciam cinza: `loading="lazy"` não dispara quando a captura
+ * não rola até a figura, e o fundo do contêiner é o que se vê. Um bloco cinza
+ * permanente e uma imagem que ainda não entrou no viewport são
+ * indistinguíveis numa imagem estática — aqui a diferença é medida.
+ */
+test("as fotografias de campo da Pesquisa carregam, e não são placeholder", async ({
+  page,
+}) => {
+  const respostas = new Map<string, number>();
+  page.on("response", (resposta) => {
+    const caminho = new URL(resposta.url()).pathname;
+    if (caminho.startsWith("/media/pesquisa/"))
+      respostas.set(caminho, resposta.status());
+  });
+
+  await page.goto("/pesquisa");
+  const pranchas = page.locator(".pq-prancha img");
+  await expect(pranchas).toHaveCount(2);
+
+  for (const prancha of await pranchas.all()) {
+    await prancha.scrollIntoViewIfNeeded();
+  }
+  await expect
+    .poll(async () =>
+      pranchas.evaluateAll((imagens) =>
+        imagens.every(
+          (imagem) =>
+            (imagem as HTMLImageElement).complete &&
+            (imagem as HTMLImageElement).naturalWidth > 0,
+        ),
+      ),
+    )
+    .toBe(true);
+
+  const medidas = await pranchas.evaluateAll((imagens) =>
+    imagens.map((elemento) => {
+      const imagem = elemento as HTMLImageElement;
+      const caixa = imagem.getBoundingClientRect();
+      return {
+        caminho: new URL(imagem.currentSrc).pathname,
+        natural: imagem.naturalWidth,
+        largura: Math.round(caixa.width),
+        altura: Math.round(caixa.height),
+        alt: imagem.alt,
+      };
+    }),
+  );
+
+  for (const medida of medidas) {
+    expect(respostas.get(medida.caminho), medida.caminho).toBe(200);
+    expect(medida.natural, medida.caminho).toBeGreaterThan(600);
+    expect(medida.largura, medida.caminho).toBeGreaterThan(200);
+    expect(medida.altura, medida.caminho).toBeGreaterThan(200);
+    expect(medida.alt.length, medida.caminho).toBeGreaterThan(10);
+  }
+});
 
 test("a Home não anuncia como em preparação uma seção já concluída", async ({
   page,

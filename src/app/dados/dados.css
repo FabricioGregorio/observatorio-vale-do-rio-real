@@ -1,0 +1,526 @@
+/*
+  `/dados` — dados como evidência documental.
+
+  Cor, família, raio e espessura saem de `tokens.css`; nenhum hex entra aqui.
+  Espaçamento é sempre relativo, para acompanhar o redimensionamento do
+  navegador.
+
+  ## O que esta folha recusa
+
+  Cartão de KPI, sombra, gradiente, fundo colorido por métrica e grade de
+  painéis. O número grande é seco: o tamanho é o único recurso de ênfase, e
+  cada valor vive dentro de uma ficha que carrega o seu denominador. O que
+  separa as fichas é filete, como nas demais superfícies do site.
+
+  ## Contêiner, e não viewport
+
+  A tipografia dos valores cresce com `cqi` — a largura da própria seção. Com
+  `vw` o número estourava a caixa em zoom de 200%: `vw` continua medindo o
+  viewport enquanto o contêiner encolhe.
+
+  ## Cor nunca é o único canal
+
+  Receita e despesa se distinguem por forma — círculo e losango — antes de se
+  distinguirem por cor, e a legenda nomeia as duas em texto. Nas barras das
+  atividades, receita direta e indireta aparecem escritas ao lado do nome.
+*/
+
+.dd {
+  --dd-fio: color-mix(
+    in srgb,
+    var(--color-borda-forte) 45%,
+    var(--color-fundo)
+  );
+  --dd-papel: color-mix(in srgb, var(--color-fundo-elevado) 72%, transparent);
+  --dd-respiro: clamp(2.75rem, 6vw, 4.5rem);
+  container-type: inline-size;
+  margin-inline: auto;
+  width: min(100% - 2rem, var(--largura-conteudo));
+  display: flex;
+  flex-direction: column;
+  padding-bottom: clamp(3rem, 7vw, 5rem);
+}
+
+.dd a {
+  color: var(--color-link);
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+}
+.dd a:hover {
+  color: var(--color-link-hover);
+}
+.dd h2 {
+  margin: 0;
+  max-width: 22ch;
+  font-size: clamp(var(--text-xl), 4.2vw, var(--text-3xl));
+}
+.dd h3 {
+  margin: 0;
+  font-size: var(--text-lg);
+}
+.dd p {
+  margin: 0;
+}
+.dd code {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+/* --- Capa ---------------------------------------------------------------- */
+
+.dd-abertura {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-block: clamp(2.5rem, 7vw, 4.5rem) var(--dd-respiro);
+}
+.dd-abertura h1 {
+  margin: 0;
+  max-width: 12ch;
+  font-size: clamp(var(--text-3xl), 8vw, var(--text-5xl));
+}
+.dd-abertura__sintese {
+  max-width: 58ch;
+  font-size: clamp(var(--text-base), 2.4vw, var(--text-lg));
+}
+
+/*
+  A advertência de amostra é a primeira coisa depois da chamada, e tem peso
+  tipográfico de afirmação — não de nota de rodapé. Ela é o denominador de
+  tudo o que vem abaixo.
+*/
+.dd-advertencia {
+  max-width: 62ch;
+  padding-left: clamp(0.85rem, 2vw, 1.25rem);
+  border-left: 3px solid var(--color-acento);
+  font-family: var(--font-display);
+  font-size: clamp(var(--text-base), 2.2vw, var(--text-lg));
+  line-height: var(--leading-titulo);
+  text-wrap: pretty;
+}
+
+/* --- Fichas de metadado --------------------------------------------------- */
+
+.dd-ficha {
+  margin: 0;
+  display: grid;
+  gap: 0;
+}
+.dd-ficha > div {
+  display: grid;
+  gap: 0.15rem 1.5rem;
+  padding-block: 0.6rem;
+  border-top: 1px solid var(--dd-fio);
+}
+.dd-ficha dt {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+}
+.dd-ficha dd {
+  margin: 0;
+  min-width: 0;
+  font-size: var(--text-sm);
+  text-wrap: pretty;
+}
+.dd-ficha--capa {
+  margin-top: 0.75rem;
+  border-top: 2px solid var(--color-marca);
+}
+.dd-ficha--capa > div:first-child {
+  border-top: 0;
+}
+@container (min-width: 44rem) {
+  .dd-ficha > div {
+    grid-template-columns: 14rem minmax(0, 1fr);
+    align-items: baseline;
+  }
+}
+
+/* --- Seções -------------------------------------------------------------- */
+
+.dd-secao {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-block: var(--dd-respiro);
+  border-top: 1px solid var(--dd-fio);
+}
+.dd-leitura {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  max-width: var(--largura-leitura);
+  min-width: 0;
+}
+.dd-ponte,
+.dd-nota {
+  padding-top: 1rem;
+  border-top: 1px solid var(--dd-fio);
+  max-width: var(--largura-leitura);
+  color: var(--color-texto-suave);
+  font-size: var(--text-sm);
+}
+
+/* --- Indicadores ---------------------------------------------------------- */
+
+.dd-indicadores {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--dd-fio);
+  border-left: 1px solid var(--dd-fio);
+}
+/*
+  Borda por célula, e não gap pintado: quando a última linha não fecha, o gap
+  pintado desenharia um bloco vazio no lugar da célula que não existe. Com
+  borda por célula, a grade simplesmente termina.
+*/
+.dd-indicador {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: clamp(1rem, 2.4vw, 1.6rem) clamp(0.85rem, 2vw, 1.4rem);
+  border-right: 1px solid var(--dd-fio);
+  border-bottom: 1px solid var(--dd-fio);
+  min-width: 0;
+}
+.dd-indicador__valor {
+  font-family: var(--font-display);
+  font-weight: var(--peso-titulo);
+  font-size: clamp(var(--text-2xl), 5cqi, var(--text-4xl));
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.dd-indicador h3 {
+  font-family: var(--font-leitura);
+  font-weight: 400;
+  font-size: var(--text-base);
+  line-height: 1.35;
+}
+.dd-indicador .dd-ficha {
+  margin-top: 0.35rem;
+}
+.dd-indicador__nota {
+  padding-left: 0.85rem;
+  border-left: 2px solid var(--color-borda-forte);
+  color: var(--color-texto-suave);
+  font-size: var(--text-sm);
+}
+@container (min-width: 44rem) {
+  .dd-indicadores {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* --- Fração da despesa ---------------------------------------------------- */
+
+.dd-retencao {
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: start;
+}
+.dd-fracao {
+  margin: 0;
+  display: grid;
+  gap: 0;
+  border-top: 2px solid var(--color-marca);
+  min-width: 0;
+}
+.dd-fracao > div {
+  display: grid;
+  gap: 0.2rem;
+  padding-block: 0.9rem;
+  border-bottom: 1px solid var(--dd-fio);
+}
+.dd-fracao dt {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+  text-wrap: pretty;
+}
+.dd-fracao dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--peso-titulo);
+  font-size: var(--text-xl);
+  font-variant-numeric: tabular-nums;
+}
+.dd-fracao__resultado dd {
+  font-size: clamp(var(--text-2xl), 6cqi, var(--text-4xl));
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+@container (min-width: 52rem) {
+  .dd-retencao {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 22rem);
+  }
+}
+
+/* --- Figuras e tabelas ---------------------------------------------------- */
+
+.dd-figura {
+  margin: 0;
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+.dd-figura figcaption {
+  max-width: 62ch;
+}
+.dd-grafico {
+  display: none;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+/* A legenda pertence ao gráfico: onde ele não aparece, ela também não. */
+.dd-legenda {
+  display: none;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.dd-legenda li {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+}
+.dd-marca-serie {
+  flex: 0 0 auto;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: var(--color-marca);
+}
+.dd-marca-serie[data-serie="despesa"] {
+  border-radius: 0;
+  rotate: 45deg;
+  background: var(--color-acento);
+}
+@container (min-width: 40rem) {
+  .dd-grafico {
+    display: block;
+  }
+  .dd-legenda {
+    display: flex;
+  }
+}
+
+.dd-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+.dd-tabela caption {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+  padding-bottom: 0.6rem;
+}
+.dd-tabela th,
+.dd-tabela td {
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--dd-fio);
+  text-align: left;
+  vertical-align: baseline;
+}
+.dd-tabela thead th {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--color-texto-suave);
+  border-bottom-color: var(--color-borda-forte);
+}
+.dd-tabela tbody th {
+  font-weight: 500;
+  font-family: var(--font-leitura);
+}
+.dd-tabela td:first-child,
+.dd-tabela th:first-child {
+  padding-left: 0;
+}
+.dd-tabela td:last-child,
+.dd-tabela th:last-child {
+  padding-right: 0;
+}
+.dd-tabela [data-numero] {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.dd-tabela tbody tr:last-child td {
+  border-bottom-color: var(--color-borda-forte);
+}
+
+.dd-qualificador {
+  display: block;
+  font-weight: 400;
+  color: var(--color-texto-suave);
+  padding-top: 0.2rem;
+}
+.dd-barra {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 9rem;
+}
+.dd-trilho {
+  position: relative;
+  height: 0.55rem;
+  background: var(--color-borda);
+  border-radius: 1px;
+}
+.dd-preenchimento {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  background: var(--color-marca);
+  border-radius: 1px;
+}
+.dd-preenchimento[data-receita="direta"] {
+  background: var(--color-acento);
+}
+.dd-barra span {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-texto-suave);
+  white-space: nowrap;
+}
+
+/*
+  Abaixo de 34rem a série troca de forma em vez de rolar: região rolável
+  precisa de parada de Tab própria só para ser alcançável por teclado, e o que
+  cabe não precisa de muleta. Cada linha vira um bloco com os rótulos ao lado
+  dos valores.
+*/
+@container (max-width: 34rem) {
+  .dd-tabela:not(.dd-tabela--ranking) thead {
+    position: absolute;
+    left: -9999px;
+  }
+  .dd-tabela:not(.dd-tabela--ranking) tbody tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.1rem 0.75rem;
+    padding-block: 0.6rem;
+    border-bottom: 1px solid var(--dd-fio);
+  }
+  .dd-tabela:not(.dd-tabela--ranking) tbody th {
+    grid-column: 1 / -1;
+    padding: 0;
+    border: 0;
+    font-family: var(--font-mono);
+    letter-spacing: var(--tracking-mono);
+  }
+  .dd-tabela:not(.dd-tabela--ranking) tbody td {
+    padding: 0;
+    border: 0;
+    text-align: left;
+  }
+  .dd-tabela:not(.dd-tabela--ranking) tbody td::before {
+    content: attr(data-rotulo) " ";
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-mono);
+    text-transform: uppercase;
+    color: var(--color-texto-suave);
+  }
+  .dd-barra {
+    min-width: 6rem;
+  }
+}
+
+/* --- Limites -------------------------------------------------------------- */
+
+.dd-limites {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: clamp(1.25rem, 3vw, 2rem);
+}
+.dd-limites li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 2px solid var(--color-acento);
+}
+.dd-limites p {
+  max-width: 54ch;
+}
+@container (min-width: 52rem) {
+  .dd-limites {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* --- Fontes públicas ------------------------------------------------------ */
+
+.dd-fontes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--dd-fio);
+}
+.dd-fontes li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding-block: 1rem;
+  border-bottom: 1px solid var(--dd-fio);
+  min-width: 0;
+}
+.dd-fontes a {
+  font-family: var(--font-display);
+  font-weight: var(--peso-titulo);
+  width: fit-content;
+  max-width: 100%;
+}
+.dd-fontes p {
+  max-width: 58ch;
+  font-size: var(--text-sm);
+}
+@container (min-width: 52rem) {
+  .dd-fontes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(1.5rem, 4vw, 3rem);
+  }
+}
+
+.dd-ponte-final {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: var(--dd-respiro);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--dd-fio);
+  border-left: 3px solid var(--color-marca);
+  border-radius: var(--radius-ficha);
+  background: var(--dd-papel);
+}
+.dd-ponte-final p {
+  max-width: 62ch;
+}

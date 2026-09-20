@@ -6,6 +6,7 @@ const ROTAS_COM_RODAPE_COMPARTILHADO = [
   "/acervo",
   "/observatorio",
   "/pesquisa",
+  "/dados",
 ] as const;
 
 async function razaoDeContraste(alvo: Locator): Promise<number> {
