@@ -1,19 +1,24 @@
 import Link from "next/link";
 
 import { MENU_RODAPE } from "../../lib/navegacao";
+import { ReguaDeCreditos } from "../institucional/ReguaDeCreditos";
 
 /**
  * Rodapé do site.
  *
- * O bloco de créditos de fomento — PNAB / Lei Aldir Blanc, Ministério da
- * Cultura, Governo Federal, Governo de Sergipe, FUNCAP — **não** é
- * implementado aqui. Ele depende do manual de aplicação de marcas do edital,
- * item E02 do inventário, hoje com status `Pendente` e sem link.
+ * ## Créditos de fomento
  *
- * O manual define proporção e ordem das marcas, e crédito de fomento errado é
- * causa recorrente de ressalva em prestação de contas. Por isso o espaço fica
- * reservado e vazio, sem logo, sem proporção e sem texto de crédito
- * aproximado: um bloco falso seria pior do que a ausência declarada.
+ * O bloco deixou de ser um espaço vazio. O que o mantinha vazio era o manual
+ * de aplicação de marcas — item E02 do inventário, ainda `PENDENTE` —, e o
+ * manual governa **a aplicação gráfica**: proporção, ordem visual e área de
+ * reserva. Ele não governa quem financia o projeto, que é fato documental
+ * desde o edital.
+ *
+ * Então a página publica agora o crédito **textual**, na ordem normativa
+ * fixada pela decisão humana registrada na tarefa 16 §2, item 5, e segue sem
+ * publicar as marcas. A separação está explicada em
+ * `componentes/institucional/creditos.ts`; a pendência continua declarada na
+ * própria superfície, agora nomeando o que exatamente falta.
  *
  * Ver `docs/tarefas/03-layout-base.md`, seção "Fatiamento".
  *
@@ -53,17 +58,14 @@ export function Rodape() {
         </nav>
 
         {/*
-          Bloco de créditos de fomento — PENDENTE do manual de marcas (E02).
-          Não preencher por estimativa: proporção, ordem e texto vêm do manual.
+          Crédito textual publicado; bloco de marcas ainda PENDENTE do manual
+          de aplicação (E02). Nenhuma logo é aplicada por estimativa.
         */}
         <section aria-labelledby="creditos-fomento">
           <h2 id="creditos-fomento" className="meta-ficha meta-ficha--inversa">
             Créditos de fomento
           </h2>
-          <p style={{ color: "var(--color-texto-inverso)" }}>
-            Bloco de marcas e créditos pendente do manual de aplicação de marcas
-            do edital.
-          </p>
+          <ReguaDeCreditos inversa />
         </section>
       </div>
     </footer>

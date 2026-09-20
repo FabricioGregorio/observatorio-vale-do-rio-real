@@ -659,3 +659,94 @@
   --dv-atraso-ponto: 100ms;
   --dv-duracao-ponto: 160ms;
 }
+
+/* =============================================================================
+   9. Régua de créditos institucionais
+   ========================================================================== */
+
+/* Crédito textual de fomento, na ordem normativa (ver
+   `componentes/institucional/creditos.ts`). Vive aqui, e não numa folha de
+   rota, porque o bloco aparece no rodapé do layout raiz — isto é, em toda
+   página que não seja a Home — e também dentro da Prestação de Contas.
+
+   Nenhuma cor, família ou medida nova: tudo sai dos tokens acima. O separador
+   do selo de programa de governo é filete, não moldura: o manual federal pede
+   uma linha, e uma linha é o que ele é. */
+
+.regua {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.regua__niveis {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1rem 2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.regua__nivel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  position: relative;
+}
+
+.regua__papel {
+  margin: 0;
+}
+
+.regua__instituicoes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  max-width: 34ch;
+}
+
+/* A linha do selo de programa de governo. Em coluna larga ela separa à
+   esquerda; quando a régua quebra em linhas, vira um filete acima do nível —
+   a mesma informação, na direção em que o bloco está lido. */
+.regua__separador {
+  display: block;
+  border-top: 1px solid var(--color-borda);
+  margin-bottom: 0.35rem;
+  width: 100%;
+}
+
+@media (width >= 48rem) {
+  .regua__separador {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: -1rem;
+    width: auto;
+    margin: 0;
+    border-top: 0;
+    border-inline-start: 1px solid var(--color-borda);
+  }
+}
+
+.regua__pendencia {
+  margin: 0;
+  max-width: 68ch;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--color-texto-suave);
+}
+
+.regua--inversa .regua__instituicoes,
+.regua--inversa .regua__pendencia {
+  color: var(--color-texto-inverso);
+}
+
+.regua--inversa .regua__separador {
+  border-color: var(--color-texto-inverso);
+}
