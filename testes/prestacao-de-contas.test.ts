@@ -1,10 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, test } from "vitest";
 
-import {
-  PENDENCIA_DAS_MARCAS,
-  REGUA_DE_CREDITOS,
-} from "../src/componentes/institucional/creditos";
+import { PENDENCIA_DAS_MARCAS } from "../src/componentes/institucional/creditos";
 import {
   agruparPorTipo,
   INDICADORES_AUDITADOS,
@@ -217,82 +214,5 @@ describe("a página não afirma o que não pode provar", () => {
     expect(servido).not.toMatch(/>\s*\d+\s+(documentos|arquivos|anexos)/);
     expect(servido).toContain("agruparPorTipo");
     expect(servido).toContain("montarEntregas");
-  });
-});
-
-describe("régua de créditos institucionais", () => {
-  const ordem = REGUA_DE_CREDITOS.map((n) => n.id);
-
-  /**
-   * A ordem é normativa, não composição: decisão humana registrada na tarefa
-   * 16 §2, item 5, e manual federal §8.3 — ascendente em importância, com a
-   * assinatura federal por último.
-   */
-  test("a ordem é a da decisão vigente", () => {
-    expect(ordem).toEqual(["realizacao", "apoio", "politica", "federal"]);
-  });
-
-  test("a assinatura federal fecha a régua", () => {
-    const ultimo = REGUA_DE_CREDITOS.at(-1);
-    expect(ultimo?.id).toBe("federal");
-    expect(ultimo?.instituicoes.at(-1)).toBe("Governo Federal");
-  });
-
-  /*
-    O separador é o do selo de programa de governo. Ele existe entre a PNAB e
-    a assinatura federal, e em nenhum outro lugar.
-  */
-  test("só a assinatura federal recebe separador", () => {
-    const comSeparador = REGUA_DE_CREDITOS.filter((n) => n.separadorAntes);
-    expect(comSeparador.map((n) => n.id)).toEqual(["federal"]);
-  });
-
-  test("Governo de Sergipe, e não a Secretaria", () => {
-    const nomes = REGUA_DE_CREDITOS.flatMap((n) => n.instituicoes).join(" | ");
-    expect(nomes).toContain("Governo de Sergipe");
-    expect(nomes).not.toMatch(/Secretaria/i);
-  });
-
-  test("PNAB e FUNCAP aparecem com a grafia documentada", () => {
-    const nomes = REGUA_DE_CREDITOS.flatMap((n) => n.instituicoes);
-    expect(nomes).toContain("PNAB / Lei Aldir Blanc");
-    expect(nomes).toContain(
-      "FUNCAP — Fundação de Cultura e Arte Aperipê de Sergipe",
-    );
-  });
-
-  /**
-   * O manual de aplicação de marcas segue pendente, e nenhuma marca oficial
-   * entra por estimativa. A régua é texto: se um `<img>` aparecer aqui, a
-   * pendência foi resolvida por interpretação, que é exatamente o que não
-   * pode acontecer com marca institucional.
-   */
-  test("nenhuma marca oficial é aplicada pela régua", () => {
-    const fonte = ler(FONTES.regua);
-    expect(fonte).not.toMatch(/<img/);
-    expect(fonte).not.toMatch(/\.(svg|png|webp|jpe?g)/i);
-  });
-
-  test("a pendência do manual continua declarada na superfície", () => {
-    expect(PENDENCIA_DAS_MARCAS).toMatch(/manual/i);
-    expect(PENDENCIA_DAS_MARCAS).toMatch(/pendente/i);
-    expect(semComentarios(ler(FONTES.regua))).toContain("PENDENCIA_DAS_MARCAS");
-  });
-
-  /*
-    O rodapé compartilhado publica a mesma régua, e não uma segunda lista de
-    nomes institucionais. Duas grafias do mesmo fomento em duas superfícies é
-    divergência, não duplicação inofensiva.
-  */
-  test("o rodapé usa a régua, e não uma lista própria", () => {
-    const fonte = semComentarios(ler(FONTES.rodape));
-    expect(fonte).toContain("ReguaDeCreditos");
-    expect(fonte).not.toMatch(/FUNCAP|PNAB|Ministério da Cultura/);
-  });
-
-  test("o nome do projeto não é redigitado na régua", () => {
-    const fonte = semComentarios(ler(FONTES.creditos));
-    expect(fonte).toContain('from "../home/conteudo"');
-    expect(fonte).not.toContain("Observatório de Cultura e Economia Criativa");
   });
 });

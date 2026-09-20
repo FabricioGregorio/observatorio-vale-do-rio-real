@@ -1,103 +1,153 @@
-/**
- * Régua de créditos institucionais.
- *
- * ## Por que a ordem é dado, e não composição
- *
- * A ordem das assinaturas de fomento não é escolha gráfica: ela é normativa.
- * A decisão humana registrada em `docs/tarefas/16-home-v2-candidata-editorial
- * -experimental.md` §2, item 5, fixa a régua —
- *
- *     Projeto → FUNCAP + Governo de Sergipe → PNAB → separador →
- *     Ministério da Cultura + Governo Federal
- *
- * — e o "Manual de uso da marca do Governo Federal" (v1.2, ago/2025), lido na
- * mesma tarefa §8.3, estabelece o que a sustenta: ordem ascendente de
- * importância da esquerda para a direita, Governo Federal sempre por último, e
- * selo de programa de governo — a PNAB — separado por linha quando entra na
- * assinatura. Por isso `separadorAntes` é um campo, e não uma borda decidida
- * no CSS.
- *
- * A mesma decisão determina **Governo de Sergipe**, e não "Secretaria de
- * Cultura + Governo de Sergipe".
- *
- * ## O que esta régua entrega, e o que ela não entrega
- *
- * Entrega o **crédito textual**: quem financia, quem acompanha e sob que
- * política, em ordem correta e em toda página que a renderiza. Isso é
- * verificável contra documento e não depende de nenhum ativo gráfico.
- *
- * **Não entrega as marcas.** Os 23 PNG oficiais existem fora do Git
- * (tarefa 16 §8.2), nenhum derivado web foi produzido, o manual específico da
- * PNAB e o da FUNCAP não foram localizados (§8.5) e o item E02 do inventário
- * segue `PENDENTE`. Proporção, área de não interferência e largura mínima
- * saem do manual, não de estimativa — crédito de fomento errado é causa
- * recorrente de ressalva em prestação de contas (doc 01 §7, item 2). As
- * marcas entram por `CreditosInstitucionais`, que continua devolvendo `null`
- * enquanto não houver ativo aprovado.
- *
- * Nenhum nome aqui foi inventado. A forma expandida da FUNCAP é a registrada
- * em `docs/auditorias/AUDITORIA_FONTES_CANONICAS_2026-09-05.md`; a grafia
- * "PNAB / Lei Aldir Blanc" é a do doc 01 §7.
- *
- * O topo da régua — quem realiza — não é escrito aqui: ele é reexportado de
- * `home/conteudo.ts`, a declaração única do nome oficial e do Coletivo. Duas
- * grafias do mesmo nome institucional em duas superfícies é exatamente o tipo
- * de divergência que uma prestação de contas não pode ter.
- */
+import {
+  CAMINHO_DAS_MARCAS_INSTITUCIONAIS,
+  MARCAS_DERIVADAS,
+  type MarcaDerivada,
+} from "../../dados/institucional/marcas";
 
-import { COLETIVO, NOME_OFICIAL } from "../home/conteudo";
+/**
+ * Régua de créditos institucionais — fonte única do rodapé e da Prestação.
+ *
+ * ## A ordem é dado, e vem de manual
+ *
+ * Até 2026-09-20 este módulo carregava só o crédito textual, e a ordem vinha
+ * da decisão humana registrada em `docs/tarefas/16-…` §2, item 5. Nesta
+ * rodada os três manuais oficiais foram localizados em
+ * `OBSERVATORIO_FONTES_DIR/marcas/` e lidos, e a régua passa a ser o que eles
+ * determinam:
+ *
+ * - **Manual de uso da marca PNAB Sergipe.** É obrigatória a veiculação da
+ *   régua de marcas em toda divulgação do projeto — sites inclusive. O bloco
+ *   se divide em **Apoio** (Governo de Sergipe, Secretaria Especial da
+ *   Cultura, FUNCAP) e **Realização** (PNAB ao lado da assinatura conjunta
+ *   Ministério da Cultura/Governo Federal, separada por um traço, fechando o
+ *   bloco à extrema direita). Nenhuma marca do bloco pode ultrapassar a altura
+ *   e a largura total da marca nominativa do Governo Federal.
+ * - **Manual de uso da marca do Governo Federal, v1.2.** Ordem ascendente de
+ *   importância da esquerda para a direita; a marca federal é sempre a última
+ *   à direita. Versão completa em cores sólidas (RGB) para toda peça não
+ *   impressa. Redução máxima em meios eletrônicos: 200 px. Caixa de proteção
+ *   em volta da marca. Proibido rotacionar, distorcer, alterar cores, aplicar
+ *   moldura ou marca-d'água, e aplicar sobre fundo instável.
+ * - **Manual de uso Governo de Sergipe.** Versão positiva do brasão, sem
+ *   alteração de cor, diagramação ou proporção; área de segurança preservada;
+ *   quando a legibilidade estiver comprometida pelo fundo, usar caixa.
+ *
+ * ## Duas divergências registradas, não corrigidas em silêncio
+ *
+ * 1. A decisão humana de 2026-09-13 determinou usar **Governo de Sergipe**, e
+ *    não o lockup "Secretaria de Cultura + Governo de Sergipe". O manual da
+ *    PNAB, localizado depois dessa decisão, exige divulgar também o apoio da
+ *    **Secretaria Especial da Cultura**. A instrução humana é o item 1 da
+ *    hierarquia de fontes e foi preservada na escolha do ativo gráfico; a
+ *    exigência do manual é atendida pela **assinatura textual padrão**, que é
+ *    a redação do próprio manual e nomeia a Secretaria. O ponto está no
+ *    relatório para decisão.
+ * 2. A régua textual anterior chamava a PNAB de "política de fomento" e o
+ *    bloco federal de "assinatura federal". O manual da PNAB chama os dois,
+ *    juntos, de **Realização**. O vocabulário do manual prevalece.
+ *
+ * ## O que continua pendente
+ *
+ * O manual da PNAB Sergipe exige que todo material em arte-final seja
+ * submetido à aprovação da Funcap e da Secult com no mínimo 10 dias úteis de
+ * antecedência. Essa aprovação — o "nada a opor" — **não foi obtida**, e a
+ * régua declara isso na própria superfície.
+ *
+ * ## Uma fonte, dois consumidores
+ *
+ * O rodapé de todas as rotas e a Prestação de Contas leem daqui. Entidades,
+ * rótulos, ordem e ativos são os mesmos nos dois; o que muda é só a escala.
+ */
 
 export type NivelDeCredito = {
   readonly id: string;
-  /** Papel na régua. Rótulo curto, em `meta-ficha`. */
+  /** Papel na régua, no vocabulário do manual. Rótulo em `meta-ficha`. */
   readonly papel: string;
-  /** Instituições do nível, na ordem em que assinam. */
+  /** Entidades do nível, na ordem em que assinam. */
   readonly instituicoes: readonly string[];
+  /** Marcas oficiais deste nível, na mesma ordem. */
+  readonly marcas: readonly MarcaDerivada[];
   /**
-   * Linha separadora antes deste nível — a do selo de programa de governo
-   * exigida pelo manual federal. Só a assinatura federal a recebe.
+   * O traço que o manual da PNAB desenha **entre as marcas** deste bloco.
+   *
+   * A frase do manual é literal: "a marca Política Nacional Aldir Blanc de
+   * Fomento à Cultura está ao lado de Ministério da Cultura/Governo Federal,
+   * separada por um traço". O traço fica dentro do bloco de Realização,
+   * separando a marca da política da assinatura conjunta federal — não antes
+   * do bloco inteiro.
    */
-  readonly separadorAntes: boolean;
+  readonly tracoEntreMarcas: boolean;
 };
 
+function marcas(...ids: readonly string[]): readonly MarcaDerivada[] {
+  return ids.map((id) => {
+    const marca = MARCAS_DERIVADAS.find((candidata) => candidata.id === id);
+    if (marca === undefined)
+      throw new Error(`Régua de créditos: marca ausente no manifesto — ${id}.`);
+    return marca;
+  });
+}
+
+/**
+ * A régua, com os dois blocos que o manual da PNAB Sergipe define.
+ *
+ * O projeto não tem nível próprio aqui. Ele teve, por um tempo, e o resultado
+ * era "Realização" duas vezes lado a lado — uma para o Coletivo e outra para o
+ * bloco federal, que é como o manual chama o seu. Quem realiza o projeto já
+ * está declarado ao lado da régua, no bloco de identidade do rodapé e na ficha
+ * da Prestação de Contas; repeti-lo aqui só desfazia o vocabulário do manual.
+ */
 export const REGUA_DE_CREDITOS: readonly NivelDeCredito[] = [
   {
-    id: "realizacao",
-    papel: "Realização",
-    instituicoes: [NOME_OFICIAL, COLETIVO],
-    separadorAntes: false,
-  },
-  {
     id: "apoio",
-    papel: "Apoio e acompanhamento",
+    papel: "Apoio",
     instituicoes: [
+      "Governo do Estado de Sergipe",
+      "Secretaria Especial da Cultura",
       "FUNCAP — Fundação de Cultura e Arte Aperipê de Sergipe",
-      "Governo de Sergipe",
     ],
-    separadorAntes: false,
+    marcas: marcas("funcap", "governo-sergipe"),
+    tracoEntreMarcas: false,
   },
   {
-    id: "politica",
-    papel: "Política de fomento",
-    instituicoes: ["PNAB / Lei Aldir Blanc"],
-    separadorAntes: false,
-  },
-  {
-    id: "federal",
-    papel: "Assinatura federal",
-    instituicoes: ["Ministério da Cultura", "Governo Federal"],
-    separadorAntes: true,
+    id: "fomento",
+    papel: "Realização",
+    instituicoes: [
+      "Política Nacional Aldir Blanc",
+      "Ministério da Cultura",
+      "Governo Federal",
+    ],
+    marcas: marcas("pnab", "mincultura-governo-federal"),
+    tracoEntreMarcas: true,
   },
 ];
 
+export { CAMINHO_DAS_MARCAS_INSTITUCIONAIS };
+
 /**
- * A pendência declarada, em uma frase.
+ * Assinatura textual padrão, transcrita do manual de uso da marca PNAB
+ * Sergipe, item 5 das orientações gerais.
  *
- * Ela fica visível na superfície pública de propósito: o leitor precisa saber
- * que o que está ali é o crédito textual, e que o bloco de marcas ainda
- * depende da validação técnica do manual.
+ * Não é redação do projeto: é o texto que o manual determina para releases e
+ * textos de divulgação. Ele é a forma pela qual a exigência de citar a
+ * Secretaria Especial da Cultura é cumprida, já que o ativo gráfico adotado é
+ * o do Governo de Sergipe isolado, por decisão humana anterior.
+ */
+export const ASSINATURA_PADRAO =
+  "Este projeto foi contemplado nos Editais da Política Nacional Aldir Blanc " +
+  "Sergipe e tem apoio do Governo do Estado de Sergipe, por meio da Fundação " +
+  "de Cultura e Arte Aperipê de Sergipe e da Secretaria Especial da Cultura, " +
+  "direcionada pelo Ministério da Cultura — Governo Federal.";
+
+/**
+ * O que ainda depende de validação, dito na própria superfície.
+ *
+ * O manual da PNAB Sergipe condiciona a arte-final à aprovação da Funcap e da
+ * Secult. As marcas já estão aplicadas conforme os manuais lidos; o que falta
+ * é o aceite formal, e quem lê precisa saber a diferença entre as duas coisas.
  */
 export const PENDENCIA_DAS_MARCAS =
-  "As marcas oficiais não são aplicadas aqui: proporção, ordem gráfica e área " +
-  "de reserva dependem do manual de aplicação de marcas do edital, que segue " +
-  "pendente. O crédito textual acima é o que está documentalmente confirmado.";
+  "Aplicação conforme os manuais oficiais de uso de marca da PNAB Sergipe, do " +
+  "Governo Federal e do Governo de Sergipe. A aprovação prévia da arte-final " +
+  "pela FUNCAP e pela Secretaria Especial da Cultura, prevista no manual da " +
+  "PNAB, ainda não foi registrada.";

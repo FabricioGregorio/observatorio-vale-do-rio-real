@@ -26,7 +26,7 @@ import {
  * documentação do Next indica `unoptimized` para esse caso; usar `<picture>`
  * diretamente é o mesmo resultado com menos indireção.
  *
- * `CreditosInstitucionais` já abre precedente para `<img>` no projeto, pelo
+ * A régua de marcas institucionais já abre precedente para `<img>` no projeto,
  * mesmo tipo de razão.
  *
  * ## LCP

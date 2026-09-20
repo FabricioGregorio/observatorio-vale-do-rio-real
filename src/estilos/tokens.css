@@ -664,26 +664,30 @@
    9. Régua de créditos institucionais
    ========================================================================== */
 
-/* Crédito textual de fomento, na ordem normativa (ver
-   `componentes/institucional/creditos.ts`). Vive aqui, e não numa folha de
-   rota, porque o bloco aparece no rodapé do layout raiz — isto é, em toda
-   página que não seja a Home — e também dentro da Prestação de Contas.
+/* A régua de marcas de fomento, na ordem que os manuais oficiais determinam
+   (ver `componentes/institucional/creditos.ts`). Vive aqui, e não numa folha
+   de rota, porque o bloco aparece no rodapé de toda página e também dentro da
+   Prestação de Contas.
 
-   Nenhuma cor, família ou medida nova: tudo sai dos tokens acima. O separador
-   do selo de programa de governo é filete, não moldura: o manual federal pede
-   uma linha, e uma linha é o que ele é. */
+   Ela é sempre renderizada sobre um painel claro — "aplicação em box branco",
+   manual do Governo Federal, p. 14. Por isso as cores de texto aqui são as da
+   superfície normal mesmo quando `regua--inversa` está ligada: só o rótulo do
+   nível, que fica fora do painel em alguns usos, acompanha o tema inverso.
+
+   Nenhuma marca recebe filtro, contorno, sombra ou mistura de cor. Os manuais
+   proíbem, e um `filter` de CSS é alteração de cor como qualquer outra. */
 
 .regua {
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
+  gap: 1.35rem;
 }
 
 .regua__niveis {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
-  gap: 1rem 2rem;
+  gap: 1.75rem 2.5rem;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -692,12 +696,37 @@
 .regua__nivel {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.6rem;
   position: relative;
 }
 
 .regua__papel {
   margin: 0;
+}
+
+/* As marcas de um nível, lado a lado, alinhadas pela base. A altura de cada
+   uma vem do manifesto, e o CSS não a sobrescreve: mudar a altura aqui seria
+   mudar a proporção declarada, que o manual proíbe. */
+.regua__marcas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1.25rem 1.5rem;
+}
+
+/* Largura e altura vêm dos atributos da imagem, que vêm do manifesto. O CSS
+   não declara `width`: declarar `auto` aqui fazia o navegador usar a dimensão
+   intrínseca do arquivo, que é 2x, e a marca saía com o dobro do tamanho de
+   exibição.
+
+   `max-width` protege a marca em telas estreitas, e `height: auto` mantém a
+   proporção quando isso acontece — encolher é a única deformação permitida,
+   porque preserva a razão. O painel afrouxa o respiro antes de deixar a marca
+   federal chegar perto do limite de redução de 200 px. */
+.regua__marca {
+  display: block;
+  max-width: 100%;
+  height: auto;
 }
 
 .regua__instituicoes {
@@ -710,43 +739,67 @@
   font-size: var(--text-sm);
   line-height: 1.45;
   max-width: 34ch;
+  color: var(--regua-tinta);
 }
 
-/* A linha do selo de programa de governo. Em coluna larga ela separa à
-   esquerda; quando a régua quebra em linhas, vira um filete acima do nível —
-   a mesma informação, na direção em que o bloco está lido. */
-.regua__separador {
-  display: block;
-  border-top: 1px solid var(--color-borda);
-  margin-bottom: 0.35rem;
-  width: 100%;
+/* O traço que o manual da PNAB desenha entre a marca da política e a
+   assinatura conjunta do Ministério da Cultura / Governo Federal. Ele fica
+   dentro do bloco, entre as duas marcas — é literalmente o que o manual
+   descreve. Quando a linha quebra, vira um filete horizontal: a mesma
+   informação, na direção em que o bloco está sendo lido. */
+.regua__traco {
+  align-self: stretch;
+  border-inline-start: 1px solid var(--regua-filete);
+  min-height: 2.5rem;
 }
 
-@media (width >= 48rem) {
-  .regua__separador {
-    position: absolute;
-    inset-block: 0;
-    inset-inline-start: -1rem;
-    width: auto;
-    margin: 0;
-    border-top: 0;
-    border-inline-start: 1px solid var(--color-borda);
+@media (width < 30rem) {
+  .regua__traco {
+    align-self: auto;
+    width: 100%;
+    min-height: 0;
+    border-inline-start: 0;
+    border-top: 1px solid var(--regua-filete);
   }
 }
 
+.regua__assinatura,
 .regua__pendencia {
   margin: 0;
-  max-width: 68ch;
+  max-width: 78ch;
   font-size: var(--text-sm);
-  line-height: 1.5;
-  color: var(--color-texto-suave);
+  line-height: 1.55;
+  color: var(--regua-tinta);
 }
 
-.regua--inversa .regua__instituicoes,
-.regua--inversa .regua__pendencia {
-  color: var(--color-texto-inverso);
+.regua__pendencia {
+  color: var(--regua-tinta-suave);
 }
 
-.regua--inversa .regua__separador {
-  border-color: var(--color-texto-inverso);
+/* O rótulo do nível também vive dentro do painel: `meta-ficha--inversa` usaria
+   a tinta de superfície escura, que sumiria no branco. */
+.regua .regua__papel {
+  color: var(--regua-tinta-suave);
+}
+
+/* O painel da régua é sempre branco, em qualquer tema — é a "aplicação em box
+   branco" do manual federal, e o fundo de uma marca de governo não pode mudar
+   com a preferência de quem lê.
+
+   Por isso o texto dentro dele não pode usar `--color-texto`, que inverte no
+   tema escuro: no escuro ele resolve para a tinta clara, e o bloco inteiro
+   ficava cinza-claro sobre branco. A régua fixa a tinta de superfície clara,
+   que é a mesma nos dois temas porque o fundo também é. */
+.regua {
+  --regua-tinta: var(--color-carvao);
+  --regua-tinta-suave: var(--color-carvao-suave);
+  --regua-filete: var(--color-pedra-borda-forte);
+  color: var(--regua-tinta);
+}
+
+.regua--destaque {
+  gap: 1.75rem;
+}
+.regua--destaque .regua__niveis {
+  gap: 2rem 3rem;
 }
