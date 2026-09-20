@@ -74,13 +74,13 @@ export default async function PaginaAcervo() {
       </div>
 
       <aside className="acervo-nota border-l-2 pl-5">
-        <h2 className="text-lg">O que está guardado aqui, e o que não está</h2>
+        <h2 className="text-lg">O que este acervo reúne</h2>
         <p className="mt-2 max-w-prose">
-          Nem tudo o que a pesquisa produziu é público. Só chega a este acervo o
-          material cuja publicação foi decidida e cuja revisão de privacidade
-          está concluída — por isso a entrevista, o relatório ou a fotografia
-          que você não encontrar aqui não deve ser procurada em outro lugar: ou
-          ela está publicada, ou ela não é pública.
+          O Acervo reúne somente os materiais que integram o corpus público do
+          Observatório. Nem tudo o que a pesquisa produziu faz parte desse
+          conjunto: entram aqui os materiais autorizados para publicação e
+          preservação pública, e é sobre eles que valem o endereço permanente, a
+          licença declarada e o hash de conferência.
         </p>
         <p className="mt-3 max-w-prose">
           O percurso que produziu estes documentos está em{" "}

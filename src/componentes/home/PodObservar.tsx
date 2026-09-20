@@ -123,10 +123,6 @@ export function PodObservarNaHome({
            * A última linha é afirmação verificável, não promessa editorial: o
            * gate público exige `transcricao` não vazia, e a página de cada
            * episódio publica o texto inteiro. Ver `consultas/podobservar.ts`.
-           *
-           * Nenhuma pessoa é nomeada aqui, como em toda a Home: o vínculo
-           * entre participante, episódio e consentimento não é assunto de
-           * página pública.
            */}
           <p>
             O PodObservar é o podcast do Observatório — uma realização do mesmo

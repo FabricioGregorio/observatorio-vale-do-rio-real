@@ -27,7 +27,13 @@ import type { RelacaoTerritorial } from "../../dados/territorio/tipos";
  * têm volumes diferentes de fonte: Ilha Grande aparece uma vez, no EP01, e é
  * esse o tamanho da ficha dela. Simetria inventada seria dado fictício.
  *
- * Nenhuma pessoa é nomeada, como em toda a Home.
+ * ## Nomes
+ *
+ * Nomear pessoa não é proibido no site, e este arquivo não é exceção a regra
+ * nenhuma. O critério é editorial: um nome entra quando for pertinente ao
+ * texto, estiver sustentado pelo corpus público e corresponder corretamente à
+ * pessoa e à função. As fichas destes seis alvos hoje não precisam de nenhum
+ * — elas descrevem território, não trajetória de quem o mantém.
  */
 
 export const RECORTES = ["vale", "comparacao"] as const;

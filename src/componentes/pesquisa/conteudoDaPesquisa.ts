@@ -14,7 +14,7 @@
  * - **`dados/territorio/recorte.ts` e `referencias.ts`** — municípios do
  *   recorte e os quatro lugares de campo.
  * - **`componentes/home/conteudo.ts`** — as oito entrevistas, identificadas
- *   por instituição ou lugar, nunca por pessoa.
+ *   por instituição ou lugar.
  * - **`dados/materiais-de-campo.ts`**, resolvido contra `vw_anexo_publico` em
  *   build — o estado real de cada material.
  *
@@ -25,9 +25,10 @@
  * aberta não entra aqui pelo mesmo motivo que não entrou em `derivados.ts`:
  * a contagem de visitantes e a de pessoas distintas continuam fora.
  *
- * Não nomeia pessoas. Os papéis da equipe aparecem como papéis — agente de
- * campo, analista de dados, coordenação de pesquisa —, que é como as próprias
- * transcrições os apresentam.
+ * Os papéis da equipe aparecem como papéis — agente de campo, analista de
+ * dados, coordenação de pesquisa —, que é como as próprias transcrições os
+ * apresentam. Isso é escolha de foco desta página, e não regra do site:
+ * nomear pessoa é decisão editorial, tomada caso a caso.
  */
 
 import {

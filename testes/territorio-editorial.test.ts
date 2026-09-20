@@ -229,21 +229,6 @@ describe("afirmações que as transcrições sustentam", () => {
       expect(texto, cidade).toContain(cidade);
     }
   });
-
-  it("nenhum alvo nomeia pessoa, como em toda a Home", () => {
-    for (const nome of [
-      "Pedro Menezes",
-      "Galileu",
-      "Laura Aguiar",
-      "Oviêdo",
-      "Neide",
-      "Dona Madá",
-      "Lhucas",
-      "Fabrício",
-    ]) {
-      expect(TODO_O_TEXTO, nome).not.toContain(nome);
-    }
-  });
 });
 
 describe("rótulos do mapa", () => {

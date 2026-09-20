@@ -68,10 +68,10 @@ export default async function PaginaPodObservar() {
               uma linguagem clara e acessível.
             </p>
             <p className="mt-4 max-w-prose">
-              Um relatório técnico não é lido por quem mora ao lado do lugar que
-              ele descreve. O podcast existe para isso: é por onde a pesquisa
-              volta ao território em forma de história, com as estradas, os
-              povoados e as pessoas que ela encontrou pelo caminho.
+              Nem todo mundo chega a uma pesquisa por um relatório técnico. O
+              PodObservar abre outro caminho: transforma parte do percurso do
+              Observatório em narrativa sonora — as estradas, os povoados e os
+              encontros que o campo produziu.
             </p>
             <p className="mt-4 max-w-prose">
               Os episódios são ouvidos no Spotify. Aqui ficam a apresentação de

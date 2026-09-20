@@ -19,8 +19,8 @@
  *
  * ## O que esta página não diz
  *
- * Não nomeia pessoas, como o resto do site público. Não descreve produto que
- * ainda não existe como rota concluída, e não repete o crédito institucional:
+ * Não descreve produto que ainda não existe como rota concluída, e não
+ * repete o crédito institucional:
  * a régua de marcas de fomento tem fonte única em `institucional/creditos.ts`
  * e aparece no rodapé de toda rota. Um segundo bloco aproximado aqui seria
  * pior que o silêncio.
