@@ -237,12 +237,16 @@ describe("integridade documental do dataset", () => {
   });
 
   /**
-   * A unidade documental de origem continua RESTRITA. Ela pode sustentar a
-   * agregação internamente — `procedencia` guarda o rastro —, mas identificador
-   * documental, título interno, nome de arquivo e nome de aba não podem
-   * atravessar para nada que seja renderizado.
+   * A unidade documental de origem é pública desde 2026-09-16 — está no Acervo,
+   * com endereço permanente. O que continua fora do HTML é a **coordenada
+   * interna de cálculo**: identificador documental, título interno, nome de
+   * arquivo, nome de aba e código da fonte. Ela não resolve para nada que o
+   * leitor possa abrir, e a referência que existe é o link do Acervo.
+   *
+   * O teste não mudou de forma porque não mudou de função: ele impede que a
+   * coordenada interna atravesse para um campo renderizável.
    */
-  test("nenhum campo renderizável carrega identificador da fonte restrita", () => {
+  test("nenhum campo renderizável carrega coordenada interna da fonte", () => {
     const texto = camposRenderizaveis.join(" | ");
     expect(texto).not.toMatch(/\bA11\b/);
     expect(texto).not.toMatch(/\bES\d{2}\b/);

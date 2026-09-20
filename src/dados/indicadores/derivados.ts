@@ -9,18 +9,31 @@
  *
  * ## Fonte de cálculo é interna; fonte pública é outra coisa
  *
- * A unidade documental que sustenta estes números continua **RESTRITA** como
- * conjunto: ela inclui abas que nomeiam pessoas. Uma fonte restrita pode
- * sustentar internamente uma agregação — é o que acontece aqui — mas isso não
- * autoriza publicar o identificador documental, o título interno, o nome do
- * arquivo, a aba ou o código de origem.
+ * **Correção de 2026-09-20.** Este cabeçalho afirmava que a unidade
+ * documental de origem continuava RESTRITA como conjunto. Isso deixou de ser
+ * verdade em 2026-09-16: a decisão humana daquela data autorizou a publicação
+ * dos materiais da pesquisa, `src/dados/classificacao-documental.ts` registra
+ * A11 como `PUBLICAVEL` com revisão de privacidade `concluida`, e o conjunto
+ * — a planilha e os dezoito derivados por aba — está no Acervo com endereço
+ * permanente. A afirmação antiga era anterior à decisão e ficou para trás.
  *
- * Por isso cada indicador tem dois campos separados:
+ * **A separação de campos abaixo continua valendo, por outro motivo.** O que
+ * o Acervo publica é o documento; o que `procedencia` guarda é a coordenada
+ * interna de cálculo — aba, linha e código da fonte. Essa coordenada não é
+ * endereço público de nada: ela não resolve para um arquivo, não pode ser
+ * conferida por quem lê a página e envelhece na primeira vez que a planilha
+ * for reorganizada. Publicá-la seria oferecer uma referência que ninguém
+ * consegue seguir, no lugar da referência que existe — o link do Acervo.
+ *
+ * Por isso cada indicador continua com dois campos separados:
  *
  * - `fontePublica`, que **pode** ser renderizado;
  * - `procedencia`, que **nunca** é renderizado e existe para auditoria interna
  *   e para os testes de conferência. Mesmo padrão de `pesquisa/derivados.ts`,
  *   onde o nome do original também fica no módulo e fora do HTML.
+ *
+ * Quem quiser a fonte inteira a encontra publicada: `/dados` aponta para a
+ * ficha do conjunto no Acervo, e é esse o caminho de conferência.
  *
  * ## Nenhum valor foi inferido
  *
@@ -494,7 +507,15 @@ export const CONTEXTO_DOS_DADOS = {
   recorte: RECORTE,
   fontePublica: FONTE_PUBLICA,
   registrosDeFuncionamento: 40,
-  /** SHA-256 do workbook de origem, fora do repositório. */
+  /**
+   * SHA-256 do workbook de origem.
+   *
+   * O original continua fora do repositório — o Git guarda metadado e hash,
+   * nunca o binário (plano §2). O mesmo conteúdo, byte a byte, é o objeto
+   * público `A11 — planilha de indicadores, 17 abas` do Acervo: este hash é o
+   * que liga a agregação desta página ao arquivo que qualquer pessoa pode
+   * baixar e conferir.
+   */
   sha256DaFonte:
     "10143117a960f3a07a84d3f798029d1490399b90b6276e42763d6c5f7b52c7b1",
 } as const;
