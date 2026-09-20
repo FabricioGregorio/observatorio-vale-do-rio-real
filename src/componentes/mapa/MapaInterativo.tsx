@@ -154,18 +154,25 @@ export function MapaInterativo({
         Modo por blocos: o servidor já escreveu o texto de cada opção e a ilha
         só decide qual aparece. Nenhuma copy é montada em JavaScript — num site
         de prestação de contas, texto não nasce no cliente.
+
+        `data-painel-padrao` nomeia o bloco que vale sem seleção. Com ele, sair
+        da seleção devolve a coluna ao seu conteúdo de abertura em vez de
+        deixá-la vazia; sem ele, o painel cai no bloco `data-painel-vazio`, que
+        é o contrato antigo e continua valendo.
       */
       const blocos = Array.from(
         painel.querySelectorAll<HTMLElement>("[data-painel-de]"),
       );
       if (blocos.length > 0) {
+        const padrao = painel.dataset.painelPadrao;
+        const alvo = valor ?? padrao;
         const semSelecao = painel.querySelector<HTMLElement>(
           "[data-painel-vazio]",
         );
         for (const bloco of blocos) {
-          bloco.hidden = bloco.dataset.painelDe !== valor;
+          bloco.hidden = bloco.dataset.painelDe !== alvo;
         }
-        if (semSelecao !== null) semSelecao.hidden = valor !== undefined;
+        if (semSelecao !== null) semSelecao.hidden = alvo !== undefined;
         return;
       }
 

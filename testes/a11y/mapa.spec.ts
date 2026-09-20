@@ -14,19 +14,55 @@ import { expect, test } from "@playwright/test";
  * 1. **as camadas**, que não dependem de interação nenhuma — quem chega sem
  *    tocar em nada já distingue Sergipe, Vale, pesquisa e comparação, e não
  *    por cor sozinha;
- * 2. **os dois recortes** como opções de teclado, mouse e toque, com foco,
- *    seleção, painel e volta à visão geral.
+ * 2. **os seis alvos editoriais** como opções de teclado, mouse e toque, com
+ *    foco, seleção, troca da coluna e volta ao padrão.
+ *
+ * Desde o adendo de 2026-09-19 a coluna inteira é contextual: selecionar troca
+ * sobretítulo, título, parágrafos e linha territorial. O estado sem seleção não
+ * é vazio — é o Vale, que é o assunto da seção e o que vale também sem
+ * JavaScript.
  *
  * A experiência territorial completa é de `/territorio`, coberta em
  * `territorio-publico.spec.ts`.
  */
 
 const SVG = "#hl-mapa";
-const VALE = '#hl-mapa g[data-recorte="vale"]';
-const COMPARACAO = '#hl-mapa g[data-recorte="comparacao"]';
+const VALE = '#hl-mapa [data-recorte="vale"]';
+const COMPARACAO = '#hl-mapa [data-recorte="comparacao"]';
+const ILHA_GRANDE = '#hl-mapa [data-recorte="ilha-grande"]';
+const SERRA = '#hl-mapa [data-recorte="serra-dos-macacos"]';
 const MARCADOS = "#hl-municipios [data-selecionado]";
 const PAINEL = "#hl-mapa-painel";
+const CONVITE = "#hl-territorio .territorio-cartografico__convite";
 const PONTE = "#hl-territorio .territorio-cartografico__ir";
+
+/** Bloco da coluna que está aberto agora. Só pode haver um. */
+const ABERTO = `${PAINEL} [data-painel-de]:not([hidden])`;
+
+/** Os seis alvos, na ordem em que o desenho os oferece. */
+const ALVOS = [
+  "vale",
+  "comparacao",
+  "recanto-da-serra",
+  "borda-da-mata",
+  "serra-dos-macacos",
+  "ilha-grande",
+];
+
+const RECORTES = ["vale", "comparacao"];
+
+/**
+ * O que se clica dentro de um alvo.
+ *
+ * O `<g>` não é alvo de ponteiro por si: num recorte, quem pinta são os
+ * caminhos dos municípios; num lugar, é o círculo transparente. Clicar no `<g>`
+ * acertaria o centro da caixa envolvente, que inclui o rótulo invisível e pode
+ * cair fora de qualquer coisa desenhada.
+ */
+function clicavel(chave: string): string {
+  const dentro = RECORTES.includes(chave) ? "path" : "path.forma";
+  return `#hl-mapa [data-recorte="${chave}"] ${dentro}`;
+}
 
 const MUNICIPIOS_DO_VALE = [
   "Tobias Barreto",
@@ -221,25 +257,53 @@ test.describe("mapa da Home — estado inicial", () => {
     expect(visiveis).toBe(0);
   });
 
-  test("o painel abre vazio e não afirma seleção que não houve", async ({
+  /**
+   * A coluna abre no Vale, e não num "selecione algo": o texto de abertura é
+   * conteúdo, não instrução. Nada fica marcado como escolhido antes de alguém
+   * escolher — abrir no padrão não é afirmar seleção.
+   */
+  test("a coluna abre no Vale, com um bloco só e sem afirmar seleção", async ({
     page,
   }) => {
     await abrirMapa(page);
 
-    await expect(page.locator(`${PAINEL} [data-painel-vazio]`)).toBeVisible();
-    await expect(
-      page.locator(`${PAINEL} [data-painel-de]:visible`),
-    ).toHaveCount(0);
+    await expect(page.locator(ABERTO)).toHaveCount(1);
+    await expect(page.locator(ABERTO)).toHaveAttribute(
+      "data-painel-de",
+      "vale",
+    );
+    await expect(page.locator(`${ABERTO} h3`)).toHaveText(
+      "Uma região que se reconhece pelo que circula nela",
+    );
+    await expect(page.locator(`${PAINEL} [data-painel-vazio]`)).toHaveCount(0);
+    await expect(page.locator('#hl-mapa [aria-selected="true"]')).toHaveCount(
+      0,
+    );
   });
 
-  test("os dois recortes são opções nomeadas de uma única listbox", async ({
+  /** O convite só existe havendo o que selecionar. */
+  test("o convite a explorar aparece quando a ilha assume o desenho", async ({
+    page,
+  }) => {
+    await abrirMapa(page);
+    await expect(page.locator(CONVITE)).toBeVisible();
+    await expect(page.locator(CONVITE)).toContainText("ponto de pesquisa");
+  });
+
+  test("os seis alvos são opções nomeadas de uma única listbox", async ({
     page,
   }) => {
     await abrirMapa(page);
 
     await expect(page.locator(SVG)).toHaveAttribute("role", "listbox");
     const opcoes = page.locator('#hl-mapa [role="option"]');
-    await expect(opcoes).toHaveCount(2);
+    await expect(opcoes).toHaveCount(ALVOS.length);
+
+    expect(
+      await opcoes.evaluateAll((os) =>
+        os.map((o) => o.getAttribute("data-recorte")),
+      ),
+    ).toEqual(ALVOS);
     expect(
       await opcoes.evaluateAll((os) =>
         os.map((o) => o.getAttribute("aria-label")),
@@ -247,10 +311,14 @@ test.describe("mapa da Home — estado inicial", () => {
     ).toEqual([
       "Recorte do Vale do Rio Real",
       "Referência de comparação, fora do Vale",
+      "Recanto da Serra, ponto de pesquisa",
+      "Museu Borda da Mata, ponto de pesquisa",
+      "Serra dos Macacos, ponto de pesquisa",
+      "Ilha Grande, ponto de pesquisa",
     ]);
   });
 
-  /** Roving tabindex: o mapa é uma parada de Tab, não duas. */
+  /** Roving tabindex: o mapa é uma parada de Tab, não seis. */
   test("o mapa é uma única parada de Tab", async ({ page }) => {
     await abrirMapa(page);
 
@@ -259,7 +327,7 @@ test.describe("mapa da Home — estado inicial", () => {
     ).toHaveCount(1);
     await expect(
       page.locator('#hl-mapa [role="option"][tabindex="-1"]'),
-    ).toHaveCount(1);
+    ).toHaveCount(ALVOS.length - 1);
   });
 });
 
@@ -284,7 +352,15 @@ test.describe("mapa da Home — seleção", () => {
 
     const painel = page.locator(`${PAINEL} [data-painel-de="vale"]`);
     await expect(painel).toBeVisible();
-    await expect(painel).toContainText("Não é divisão administrativa oficial");
+    await expect(painel).toContainText("atravessa Sergipe e a Bahia");
+    // Grafia decidida pela equipe para o texto editorial do site.
+    await expect(painel).toContainText("Itanhi");
+    await expect(painel).not.toContainText("Itanhy");
+    // A abordagem recusada não volta por nenhuma porta.
+    await expect(painel).not.toContainText(
+      "Não é divisão administrativa oficial",
+    );
+    await expect(painel).toContainText(MUNICIPIOS_DO_VALE.join(" · "));
   });
 
   test("clique em São Cristóvão destaca só ele, como referência de comparação", async ({
@@ -302,6 +378,93 @@ test.describe("mapa da Home — seleção", () => {
     await expect(painel).toBeVisible();
     await expect(painel).toContainText("comparação");
     await expect(painel).not.toContainText("parte do Vale do Rio Real");
+  });
+
+  /**
+   * O caso que o adendo nomeia: Ilha Grande deixa de ser só um ponto no
+   * desenho e passa a abrir ficha própria. O município é o que a transcrição
+   * do EP01 diz e o que `referencias.ts` publica desde 2026-09-14.
+   */
+  test("clique em Ilha Grande abre a ficha do povoado de São Cristóvão", async ({
+    page,
+  }) => {
+    await abrirMapa(page);
+    await page.locator(clicavel("ilha-grande")).click();
+
+    await expect(page.locator(ILHA_GRANDE)).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+
+    const ficha = page.locator(`${PAINEL} [data-painel-de="ilha-grande"]`);
+    await expect(ficha).toBeVisible();
+    await expect(ficha.locator("h3")).toHaveText("Ilha Grande");
+    await expect(ficha).toContainText("São Cristóvão");
+    await expect(ficha).toContainText("samba de coco");
+    await expect(ficha).toContainText("barco");
+    await expect(ficha).not.toContainText("município não consolidado");
+  });
+
+  /** Alternar não mistura: a coluna mostra um alvo por vez, e só um. */
+  test("alternar entre alvos não mistura conteúdo", async ({ page }) => {
+    await abrirMapa(page);
+
+    for (const chave of ["ilha-grande", "vale", "serra-dos-macacos"]) {
+      await page.locator(clicavel(chave)).first().click({ force: true });
+      await expect(page.locator(ABERTO)).toHaveCount(1);
+      await expect(page.locator(ABERTO)).toHaveAttribute(
+        "data-painel-de",
+        chave,
+      );
+      await expect(page.locator('#hl-mapa [aria-selected="true"]')).toHaveCount(
+        1,
+      );
+    }
+
+    // O texto do alvo anterior não sobrou na coluna visível.
+    await expect(page.locator(ABERTO)).not.toContainText("samba de coco");
+    await expect(page.locator(ABERTO)).toContainText("Pedra Grande");
+  });
+
+  /**
+   * O alvo de toque de cada lugar precisa existir no telefone: a gota tem
+   * menos de 6 px em 375 px, e é o círculo transparente que dá o alvo.
+   */
+  test("no telefone, cada ponto de pesquisa é tocável e abre o seu", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await abrirMapa(page);
+
+    const alvos = page.locator(
+      "#hl-mapa .territorio-cartografico__lugar .alvo",
+    );
+    await expect(alvos).toHaveCount(4);
+    for (const caixa of await alvos.evaluateAll((cs) =>
+      cs.map((c) => c.getBoundingClientRect().width),
+    )) {
+      // WCAG 2.2 AA, critério 2.5.8: 24 px é o mínimo.
+      expect(caixa).toBeGreaterThanOrEqual(24);
+    }
+
+    /*
+      Toque fora da gota e dentro do círculo: é exatamente o que o alvo
+      ampliado existe para pegar. A gota mede menos de 6 px aqui; sem o
+      círculo, este toque não acertaria nada.
+    */
+    await page.locator(`${SERRA} .alvo`).click({ position: { x: 6, y: 6 } });
+    await expect(page.locator(SERRA)).toHaveAttribute("aria-selected", "true");
+    await expect(page.locator(ABERTO)).toHaveAttribute(
+      "data-painel-de",
+      "serra-dos-macacos",
+    );
+    // A coluna continua legível: nada de rolagem horizontal na página.
+    expect(
+      await page.evaluate(() => ({
+        rolagem: document.documentElement.scrollWidth,
+        visivel: document.documentElement.clientWidth,
+      })),
+    ).toEqual({ rolagem: 375, visivel: 375 });
   });
 
   /** Toque percorre o mesmo caminho de seleção: nada depende de `hover`. */
@@ -358,7 +521,34 @@ test.describe("mapa da Home — teclado", () => {
     await page.keyboard.press("Escape");
     await expect(vale).toHaveAttribute("aria-selected", "false");
     await expect(page.locator(MARCADOS)).toHaveCount(0);
-    await expect(page.locator(`${PAINEL} [data-painel-vazio]`)).toBeVisible();
+    // Sair da seleção devolve a coluna ao padrão; nunca a deixa vazia.
+    await expect(page.locator(ABERTO)).toHaveAttribute(
+      "data-painel-de",
+      "vale",
+    );
+  });
+
+  /** Esc a partir de um lugar também volta ao Vale, não ao nada. */
+  test("Esc a partir de um ponto de pesquisa volta ao Vale", async ({
+    page,
+  }) => {
+    await abrirMapa(page);
+    await page.locator(ILHA_GRANDE).focus();
+    await page.keyboard.press("Enter");
+    await expect(page.locator(ABERTO)).toHaveAttribute(
+      "data-painel-de",
+      "ilha-grande",
+    );
+
+    await page.keyboard.press("Escape");
+    await expect(page.locator(ABERTO)).toHaveCount(1);
+    await expect(page.locator(ABERTO)).toHaveAttribute(
+      "data-painel-de",
+      "vale",
+    );
+    await expect(page.locator('#hl-mapa [aria-selected="true"]')).toHaveCount(
+      0,
+    );
   });
 
   test("Espaço também seleciona", async ({ page }) => {
@@ -368,30 +558,34 @@ test.describe("mapa da Home — teclado", () => {
     await expect(page.locator(VALE)).toHaveAttribute("aria-selected", "true");
   });
 
-  test("as setas andam entre os dois recortes", async ({ page }) => {
+  test("as setas alcançam os seis alvos, incluindo os pontos de pesquisa", async ({
+    page,
+  }) => {
     await abrirMapa(page);
     await page.locator(VALE).focus();
 
-    await page.keyboard.press("ArrowRight");
-    expect(
-      await page.evaluate(() =>
-        document.activeElement?.getAttribute("data-recorte"),
-      ),
-    ).toBe("comparacao");
+    const focado = () =>
+      page.evaluate(() => document.activeElement?.getAttribute("data-recorte"));
 
-    await page.keyboard.press("ArrowLeft");
-    expect(
-      await page.evaluate(() =>
-        document.activeElement?.getAttribute("data-recorte"),
-      ),
-    ).toBe("vale");
+    const percorrido = [await focado()];
+    for (let passo = 1; passo < ALVOS.length; passo++) {
+      await page.keyboard.press("ArrowRight");
+      percorrido.push(await focado());
+    }
+    expect(percorrido).toEqual(ALVOS);
+
+    await page.keyboard.press("Home");
+    expect(await focado()).toBe("vale");
 
     await page.keyboard.press("End");
-    expect(
-      await page.evaluate(() =>
-        document.activeElement?.getAttribute("data-recorte"),
-      ),
-    ).toBe("comparacao");
+    expect(await focado()).toBe("ilha-grande");
+
+    // Do fim, Enter abre a ficha do lugar: teclado chega onde o mouse chega.
+    await page.keyboard.press("Enter");
+    await expect(page.locator(ABERTO)).toHaveAttribute(
+      "data-painel-de",
+      "ilha-grande",
+    );
   });
 
   test("o foco é perceptível e não usa o tratamento da seleção", async ({
@@ -515,15 +709,39 @@ test.describe("mapa da Home sem JavaScript", () => {
     await expect(page.getByLabel("Legenda do mapa")).toBeVisible();
   });
 
-  test("o painel não é oferecido, mas a ponte continua sendo um link", async ({
+  /**
+   * A coluna **é** texto editorial, não uma promessa de interação: sem
+   * JavaScript ela continua inteira, no alvo padrão. O que some é o convite a
+   * selecionar, porque não há o que selecionar.
+   */
+  test("a coluna entrega o Vale por inteiro, e o convite não aparece", async ({
     page,
   }) => {
     await page.goto("/");
 
-    await expect(page.locator(PAINEL)).toBeHidden();
+    const aberto = page.locator(ABERTO);
+    await expect(aberto).toHaveCount(1);
+    await expect(aberto).toHaveAttribute("data-painel-de", "vale");
+    await expect(aberto).toContainText("atravessa Sergipe e a Bahia");
+    await expect(aberto).toContainText("Itanhi");
+
+    await expect(page.locator(CONVITE)).toBeHidden();
+
     // A ponte é navegação, não interação: funciona sem JavaScript.
     await expect(page.locator(PONTE)).toBeVisible();
     await expect(page.locator(PONTE)).toHaveAttribute("href", "/territorio");
+  });
+
+  /** As cinco fichas restantes existem no documento, mas ficam fechadas. */
+  test("os outros cinco alvos ficam fechados, sem JavaScript para abri-los", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    await expect(page.locator(`${PAINEL} [data-painel-de]`)).toHaveCount(
+      ALVOS.length,
+    );
+    await expect(page.locator(ABERTO)).toHaveCount(1);
   });
 
   test("o vínculo de cada município continua legível em texto", async ({

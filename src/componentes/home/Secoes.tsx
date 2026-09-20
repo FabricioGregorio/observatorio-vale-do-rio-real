@@ -14,10 +14,7 @@ import {
   DERIVADOS_DOS_LUGARES,
   PASTA_PUBLICA_DA_PESQUISA,
 } from "../../dados/pesquisa/derivados";
-import {
-  DEFINICAO_VALE_DO_RIO_REAL,
-  RECORTE_TERRITORIAL,
-} from "../../dados/territorio/recorte";
+import { RECORTE_TERRITORIAL } from "../../dados/territorio/recorte";
 import { REFERENCIAS_TERRITORIAIS } from "../../dados/territorio/referencias";
 import { MENU_RODAPE } from "../../lib/navegacao";
 import {
@@ -48,7 +45,12 @@ import {
   ID_DO_PAINEL_DO_MAPA,
   MapaDoRecorte,
 } from "./MapaDoRecorte";
-import { DEFINICOES, recorteDoMunicipio } from "./recortes";
+import {
+  ALVO_PADRAO,
+  ALVOS_EDITORIAIS,
+  type ConteudoEditorial,
+  recorteDoMunicipio,
+} from "./recortes";
 
 /**
  * Seções da Home, na ordem narrativa:
@@ -147,24 +149,55 @@ const ROTULO_DA_RELACAO = {
   comparacao: "referência de comparação",
 } as const;
 
-const ID_DO_TITULO_DA_LEITURA = "hl-territorio-leitura";
 const ID_DO_TITULO_DOS_PONTOS = "hl-territorio-pontos";
+
+/**
+ * Linha territorial de um alvo — municípios do recorte, ou onde fica o lugar.
+ *
+ * Nenhum dos dois é escrito à mão: o recorte deriva de `RECORTE_TERRITORIAL`
+ * pelo mesmo filtro que alimenta o mapa, e o lugar deriva de
+ * `REFERENCIAS_TERRITORIAIS`, que é a fonte de município e localidade desde a
+ * Tarefa 20. A tabela editorial não repete nenhum dos dois.
+ */
+function notaTerritorialDe(chave: ConteudoEditorial["chave"]): string {
+  const lugar = REFERENCIAS_TERRITORIAIS.find(
+    (referencia) => referencia.id === chave,
+  );
+  if (lugar !== undefined) return `${lugar.localidade} · ${lugar.municipio}`;
+
+  return RECORTE_TERRITORIAL.filter(
+    (municipio) => recorteDoMunicipio(municipio.relacoesTerritoriais) === chave,
+  )
+    .map((municipio) => municipio.nome)
+    .join(" · ");
+}
 
 /**
  * III Território — cartografia editorial.
  *
  * Composição em duas colunas: o mapa emoldurado à esquerda, com nota
- * cartográfica e legenda; o eixo editorial à direita, com a leitura em
- * camadas, o painel contextual e os pontos de pesquisa. A leitura em texto dos
- * municípios fecha a seção, em largura inteira, e é ela a alternativa completa
- * quando não há JavaScript.
+ * cartográfica e legenda; a coluna editorial à direita. A leitura em texto dos
+ * municípios fecha a seção, em largura inteira.
  *
- * A Home é a **síntese** da cartografia: dois alvos editoriais, não 75
- * municípios clicáveis. A exploração profunda é de `/territorio`.
+ * ## A coluna responde ao mapa
+ *
+ * A coluna inteira é contextual: sobretítulo, título, parágrafos e linha
+ * territorial mudam junto com o que está selecionado no desenho. São seis
+ * alvos — os dois recortes declarados e os quatro lugares de campo —, todos
+ * vindos de `ALVOS_EDITORIAIS`, que é a única tabela que liga identificador,
+ * rótulo do mapa e texto. Mapa e coluna não têm como divergir de nome.
+ *
+ * Nada disso nasce no cliente: o servidor escreve os seis blocos, e a ilha só
+ * decide qual deles está visível. Sem JavaScript, a coluna mostra o alvo
+ * padrão — o Vale, que é o assunto da seção — e continua sendo texto completo.
+ *
+ * A Home é a **síntese** da cartografia. A exploração dos 75 municípios, com
+ * camadas e fichas, é de `/territorio`.
  */
 export function Territorio() {
   return (
     <Capitulo
+      antes="Cada povoação do recorte guarda uma fonte histórica e social própria"
       className="hl-capitulo--territorio"
       id="hl-territorio"
       numero="III"
@@ -178,63 +211,67 @@ export function Territorio() {
           <MapaDoRecorte />
 
           <aside className="territorio-cartografico__editorial">
-            <div className="territorio-cartografico__introducao hl-texto">
-              <p className="meta-ficha">Leitura cartográfica</p>
-              <h3>Território em camadas</h3>
-              <p>
-                A cartografia apresenta os 75 municípios de Sergipe e distingue
-                as relações territoriais declaradas no projeto: o recorte do
-                Vale, os municípios com pesquisa de campo e a referência de
-                comparação.
-              </p>
-              <p>
-                {DEFINICAO_VALE_DO_RIO_REAL} O Observatório não cria fronteira
-                nova, destaca os municípios do recorte que utiliza.
-              </p>
-            </div>
-
             {/*
-              Servido com `hidden`. Quem revela é a ilha, ao montar: sem
-              JavaScript não há painel prometendo uma exploração que não
-              acontece. Ver MapaInterativo. A ponte para /territorio fica fora
-              dele, logo abaixo, porque é um link e funciona sem JavaScript.
+              A coluna editorial da seção. Os seis blocos são servidos prontos;
+              o padrão vem visível e os outros cinco vêm com `hidden`, e é a
+              ilha que troca qual aparece. `data-painel-padrao` diz a ela para
+              onde voltar quando a seleção é limpa — sem isso, Esc deixaria a
+              coluna vazia.
+
+              Base factual de todo o texto: transcrições revisadas do
+              PodObservar. Ver `recortes.ts`.
             */}
             <section
-              aria-labelledby={ID_DO_TITULO_DA_LEITURA}
+              aria-label="Leitura do território"
               aria-live="polite"
-              className="territorio-cartografico__painel"
-              data-revelavel
-              hidden
+              className="territorio-cartografico__painel hl-texto"
+              data-painel-padrao={ALVO_PADRAO}
               id={ID_DO_PAINEL_DO_MAPA}
             >
-              <p className="meta-ficha" id={ID_DO_TITULO_DA_LEITURA}>
-                Leitura do território
-              </p>
+              {ALVOS_EDITORIAIS.map((alvo) => {
+                /*
+                  A linha territorial só entra quando acrescenta: em São
+                  Cristóvão ela repetiria o próprio título, e repetir é peso
+                  sem informação numa Home que tem orçamento de bytes.
+                */
+                const nota = notaTerritorialDe(alvo.chave);
+                const repetida = nota === "" || alvo.titulo.includes(nota);
 
-              <p data-painel-vazio>
-                Selecione um recorte no mapa para ler o que ele reúne.
-              </p>
-
-              {DEFINICOES.map((definicao) => (
-                <div
-                  data-painel-de={definicao.chave}
-                  hidden
-                  key={definicao.chave}
-                >
-                  <h4>{definicao.titulo}</h4>
-                  <p>{definicao.resumo}</p>
-                  <p className="territorio-cartografico__painel-lista">
-                    {RECORTE_TERRITORIAL.filter(
-                      (municipio) =>
-                        recorteDoMunicipio(municipio.relacoesTerritoriais) ===
-                        definicao.chave,
-                    )
-                      .map((municipio) => municipio.nome)
-                      .join(" · ")}
-                  </p>
-                </div>
-              ))}
+                return (
+                  <div
+                    data-painel-de={alvo.chave}
+                    hidden={alvo.chave !== ALVO_PADRAO}
+                    key={alvo.chave}
+                  >
+                    <p className="meta-ficha">{alvo.sobretitulo}</p>
+                    <h3>{alvo.titulo}</h3>
+                    {alvo.paragrafos.map((paragrafo) => (
+                      <p key={paragrafo}>{paragrafo}</p>
+                    ))}
+                    {repetida ? null : (
+                      <p className="territorio-cartografico__painel-lista">
+                        {nota}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
             </section>
+
+            {/*
+              Servido com `hidden`: só a ilha revela. Sem JavaScript não há o
+              que selecionar, e convidar para uma exploração que não acontece
+              seria promessa falsa. O texto da coluna, esse, está lá nos dois
+              casos.
+            */}
+            <p
+              className="territorio-cartografico__convite meta-ficha"
+              data-revelavel
+              hidden
+            >
+              Selecione um recorte ou um ponto de pesquisa no mapa para mudar
+              esta leitura.
+            </p>
 
             {/*
               A Home mostra a síntese; a cartografia com camadas, zoom e fichas
@@ -258,7 +295,9 @@ export function Territorio() {
               <h3 id={ID_DO_TITULO_DOS_PONTOS}>Pontos de pesquisa</h3>
               <p>
                 Os quatro lugares visitados em campo, na posição confirmada pelo
-                responsável e desenhada no mapa.
+                responsável e desenhada no mapa. Chegar até eles fez parte da
+                pesquisa: estrada de terra, ponte de madeira sobre riacho e, no
+                caso de Ilha Grande, travessia de barco.
               </p>
               <ul>
                 {REFERENCIAS_TERRITORIAIS.map((lugar) => (
@@ -280,9 +319,10 @@ export function Territorio() {
           <summary>Leitura em texto — municípios do recorte</summary>
           <p>
             {MUNICIPIOS_DE_COMPARACAO.map((m) => m.nome).join(", ")} entra como
-            comparação de políticas públicas, não como parte do Vale. Ilha
-            Grande e Serra dos Macacos também fazem parte da pesquisa e aparecem
-            como lugares visitados no mapa.
+            comparação de políticas públicas, não como parte do Vale. A Serra
+            dos Macacos, em Tobias Barreto, e Ilha Grande, povoado de São
+            Cristóvão, também fazem parte da pesquisa e aparecem como lugares
+            visitados no mapa.
           </p>
           <dl
             className="territorio-cartografico__lista"
@@ -337,24 +377,34 @@ function MateriaisReunidos({
   equipamento: Equipamento;
   materiais: readonly MaterialResolvido[];
 }) {
+  /*
+   * O rótulo passou a ser visível. Antes ele existia só como `aria-label`: o
+   * leitor de tela sabia o que aquela lista era e quem lê na tela via uma
+   * pilha de linhas sem título, logo depois do texto do lugar. Um `id`
+   * compartilhado dá o mesmo nome às duas leituras, sem duplicá-lo.
+   */
+  const idDoRotulo = `hl-reuniu-${equipamento.id}`;
+
   return (
-    <ul
-      aria-label={`O que a pesquisa reuniu sobre ${equipamento.nome}`}
-      className="hl-reuniu"
-    >
-      {materiais.map((item) => (
-        <li key={item.material}>
-          {item.href === null ? (
-            <span>{item.material}</span>
-          ) : (
-            <a href={item.href}>{item.material}</a>
-          )}
-          <span className="hl-estado" data-estado={item.estado}>
-            {ROTULO_DO_ESTADO[item.estado]}
-          </span>
-        </li>
-      ))}
-    </ul>
+    <div className="hl-reuniu">
+      <p className="meta-ficha" id={idDoRotulo}>
+        O que a pesquisa reuniu
+      </p>
+      <ul aria-labelledby={idDoRotulo}>
+        {materiais.map((item) => (
+          <li key={item.material}>
+            {item.href === null ? (
+              <span>{item.material}</span>
+            ) : (
+              <a href={item.href}>{item.material}</a>
+            )}
+            <span className="hl-estado" data-estado={item.estado}>
+              {ROTULO_DO_ESTADO[item.estado]}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
@@ -427,6 +477,20 @@ export function Lugares({
         foi contratado.
       </p>
 
+      {/*
+       * Os dois cards têm a mesma anatomia, na mesma ordem: fotografia,
+       * localidade, nome, o que é o lugar, a nota documental, a lista de
+       * materiais e o CTA. Era essa simetria que faltava — um card abria
+       * descrevendo o lugar e o outro abria descrevendo o estado de um PDF,
+       * e os botões pousavam em alturas diferentes porque nada os prendia ao
+       * pé da ficha. O pé agora é um bloco só (`hl-equip__pe`), empurrado
+       * para baixo pelo CSS; a altura dos dois passa a ser a mesma qualquer
+       * que seja o tamanho do texto acima.
+       *
+       * As descrições saem das transcrições revisadas do PodObservar (EP02,
+       * Recanto; EP03, Borda da Mata) e não nomeiam ninguém, como no resto
+       * da Home.
+       */}
       <div className="hl-dupla">
         <article aria-labelledby="hl-recanto" className="hl-equip">
           <FotoDaFicha foto={fotos.recanto} />
@@ -434,24 +498,31 @@ export function Lugares({
             <p className="meta-ficha">{recanto.lugar}</p>
             <h3 id="hl-recanto">{recanto.nome}</h3>
             <p>
+              Aberto à visitação em 2008, reúne museus, trilhas, biblioteca,
+              área de reflorestamento e uma cozinha abastecida pela produção da
+              região.
+            </p>
+            <p className="hl-nota">
               Segundo o relatório técnico publicado, o espaço é equipamento
               cultural e motor da economia criativa e solidária da região do
               Vale do Rio Real.
             </p>
-            <MateriaisReunidos
-              equipamento={recanto}
-              materiais={materiais.recanto}
-            />
-            <a
-              className="hl-botao hl-botao--cheio"
-              href={RELATORIO_DO_RECANTO.url}
-            >
-              Ler o relatório técnico
-              <span className="hl-botao__meta">
-                PDF · {tamanhoEmKb(RELATORIO_DO_RECANTO.bytes)} ·{" "}
-                {RELATORIO_DO_RECANTO.licenca}
-              </span>
-            </a>
+            <div className="hl-equip__pe">
+              <MateriaisReunidos
+                equipamento={recanto}
+                materiais={materiais.recanto}
+              />
+              <a
+                className="hl-botao hl-botao--cheio"
+                href={RELATORIO_DO_RECANTO.url}
+              >
+                Ler o relatório técnico
+                <span className="hl-botao__meta">
+                  PDF · {tamanhoEmKb(RELATORIO_DO_RECANTO.bytes)} ·{" "}
+                  {RELATORIO_DO_RECANTO.licenca}
+                </span>
+              </a>
+            </div>
           </div>
         </article>
 
@@ -461,33 +532,40 @@ export function Lugares({
             <p className="meta-ficha">{borda.lugar}</p>
             <h3 id="hl-borda">{borda.nome}</h3>
             <p>
-              O relatório técnico do Borda da Mata é um PDF digitalizado de sete
-              páginas, sem camada de texto. A decisão de 2026-09-16 autorizou
-              sua publicação integral, junto das fotografias de campo, da
-              entrevista e dos formulários do equipamento.
+              Um centro cultural que divide o endereço com a casa de quem o
+              mantém: a Garagem Cultural guarda discos, livros e varais de
+              cordel, e a casa de taipa preserva a memória do trabalho no campo.
             </p>
-            <MateriaisReunidos
-              equipamento={borda}
-              materiais={materiais.borda}
-            />
-            {relatorioDoBorda?.href === undefined ||
-            relatorioDoBorda.href === null ? (
-              <p className="hl-nota">
-                Nenhum documento do Borda da Mata está público ainda. Esta ficha
-                diz o que existe, sem antecipar o conteúdo.
-              </p>
-            ) : (
-              <a
-                className="hl-botao hl-botao--cheio"
-                href={relatorioDoBorda.href}
-              >
-                Ler o relatório técnico
-                <span className="hl-botao__meta">
-                  PDF digitalizado · {FOTOGRAFIAS_DO_BORDA_NO_ACERVO}{" "}
-                  fotografias de campo no acervo
-                </span>
-              </a>
-            )}
+            <p className="hl-nota">
+              O relatório técnico é um PDF digitalizado de sete páginas, sem
+              camada de texto. A decisão de 2026-09-16 autorizou sua publicação
+              integral, junto das fotografias de campo, da entrevista e dos
+              formulários do equipamento.
+            </p>
+            <div className="hl-equip__pe">
+              <MateriaisReunidos
+                equipamento={borda}
+                materiais={materiais.borda}
+              />
+              {relatorioDoBorda?.href === undefined ||
+              relatorioDoBorda.href === null ? (
+                <p className="hl-nota">
+                  Nenhum documento do Borda da Mata está público ainda. Esta
+                  ficha diz o que existe, sem antecipar o conteúdo.
+                </p>
+              ) : (
+                <a
+                  className="hl-botao hl-botao--cheio"
+                  href={relatorioDoBorda.href}
+                >
+                  Ler o relatório técnico
+                  <span className="hl-botao__meta">
+                    PDF digitalizado · {FOTOGRAFIAS_DO_BORDA_NO_ACERVO}{" "}
+                    fotografias de campo no acervo
+                  </span>
+                </a>
+              )}
+            </div>
           </div>
         </article>
       </div>
@@ -587,10 +665,16 @@ export function Escuta() {
     >
       <div className="hl-escuta">
         <div className="hl-texto">
+          {/*
+           * Ilha Grande saiu da lista de municípios: é povoado de São
+           * Cristóvão, e enfileirá-la ao lado de três municípios afirmava uma
+           * geografia que a transcrição do EP01 desmente.
+           */}
           <p>
             Foram {ENTREVISTAS.length} entrevistas gravadas, com gestores
             públicos e com quem mantém os lugares visitados, em Tobias Barreto,
-            Tomar do Geru, São Cristóvão e Ilha Grande.
+            Tomar do Geru e São Cristóvão — da sede do município ao povoado de
+            Ilha Grande.
           </p>
           <p>
             Os áudios e as transcrições seguem restritos. As vozes entram no
@@ -620,8 +704,9 @@ export function Escuta() {
         <div className="hl-ilha__texto">
           <h3>Também em campo: Ilha Grande</h3>
           <p>
-            Registros fotográficos de Ilha Grande, um dos lugares onde a
-            pesquisa esteve.
+            Povoado de São Cristóvão, alcançado de barco, com cultura pesqueira
+            própria e a tradição do samba de coco preservada ali. Estes são os
+            registros fotográficos da visita.
           </p>
         </div>
         <ul className="hl-ilha__fotos">

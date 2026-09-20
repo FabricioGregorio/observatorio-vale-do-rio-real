@@ -13,6 +13,7 @@ import {
 } from "../mapa/estilosDoMapa";
 import { CSS_DO_TERRITORIO } from "../territorio/estilosDoTerritorio";
 import {
+  ALVOS_EDITORIAIS,
   DEFINICOES,
   municipiosDoRecorte,
   recorteDoMunicipio,
@@ -30,6 +31,25 @@ export const ID_DA_HACHURA = "hl-mapa-hachura-pesquisa";
  * gota no projeto, e a ponta cai exatamente sobre a coordenada confirmada.
  */
 const RAIO_DO_LUGAR = 9;
+
+/**
+ * Raio do alvo de toque de cada lugar, em unidades do `viewBox`.
+ *
+ * A gota tem 9 unidades; num `viewBox` de 1000 servido a 317 px — o mapa em
+ * viewport de 375 px — ela mede menos de 6 px e seria intocável no telefone.
+ * Este círculo é transparente, não aparece no desenho e existe só para dar
+ * alvo: 40 unidades viram ~25 px de diâmetro no telefone e ~53 px em 1440 px.
+ *
+ * O valor é o maior que cabe sem que dois alvos se sobreponham: os dois lugares
+ * mais próximos, Recanto da Serra e Serra dos Macacos, ficam a ~80 unidades um
+ * do outro.
+ */
+const RAIO_DO_ALVO = 40;
+
+/** Rótulo acessível de cada lugar, da tabela editorial única. */
+const ROTULO_DO_LUGAR = new Map(
+  ALVOS_EDITORIAIS.map((alvo) => [alvo.chave, alvo.rotulo]),
+);
 
 /**
  * Semântica explícita dos dois recortes rotulados dentro do SVG.
@@ -64,10 +84,15 @@ const SEMANTICA_DO_RECORTE = { role: "group" } as const;
  *
  * ## O que é opção, e o que é contexto
  *
- * Nenhum dos 75 municípios é opção. Os dois recortes que o Observatório
- * declarou são grupos `<g data-recorte>`, e são eles que a ilha promove a
- * opções de uma listbox. Selecionar um recorte reforça o traço, nomeia os
- * lugares visitados que caem nele e abre a leitura em texto ao lado.
+ * Nenhum dos 75 municípios é opção. São opções os **seis alvos editoriais**:
+ * os dois recortes que o Observatório declarou, que são grupos de municípios,
+ * e os quatro lugares onde a pesquisa esteve em campo, que são pins. Todos
+ * carregam `data-recorte` com o seu identificador, e é por ele que a ilha os
+ * promove a opções de uma listbox só — ela não precisa distinguir um grupo de
+ * cinco municípios de um ponto.
+ *
+ * Selecionar reforça o traço, nomeia os lugares envolvidos e troca a leitura
+ * editorial ao lado.
  *
  * ## Por que os atributos de interação não vêm daqui
  *
@@ -171,10 +196,16 @@ export function MapaDoRecorte({
           {/*
             Os quatro lugares visitados, na posição confirmada pelo responsável
             em 2026-09-14. O ponto aparece sempre — é a pesquisa no desenho; o
-            nome só aparece com o recorte correspondente selecionado, para que
-            a visão geral continue sendo a malha e não uma lista de etiquetas.
-            O nome de cada lugar está em texto no bloco Pontos de pesquisa, e a
-            subárvore é apresentacional enquanto o SVG for `role="img"`.
+            nome só aparece quando o lugar, ou o recorte em que ele cai, está
+            selecionado, para que a visão geral continue sendo a malha e não uma
+            lista de etiquetas. O nome de cada lugar está em texto no bloco
+            Pontos de pesquisa, e a subárvore é apresentacional enquanto o SVG
+            for `role="img"`.
+
+            Cada lugar é também um alvo editorial: leva `data-recorte` com o seu
+            próprio id, o que o torna opção do mesmo listbox dos dois recortes,
+            sem que a ilha precise saber a diferença entre um `<g>` de cinco
+            municípios e um pin.
           */}
           {REFERENCIAS_TERRITORIAIS.map((lugar) => {
             const [x, y] = posicaoNoSvg(
@@ -191,11 +222,15 @@ export function MapaDoRecorte({
 
             return (
               <g
+                {...SEMANTICA_DO_RECORTE}
+                aria-label={ROTULO_DO_LUGAR.get(lugar.id) ?? lugar.nome}
                 className="territorio-cartografico__lugar"
                 data-lugar-do-recorte={recorte}
+                data-recorte={lugar.id}
                 key={lugar.id}
                 transform={`translate(${x} ${y})`}
               >
+                <circle className="alvo" cy={-RAIO_DO_LUGAR} r={RAIO_DO_ALVO} />
                 <path className="forma" d={caminhoDoPin(RAIO_DO_LUGAR)} />
                 <circle
                   className="miolo"
