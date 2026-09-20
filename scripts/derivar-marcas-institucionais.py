@@ -2,8 +2,8 @@
 
 ## O que entra
 
-Quatro arquivos de `OBSERVATORIO_FONTES_DIR/marcas/`, escolhidos pelos manuais
-oficiais e não por conveniência:
+Seis marcas oficiais de `OBSERVATORIO_FONTES_DIR/marcas/`, escolhidas pelos
+manuais e não por conveniência:
 
 - `MINISTERIO DA CULTURA + GOVERNO FEDERAL SEM FUNDO HORIZONTAL.png` — a
   versão completa e original em cores sólidas. O manual do Governo Federal
@@ -16,6 +16,11 @@ oficiais e não por conveniência:
 - `FUNCAP-HORIZONTAL.png` — versão colorida, horizontal;
 - `GOVERNO DE SERGIPE HORIZONTAL SEM FUNDO.png` — brasão azul sobre
   transparência, que é a versão positiva do manual do Governo de Sergipe.
+- a marca isolada da Secretaria Especial da Cultura e a do Sistema Nacional
+  de Cultura — SNC, extraídas da aplicação horizontal colorida da página 9 do
+  `manual pnab.pdf`. Elas existem no corpus como vetores dentro do manual, mas
+  não como arquivos avulsos; os recortes em pontos PDF ficam registrados no
+  manifesto.
 
 Os 23 arquivos da pasta são todos 8000x4500 px com transparência e a arte
 centrada numa moldura vazia. Servir um deles numa faixa de rodapé seria
@@ -45,7 +50,7 @@ dela. Os arquivos são gerados em 2x para telas de densidade dupla.
 
 ## Reprodutibilidade
 
-    uv run --with pillow python scripts/derivar-marcas-institucionais.py
+    uv run --with pillow --with pypdfium2 python scripts/derivar-marcas-institucionais.py
 
 Determinístico: mesmos originais produzem os mesmos bytes. O manifesto com
 origem, hash do original, hash do derivado e transformação é gravado ao lado
@@ -59,6 +64,7 @@ import json
 import os
 from pathlib import Path
 
+import pypdfium2 as pdfium
 from PIL import Image
 
 # WebP sem perda: a arte é de cor chapada, e uma compressão com perda
@@ -81,6 +87,13 @@ LARGURA_FEDERAL = 260
 # largura da federal, que é a regra do manual da PNAB.
 ALTURA_REALIZACAO = 56
 ALTURA_APOIO = 46
+
+# A aplicação horizontal colorida oficial está na página 9 do manual PNAB.
+# Os recortes usam pontos PDF e isolam exatamente as duas marcas que não
+# existem como arquivos avulsos no corpus. A rasterização transparente mantém
+# a arte vetorial e remove apenas o fundo da página.
+PAGINA_REGUA_PNAB = 9
+ESCALA_RENDER_PDF = 6
 
 MARCAS = [
     {
@@ -111,6 +124,26 @@ MARCAS = [
         ),
     },
     {
+        "id": "snc",
+        "origem": "manual pnab.pdf",
+        "arquivo": "sistema-nacional-de-cultura.webp",
+        "entidade": "Sistema Nacional de Cultura",
+        "bloco": "realizacao",
+        "medida": {"tipo": "altura", "valor": 52},
+        "pagina": PAGINA_REGUA_PNAB,
+        "recorte": {
+            "esquerda": 765,
+            "inferior": 595,
+            "direita": 995,
+            "superior": 360,
+        },
+        "regra": (
+            "Manual de uso da marca PNAB Sergipe, página 9: o Sistema "
+            "Nacional de Cultura abre o bloco de Realização na aplicação "
+            "horizontal colorida de uso preferencial."
+        ),
+    },
+    {
         "id": "funcap",
         "origem": "FUNCAP-HORIZONTAL.png",
         "arquivo": "funcap.webp",
@@ -120,6 +153,26 @@ MARCAS = [
         "regra": (
             "Manual de uso da marca PNAB Sergipe: a FUNCAP integra o bloco de "
             "apoio e não ultrapassa a altura nem a largura da marca federal."
+        ),
+    },
+    {
+        "id": "secretaria-especial-cultura",
+        "origem": "manual pnab.pdf",
+        "arquivo": "secretaria-especial-da-cultura.webp",
+        "entidade": "Secretaria Especial da Cultura",
+        "bloco": "apoio",
+        "medida": {"tipo": "altura", "valor": 27},
+        "pagina": PAGINA_REGUA_PNAB,
+        "recorte": {
+            "esquerda": 420,
+            "inferior": 595,
+            "direita": 1352,
+            "superior": 360,
+        },
+        "regra": (
+            "Manual de uso da marca PNAB Sergipe, página 9: a Secretaria "
+            "Especial da Cultura integra o bloco de Apoio na aplicação "
+            "horizontal colorida de uso preferencial."
         ),
     },
     {
@@ -150,10 +203,39 @@ def principal() -> None:
     itens = []
     for marca in MARCAS:
         origem = raiz / str(marca["origem"])
-        imagem = Image.open(origem).convert("RGBA")
+        pagina = marca.get("pagina")
+        recorte = marca.get("recorte")
+        if pagina is None:
+            imagem = Image.open(origem).convert("RGBA")
+            largura_original, altura_original = imagem.size
+            transformacao_inicial = (
+                "moldura transparente removida pela caixa delimitadora do alfa"
+            )
+        else:
+            if not isinstance(recorte, dict):
+                raise SystemExit(f"{marca['id']}: recorte do manual ausente.")
+            documento = pdfium.PdfDocument(origem)
+            folha = documento[int(pagina) - 1]
+            largura_original, altura_original = map(round, folha.get_size())
+            imagem = folha.render(
+                scale=ESCALA_RENDER_PDF,
+                crop=(
+                    recorte["esquerda"],
+                    recorte["inferior"],
+                    recorte["direita"],
+                    recorte["superior"],
+                ),
+                fill_color=(255, 255, 255, 0),
+                rev_byteorder=True,
+            ).to_pil()
+            transformacao_inicial = (
+                f"marca vetorial extraída da página {pagina} do manual PNAB, "
+                "no recorte oficial registrado em pontos PDF; fundo da página "
+                "mantido transparente; caixa delimitadora do alfa aplicada"
+            )
 
         # A caixa delimitadora do alfa remove a moldura transparente vazia do
-        # arquivo de origem. A arte não é tocada.
+        # arquivo ou do recorte da página. A arte não é tocada.
         caixa = imagem.getchannel("A").getbbox()
         if caixa is None:
             raise SystemExit(f"{origem.name}: arquivo sem conteúdo opaco.")
@@ -188,16 +270,27 @@ def principal() -> None:
                 "regra": marca["regra"],
                 "original": {
                     "arquivo": f"marcas/{marca['origem']}",
-                    "largura": imagem.size[0],
-                    "altura": imagem.size[1],
+                    "largura": largura_original,
+                    "altura": altura_original,
                     "larguraDaArte": largura_arte,
                     "alturaDaArte": altura_arte,
                     "bytes": origem.stat().st_size,
                     "sha256": sha256(origem),
+                    **(
+                        {
+                            "pagina": pagina,
+                            "recorte": {
+                                **recorte,
+                                "unidade": "ponto_pdf",
+                            },
+                        }
+                        if pagina is not None
+                        else {}
+                    ),
                 },
                 "transformacao": (
-                    "moldura transparente removida pela caixa delimitadora do "
-                    f"alfa; redimensionamento proporcional para {ESCALA}x da "
+                    f"{transformacao_inicial}; redimensionamento proporcional "
+                    f"para {ESCALA}x da "
                     "medida de exibição; conversão para WebP sem perda; cores, "
                     "proporção e transparência preservadas"
                 ),
@@ -206,7 +299,9 @@ def principal() -> None:
         print(f"{saida} — {largura_css}x{altura_css} css, {saida.stat().st_size} B")
 
     MANIFESTO.write_text(
-        json.dumps(itens, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        json.dumps(itens, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+        newline="\n",
     )
     print(f"{MANIFESTO} — {len(itens)} marcas")
 

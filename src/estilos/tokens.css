@@ -763,17 +763,12 @@
   }
 }
 
-.regua__assinatura,
-.regua__pendencia {
+.regua__assinatura {
   margin: 0;
   max-width: 78ch;
   font-size: var(--text-sm);
   line-height: 1.55;
   color: var(--regua-tinta);
-}
-
-.regua__pendencia {
-  color: var(--regua-tinta-suave);
 }
 
 /* O rótulo do nível também vive dentro do painel: `meta-ficha--inversa` usaria

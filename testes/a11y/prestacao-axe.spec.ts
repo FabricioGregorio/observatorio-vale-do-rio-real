@@ -86,19 +86,17 @@ test.describe("estrutura da página de comprovação", () => {
   });
 
   /**
-   * As quatro marcas oficiais entram aqui desde 2026-09-20, quando os manuais
+   * As seis marcas oficiais entram aqui desde 2026-09-20, quando os manuais
    * foram localizados e lidos. Até então a régua era só texto, e este teste
    * exigia zero imagens — o que estava certo enquanto a aplicação não tinha
    * regra documental para seguir.
    *
-   * O que ele passa a exigir é que as marcas venham **do manifesto**: quatro,
+   * O que ele passa a exigir é que as marcas venham **do manifesto**: seis,
    * servidas de `/media/marcas`, e nenhuma de outra origem.
    */
-  test("os créditos aplicam as quatro marcas do manifesto", async ({
-    page,
-  }) => {
+  test("os créditos aplicam as seis marcas do manifesto", async ({ page }) => {
     const marcas = page.locator("main .regua__marca");
-    await expect(marcas).toHaveCount(4);
+    await expect(marcas).toHaveCount(6);
     const origens = await marcas.evaluateAll((imagens) =>
       imagens.map((img) => img.getAttribute("src") ?? "?"),
     );

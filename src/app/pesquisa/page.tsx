@@ -330,7 +330,9 @@ export default async function PaginaPesquisa() {
       </section>
 
       <section aria-labelledby="pq-leitura-titulo" className="pq-secao">
-        <h2 id="pq-leitura-titulo">Como os dados foram lidos</h2>
+        <h2 id="pq-leitura-titulo">
+          Dados e escuta fazem parte da mesma pesquisa
+        </h2>
         <div className="pq-leitura">
           {LEITURA.map((paragrafo) => (
             <p key={paragrafo}>{paragrafo}</p>

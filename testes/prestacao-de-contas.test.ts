@@ -1,7 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, test } from "vitest";
 
-import { PENDENCIA_DAS_MARCAS } from "../src/componentes/institucional/creditos";
 import {
   agruparPorTipo,
   INDICADORES_AUDITADOS,
@@ -161,7 +160,6 @@ describe("a página não afirma o que não pode provar", () => {
     ...montarEntregas({ documentos: 16, arquivos: 109, episodios: 3 }).map(
       (e) => `${e.titulo} ${e.texto} ${e.acao}`,
     ),
-    PENDENCIA_DAS_MARCAS,
   ].join(" | ");
 
   /**

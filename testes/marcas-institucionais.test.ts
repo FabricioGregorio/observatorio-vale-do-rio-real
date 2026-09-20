@@ -5,7 +5,6 @@ import { describe, expect, test } from "vitest";
 
 import {
   ASSINATURA_PADRAO,
-  PENDENCIA_DAS_MARCAS,
   REGUA_DE_CREDITOS,
 } from "../src/componentes/institucional/creditos";
 import {
@@ -51,6 +50,16 @@ describe("os arquivos derivados existem e conferem", () => {
       expect(
         createHash("sha256").update(readFileSync(caminho)).digest("hex"),
       ).toBe(marca.sha256);
+    },
+  );
+
+  test.each(["secretaria-especial-cultura", "snc"])(
+    "%s registra a extração da régua oficial do manual",
+    (id) => {
+      const marca = MARCAS_DERIVADAS.find((candidata) => candidata.id === id);
+      expect(marca?.original.arquivo).toBe("marcas/manual pnab.pdf");
+      expect(marca?.original.pagina).toBe(9);
+      expect(marca?.original.recorte?.unidade).toBe("ponto_pdf");
     },
   );
 
@@ -155,17 +164,27 @@ describe("a ordem da régua vem dos manuais", () => {
    */
   test("só o bloco de realização traz o traço, e ele é interno", () => {
     const comTraco = REGUA_DE_CREDITOS.filter(
-      (nivel) => nivel.tracoEntreMarcas,
+      (nivel) => nivel.tracoAntesDaMarca !== null,
     );
     expect(comTraco.map((nivel) => nivel.id)).toEqual(["fomento"]);
-    expect(comTraco[0]?.marcas).toHaveLength(2);
+    expect(comTraco[0]?.tracoAntesDaMarca).toBe(MARCA_FEDERAL.id);
   });
 
-  test("a PNAB vem antes da assinatura federal, no mesmo bloco", () => {
+  test("SNC, PNAB e assinatura federal seguem a ordem do manual", () => {
     const fomento = REGUA_DE_CREDITOS.find((nivel) => nivel.id === "fomento");
     expect(fomento?.marcas.map((marca) => marca.id)).toEqual([
+      "snc",
       "pnab",
       MARCA_FEDERAL.id,
+    ]);
+  });
+
+  test("FUNCAP, Secretaria e Governo de Sergipe seguem a ordem do manual", () => {
+    const apoio = REGUA_DE_CREDITOS.find((nivel) => nivel.id === "apoio");
+    expect(apoio?.marcas.map((marca) => marca.id)).toEqual([
+      "funcap",
+      "secretaria-especial-cultura",
+      "governo-sergipe",
     ]);
   });
 
@@ -195,6 +214,7 @@ describe("as entidades nomeadas", () => {
   test.each([
     "Governo do Estado de Sergipe",
     "Secretaria Especial da Cultura",
+    "Sistema Nacional de Cultura",
     "Governo Federal",
   ])("%s é nomeada na régua", (entidade) => {
     expect(nomes).toContain(entidade);
@@ -247,9 +267,9 @@ describe("o que os manuais proíbem, e o código não faz", () => {
 
   /**
    * As marcas ficam sobre painel claro — "aplicação em box branco" do manual
-   * federal. É o que permite usar a versão completa em cores sólidas de todas
-   * as quatro, sem fabricar variante que o corpus não tem: não existe versão
-   * negativa do brasão do Governo de Sergipe.
+   * federal. É o que permite usar as versões completas em cores sólidas sem
+   * fabricar variante que o corpus não tem: não existe versão negativa do
+   * brasão do Governo de Sergipe.
    */
   test("a régua é servida sobre painel claro", () => {
     expect(ler(FONTES.estilos)).toMatch(/\.rd__painel\{background:#fff/);
@@ -266,24 +286,17 @@ describe("o que os manuais proíbem, e o código não faz", () => {
   });
 });
 
-describe("a pendência de aprovação continua declarada", () => {
+describe("a nota operacional de aprovação não é conteúdo público", () => {
   /**
    * Manual PNAB Sergipe, orientação geral 2: todo material em arte-final deve
    * ser submetido à aprovação da Funcap e da Secult com no mínimo 10 dias
-   * úteis de antecedência. Essa aprovação não foi registrada, e a superfície
-   * pública precisa dizer a diferença entre "aplicado conforme o manual" e
-   * "aprovado".
+   * úteis de antecedência. A obrigação permanece registrada internamente,
+   * sem virar nota operacional para o visitante.
    */
-  test("a superfície distingue aplicação conforme manual de aprovação", () => {
-    expect(PENDENCIA_DAS_MARCAS).toMatch(/manuais oficiais/i);
-    expect(PENDENCIA_DAS_MARCAS).toMatch(/aprovação prévia/i);
-    expect(PENDENCIA_DAS_MARCAS).toMatch(/não foi registrada/i);
-  });
-
-  test("a régua publica a pendência e a assinatura padrão", () => {
+  test("a régua publica só a assinatura padrão", () => {
     const regua = ler(FONTES.regua);
-    expect(regua).toContain("PENDENCIA_DAS_MARCAS");
     expect(regua).toContain("ASSINATURA_PADRAO");
+    expect(regua).not.toContain("PENDENCIA_DAS_MARCAS");
   });
 
   /*
@@ -292,8 +305,13 @@ describe("a pendência de aprovação continua declarada", () => {
     oferecer ao leitor um canal que não é do projeto.
   */
   test("nenhum e-mail de terceiro vaza para a superfície pública", () => {
-    const publico = [ASSINATURA_PADRAO, PENDENCIA_DAS_MARCAS].join(" ");
-    expect(publico).not.toMatch(/@/);
+    expect(ASSINATURA_PADRAO).not.toMatch(/@/);
+  });
+
+  test("a assinatura pública não afirma aprovação nem pendência", () => {
+    expect(ASSINATURA_PADRAO).not.toMatch(
+      /aprovad|aprovação|nada a opor|não foi registrada/i,
+    );
   });
 });
 

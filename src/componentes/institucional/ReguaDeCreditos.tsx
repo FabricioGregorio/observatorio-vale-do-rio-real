@@ -3,7 +3,6 @@ import { Fragment } from "react";
 import {
   ASSINATURA_PADRAO,
   CAMINHO_DAS_MARCAS_INSTITUCIONAIS,
-  PENDENCIA_DAS_MARCAS,
   REGUA_DE_CREDITOS,
 } from "./creditos";
 
@@ -13,9 +12,9 @@ import {
  * ## Por que as marcas ficam sobre branco
  *
  * O rodapé é escuro, e nenhum dos três manuais autoriza fabricar versão
- * branca de marca por filtro. Dois dos quatro ativos existem em versão de
+ * branca de marca por filtro. Parte dos ativos existe em versão de
  * fonte branca; **a do Governo de Sergipe não existe** — o corpus só traz o
- * brasão azul. Aplicar as quatro em variantes diferentes de cor seria compor
+ * brasão azul. Aplicar as marcas em variantes diferentes de cor seria compor
  * uma assinatura que manual nenhum descreve.
  *
  * O manual do Governo Federal resolve isso com a **aplicação em box branco**,
@@ -75,7 +74,7 @@ export function ReguaDeCreditos({
                       de composição gráfica: o que importa para quem ouve é a
                       ordem, e ela já está na lista.
                     */}
-                    {nivel.tracoEntreMarcas && indice > 0 ? (
+                    {nivel.tracoAntesDaMarca === marca.id && indice > 0 ? (
                       <span aria-hidden="true" className="regua__traco" />
                     ) : null}
                     <img
@@ -100,7 +99,6 @@ export function ReguaDeCreditos({
         ))}
       </ol>
       <p className="regua__assinatura">{ASSINATURA_PADRAO}</p>
-      <p className="regua__pendencia">{PENDENCIA_DAS_MARCAS}</p>
     </div>
   );
 }

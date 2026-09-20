@@ -19,6 +19,7 @@ import {
   ATOR_CHAVE,
   ESCUTA,
   INSTRUMENTOS,
+  LEITURA,
   LIMITES,
   NOTA_DOS_MESES,
   OBJETIVO,
@@ -80,6 +81,7 @@ const TEXTOS_PUBLICOS: readonly string[] = [
   ]),
   ...PERCURSO.flatMap((e) => [e.titulo, ...e.paragrafos]),
   ...ESCUTA,
+  ...LEITURA,
   ...LIMITES.map((l) => `${l.titulo} ${l.texto}`),
   NOTA_DOS_MESES,
 ];
@@ -133,6 +135,20 @@ describe("ausência de texto provisório", () => {
       }
       expect(texto.trim().length, texto).toBeGreaterThan(8);
     }
+  });
+});
+
+describe("a leitura de dados permanece ligada à escuta", () => {
+  test("o texto editorial final substitui a abordagem anterior", () => {
+    expect(LEITURA).toEqual([
+      "A leitura quantitativa não aparece isolada do campo. Os registros, formulários e indicadores foram analisados junto às entrevistas, às visitas e à observação dos lugares pesquisados. Essa combinação permite compreender não apenas números, mas também trajetórias, práticas culturais e relações construídas no território.",
+    ]);
+    expect(ler(FONTES.rotaPesquisa)).toContain(
+      "Dados e escuta fazem parte da mesma pesquisa",
+    );
+    expect(LEITURA.join(" ")).not.toContain(
+      "Nem tudo o que a planilha calcula foi publicado",
+    );
   });
 });
 

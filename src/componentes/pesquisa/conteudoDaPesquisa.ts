@@ -208,8 +208,7 @@ export const ESCUTA_RESTRITA =
   "Os áudios e as transcrições seguem restritos. Eles entram no site quando cada entrevista passar pela revisão de privacidade — e não antes.";
 
 export const LEITURA: readonly string[] = [
-  "O registro diário virou série mensal, e a série virou indicador. Cada indicador publicado declara a regra de cálculo, a base sobre a qual foi apurado, o período e o recorte — e diz também o que não mede.",
-  "Nem tudo o que a planilha calcula foi publicado. Indicador com pendência metodológica aberta na própria fonte ficou de fora: a contagem de visitantes tem uma visita em conciliação, e a contagem de pessoas distintas tem definição em aberto. O detalhamento por localidade dos trabalhadores contratados também não é publicado — há localidades com uma única pessoa, e o cruzamento permitiria identificá-la.",
+  "A leitura quantitativa não aparece isolada do campo. Os registros, formulários e indicadores foram analisados junto às entrevistas, às visitas e à observação dos lugares pesquisados. Essa combinação permite compreender não apenas números, mas também trajetórias, práticas culturais e relações construídas no território.",
 ];
 
 export type Limite = {

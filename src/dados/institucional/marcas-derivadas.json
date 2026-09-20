@@ -44,6 +44,36 @@
     "transformacao": "moldura transparente removida pela caixa delimitadora do alfa; redimensionamento proporcional para 2x da medida de exibição; conversão para WebP sem perda; cores, proporção e transparência preservadas"
   },
   {
+    "id": "snc",
+    "entidade": "Sistema Nacional de Cultura",
+    "bloco": "realizacao",
+    "arquivo": "sistema-nacional-de-cultura.webp",
+    "largura": 104,
+    "altura": 52,
+    "escala": 2,
+    "bytes": 8926,
+    "sha256": "a0f82df42d57a92e885aacc0b4c528737aaa19301a187d97c66c0f4101af7deb",
+    "regra": "Manual de uso da marca PNAB Sergipe, página 9: o Sistema Nacional de Cultura abre o bloco de Realização na aplicação horizontal colorida de uso preferencial.",
+    "original": {
+      "arquivo": "marcas/manual pnab.pdf",
+      "largura": 1920,
+      "altura": 1080,
+      "larguraDaArte": 723,
+      "alturaDaArte": 361,
+      "bytes": 8145551,
+      "sha256": "40ac5aab4c9686801652025f35e6125f83f4a197e28de175ec4f6a84ddde45be",
+      "pagina": 9,
+      "recorte": {
+        "esquerda": 765,
+        "inferior": 595,
+        "direita": 995,
+        "superior": 360,
+        "unidade": "ponto_pdf"
+      }
+    },
+    "transformacao": "marca vetorial extraída da página 9 do manual PNAB, no recorte oficial registrado em pontos PDF; fundo da página mantido transparente; caixa delimitadora do alfa aplicada; redimensionamento proporcional para 2x da medida de exibição; conversão para WebP sem perda; cores, proporção e transparência preservadas"
+  },
+  {
     "id": "funcap",
     "entidade": "Fundação de Cultura e Arte Aperipê de Sergipe",
     "bloco": "apoio",
@@ -64,6 +94,36 @@
       "sha256": "f9ce8e2b42652c1e860335c545dea92d68326cc4fff053c3b83eb326bbe2bd8f"
     },
     "transformacao": "moldura transparente removida pela caixa delimitadora do alfa; redimensionamento proporcional para 2x da medida de exibição; conversão para WebP sem perda; cores, proporção e transparência preservadas"
+  },
+  {
+    "id": "secretaria-especial-cultura",
+    "entidade": "Secretaria Especial da Cultura",
+    "bloco": "apoio",
+    "arquivo": "secretaria-especial-da-cultura.webp",
+    "largura": 148,
+    "altura": 27,
+    "escala": 2,
+    "bytes": 8342,
+    "sha256": "358f50555bc7793ad3d0ffc20eb517a9b97aebc40e7f3069f8c88ae66685ac99",
+    "regra": "Manual de uso da marca PNAB Sergipe, página 9: a Secretaria Especial da Cultura integra o bloco de Apoio na aplicação horizontal colorida de uso preferencial.",
+    "original": {
+      "arquivo": "marcas/manual pnab.pdf",
+      "largura": 1920,
+      "altura": 1080,
+      "larguraDaArte": 686,
+      "alturaDaArte": 125,
+      "bytes": 8145551,
+      "sha256": "40ac5aab4c9686801652025f35e6125f83f4a197e28de175ec4f6a84ddde45be",
+      "pagina": 9,
+      "recorte": {
+        "esquerda": 420,
+        "inferior": 595,
+        "direita": 1352,
+        "superior": 360,
+        "unidade": "ponto_pdf"
+      }
+    },
+    "transformacao": "marca vetorial extraída da página 9 do manual PNAB, no recorte oficial registrado em pontos PDF; fundo da página mantido transparente; caixa delimitadora do alfa aplicada; redimensionamento proporcional para 2x da medida de exibição; conversão para WebP sem perda; cores, proporção e transparência preservadas"
   },
   {
     "id": "governo-sergipe",

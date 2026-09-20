@@ -44,6 +44,16 @@ export const marcaDerivadaSchema = z.strictObject({
     alturaDaArte: z.number().int().positive(),
     bytes: z.number().int().positive(),
     sha256,
+    pagina: z.number().int().positive().optional(),
+    recorte: z
+      .strictObject({
+        esquerda: z.number().nonnegative(),
+        inferior: z.number().nonnegative(),
+        direita: z.number().nonnegative(),
+        superior: z.number().nonnegative(),
+        unidade: z.literal("ponto_pdf"),
+      })
+      .optional(),
   }),
   transformacao: texto,
 });
@@ -52,7 +62,7 @@ export type MarcaDerivada = z.infer<typeof marcaDerivadaSchema>;
 
 export const MARCAS_DERIVADAS: readonly MarcaDerivada[] = z
   .array(marcaDerivadaSchema)
-  .length(4)
+  .length(6)
   .parse(bruto);
 
 /** Caminho público das marcas, servido de `public/media/marcas`. */

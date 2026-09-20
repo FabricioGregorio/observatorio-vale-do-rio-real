@@ -131,9 +131,9 @@ export const LIMITES: readonly Limite[] = [
       "Nenhum número aqui foi apurado fora do Recanto da Serra e do Centro Cultural e Museu Borda da Mata. Eles não representam os cinco municípios do recorte nem o conjunto dos equipamentos culturais do Vale.",
   },
   {
-    titulo: "Nem tudo o que a fonte calcula foi publicado",
+    titulo: "Como ler estes dados",
     texto:
-      "Indicador com pendência metodológica aberta ficou fora: a contagem de visitantes tem uma visita em conciliação e a contagem de pessoas distintas tem definição em aberto. O detalhamento por localidade de quem foi contratado também não é publicado — há localidades com uma única pessoa, e o cruzamento permitiria identificá-la.",
+      "Os indicadores apresentam um retrato do período e do recorte pesquisado pelo Observatório. Eles foram construídos a partir dos registros reunidos durante o trabalho de campo e devem ser lidos em conjunto com a metodologia, as entrevistas e os demais materiais publicados. Não representam um censo de todo o Vale do Rio Real, mas evidências produzidas dentro do percurso desta pesquisa.",
   },
   {
     titulo: "A janela cai na baixa temporada",

@@ -67,6 +67,18 @@ describe("a amostra é declarada antes de qualquer número", () => {
       expect(limite.texto.length, limite.titulo).toBeGreaterThan(80);
     }
   });
+
+  test("a orientação editorial de leitura substitui a ressalva antiga", () => {
+    const orientacao = LIMITES.find(
+      (limite) => limite.titulo === "Como ler estes dados",
+    );
+    expect(orientacao?.texto).toBe(
+      "Os indicadores apresentam um retrato do período e do recorte pesquisado pelo Observatório. Eles foram construídos a partir dos registros reunidos durante o trabalho de campo e devem ser lidos em conjunto com a metodologia, as entrevistas e os demais materiais publicados. Não representam um censo de todo o Vale do Rio Real, mas evidências produzidas dentro do percurso desta pesquisa.",
+    );
+    expect(LIMITES.map((limite) => limite.titulo)).not.toContain(
+      "Nem tudo o que a fonte calcula foi publicado",
+    );
+  });
 });
 
 describe("nenhum número é reescrito pela página", () => {
