@@ -20,6 +20,8 @@ import { expect, test } from "@playwright/test";
 
 const PAGINAS = [
   "/",
+  "/observatorio",
+  "/pesquisa",
   "/prestacao-de-contas",
   "/prestacao-de-contas/imprimir",
   "/rota-que-nao-existe",

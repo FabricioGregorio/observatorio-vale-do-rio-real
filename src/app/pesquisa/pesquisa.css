@@ -1,0 +1,462 @@
+/*
+  `/pesquisa` — caderno de pesquisa.
+
+  Cor, família e raio vêm de `tokens.css`, direto ou por `color-mix` sobre
+  papéis semânticos; espaçamento é sempre relativo, para acompanhar o
+  redimensionamento do navegador.
+
+  A forma é a de um caderno técnico, e não a de uma Home: ficha na capa,
+  percurso numerado num fio vertical, fichas de instrumento lado a lado e
+  pranchas fotográficas ao lado do texto. `/observatorio` usa margem de ficha
+  com rótulo em mono; aqui a hierarquia é vertical e o numeral faz o trabalho
+  que lá cabia ao rótulo. As duas páginas compartilham tokens e filetes, e
+  nenhuma composição.
+
+  O estado de material reaproveita o vocabulário da Home — mono, caixa alta,
+  marca para o que é público — porque é o mesmo significado. Repetir o
+  significado com outra aparência seria pior que repetir a aparência.
+*/
+
+.pq {
+  --pq-fio: color-mix(
+    in srgb,
+    var(--color-borda-forte) 45%,
+    var(--color-fundo)
+  );
+  --pq-papel: color-mix(in srgb, var(--color-fundo-elevado) 72%, transparent);
+  --pq-respiro: clamp(2.75rem, 6vw, 4.5rem);
+  margin-inline: auto;
+  width: min(100% - 2rem, var(--largura-conteudo));
+  display: flex;
+  flex-direction: column;
+  padding-bottom: clamp(3rem, 7vw, 5rem);
+}
+
+.pq a {
+  color: var(--color-link);
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+}
+.pq a:hover {
+  color: var(--color-link-hover);
+}
+.pq h2 {
+  margin: 0;
+  max-width: 22ch;
+  font-size: clamp(var(--text-xl), 4.2vw, var(--text-3xl));
+}
+.pq h3 {
+  margin: 0;
+  font-size: var(--text-lg);
+}
+.pq p {
+  margin: 0;
+}
+
+/* --- Capa ---------------------------------------------------------------- */
+
+.pq-abertura {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-block: clamp(2.5rem, 7vw, 4.5rem) var(--pq-respiro);
+}
+.pq-abertura h1 {
+  margin: 0;
+  max-width: 12ch;
+  font-size: clamp(var(--text-3xl), 8vw, var(--text-5xl));
+}
+.pq-abertura__sintese {
+  max-width: 58ch;
+  font-size: clamp(var(--text-base), 2.4vw, var(--text-lg));
+}
+.pq-abertura__nota {
+  max-width: var(--largura-leitura);
+  color: var(--color-texto-suave);
+  font-size: var(--text-sm);
+}
+
+.pq-ficha {
+  margin: 0.75rem 0 0;
+  border-top: 2px solid var(--color-marca);
+}
+.pq-ficha > div {
+  display: grid;
+  gap: 0.15rem 1.5rem;
+  padding-block: 0.7rem;
+  border-bottom: 1px solid var(--pq-fio);
+}
+.pq-ficha dt {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+}
+.pq-ficha dd {
+  margin: 0;
+  min-width: 0;
+  text-wrap: pretty;
+}
+@media (min-width: 48rem) {
+  .pq-ficha > div {
+    grid-template-columns: 14rem minmax(0, 1fr);
+    align-items: baseline;
+  }
+}
+
+/* --- Seções -------------------------------------------------------------- */
+
+.pq-secao {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-block: var(--pq-respiro);
+  border-top: 1px solid var(--pq-fio);
+}
+.pq-leitura {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  max-width: var(--largura-leitura);
+  min-width: 0;
+}
+.pq-ponte {
+  padding-top: 1rem;
+  border-top: 1px solid var(--pq-fio);
+  max-width: var(--largura-leitura);
+  color: var(--color-texto-suave);
+  font-size: var(--text-sm);
+}
+
+/* --- Prancha fotográfica -------------------------------------------------- */
+
+.pq-prancha {
+  margin: 0;
+  min-width: 0;
+}
+.pq-prancha img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-ficha);
+  background: var(--pq-fio);
+}
+.pq-prancha figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding-top: 0.65rem;
+  font-size: var(--text-sm);
+}
+
+.pq-metodo,
+.pq-percurso,
+.pq-escuta {
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: start;
+}
+@media (min-width: 64rem) {
+  .pq-metodo,
+  .pq-percurso {
+    grid-template-columns: minmax(0, 1fr) 22rem;
+  }
+  .pq-escuta {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+/* --- Papéis --------------------------------------------------------------- */
+
+.pq-papeis > .meta-ficha {
+  margin-bottom: 0.5rem;
+}
+.pq-papeis dl {
+  margin: 0;
+  border-top: 1px solid var(--pq-fio);
+}
+.pq-papeis > dl > div {
+  display: grid;
+  gap: 0.2rem 1.5rem;
+  padding-block: 0.9rem;
+  border-bottom: 1px solid var(--pq-fio);
+}
+.pq-papeis dt {
+  font-family: var(--font-display);
+  font-weight: var(--peso-titulo);
+  color: var(--color-marca);
+}
+.pq-papeis dd {
+  margin: 0;
+  max-width: 62ch;
+}
+@media (min-width: 48rem) {
+  .pq-papeis > dl > div {
+    grid-template-columns: 12rem minmax(0, 1fr);
+    align-items: baseline;
+  }
+}
+
+/* --- Instrumentos --------------------------------------------------------- */
+
+.pq-instrumentos > .meta-ficha {
+  margin-bottom: 0.5rem;
+}
+.pq-instrumentos > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: clamp(1.25rem, 3vw, 2rem);
+}
+.pq-instrumento {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+  border: 1px solid var(--pq-fio);
+  border-top: 3px solid var(--color-acento);
+  border-radius: var(--radius-ficha);
+  background: var(--pq-papel);
+}
+.pq-instrumento > dl {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.pq-instrumento dt {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+}
+.pq-instrumento dd {
+  margin: 0;
+}
+.pq-instrumento__itens {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.pq-instrumento__itens li {
+  padding: 0.4rem 0 0.4rem 1rem;
+  border-bottom: 1px solid var(--pq-fio);
+  position: relative;
+  font-size: var(--text-sm);
+}
+.pq-instrumento__itens li::before {
+  content: "";
+  position: absolute;
+  top: 0.95em;
+  left: 0;
+  width: 0.35rem;
+  height: 0.35rem;
+  background: var(--color-acento);
+}
+@media (min-width: 52rem) {
+  .pq-instrumentos > ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* --- Percurso ------------------------------------------------------------- */
+
+.pq-etapas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2.25rem;
+}
+.pq-etapa {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-left: clamp(2.75rem, 6vw, 3.75rem);
+}
+.pq-etapa p {
+  max-width: 58ch;
+}
+.pq-etapa .numeral-ficha {
+  position: absolute;
+  top: -0.15rem;
+  left: 0;
+  font-size: var(--text-2xl);
+  color: var(--color-marca);
+}
+.pq-etapa::before {
+  content: "";
+  position: absolute;
+  top: 2.4rem;
+  bottom: -2.25rem;
+  left: 0.55rem;
+  width: 1px;
+  background: var(--pq-fio);
+}
+.pq-etapa:last-child::before {
+  display: none;
+}
+
+/* --- Escuta --------------------------------------------------------------- */
+
+.pq-entrevistas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 2px solid var(--color-texto);
+  min-width: 0;
+}
+.pq-entrevistas li {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: 0.1rem 1rem;
+  padding-block: 0.7rem;
+  border-bottom: 1px solid var(--pq-fio);
+  align-items: baseline;
+}
+.pq-entrevistas li .meta-ficha {
+  grid-column: 2;
+}
+.pq-entrevistas__n {
+  font-family: var(--font-mono);
+  color: var(--color-marca);
+}
+.pq-entrevistas__onde {
+  font-family: var(--font-display);
+  font-weight: var(--peso-titulo);
+}
+@media (min-width: 30rem) {
+  .pq-entrevistas li {
+    grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+  }
+  .pq-entrevistas li .meta-ficha {
+    grid-column: auto;
+    text-align: right;
+  }
+}
+
+/* --- Limites -------------------------------------------------------------- */
+
+.pq-limites {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: clamp(1.25rem, 3vw, 2rem);
+}
+.pq-limites li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 2px solid var(--color-acento);
+}
+.pq-limites p {
+  max-width: 54ch;
+}
+@media (min-width: 52rem) {
+  .pq-limites {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* --- Materiais reunidos --------------------------------------------------- */
+
+.pq-materiais {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+}
+.pq-materiais > li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+.pq-material {
+  list-style: none;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  border-top: 1px solid var(--pq-fio);
+}
+.pq-material li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 0.55rem;
+  border-bottom: 1px solid var(--pq-fio);
+  font-size: var(--text-sm);
+}
+.pq-estado {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-texto-suave);
+}
+.pq-estado[data-estado="publico"] {
+  color: var(--color-marca);
+  font-weight: 500;
+}
+@media (min-width: 52rem) {
+  .pq-materiais {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* --- Ações e ponte final -------------------------------------------------- */
+
+.pq-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+}
+.pq a.pq-botao {
+  display: inline-block;
+  padding: 0.7rem 1.1rem;
+  border: 1px solid var(--color-fundo-inverso);
+  border-radius: var(--radius-ficha);
+  background: var(--color-fundo-inverso);
+  color: var(--color-texto-inverso);
+  font-family: var(--font-display);
+  font-weight: var(--peso-titulo);
+  text-decoration: none;
+}
+.pq a.pq-botao:hover {
+  background: var(--color-mata-claro);
+  border-color: var(--color-mata-claro);
+  color: var(--color-texto-inverso);
+}
+.pq a.pq-botao--vazado {
+  background: transparent;
+  border-color: var(--color-borda-forte);
+  color: var(--color-texto);
+}
+.pq a.pq-botao--vazado:hover {
+  background: color-mix(in srgb, var(--color-marca) 12%, transparent);
+  border-color: var(--color-marca);
+  color: var(--color-texto);
+}
+
+.pq-ponte-final {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: var(--pq-respiro);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--pq-fio);
+  border-left: 3px solid var(--color-marca);
+  border-radius: var(--radius-ficha);
+  background: var(--pq-papel);
+}
+.pq-ponte-final p {
+  max-width: 62ch;
+}
