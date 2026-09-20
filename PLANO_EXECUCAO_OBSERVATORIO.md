@@ -14,20 +14,31 @@ preservado em
 
 ## 1. Datas oficiais
 
+> **Revisado em 2026-09-17 — ver
+> [ADR-019](./docs/decisoes/ADR-019-prazo-estendido-e-funcao-de-divulgacao.md).**
+
 | Data | O que é | Natureza |
 |---|---|---|
-| **14/09/2026** | prazo interno do site | congelamento interno, não é entrega à FUNCAP |
-| **22/09/2026** | envio do pacote à FUNCAP | entrega oficial |
+| ~~14/09/2026~~ | ~~prazo interno do site~~ | **superado**: o prazo do site foi estendido |
+| **22/09/2026** | prazo do site **e** envio do pacote à FUNCAP | entrega oficial |
 
-O prazo de 14/09 existe para que haja uma semana entre o site pronto e o envio
-oficial. Ele não se confunde com o prazo do edital.
+Por decisão do responsável em 2026-09-17, o prazo do site foi estendido até
+22/09/2026. **A folga de uma semana entre o site pronto e o envio oficial deixou
+de existir:** as duas datas convergiram, e qualquer atraso no site passa a ser
+atraso na entrega à FUNCAP, sem colchão.
+
+A mesma decisão retomou a **função de divulgação** do site — da pesquisa, do
+Observatório e do PodObservar —, que o `docs/01-arquitetura-informacao.md` §0.1
+dava por encerrada. Divulgação volta a ser objetivo de primeira ordem, ao lado da
+rastreabilidade, e **sem flexibilizar** o fail-closed da §4 nem a proibição de
+dado fictício do `AGENTS.md`.
 
 ### O Caderno de Estudos não bloqueia o site
 
 O Caderno é entregável administrativo. Enquanto não existir, o item aparece como
 `PENDENTE` na Prestação de Contas, com previsão. **Isso não bloqueia
-tecnicamente o site de 14/09**, e nenhum caderno provisório é criado para
-preencher a ausência.
+tecnicamente o site**, e nenhum caderno provisório é criado para preencher a
+ausência.
 
 ---
 

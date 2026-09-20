@@ -14,6 +14,16 @@ Três observações do material enviado que condicionam todas as decisões abaix
 
 1. **O cronograma do projeto já se encerrou.** A entrega do Relatório Final de Execução estava prevista para 16/07/2026 e a publicização em "portal digital de domínio público" para 05–08/05/2026. Portanto o site **não é mais uma peça de divulgação em curso: é o repositório permanente e a prova documental do objeto executado**. Isso muda a prioridade: durabilidade e rastreabilidade dos links vêm antes de qualquer sofisticação visual.
 
+   > **⚠ SUPERADO — ver [ADR-019](./decisoes/ADR-019-prazo-estendido-e-funcao-de-divulgacao.md).**
+   >
+   > Decisão humana de 2026-09-17: o prazo do site foi estendido até 22/09/2026 e o
+   > site **é sim peça de divulgação** da pesquisa, do Observatório e do PodObservar.
+   > As duas funções coexistem: repositório permanente **e** divulgação. A regra
+   > "rastreabilidade antes de sofisticação visual" passa a valer **apenas onde houver
+   > conflito real** entre as duas, e os objetivos O3, O4 e O5 da §1 deixam de estar
+   > subordinados. Nada disso flexibiliza o fail-closed do plano §4 nem a proibição de
+   > dado fictício do `AGENTS.md`.
+
 2. **O maior risco técnico do projeto hoje é a fragilidade dos links.** O documento "Links de Referência" aponta para Google Drive, Google Docs, Google Forms (`/edit#responses` — link de edição, não de leitura) e Figma. Esses endereços quebram, mudam de permissão, dependem de conta e não sobrevivem a uma auditoria feita daqui a dois anos. **A função primária do site é substituir esses links por URLs próprias, estáveis e públicas.**
 
 3. **Há lacunas declaradas no inventário.** Continuam marcados como `[Inserir link aqui]`: Diagnósticos Internos, Relatos de Campo, Documento Final / Modelagem Estatística e o Podcast. São bloqueadores de conteúdo, não de código — o site pode ser construído sem eles, mas não pode ser publicado sem eles.
@@ -217,11 +227,19 @@ Taxonomias transversais: `tema` (economia solidária, ecoturismo, patrimônio im
 | Acessibilidade | **WCAG 2.1 nível AA** + eMAG; navegação por teclado; foco visível; contraste ≥ 4.5:1; `lang="pt-BR"`; skip links; textos alternativos em todas as fotos de campo |
 | Recursos de acessibilidade | Alto contraste, aumento de fonte, **VLibras**, transcrição de 100% dos áudios, versão em **linguagem simples** do documento final |
 | Desempenho | Lighthouse ≥ 90 em todas as categorias; LCP < 2,5s em 3G — o público rural e escolar acessa por celular com rede fraca |
-| Peso | Home < 500 KB; imagens em WebP/AVIF com `loading="lazy"` |
+| Peso | Home < 500 KB; imagens em WebP/AVIF com `loading="lazy"` — **meta hoje descumprida**, ver nota abaixo |
 | SEO / dados estruturados | JSON-LD `Dataset`, `Report`, `PodcastEpisode`, `Place`; sitemap.xml; OG images |
 | Privacidade | Sem rastreadores de terceiros; analytics sem cookies (Plausible/Umami); política LGPD explícita |
 | Compatibilidade | Funcionar sem JavaScript nas páginas de leitura e download |
 | Idioma | pt-BR; considerar resumo em inglês/espanhol apenas na página do documento final |
+
+> **Nota de 2026-09-17 — ver [ADR-019](./decisoes/ADR-019-prazo-estendido-e-funcao-de-divulgacao.md).**
+>
+> A Home transfere hoje 881.195 B a 1440 px, dos quais 553.838 B são imagem —
+> contra a meta de 500 KB desta tabela. O desvio estava registrado no
+> `ESTADO_ATUAL_PROJETO.md` como dívida tolerável enquanto o site era apenas prova
+> documental. Com a retomada da função de divulgação, ele deixa de ser tolerável:
+> quem chega por rádio, escola ou rede móvel encontra a Home primeiro.
 
 ---
 
