@@ -66,26 +66,45 @@ test.describe("estrutura da página de comprovação", () => {
 
   /**
    * A régua de créditos é lista ordenada porque a ordem é normativa: quem
-   * ouve precisa receber "4 de 4 — Assinatura federal", e não quatro blocos
-   * soltos. Ver `componentes/institucional/creditos.ts`.
+   * ouve precisa receber "2 de 2 — Realização", e não dois blocos soltos. Os
+   * dois blocos e a ordem deles vêm dos manuais oficiais de uso de marca —
+   * ver `componentes/institucional/creditos.ts`.
    */
   test("a régua de créditos é ordenada e fecha no Governo Federal", async ({
     page,
   }) => {
+    /*
+      Escopado ao conteúdo: desde que o rodapé global serve a mesma régua, ela
+      existe duas vezes na página — de propósito, e da mesma fonte. O que este
+      teste afirma é sobre a régua em destaque da Prestação de Contas.
+    */
     const regua = page.locator("main .regua__niveis");
     await expect(regua).toHaveCount(1);
     expect(await regua.evaluate((el) => el.tagName)).toBe("OL");
-    await expect(regua.locator("> li")).toHaveCount(4);
+    await expect(regua.locator("> li")).toHaveCount(2);
     await expect(regua.locator("> li").last()).toContainText("Governo Federal");
   });
 
-  /*
-    Nenhuma marca oficial entra enquanto o manual de aplicação estiver
-    pendente. Um `<img>` aqui significaria que a pendência foi resolvida por
-    interpretação.
-  */
-  test("os créditos não aplicam marca oficial", async ({ page }) => {
-    await expect(page.locator("main .regua img")).toHaveCount(0);
+  /**
+   * As quatro marcas oficiais entram aqui desde 2026-09-20, quando os manuais
+   * foram localizados e lidos. Até então a régua era só texto, e este teste
+   * exigia zero imagens — o que estava certo enquanto a aplicação não tinha
+   * regra documental para seguir.
+   *
+   * O que ele passa a exigir é que as marcas venham **do manifesto**: quatro,
+   * servidas de `/media/marcas`, e nenhuma de outra origem.
+   */
+  test("os créditos aplicam as quatro marcas do manifesto", async ({
+    page,
+  }) => {
+    const marcas = page.locator("main .regua__marca");
+    await expect(marcas).toHaveCount(4);
+    const origens = await marcas.evaluateAll((imagens) =>
+      imagens.map((img) => img.getAttribute("src") ?? "?"),
+    );
+    for (const origem of origens) {
+      expect(origem, origem).toMatch(/^\/media\/marcas\/[a-z-]+\.webp$/);
+    }
   });
 
   test("a contagem exibida é a mesma que a tabela lista", async ({

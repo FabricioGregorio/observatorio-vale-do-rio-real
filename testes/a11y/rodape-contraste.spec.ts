@@ -1,13 +1,19 @@
 import { expect, type Locator, test } from "@playwright/test";
 
-const ROTAS_COM_RODAPE_COMPARTILHADO = [
-  "/podobservar",
-  "/territorio",
-  "/acervo",
-  "/observatorio",
-  "/pesquisa",
-  "/dados",
-] as const;
+import { ENDERECOS_PUBLICOS } from "./rotas";
+
+/**
+ * Desde 2026-09-20 não há rodapé "compartilhado" e rodapé da Home: há um só,
+ * em toda rota pública. A lista deixa de ser um recorte e passa a ser a
+ * declaração única de `rotas.ts`.
+ *
+ * A versão imprimível da Prestação de Contas fica de fora: a folha de
+ * impressão esconde o rodapé de propósito, e medir contraste de elemento
+ * oculto não mede nada.
+ */
+const ROTAS_COM_RODAPE = ENDERECOS_PUBLICOS.filter(
+  (rota) => rota !== "/prestacao-de-contas/imprimir",
+);
 
 async function razaoDeContraste(alvo: Locator): Promise<number> {
   return alvo.evaluate((elemento) => {
@@ -45,7 +51,7 @@ async function razaoDeContraste(alvo: Locator): Promise<number> {
 
 for (const tema of ["light", "dark"] as const) {
   test.describe(`rodapé no tema ${tema}`, () => {
-    for (const rota of ROTAS_COM_RODAPE_COMPARTILHADO) {
+    for (const rota of ROTAS_COM_RODAPE) {
       test(`${rota}: crédito de fomento passa AA`, async ({ page }) => {
         await page.emulateMedia({ colorScheme: tema });
         await page.goto(rota);
@@ -67,10 +73,15 @@ for (const tema of ["light", "dark"] as const) {
       expect(await razaoDeContraste(titulo)).toBeGreaterThanOrEqual(4.5);
     });
 
-    test("Home preserva o contraste do rodapé próprio", async ({ page }) => {
+    /*
+      A Home usava um rodapé próprio e escondia o do layout. Agora ela serve o
+      mesmo, e o que se verifica é o link dele — não mais um seletor de um
+      componente que deixou de existir.
+    */
+    test("os links do rodapé passam AA", async ({ page }) => {
       await page.emulateMedia({ colorScheme: tema });
       await page.goto("/");
-      const link = page.locator(".hl-rodape a").first();
+      const link = page.locator("body > footer a").first();
       await expect(link).toBeVisible();
       expect(await razaoDeContraste(link)).toBeGreaterThanOrEqual(4.5);
     });

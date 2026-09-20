@@ -215,8 +215,15 @@ test.describe("Home", () => {
     ).toBe("rgb(231, 229, 222)");
 
     await menu.click();
+    /*
+      Escopado ao menu compacto. Desde que o rodapé global passou a servir as
+      mesmas seções, "Acervo" existe duas vezes na página — e o que este teste
+      afirma é sobre o menu que acabou de abrir, não sobre o rodapé.
+    */
     await expect(
-      page.getByRole("link", { name: "Acervo", exact: true }),
+      page
+        .getByRole("navigation", { name: "Principal (telas estreitas)" })
+        .getByRole("link", { name: "Acervo", exact: true }),
     ).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(menu).toBeFocused();
