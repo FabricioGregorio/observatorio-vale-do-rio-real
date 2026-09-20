@@ -892,22 +892,28 @@ export function Produtos({
       </ul>
 
       {/*
-        Só continua aqui o que de fato está em preparação. `/podobservar`
-        saiu com a página do podcast; `/pesquisa` saiu com a página do
-        percurso. Manter uma rota concluída nesta lista é afirmar sobre o
-        próprio site algo que ele desmente na tela seguinte.
+        A lista de "seções em preparação" saiu daqui em 2026-09-20, quando a
+        última delas deixou de estar em preparação: `/dados` foi publicada com
+        os indicadores consolidados e `/campo` com o registro fotográfico —
+        como `/pesquisa` e `/podobservar` já tinham saído antes. Não sobrou
+        rota pública anunciada como incompleta, e uma lista vazia, ou com uma
+        rota concluída dentro, afirmaria sobre o próprio site algo que ele
+        desmente na tela seguinte.
+
+        No lugar dela, o caminho para o campo — que é o que a lista, na
+        prática, servia para oferecer.
       */}
-      <nav aria-label="Seções em preparação" className="hl-secoes">
-        <p className="meta-ficha">Seções do site em preparação</p>
+      <nav aria-label="Outras entradas" className="hl-secoes">
+        <p className="meta-ficha">Também neste site</p>
         <ul>
-          <li>
-            <Link href="/dados" prefetch={false}>
-              Dados
-            </Link>
-          </li>
           <li>
             <Link href="/campo" prefetch={false}>
               Diário de Campo
+            </Link>
+          </li>
+          <li>
+            <Link href="/educacao" prefetch={false}>
+              Uso educativo do acervo
             </Link>
           </li>
         </ul>

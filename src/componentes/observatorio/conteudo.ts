@@ -210,11 +210,22 @@ export const TERRITORIO: readonly string[] = [
  * `href` aponta apenas para rota concluída. Seção em preparação **não** entra
  * nesta lista: anunciar destino vazio numa página institucional é promessa
  * falsa, e o menu já dá acesso a tudo o que existe.
+ *
+ * Em 2026-09-20 a lista passou de quatro para seis. Dados e Diário de Campo
+ * não entram por mudança de critério — entram porque deixaram de estar em
+ * preparação: a primeira publicou os indicadores consolidados, a segunda o
+ * registro fotográfico de campo. O critério é o mesmo de sempre.
  */
 export type Produto = {
   readonly id: string;
   readonly nome: string;
-  readonly href: "/pesquisa" | "/territorio" | "/podobservar" | "/acervo";
+  readonly href:
+    | "/pesquisa"
+    | "/territorio"
+    | "/dados"
+    | "/campo"
+    | "/podobservar"
+    | "/acervo";
   readonly texto: string;
   readonly acao: string;
 };
@@ -235,6 +246,22 @@ export const PRODUTOS: readonly Produto[] = [
     texto:
       "A cartografia viva do recorte, sobre a malha oficial de Sergipe, com os quatro lugares visitados em campo na posição confirmada e a ficha de cada um.",
     acao: "Abrir a cartografia",
+  },
+  {
+    id: "dados",
+    nome: "Dados",
+    href: "/dados",
+    texto:
+      "Os indicadores auditados do levantamento, cada um com a sua regra de cálculo, a base sobre a qual foi apurado, o período, o recorte — e o que eles deliberadamente não dizem.",
+    acao: "Consultar os dados",
+  },
+  {
+    id: "campo",
+    nome: "Diário de Campo",
+    href: "/campo",
+    texto:
+      "O registro fotográfico da pesquisa, lugar a lugar, com legenda, crédito e procedência de cada imagem. Chegar a alguns destes lugares fez parte do que o campo veio medir.",
+    acao: "Ver o registro de campo",
   },
   {
     id: "podobservar",

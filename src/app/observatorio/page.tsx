@@ -228,12 +228,22 @@ export default function PaginaObservatorio() {
                 </li>
               ))}
             </ul>
+            {/*
+              Esta nota dizia que Dados e Diário de Campo ainda não tinham
+              conteúdo. Deixou de ser verdade em 2026-09-20, e os dois entraram
+              na lista acima. O que sobra de ausência declarada é o Caderno de
+              Estudos, que é entregável administrativo e tem lugar próprio na
+              Prestação de Contas — não é seção do site.
+            */}
             <p className="obs-nota">
-              O Diário de Campo e a seção de Dados estão previstos na
-              arquitetura do site e ainda não têm conteúdo publicado. Os dois
-              continuam no menu principal e dizem isso de si mesmos — uma rota
-              que declara a ausência é melhor que uma rota que promete o que não
-              tem.
+              As páginas institucionais curtas — acessibilidade, privacidade,
+              imprensa, contato e uso educativo do acervo — estão no rodapé de
+              cada página. O que o projeto ainda não produziu é declarado como
+              ausência na{" "}
+              <Link href="/prestacao-de-contas" prefetch={false}>
+                Prestação de Contas
+              </Link>
+              , nunca preenchido com conteúdo de ocasião.
             </p>
           </div>
         </section>
