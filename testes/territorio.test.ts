@@ -17,7 +17,6 @@ import { createHash } from "node:crypto";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
-import { CreditosInstitucionais } from "../src/componentes/institucional/CreditosInstitucionais";
 import {
   idDaFicha,
   nomeAcessivelDoMunicipio,
@@ -29,6 +28,7 @@ import {
   MARCA_OBSERVATORIO,
   SIMBOLO_OBSERVATORIO,
 } from "../src/dados/hero/derivados";
+import { MARCAS_DERIVADAS } from "../src/dados/institucional/marcas";
 import {
   DERIVADOS_DA_PESQUISA,
   DERIVADOS_DOS_LUGARES,
@@ -57,12 +57,6 @@ const pontoDeTeste: PontoDeVisita = {
   imagem: null,
   descricao: null,
 };
-
-describe("componentes do mapa", () => {
-  test("os créditos somem enquanto não houver marca aprovada", () => {
-    expect(CreditosInstitucionais({ marcas: [] })).toBeNull();
-  });
-});
 
 describe("ausência de dado territorial inventado", () => {
   test("os dados territoriais presentes são os dois arquivos oficiais", () => {
@@ -158,6 +152,13 @@ describe("ausência de dado territorial inventado", () => {
       ...ARTES_PODOBSERVAR.filter((arte) => arte.papel === "logo").map(
         (arte) => arte.arquivo,
       ),
+      /*
+        Marcas institucionais de fomento. A procedência de cada uma — arquivo
+        de origem no corpus, hash do original, hash do derivado, transformação
+        e a regra do manual que justifica a variante — está no manifesto que
+        `scripts/derivar-marcas-institucionais.py` grava.
+      */
+      ...MARCAS_DERIVADAS.map((marca) => marca.arquivo),
     ]);
 
     const semProcedencia = encontrados.filter((nome) => !declarados.has(nome));
@@ -188,8 +189,10 @@ describe("ausência de dado territorial inventado", () => {
    * A lista cresce quando uma fase traz mídia de natureza nova, e só então.
    * `pesquisa/` contém fotografias documentais de campo. Os grafismos
    * territoriais abstratos são gerados por código e não exigem pasta de mídia.
+   * `marcas/` entrou em 2026-09-20, com as marcas oficiais de fomento — que
+   * são de natureza diferente de `logos/`, a identidade do próprio projeto.
    */
-  test("as sete pastas de mídia previstas existem", () => {
+  test("as oito pastas de mídia previstas existem", () => {
     const pastas = readdirSync("public/media", { withFileTypes: true })
       .filter((entrada) => entrada.isDirectory())
       .map((entrada) => entrada.name)
@@ -198,6 +201,7 @@ describe("ausência de dado territorial inventado", () => {
       "campo",
       "logos",
       "mapa",
+      "marcas",
       "pesquisa",
       "pessoas",
       "podobservar",

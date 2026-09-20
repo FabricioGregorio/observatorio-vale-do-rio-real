@@ -1,0 +1,90 @@
+[
+  {
+    "id": "mincultura-governo-federal",
+    "entidade": "Ministério da Cultura · Governo Federal",
+    "bloco": "realizacao",
+    "arquivo": "minc-governo-federal.webp",
+    "largura": 260,
+    "altura": 63,
+    "escala": 2,
+    "bytes": 16628,
+    "sha256": "0f0a64dbe6126020262293aed2a4634650196ee860959dde10ff29c402d60fec",
+    "regra": "Manual de uso da marca do Governo Federal v1.2: versão completa e original em cores sólidas para peças não impressas; redução máxima em meios eletrônicos de 200 px; última à direita na assinatura horizontal.",
+    "original": {
+      "arquivo": "marcas/MINISTERIO DA CULTURA + GOVERNO FEDERAL SEM FUNDO HORIZONTAL.png",
+      "largura": 8000,
+      "altura": 4500,
+      "larguraDaArte": 5118,
+      "alturaDaArte": 1236,
+      "bytes": 248801,
+      "sha256": "f6ec19eb4ee7f17a3ff959fef4560b76868c50c392e9023ddfb5546b43a5d0ec"
+    },
+    "transformacao": "moldura transparente removida pela caixa delimitadora do alfa; redimensionamento proporcional para 2x da medida de exibição; conversão para WebP sem perda; cores, proporção e transparência preservadas"
+  },
+  {
+    "id": "pnab",
+    "entidade": "Política Nacional Aldir Blanc",
+    "bloco": "realizacao",
+    "arquivo": "pnab.webp",
+    "largura": 110,
+    "altura": 56,
+    "escala": 2,
+    "bytes": 8830,
+    "sha256": "bbe18a7ebb3a2c4651c4ffc17049e32188baabfa245c692768c20e2b5c4dcaeb",
+    "regra": "Manual de uso da marca PNAB Sergipe: a marca fica ao lado da assinatura Ministério da Cultura/Governo Federal, separada por um traço, e não ultrapassa a altura nem a largura da marca federal.",
+    "original": {
+      "arquivo": "marcas/PNAB3.png",
+      "largura": 8000,
+      "altura": 4500,
+      "larguraDaArte": 4474,
+      "alturaDaArte": 2274,
+      "bytes": 248742,
+      "sha256": "54939f78b71ce25659bd362a375e3d09613b9b1a0b7713c1a95f9a45c0c9c03f"
+    },
+    "transformacao": "moldura transparente removida pela caixa delimitadora do alfa; redimensionamento proporcional para 2x da medida de exibição; conversão para WebP sem perda; cores, proporção e transparência preservadas"
+  },
+  {
+    "id": "funcap",
+    "entidade": "Fundação de Cultura e Arte Aperipê de Sergipe",
+    "bloco": "apoio",
+    "arquivo": "funcap.webp",
+    "largura": 153,
+    "altura": 46,
+    "escala": 2,
+    "bytes": 15066,
+    "sha256": "84d9a5d1919302e0de3db831bb2d2a3424194feff874994cb4b1158e388f66a1",
+    "regra": "Manual de uso da marca PNAB Sergipe: a FUNCAP integra o bloco de apoio e não ultrapassa a altura nem a largura da marca federal.",
+    "original": {
+      "arquivo": "marcas/FUNCAP-HORIZONTAL.png",
+      "largura": 8000,
+      "altura": 4500,
+      "larguraDaArte": 5700,
+      "alturaDaArte": 1712,
+      "bytes": 396224,
+      "sha256": "f9ce8e2b42652c1e860335c545dea92d68326cc4fff053c3b83eb326bbe2bd8f"
+    },
+    "transformacao": "moldura transparente removida pela caixa delimitadora do alfa; redimensionamento proporcional para 2x da medida de exibição; conversão para WebP sem perda; cores, proporção e transparência preservadas"
+  },
+  {
+    "id": "governo-sergipe",
+    "entidade": "Governo do Estado de Sergipe",
+    "bloco": "apoio",
+    "arquivo": "governo-de-sergipe.webp",
+    "largura": 114,
+    "altura": 46,
+    "escala": 2,
+    "bytes": 12658,
+    "sha256": "86843de55719b3bdfcb6afe8dabc2ddd4bce141444ee0130e14cd64eddeaba13",
+    "regra": "Manual de uso Governo de Sergipe: versão positiva do brasão, sem alteração de cor, diagramação ou proporção, com área de segurança preservada e nunca sobre fundo que comprometa a legibilidade.",
+    "original": {
+      "arquivo": "marcas/GOVERNO DE SERGIPE HORIZONTAL SEM FUNDO.png",
+      "largura": 8000,
+      "altura": 4500,
+      "larguraDaArte": 4168,
+      "alturaDaArte": 1684,
+      "bytes": 432667,
+      "sha256": "d15ca05aba0d4125d3378e435293ff21535bbd35534e9251e7153227460ce650"
+    },
+    "transformacao": "moldura transparente removida pela caixa delimitadora do alfa; redimensionamento proporcional para 2x da medida de exibição; conversão para WebP sem perda; cores, proporção e transparência preservadas"
+  }
+]
