@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { DESCRICOES_DE_CONTEUDO } from "../../src/lib/navegacao";
+
 const ITENS_PRINCIPAIS = [
   ["O Observatório", "/observatorio"],
   ["A Pesquisa", "/pesquisa"],
@@ -12,6 +14,15 @@ const ITENS_DE_CONTEUDO = [
   ["PodObservar", "/podobservar"],
   ["Acervo", "/acervo"],
 ] as const;
+
+/**
+ * No painel "Conteúdos", o texto acessível de cada link é o rótulo seguido da
+ * descrição. As duas partes vêm da mesma fonte que o menu usa, e não de uma
+ * cópia escrita aqui: uma revisão editorial da descrição não é regressão de
+ * navegação, e não deve quebrar este teste.
+ */
+const textoDoLink = ([rotulo, href]: readonly [string, string]): string =>
+  `${rotulo}${DESCRICOES_DE_CONTEUDO[href as keyof typeof DESCRICOES_DE_CONTEUDO]}`;
 
 for (const largura of [320, 375, 768, 900, 1024, 1280, 1440]) {
   test(`menu aprovado sem overflow em ${largura}px`, async ({ page }) => {
@@ -68,13 +79,7 @@ for (const largura of [320, 375, 768, 900, 1024, 1280, 1440]) {
       );
       await expect(painel.getByRole("link")).toHaveCount(3);
       expect(await painel.getByRole("link").allTextContents()).toEqual(
-        ITENS_DE_CONTEUDO.map(([rotulo]) =>
-          rotulo === "Diário de Campo"
-            ? "Diário de CampoRegistros das visitas e do trabalho em território"
-            : rotulo === "PodObservar"
-              ? "PodObservarConversas e narrativas do Vale"
-              : "AcervoFotografias, documentos e memória",
-        ),
+        ITENS_DE_CONTEUDO.map(textoDoLink),
       );
     }
 

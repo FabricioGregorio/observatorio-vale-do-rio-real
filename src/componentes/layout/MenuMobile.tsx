@@ -19,13 +19,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 
-import { type ItemNavegacao, MENU_PRINCIPAL } from "../../lib/navegacao";
-
-const DESCRICOES_DE_CONTEUDO = {
-  "/campo": "Registros das visitas e do trabalho em território",
-  "/podobservar": "A pesquisa em áudio, com transcrição de cada episódio",
-  "/acervo": "Fotografias, documentos e memória",
-} as const;
+import {
+  DESCRICOES_DE_CONTEUDO,
+  type ItemNavegacao,
+  MENU_PRINCIPAL,
+} from "../../lib/navegacao";
 
 type RotaDeConteudo = keyof typeof DESCRICOES_DE_CONTEUDO;
 

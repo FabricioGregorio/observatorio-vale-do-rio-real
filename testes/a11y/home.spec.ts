@@ -435,10 +435,10 @@ test.describe("Home — apresentação", () => {
     await expect(page.locator("#hl-territorio figcaption")).toContainText(
       "municípios no recorte do Vale",
     );
-    // Catálogo de produtos, capítulo VI.
+    // Catálogo de produtos, capítulo VII.
     await expect(
       page.locator("#hl-produtos .hl-catalogo li", {
-        hasText: "Mapa do recorte",
+        hasText: "Cartografia do recorte",
       }),
     ).toContainText("municípios no recorte do Vale");
   });

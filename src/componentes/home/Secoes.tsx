@@ -838,8 +838,9 @@ export function Produtos({
           </span>
           <h3>Cartografia do recorte</h3>
           <p>
-            {MUNICIPIOS_DO_VALE.length} municípios sobre a malha oficial de
-            Sergipe, com os lugares visitados em campo.
+            {MUNICIPIOS_DO_VALE.length} municípios no recorte do Vale, sobre a
+            malha oficial de Sergipe, com os {REFERENCIAS_TERRITORIAIS.length}{" "}
+            lugares visitados em campo.
           </p>
           <Link href="/territorio" prefetch={false}>
             Abrir a cartografia

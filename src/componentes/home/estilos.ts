@@ -161,7 +161,7 @@ export const CSS_DA_HOME = `
 .hl-texto p+p{margin-top:1rem}
 .hl-intro{margin-top:1.5rem;font-size:var(--text-lg);line-height:1.5}
 .hl-nota{margin-top:1.25rem;font-size:var(--text-sm);color:var(--color-texto-suave)}
-.hl-ponte{display:flex;align-items:center;gap:1rem;margin-top:3rem;font-size:var(--text-lg);font-style:italic}
+.hl-ponte{display:flex;align-items:center;gap:1rem;margin-top:3rem;max-width:var(--largura-leitura);font-size:var(--text-lg);font-style:italic}
 .hl-ponte::before{content:"";flex:0 0 3rem;height:1px;background:currentColor}
 
 

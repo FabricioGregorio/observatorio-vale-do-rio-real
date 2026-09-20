@@ -40,6 +40,22 @@ export const MENU_INSTITUCIONAL: readonly ItemNavegacao[] = [
   { href: "/contato", rotulo: "Contato" },
 ] as const;
 
+/**
+ * Descrição de uma linha para as rotas de conteúdo, no painel "Conteúdos" do
+ * cabeçalho.
+ *
+ * Mora aqui, junto do resto da navegação, e não dentro do componente cliente:
+ * o teste de navegação precisa lê-la, e importar o componente arrasta
+ * `next/link` para dentro do runner. Antes o teste repetia cada descrição
+ * palavra por palavra, e uma revisão editorial quebrava um teste de
+ * navegação sem que nada de navegação tivesse mudado.
+ */
+export const DESCRICOES_DE_CONTEUDO = {
+  "/campo": "Registros das visitas e do trabalho em território",
+  "/podobservar": "A pesquisa em áudio, com transcrição de cada episódio",
+  "/acervo": "Fotografias, documentos e memória",
+} as const;
+
 /** Âncora do conteúdo principal, alvo do link de pular. */
 export const ID_CONTEUDO = "conteudo";
 
