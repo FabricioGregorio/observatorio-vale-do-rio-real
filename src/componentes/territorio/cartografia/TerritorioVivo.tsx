@@ -206,16 +206,15 @@ export function TerritorioVivo({
       <div className="tv__cab">
         <p className="meta-ficha">Território da pesquisa</p>
         <h1>Cartografia Viva</h1>
-        {/* Proposta editorial — aguarda aprovação humana para integração. */}
-        <p className="tv__abertura" data-copy-editorial="proposta">
+        <p className="tv__abertura">
           Uma leitura espacial dos lugares, equipamentos e evidências que
           fizeram parte da pesquisa do Observatório.
         </p>
-        <p className="tv__instrucao" data-copy-editorial="proposta">
+        <p className="tv__instrucao">
           Escolha um lugar para aproximar o mapa e consultar seus registros
           públicos.
         </p>
-        <div className="tv__contexto" data-copy-editorial="proposta">
+        <div className="tv__contexto">
           <p>
             <strong>Cinco municípios</strong> formam o recorte do Vale do Rio
             Real.
@@ -598,9 +597,7 @@ export function TerritorioVivo({
           <div className="tv__lista-cab">
             <p className="meta-ficha">Percurso</p>
             <h2 id="tv-lista-titulo">Explore os lugares</h2>
-            <p data-copy-editorial="proposta">
-              Veja o território inteiro ou escolha um ponto da pesquisa.
-            </p>
+            <p>Veja o território inteiro ou escolha um ponto da pesquisa.</p>
           </div>
           <ul data-tv-lista="">
             <li>
@@ -685,17 +682,21 @@ export function TerritorioVivo({
             <section>
               <h3>A pesquisa no território</h3>
               <p>
-                Os quatro lugares desta cartografia podem ser explorados
-                individualmente. Três estão em Tobias Barreto, dentro do recorte
-                principal.
+                Três dos quatro lugares desta cartografia ficam em Tobias
+                Barreto, dentro do recorte: dois equipamentos culturais
+                acompanhados mês a mês e uma comunidade agrícola entre serras,
+                onde a pesquisa terminou com uma oficina aberta aos moradores.
+                Cada ponto abre a sua própria ficha.
               </p>
             </section>
             <section>
               <h3>Ilha Grande</h3>
               <p>
-                Faz parte da pesquisa e está em São Cristóvão. Sua presença
-                amplia a leitura documental, sem incluir São Cristóvão entre os
-                cinco municípios do Vale.
+                O quarto ponto está em São Cristóvão, fora do Vale. A pesquisa
+                chegou até lá porque o próprio portal da prefeitura apresentava
+                a povoação como território ecoturístico aberto à visitação — e
+                foi conferir. Isso não inclui São Cristóvão entre os cinco
+                municípios do recorte.
               </p>
             </section>
           </section>
@@ -710,7 +711,7 @@ export function TerritorioVivo({
         </div>
       </div>
 
-      <section className="tv__fecho" data-copy-editorial="proposta">
+      <section className="tv__fecho">
         <p className="meta-ficha">Sobre a cartografia</p>
         <h2>Uma leitura espacial da pesquisa</h2>
         <p>

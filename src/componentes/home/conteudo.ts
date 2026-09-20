@@ -105,10 +105,14 @@ export type Entrevista = {
   readonly numero: string;
   readonly onde: string;
   /**
-   * `null` quando o município não está consolidado em documento. Hoje as oito
-   * estão consolidadas; o campo continua anulável porque é ele o mecanismo de
-   * lacuna explícita — uma entrevista futura sem município documentado aparece
-   * como lacuna, não como suposição.
+   * `null` quando o município não está documentado. Hoje as oito estão; o
+   * campo continua anulável porque é ele que impede a suposição — a entrevista
+   * cujo município não estiver documentado simplesmente não exibe a linha, em
+   * vez de exibir um município provável.
+   *
+   * A interface não escreve rótulo de ausência: "município não consolidado"
+   * era texto de processo interno na tela de quem lê, e saiu da Home e de
+   * `/pesquisa` na revisão editorial de 2026-09-20.
    */
   readonly municipio: string | null;
   /**

@@ -90,15 +90,18 @@ export function Origem() {
       <div className="hl-origem">
         <div className="hl-texto">
           <p>
-            O Observatório é uma iniciativa do {COLETIVO}, que o idealizou e o
-            realiza. O projeto é financiado pelo {EDITAL}, dedicado a
-            observatórios de cultura e economia criativa, e presta contas da sua
-            execução à FUNCAP, em Sergipe.
+            O {COLETIVO} nasceu em Tobias Barreto, em 2024, reunindo artistas,
+            produtores culturais e pesquisadores da cidade. No ano seguinte,
+            quando saíram os primeiros editais da Política Nacional Aldir Blanc
+            em Sergipe, uma das linhas era destinada a observatórios de cultura
+            e economia criativa. A inquietação que o grupo já carregava sobre os
+            equipamentos culturais da região tinha, enfim, onde caber.
           </p>
           <p>
-            Por isso este site tem duas funções que não se separam: publicar a
-            pesquisa em domínio público e guardar a prova documental do que foi
-            feito.
+            O Observatório é essa iniciativa. Financiado pelo {EDITAL}, presta
+            contas da sua execução à FUNCAP, em Sergipe. Por isso este site tem
+            duas funções que não se separam: publicar a pesquisa em domínio
+            público e guardar a prova documental do que foi feito.
           </p>
         </div>
       </div>
@@ -295,9 +298,8 @@ export function Territorio() {
               <h3 id={ID_DO_TITULO_DOS_PONTOS}>Pontos de pesquisa</h3>
               <p>
                 Os quatro lugares visitados em campo, na posição confirmada pelo
-                responsável e desenhada no mapa. Chegar até eles fez parte da
-                pesquisa: estrada de terra, ponte de madeira sobre riacho e, no
-                caso de Ilha Grande, travessia de barco.
+                responsável e desenhada no mapa. Três ficam em Tobias Barreto; o
+                quarto, do outro lado do estado, só se alcança de barco.
               </p>
               <ul>
                 {REFERENCIAS_TERRITORIAIS.map((lugar) => (
@@ -537,10 +539,10 @@ export function Lugares({
               cordel, e a casa de taipa preserva a memória do trabalho no campo.
             </p>
             <p className="hl-nota">
-              O relatório técnico é um PDF digitalizado de sete páginas, sem
-              camada de texto. A decisão de 2026-09-16 autorizou sua publicação
-              integral, junto das fotografias de campo, da entrevista e dos
-              formulários do equipamento.
+              Os dois lugares se conhecem. Em 2015, sete anos depois de o
+              Recanto abrir ao público, quem mantém o Borda da Mata foi
+              visitá-lo — e a experiência de um passou a servir de referência ao
+              outro.
             </p>
             <div className="hl-equip__pe">
               <MateriaisReunidos
@@ -550,8 +552,8 @@ export function Lugares({
               {relatorioDoBorda?.href === undefined ||
               relatorioDoBorda.href === null ? (
                 <p className="hl-nota">
-                  Nenhum documento do Borda da Mata está público ainda. Esta
-                  ficha diz o que existe, sem antecipar o conteúdo.
+                  Nenhum documento do Borda da Mata está público ainda. Quando
+                  estiver, o endereço aparece nesta ficha.
                 </p>
               ) : (
                 <a
@@ -570,7 +572,10 @@ export function Lugares({
         </article>
       </div>
 
-      <p className="hl-ponte">Os números a seguir vêm destes dois lugares.</p>
+      <p className="hl-ponte">
+        Foi o registro diário desses dois lugares que produziu os números a
+        seguir.
+      </p>
     </Capitulo>
   );
 }
@@ -590,11 +595,10 @@ export function Leitura() {
       titulo="Onde o recurso circula"
     >
       <p className="hl-texto hl-intro">
-        Os números desta seção vêm do levantamento próprio do Observatório em
-        dois equipamentos culturais de Tobias Barreto, entre julho e dezembro de
-        2025. Eles descrevem quanto entrou, quanto saiu e onde a despesa foi
-        executada. Não descrevem lucro, impacto nem o que aconteceu fora do que
-        foi registrado.
+        Cada compra, cada contratação e cada taxa recebida virou linha de
+        planilha, e a planilha virou série. O indicador abaixo é o que essa
+        série responde melhor: de todo o dinheiro que saiu com destino
+        identificado, quanto ficou na própria cidade.
       </p>
 
       <div className="hl-protagonista">
@@ -646,8 +650,12 @@ export function Leitura() {
       </dl>
 
       <p className="hl-ponte">
-        Esta leitura apresenta um recorte. O levantamento completo preserva o
-        detalhamento das atividades registradas
+        Este é um indicador entre {INDICADORES.length}. Os demais, a série mês a
+        mês e as atividades registradas estão em{" "}
+        <Link href="/dados" prefetch={false}>
+          Dados
+        </Link>
+        .
       </p>
     </Capitulo>
   );
@@ -699,9 +707,9 @@ export function Escuta({
               {publicas.length === ENTREVISTAS.length
                 ? "As oito estão públicas no acervo, com áudio e transcrição."
                 : `${publicas.length} de ${ENTREVISTAS.length} já estão públicas no acervo, com áudio e transcrição.`}{" "}
-              Nenhuma foi publicada por associação: cada documento passou pelo
-              mesmo gate dos demais arquivos do site, que exige revisão de
-              privacidade concluída antes de existir endereço público.
+              Nenhuma foi publicada por semelhança de nome: como todo arquivo
+              deste site, cada documento só passa a ter endereço público depois
+              de concluída a revisão de privacidade.
             </p>
           )}
           <p className="hl-metodo">
@@ -715,9 +723,9 @@ export function Escuta({
             <li key={entrevista.numero}>
               <span className="hl-entrevistas__n">{entrevista.numero}</span>
               <span className="hl-entrevistas__onde">{entrevista.onde}</span>
-              <span className="meta-ficha">
-                {entrevista.municipio ?? "município não consolidado"}
-              </span>
+              {entrevista.municipio === null ? null : (
+                <span className="meta-ficha">{entrevista.municipio}</span>
+              )}
             </li>
           ))}
         </ol>
@@ -817,21 +825,25 @@ export function Produtos({
           </span>
           <h3>Leitura quantitativa</h3>
           <p>
-            {INDICADORES.length} indicadores auditados;{" "}
-            {REGISTROS_DE_APOIO.length + 1} nesta página.
+            {INDICADORES.length} indicadores, cada um com regra de cálculo,
+            base, período e recorte declarados.
           </p>
-          <a href="#hl-leitura">Ir para a leitura</a>
+          <Link href="/dados" prefetch={false}>
+            Consultar os dados
+          </Link>
         </li>
         <li>
           <span className="hl-estado" data-estado="publicado">
             Público
           </span>
-          <h3>Mapa do recorte</h3>
+          <h3>Cartografia do recorte</h3>
           <p>
-            {MUNICIPIOS_DO_VALE.length} municípios no recorte do Vale, sobre a
-            malha oficial de Sergipe.
+            {MUNICIPIOS_DO_VALE.length} municípios sobre a malha oficial de
+            Sergipe, com os lugares visitados em campo.
           </p>
-          <a href="#hl-territorio">Ir para o território</a>
+          <Link href="/territorio" prefetch={false}>
+            Abrir a cartografia
+          </Link>
         </li>
         <li>
           <span className="hl-estado" data-estado="publicado">

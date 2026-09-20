@@ -29,9 +29,15 @@ export {
  * ## Regra deste arquivo
  *
  * Só entra aqui o que já é **público** ou foi autorizado pelo responsável.
- * Achados em fontes restritas — transcrições, relatórios não publicados,
- * planilhas — ficam fora do código e fora da interface. Onde a informação
- * pública não existe, o campo é `null` e a ficha não mostra a seção.
+ * Achados em fonte restrita — relatório não publicado, planilha, gravação sem
+ * revisão de privacidade — ficam fora do código e fora da interface. Onde a
+ * informação pública não existe, o campo é `null` e a ficha não mostra a
+ * seção.
+ *
+ * As transcrições revisadas do PodObservar **são** fonte pública: elas estão
+ * publicadas por inteiro em `/podobservar`, e a ficha cita o episódio como
+ * cita qualquer outro documento. O que não se faz é citar o roteiro de
+ * produção, que não é o áudio publicado.
  *
  * ## Território × documentos
  *
@@ -111,6 +117,11 @@ export type LugarDeCampo = {
  * ela vem de `vw_anexo_publico`, como a de qualquer outro material.
  */
 const A02_TITULO = "Relatório Técnico — Recanto da Serra (A02)";
+
+/** Transcrição revisada de um episódio publicado, citada como fonte. */
+function podObservar(episodio: "01" | "02" | "03"): string {
+  return `PodObservar, episódio ${episodio} — transcrição revisada`;
+}
 
 function nomeDoPonto(id: IdDoLugar): string | null {
   return PONTOS_DE_VISITA_PREVISTOS.find((p) => p.id === id)?.nome ?? null;
@@ -251,7 +262,11 @@ export function lugaresDeCampo(
         texto: "Equipamento cultural",
         fonte: `Recorte dos indicadores: ${RECORTE_H4}`,
       },
-      descricao: null,
+      descricao: {
+        texto:
+          "Centro cultural e museu que dividem endereço com a casa da família que os mantém. Quem chega conhece o espaço, come à mesa e convive um pouco com a rotina da casa — a visita é combinada previamente com os responsáveis.",
+        fonte: podObservar("03"),
+      },
       materiais: materiais("borda-da-mata"),
       dados: [],
       fotos: fotografiasDoLugar("borda-da-mata"),
@@ -262,7 +277,11 @@ export function lugaresDeCampo(
       ...SERRA,
       nomeCompleto: null,
       tipo: null,
-      descricao: null,
+      descricao: {
+        texto:
+          "Comunidade agrícola entre serras, alcançada por estrada de terra a partir da Vila de Samambaia e por uma ponte de madeira sobre o Riacho do Caripau. Foi aqui, em área de Mata Atlântica preservada, que a pesquisa se encerrou: numa oficina de criação de equipamento cultural feita com os próprios moradores.",
+        fonte: podObservar("01"),
+      },
       materiais: materiais("serra-dos-macacos"),
       dados: [],
       fotos: fotografiasDoLugar("serra-dos-macacos"),
@@ -281,7 +300,11 @@ export function lugaresDeCampo(
       ...territorio("ilha-grande", "ilha-grande"),
       nomeCompleto: null,
       tipo: null,
-      descricao: null,
+      descricao: {
+        texto:
+          "Único ponto de campo fora do recorte do Vale. A travessia de barco, a partir da sede de São Cristóvão, faz parte do próprio percurso: a pesquisa foi ver de perto o território ecoturístico que o portal da prefeitura anunciava, numa povoação de cultura pesqueira que mantém viva a tradição do samba de coco.",
+        fonte: podObservar("01"),
+      },
       materiais: materiais("ilha-grande"),
       dados: [],
       fotos: fotografiasDoLugar("ilha-grande"),
