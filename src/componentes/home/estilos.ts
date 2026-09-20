@@ -311,9 +311,4 @@ export const CSS_DA_HOME = `
 .hl-hash code{display:block;margin-top:.5rem;font-family:var(--font-mono);font-size:var(--text-sm);overflow-wrap:anywhere}
 
 /* Rodapé */
-.hl-rodape{background:var(--color-fundo-inverso);color:var(--color-texto-inverso)}
-.hl-rodape__linha{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem 2rem;padding-block:2rem;font-size:var(--text-sm)}
-.hl-rodape ul{display:flex;flex-wrap:wrap;gap:.5rem 1.5rem}
-.home-observatorio .hl-rodape a{color:var(--color-texto-inverso)}
-.hl-rodape :focus-visible{outline-color:var(--color-destaque)}
 `.trim();

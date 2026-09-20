@@ -262,7 +262,15 @@ export default async function SalaDoAvaliador() {
         <p className="meta-ficha pc-secao__rotulo">Créditos</p>
         <div className="pc-secao__corpo">
           <h2 id="pc-creditos-titulo">Quem financia, apoia e acompanha</h2>
-          <ReguaDeCreditos />
+          {/*
+            Mesma régua do rodapé, mesma fonte de verdade — entidades, rótulos,
+            ordem e ativos saem de `institucional/creditos.ts`. O que muda aqui
+            é só a escala: numa página de comprovação, a régua de marcas é
+            parte do que se comprova.
+          */}
+          <div className="pc-painel-marcas">
+            <ReguaDeCreditos destaque />
+          </div>
         </div>
       </section>
     </div>

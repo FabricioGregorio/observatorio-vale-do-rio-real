@@ -11,7 +11,6 @@ import {
   Lugares,
   Origem,
   Produtos,
-  RodapeDaHome,
   Territorio,
 } from "./Secoes";
 
@@ -29,14 +28,16 @@ import {
  * Server Component. A consulta dos arquivos públicos é feita em build pela
  * rota e chega aqui por props: nenhum componente consulta o banco.
  *
- * ## Isolamento do rodapé
+ * ## O rodapé
  *
- * O layout raiz serve o rodapé de todas as rotas. A Home fecha com um rodapé
- * próprio, de linha única, e por isso esconde o do layout enquanto está
- * renderizada. Os estilos vivem sob `.home-observatorio` e não alcançam
- * nenhum outro componente.
+ * Até 2026-09-20 a Home fechava com um rodapé próprio e escondia o do layout
+ * por CSS. Eram dois rodapés com o mesmo propósito e conteúdos que já
+ * começavam a divergir — e, com a régua de marcas institucionais, seriam duas
+ * verdades sobre quem financia o projeto.
+ *
+ * Agora a Home usa o rodapé do layout raiz, como todas as outras rotas. Não há
+ * mais isolamento a manter.
  */
-const CSS_DE_ISOLAMENTO = "body > footer { display: none; }";
 
 export function Home({
   publicados = new Map(),
@@ -57,7 +58,6 @@ export function Home({
 }) {
   return (
     <div className="home-observatorio" id="home">
-      <style>{CSS_DE_ISOLAMENTO}</style>
       <style>{CSS_DA_HOME}</style>
       <style>{CSS_DAS_ABERTURAS}</style>
 
@@ -71,7 +71,6 @@ export function Home({
       <Escuta publicados={publicados} />
       <Produtos publicados={publicados} />
       <Conferencia />
-      <RodapeDaHome />
     </div>
   );
 }

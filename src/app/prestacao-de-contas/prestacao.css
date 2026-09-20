@@ -303,3 +303,18 @@
     gap: 1rem;
   }
 }
+
+/* --------------------------------------------------------------- créditos
+
+   A régua de marcas entra aqui na mesma "aplicação em box branco" do rodapé.
+   A razão é a mesma: nenhum dos três manuais autoriza fabricar versão branca
+   por filtro, e o corpus não traz versão negativa do brasão do Governo de
+   Sergipe. O branco é puro, e não um token de tema, porque o fundo da marca
+   não pode mudar com o tema da página. */
+
+.pc-painel-marcas {
+  background: #fff;
+  border: 1px solid var(--pc-fio);
+  border-radius: var(--radius-ficha);
+  padding: clamp(0.9rem, 3vw, 2.25rem);
+}

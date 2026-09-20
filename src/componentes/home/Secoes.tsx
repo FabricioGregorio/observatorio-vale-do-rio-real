@@ -16,7 +16,6 @@ import {
 } from "../../dados/pesquisa/derivados";
 import { RECORTE_TERRITORIAL } from "../../dados/territorio/recorte";
 import { REFERENCIAS_TERRITORIAIS } from "../../dados/territorio/referencias";
-import { MENU_RODAPE } from "../../lib/navegacao";
 import {
   GrafismoRioReal,
   GrafismoSerra,
@@ -971,28 +970,5 @@ export function Conferencia() {
 
       <GrafismoSerra />
     </Capitulo>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
-
-export function RodapeDaHome() {
-  return (
-    <div className="hl-rodape">
-      <div className="hl-quadro hl-rodape__linha">
-        <p>{NOME_OFICIAL}</p>
-        <nav aria-label="Rodapé">
-          <ul>
-            {MENU_RODAPE.map((item) => (
-              <li key={item.href}>
-                <Link href={item.href} prefetch={false}>
-                  {item.rotulo}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
-    </div>
   );
 }

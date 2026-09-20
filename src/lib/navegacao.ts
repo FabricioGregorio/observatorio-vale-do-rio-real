@@ -20,10 +20,21 @@ export const MENU_PRINCIPAL: readonly ItemNavegacao[] = [
   { href: "/acervo", rotulo: "Acervo" },
 ] as const;
 
-/** Links do rodapé (doc 01 §3). O bloco de créditos é separado. */
-export const MENU_RODAPE: readonly ItemNavegacao[] = [
-  { href: "/prestacao-de-contas", rotulo: "Prestação de Contas" },
+/**
+ * Links institucionais do rodapé (doc 01 §3).
+ *
+ * `MENU_RODAPE` chamava-se assim quando o rodapé era só esta lista. Com o
+ * rodapé definitivo ele passou a ser a **faixa institucional** dele: as
+ * seções do site vêm de `MENU_PRINCIPAL`, e a Prestação de Contas entra ao
+ * lado delas, porque é seção e não página institucional.
+ *
+ * `/educacao` entra aqui. Ela continua fora do menu principal, como a emenda
+ * de 2026-09-15 à ADR-017 determina — o teto de sete itens não muda —, mas
+ * uma rota alcançável só pela Home é uma rota que quase ninguém alcança.
+ */
+export const MENU_INSTITUCIONAL: readonly ItemNavegacao[] = [
   { href: "/imprensa", rotulo: "Imprensa" },
+  { href: "/educacao", rotulo: "Educação" },
   { href: "/acessibilidade", rotulo: "Acessibilidade" },
   { href: "/privacidade", rotulo: "Privacidade" },
   { href: "/contato", rotulo: "Contato" },
