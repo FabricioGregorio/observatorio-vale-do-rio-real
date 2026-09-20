@@ -207,10 +207,22 @@ describe("as duas páginas não dizem a mesma coisa", () => {
 describe("produtos anunciados existem como rota concluída", () => {
   /*
     Anunciar destino vazio numa página institucional é promessa falsa. A lista
-    é fechada de propósito: incluir `/dados` ou `/campo` exige antes concluir
-    a rota, e não editar este teste.
+    é fechada de propósito: incluir uma rota aqui exige antes concluí-la.
+
+    `/dados` entrou com os indicadores consolidados e `/campo` com o registro
+    fotográfico de campo, ambas em 2026-09-20. As duas deixaram de ser stub, e
+    a condição que o comentário anterior impunha foi cumprida na ordem certa —
+    primeiro a rota, depois a lista. `rotas-publicas.spec.ts` confere, contra
+    o site servido, que nenhuma delas se anuncia incompleta.
   */
-  const CONCLUIDAS = ["/pesquisa", "/territorio", "/podobservar", "/acervo"];
+  const CONCLUIDAS = [
+    "/pesquisa",
+    "/territorio",
+    "/dados",
+    "/campo",
+    "/podobservar",
+    "/acervo",
+  ];
 
   test("nenhum produto aponta para rota em preparação", () => {
     expect(PRODUTOS.map((p) => p.href).sort()).toEqual([...CONCLUIDAS].sort());

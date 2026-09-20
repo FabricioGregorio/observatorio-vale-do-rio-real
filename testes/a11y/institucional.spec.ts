@@ -251,19 +251,13 @@ test("as fotografias de campo da Pesquisa carregam, e não são placeholder", as
   }
 });
 
-test("a Home não anuncia como em preparação uma seção já concluída", async ({
-  page,
-}) => {
-  await page.goto("/");
-  const emPreparacao = page.getByRole("navigation", {
-    name: "Seções em preparação",
-  });
-  const destinos = await emPreparacao
-    .getByRole("link")
-    .evaluateAll((links) => links.map((link) => link.getAttribute("href")));
-  expect(destinos).not.toContain("/pesquisa");
-  expect(destinos).not.toContain("/podobservar");
-});
+/*
+  A lista "Seções em preparação" da Home não existe mais: em 2026-09-20 a
+  última rota que estava em preparação deixou de estar. O teste que vigiava o
+  conteúdo dela foi substituído por um mais forte, em
+  `rotas-publicas.spec.ts` — nenhuma superfície pública pode anunciar
+  preparação, porque não há mais nada em preparação para anunciar.
+*/
 
 test("Home e Pesquisa contam a mesma história sobre as entrevistas", async ({
   page,
