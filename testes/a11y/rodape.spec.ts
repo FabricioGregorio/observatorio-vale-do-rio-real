@@ -57,7 +57,7 @@ test.describe("as marcas institucionais na tela", () => {
   /*
     As marcas carregam com `loading="lazy"` — elas ficam no fim de toda página,
     muito abaixo da primeira dobra, e é isso que mantém o orçamento da Home
-    intacto. Então não basta rolar até lá: é preciso esperar as seis
+    intacto. Então não basta rolar até lá: é preciso esperar as cinco
     decodificarem, ou a asserção corre contra uma imagem ainda em voo.
   */
   test.beforeEach(async ({ page }) => {
@@ -78,12 +78,12 @@ test.describe("as marcas institucionais na tela", () => {
             ),
         { timeout: 10_000 },
       )
-      .toBe(6);
+      .toBe(5);
   });
 
-  test("as seis marcas carregam de fato", async ({ page }) => {
+  test("as cinco marcas carregam de fato", async ({ page }) => {
     const marcas = page.locator(".regua__marca");
-    await expect(marcas).toHaveCount(6);
+    await expect(marcas).toHaveCount(5);
 
     const quebradas = await marcas.evaluateAll((imagens) =>
       imagens
@@ -168,7 +168,7 @@ test.describe("as marcas institucionais na tela", () => {
       "Sistema Nacional de Cultura",
       "Política Nacional Aldir Blanc",
       "Ministério da Cultura",
-      "Governo Federal",
+      "Governo do Brasil",
     ]) {
       expect(texto, entidade).toContain(entidade);
     }

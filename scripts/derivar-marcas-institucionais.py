@@ -2,25 +2,16 @@
 
 ## O que entra
 
-Seis marcas oficiais de `OBSERVATORIO_FONTES_DIR/marcas/`, escolhidas pelos
+Cinco assinaturas oficiais de `OBSERVATORIO_FONTES_DIR/marcas/`, escolhidas pelos
 manuais e não por conveniência:
 
-- `MINISTERIO DA CULTURA + GOVERNO FEDERAL SEM FUNDO HORIZONTAL.png` — a
-  versão completa e original em cores sólidas. O manual do Governo Federal
-  (v1.2) determina que ela seja usada em **todas as peças exceto impressas**,
-  e uma página web não é peça impressa;
-- `PNAB3.png` — a variante cuja paleta bate exatamente com a do manual da PNAB
-  Sergipe (#FFCF00, #183EFF, #FF0000, #00CF00) e cuja assinatura é azul. A
-  variante de assinatura amarela seria ilegível sobre branco, e PNAB1/PNAB2
-  usam cores que não estão na paleta do manual;
+- as assinaturas atuais da Política Nacional Aldir Blanc e do Ministério da
+  Cultura/Governo do Brasil, extraídas da aplicação horizontal colorida da
+  página 9 do `manual pnab.pdf`;
+- a marca do Sistema Nacional de Cultura — SNC, extraída da mesma aplicação;
 - `FUNCAP-HORIZONTAL.png` — versão colorida, horizontal;
-- `GOVERNO DE SERGIPE HORIZONTAL SEM FUNDO.png` — brasão azul sobre
-  transparência, que é a versão positiva do manual do Governo de Sergipe.
-- a marca isolada da Secretaria Especial da Cultura e a do Sistema Nacional
-  de Cultura — SNC, extraídas da aplicação horizontal colorida da página 9 do
-  `manual pnab.pdf`. Elas existem no corpus como vetores dentro do manual, mas
-  não como arquivos avulsos; os recortes em pontos PDF ficam registrados no
-  manifesto.
+- `SECRETARIA DE CULTURA + GOVERNO DE SERGIPE HORIZONTAL.png` — assinatura
+  conjunta oficial, com tipologia, proporção e espaçamento já compostos.
 
 Os 23 arquivos da pasta são todos 8000x4500 px com transparência e a arte
 centrada numa moldura vazia. Servir um deles numa faixa de rodapé seria
@@ -85,11 +76,10 @@ LARGURA_FEDERAL = 260
 
 # Altura de exibição das demais, em CSS px. Nenhuma ultrapassa a altura nem a
 # largura da federal, que é a regra do manual da PNAB.
-ALTURA_REALIZACAO = 56
 ALTURA_APOIO = 46
 
 # A aplicação horizontal colorida oficial está na página 9 do manual PNAB.
-# Os recortes usam pontos PDF e isolam exatamente as duas marcas que não
+# Os recortes usam pontos PDF e isolam exatamente as marcas atuais que não
 # existem como arquivos avulsos no corpus. A rasterização transparente mantém
 # a arte vetorial e remove apenas o fundo da página.
 PAGINA_REGUA_PNAB = 9
@@ -98,29 +88,44 @@ ESCALA_RENDER_PDF = 6
 MARCAS = [
     {
         "id": "mincultura-governo-federal",
-        "origem": "MINISTERIO DA CULTURA + GOVERNO FEDERAL SEM FUNDO HORIZONTAL.png",
+        "origem": "manual pnab.pdf",
         "arquivo": "minc-governo-federal.webp",
-        "entidade": "Ministério da Cultura · Governo Federal",
+        "entidade": "Ministério da Cultura · Governo do Brasil",
         "bloco": "realizacao",
         "medida": {"tipo": "largura", "valor": LARGURA_FEDERAL},
+        "pagina": PAGINA_REGUA_PNAB,
+        "recorte": {
+            "esquerda": 1255,
+            "inferior": 600,
+            "direita": 200,
+            "superior": 350,
+        },
         "regra": (
-            "Manual de uso da marca do Governo Federal v1.2: versão completa e "
-            "original em cores sólidas para peças não impressas; redução máxima "
-            "em meios eletrônicos de 200 px; última à direita na assinatura "
-            "horizontal."
+            "Manual PNAB Sergipe, página 9, e Manual do Governo Federal v1.2, "
+            "páginas 4–6 e 13–15: assinatura atual Ministério da Cultura/"
+            "Governo do Brasil em RGB; redução máxima em meios eletrônicos de "
+            "200 px; última à direita na assinatura horizontal."
         ),
     },
     {
         "id": "pnab",
-        "origem": "PNAB3.png",
+        "origem": "manual pnab.pdf",
         "arquivo": "pnab.webp",
         "entidade": "Política Nacional Aldir Blanc",
         "bloco": "realizacao",
-        "medida": {"tipo": "altura", "valor": ALTURA_REALIZACAO},
+        "medida": {"tipo": "largura", "valor": 150},
+        "pagina": PAGINA_REGUA_PNAB,
+        "recorte": {
+            "esquerda": 955,
+            "inferior": 625,
+            "direita": 680,
+            "superior": 315,
+        },
         "regra": (
-            "Manual de uso da marca PNAB Sergipe: a marca fica ao lado da "
-            "assinatura Ministério da Cultura/Governo Federal, separada por um "
-            "traço, e não ultrapassa a altura nem a largura da marca federal."
+            "Manual de uso da marca PNAB Sergipe, página 9: a marca oficial "
+            "Aldir Blanc fica ao lado da assinatura Ministério da Cultura/"
+            "Governo do Brasil, separada por um traço, e não ultrapassa a "
+            "altura nem a largura da marca federal."
         ),
     },
     {
@@ -156,36 +161,16 @@ MARCAS = [
         ),
     },
     {
-        "id": "secretaria-especial-cultura",
-        "origem": "manual pnab.pdf",
-        "arquivo": "secretaria-especial-da-cultura.webp",
-        "entidade": "Secretaria Especial da Cultura",
+        "id": "secretaria-sergipe",
+        "origem": "SECRETARIA DE CULTURA + GOVERNO DE SERGIPE HORIZONTAL.png",
+        "arquivo": "secretaria-especial-governo-sergipe.webp",
+        "entidade": "Secretaria Especial da Cultura · Governo do Estado de Sergipe",
         "bloco": "apoio",
-        "medida": {"tipo": "altura", "valor": 27},
-        "pagina": PAGINA_REGUA_PNAB,
-        "recorte": {
-            "esquerda": 420,
-            "inferior": 595,
-            "direita": 1352,
-            "superior": 360,
-        },
+        "medida": {"tipo": "largura", "valor": 210},
         "regra": (
-            "Manual de uso da marca PNAB Sergipe, página 9: a Secretaria "
-            "Especial da Cultura integra o bloco de Apoio na aplicação "
-            "horizontal colorida de uso preferencial."
-        ),
-    },
-    {
-        "id": "governo-sergipe",
-        "origem": "GOVERNO DE SERGIPE HORIZONTAL SEM FUNDO.png",
-        "arquivo": "governo-de-sergipe.webp",
-        "entidade": "Governo do Estado de Sergipe",
-        "bloco": "apoio",
-        "medida": {"tipo": "altura", "valor": ALTURA_APOIO},
-        "regra": (
-            "Manual de uso Governo de Sergipe: versão positiva do brasão, sem "
-            "alteração de cor, diagramação ou proporção, com área de segurança "
-            "preservada e nunca sobre fundo que comprometa a legibilidade."
+            "Manual de uso Governo de Sergipe, páginas 14–16: assinatura "
+            "conjunta horizontal preferencial, com nome da Secretaria em "
+            "caixa alta, proporção e espaçamento oficiais preservados."
         ),
     },
 ]

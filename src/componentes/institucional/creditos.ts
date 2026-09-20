@@ -90,7 +90,7 @@ export const REGUA_DE_CREDITOS: readonly NivelDeCredito[] = [
       "Secretaria Especial da Cultura",
       "Governo do Estado de Sergipe",
     ],
-    marcas: marcas("funcap", "secretaria-especial-cultura", "governo-sergipe"),
+    marcas: marcas("funcap", "secretaria-sergipe"),
     tracoAntesDaMarca: null,
   },
   {
@@ -100,7 +100,7 @@ export const REGUA_DE_CREDITOS: readonly NivelDeCredito[] = [
       "Sistema Nacional de Cultura",
       "Política Nacional Aldir Blanc",
       "Ministério da Cultura",
-      "Governo Federal",
+      "Governo do Brasil",
     ],
     marcas: marcas("snc", "pnab", "mincultura-governo-federal"),
     tracoAntesDaMarca: "mincultura-governo-federal",

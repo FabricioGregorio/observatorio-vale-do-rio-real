@@ -1,47 +1,63 @@
 [
   {
     "id": "mincultura-governo-federal",
-    "entidade": "Ministério da Cultura · Governo Federal",
+    "entidade": "Ministério da Cultura · Governo do Brasil",
     "bloco": "realizacao",
     "arquivo": "minc-governo-federal.webp",
     "largura": 260,
-    "altura": 63,
+    "altura": 62,
     "escala": 2,
-    "bytes": 16628,
-    "sha256": "0f0a64dbe6126020262293aed2a4634650196ee860959dde10ff29c402d60fec",
-    "regra": "Manual de uso da marca do Governo Federal v1.2: versão completa e original em cores sólidas para peças não impressas; redução máxima em meios eletrônicos de 200 px; última à direita na assinatura horizontal.",
+    "bytes": 15326,
+    "sha256": "5d8ffb6f7632c3bb0b6682612a0b7f994736270cbee6a21847ffde3edb7e2b35",
+    "regra": "Manual PNAB Sergipe, página 9, e Manual do Governo Federal v1.2, páginas 4–6 e 13–15: assinatura atual Ministério da Cultura/Governo do Brasil em RGB; redução máxima em meios eletrônicos de 200 px; última à direita na assinatura horizontal.",
     "original": {
-      "arquivo": "marcas/MINISTERIO DA CULTURA + GOVERNO FEDERAL SEM FUNDO HORIZONTAL.png",
-      "largura": 8000,
-      "altura": 4500,
-      "larguraDaArte": 5118,
-      "alturaDaArte": 1236,
-      "bytes": 248801,
-      "sha256": "f6ec19eb4ee7f17a3ff959fef4560b76868c50c392e9023ddfb5546b43a5d0ec"
+      "arquivo": "marcas/manual pnab.pdf",
+      "largura": 1920,
+      "altura": 1080,
+      "larguraDaArte": 2638,
+      "alturaDaArte": 631,
+      "bytes": 8145551,
+      "sha256": "40ac5aab4c9686801652025f35e6125f83f4a197e28de175ec4f6a84ddde45be",
+      "pagina": 9,
+      "recorte": {
+        "esquerda": 1255,
+        "inferior": 600,
+        "direita": 200,
+        "superior": 350,
+        "unidade": "ponto_pdf"
+      }
     },
-    "transformacao": "moldura transparente removida pela caixa delimitadora do alfa; redimensionamento proporcional para 2x da medida de exibição; conversão para WebP sem perda; cores, proporção e transparência preservadas"
+    "transformacao": "marca vetorial extraída da página 9 do manual PNAB, no recorte oficial registrado em pontos PDF; fundo da página mantido transparente; caixa delimitadora do alfa aplicada; redimensionamento proporcional para 2x da medida de exibição; conversão para WebP sem perda; cores, proporção e transparência preservadas"
   },
   {
     "id": "pnab",
     "entidade": "Política Nacional Aldir Blanc",
     "bloco": "realizacao",
     "arquivo": "pnab.webp",
-    "largura": 110,
-    "altura": 56,
+    "largura": 150,
+    "altura": 34,
     "escala": 2,
-    "bytes": 8830,
-    "sha256": "bbe18a7ebb3a2c4651c4ffc17049e32188baabfa245c692768c20e2b5c4dcaeb",
-    "regra": "Manual de uso da marca PNAB Sergipe: a marca fica ao lado da assinatura Ministério da Cultura/Governo Federal, separada por um traço, e não ultrapassa a altura nem a largura da marca federal.",
+    "bytes": 10976,
+    "sha256": "33712f5f0ed720e3cb7f9c56644d144711cb10e6875e62955c0dbb3dbb9b9ba6",
+    "regra": "Manual de uso da marca PNAB Sergipe, página 9: a marca oficial Aldir Blanc fica ao lado da assinatura Ministério da Cultura/Governo do Brasil, separada por um traço, e não ultrapassa a altura nem a largura da marca federal.",
     "original": {
-      "arquivo": "marcas/PNAB3.png",
-      "largura": 8000,
-      "altura": 4500,
-      "larguraDaArte": 4474,
-      "alturaDaArte": 2274,
-      "bytes": 248742,
-      "sha256": "54939f78b71ce25659bd362a375e3d09613b9b1a0b7713c1a95f9a45c0c9c03f"
+      "arquivo": "marcas/manual pnab.pdf",
+      "largura": 1920,
+      "altura": 1080,
+      "larguraDaArte": 1604,
+      "alturaDaArte": 363,
+      "bytes": 8145551,
+      "sha256": "40ac5aab4c9686801652025f35e6125f83f4a197e28de175ec4f6a84ddde45be",
+      "pagina": 9,
+      "recorte": {
+        "esquerda": 955,
+        "inferior": 625,
+        "direita": 680,
+        "superior": 315,
+        "unidade": "ponto_pdf"
+      }
     },
-    "transformacao": "moldura transparente removida pela caixa delimitadora do alfa; redimensionamento proporcional para 2x da medida de exibição; conversão para WebP sem perda; cores, proporção e transparência preservadas"
+    "transformacao": "marca vetorial extraída da página 9 do manual PNAB, no recorte oficial registrado em pontos PDF; fundo da página mantido transparente; caixa delimitadora do alfa aplicada; redimensionamento proporcional para 2x da medida de exibição; conversão para WebP sem perda; cores, proporção e transparência preservadas"
   },
   {
     "id": "snc",
@@ -96,54 +112,24 @@
     "transformacao": "moldura transparente removida pela caixa delimitadora do alfa; redimensionamento proporcional para 2x da medida de exibição; conversão para WebP sem perda; cores, proporção e transparência preservadas"
   },
   {
-    "id": "secretaria-especial-cultura",
-    "entidade": "Secretaria Especial da Cultura",
+    "id": "secretaria-sergipe",
+    "entidade": "Secretaria Especial da Cultura · Governo do Estado de Sergipe",
     "bloco": "apoio",
-    "arquivo": "secretaria-especial-da-cultura.webp",
-    "largura": 148,
-    "altura": 27,
+    "arquivo": "secretaria-especial-governo-sergipe.webp",
+    "largura": 210,
+    "altura": 62,
     "escala": 2,
-    "bytes": 8342,
-    "sha256": "358f50555bc7793ad3d0ffc20eb517a9b97aebc40e7f3069f8c88ae66685ac99",
-    "regra": "Manual de uso da marca PNAB Sergipe, página 9: a Secretaria Especial da Cultura integra o bloco de Apoio na aplicação horizontal colorida de uso preferencial.",
+    "bytes": 15662,
+    "sha256": "d5ea43c27fe993110449bf65252a3ac5d05a19a13f41c0aa0756d37812840644",
+    "regra": "Manual de uso Governo de Sergipe, páginas 14–16: assinatura conjunta horizontal preferencial, com nome da Secretaria em caixa alta, proporção e espaçamento oficiais preservados.",
     "original": {
-      "arquivo": "marcas/manual pnab.pdf",
-      "largura": 1920,
-      "altura": 1080,
-      "larguraDaArte": 686,
-      "alturaDaArte": 125,
-      "bytes": 8145551,
-      "sha256": "40ac5aab4c9686801652025f35e6125f83f4a197e28de175ec4f6a84ddde45be",
-      "pagina": 9,
-      "recorte": {
-        "esquerda": 420,
-        "inferior": 595,
-        "direita": 1352,
-        "superior": 360,
-        "unidade": "ponto_pdf"
-      }
-    },
-    "transformacao": "marca vetorial extraída da página 9 do manual PNAB, no recorte oficial registrado em pontos PDF; fundo da página mantido transparente; caixa delimitadora do alfa aplicada; redimensionamento proporcional para 2x da medida de exibição; conversão para WebP sem perda; cores, proporção e transparência preservadas"
-  },
-  {
-    "id": "governo-sergipe",
-    "entidade": "Governo do Estado de Sergipe",
-    "bloco": "apoio",
-    "arquivo": "governo-de-sergipe.webp",
-    "largura": 114,
-    "altura": 46,
-    "escala": 2,
-    "bytes": 12658,
-    "sha256": "86843de55719b3bdfcb6afe8dabc2ddd4bce141444ee0130e14cd64eddeaba13",
-    "regra": "Manual de uso Governo de Sergipe: versão positiva do brasão, sem alteração de cor, diagramação ou proporção, com área de segurança preservada e nunca sobre fundo que comprometa a legibilidade.",
-    "original": {
-      "arquivo": "marcas/GOVERNO DE SERGIPE HORIZONTAL SEM FUNDO.png",
+      "arquivo": "marcas/SECRETARIA DE CULTURA + GOVERNO DE SERGIPE HORIZONTAL.png",
       "largura": 8000,
       "altura": 4500,
-      "larguraDaArte": 4168,
-      "alturaDaArte": 1684,
-      "bytes": 432667,
-      "sha256": "d15ca05aba0d4125d3378e435293ff21535bbd35534e9251e7153227460ce650"
+      "larguraDaArte": 6405,
+      "alturaDaArte": 1886,
+      "bytes": 451918,
+      "sha256": "bdbd051e8f86acd428f4fd635b14e44be03566e8189acb845e955d2a160cfa99"
     },
     "transformacao": "moldura transparente removida pela caixa delimitadora do alfa; redimensionamento proporcional para 2x da medida de exibição; conversão para WebP sem perda; cores, proporção e transparência preservadas"
   }

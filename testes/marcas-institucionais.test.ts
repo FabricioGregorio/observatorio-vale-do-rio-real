@@ -53,7 +53,7 @@ describe("os arquivos derivados existem e conferem", () => {
     },
   );
 
-  test.each(["secretaria-especial-cultura", "snc"])(
+  test.each(["pnab", "snc", "mincultura-governo-federal"])(
     "%s registra a extração da régua oficial do manual",
     (id) => {
       const marca = MARCAS_DERIVADAS.find((candidata) => candidata.id === id);
@@ -62,6 +62,26 @@ describe("os arquivos derivados existem e conferem", () => {
       expect(marca?.original.recorte?.unidade).toBe("ponto_pdf");
     },
   );
+
+  test("a assinatura sergipana vem do lockup conjunto oficial", () => {
+    const marca = MARCAS_DERIVADAS.find(
+      (candidata) => candidata.id === "secretaria-sergipe",
+    );
+    expect(marca?.original.arquivo).toBe(
+      "marcas/SECRETARIA DE CULTURA + GOVERNO DE SERGIPE HORIZONTAL.png",
+    );
+    expect(marca?.entidade).toBe(
+      "Secretaria Especial da Cultura · Governo do Estado de Sergipe",
+    );
+  });
+
+  test("a PNAB antiga e a assinatura federal anterior não são fontes", () => {
+    const origens = MARCAS_DERIVADAS.map((marca) => marca.original.arquivo);
+    expect(origens).not.toContain("marcas/PNAB3.png");
+    expect(origens).not.toContain(
+      "marcas/MINISTERIO DA CULTURA + GOVERNO FEDERAL SEM FUNDO HORIZONTAL.png",
+    );
+  });
 
   /**
    * A proporção do derivado é a da arte do original. Um derivado com outra
@@ -153,7 +173,7 @@ describe("a ordem da régua vem dos manuais", () => {
   test("a assinatura federal é a última marca da régua", () => {
     const ultimo = REGUA_DE_CREDITOS.at(-1);
     expect(ultimo?.marcas.at(-1)?.id).toBe(MARCA_FEDERAL.id);
-    expect(ultimo?.instituicoes.at(-1)).toBe("Governo Federal");
+    expect(ultimo?.instituicoes.at(-1)).toBe("Governo do Brasil");
   });
 
   /**
@@ -179,12 +199,11 @@ describe("a ordem da régua vem dos manuais", () => {
     ]);
   });
 
-  test("FUNCAP, Secretaria e Governo de Sergipe seguem a ordem do manual", () => {
+  test("FUNCAP e a assinatura conjunta de Secretaria/Sergipe seguem o manual", () => {
     const apoio = REGUA_DE_CREDITOS.find((nivel) => nivel.id === "apoio");
     expect(apoio?.marcas.map((marca) => marca.id)).toEqual([
       "funcap",
-      "secretaria-especial-cultura",
-      "governo-sergipe",
+      "secretaria-sergipe",
     ]);
   });
 
@@ -215,7 +234,7 @@ describe("as entidades nomeadas", () => {
     "Governo do Estado de Sergipe",
     "Secretaria Especial da Cultura",
     "Sistema Nacional de Cultura",
-    "Governo Federal",
+    "Governo do Brasil",
   ])("%s é nomeada na régua", (entidade) => {
     expect(nomes).toContain(entidade);
   });
@@ -334,7 +353,9 @@ describe("uma fonte, dois consumidores", () => {
       const servido = ler(caminho)
         .replace(/\/\*[\s\S]*?\*\//g, " ")
         .replace(/^\s*\/\/.*$/gm, " ");
-      expect(servido).not.toMatch(/FUNCAP|PNAB|Aldir Blanc|Governo Federal/);
+      expect(servido).not.toMatch(
+        /FUNCAP|PNAB|Aldir Blanc|Governo Federal|Governo do Brasil/,
+      );
     },
   );
 

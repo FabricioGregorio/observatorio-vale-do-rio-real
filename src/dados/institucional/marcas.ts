@@ -62,7 +62,7 @@ export type MarcaDerivada = z.infer<typeof marcaDerivadaSchema>;
 
 export const MARCAS_DERIVADAS: readonly MarcaDerivada[] = z
   .array(marcaDerivadaSchema)
-  .length(6)
+  .length(5)
   .parse(bruto);
 
 /** Caminho público das marcas, servido de `public/media/marcas`. */

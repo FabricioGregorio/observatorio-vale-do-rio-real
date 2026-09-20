@@ -70,7 +70,7 @@ test.describe("estrutura da página de comprovação", () => {
    * dois blocos e a ordem deles vêm dos manuais oficiais de uso de marca —
    * ver `componentes/institucional/creditos.ts`.
    */
-  test("a régua de créditos é ordenada e fecha no Governo Federal", async ({
+  test("a régua de créditos é ordenada e fecha no Governo do Brasil", async ({
     page,
   }) => {
     /*
@@ -82,21 +82,23 @@ test.describe("estrutura da página de comprovação", () => {
     await expect(regua).toHaveCount(1);
     expect(await regua.evaluate((el) => el.tagName)).toBe("OL");
     await expect(regua.locator("> li")).toHaveCount(2);
-    await expect(regua.locator("> li").last()).toContainText("Governo Federal");
+    await expect(regua.locator("> li").last()).toContainText(
+      "Governo do Brasil",
+    );
   });
 
   /**
-   * As seis marcas oficiais entram aqui desde 2026-09-20, quando os manuais
+   * As cinco assinaturas oficiais entram aqui desde 2026-09-20, quando os manuais
    * foram localizados e lidos. Até então a régua era só texto, e este teste
    * exigia zero imagens — o que estava certo enquanto a aplicação não tinha
    * regra documental para seguir.
    *
-   * O que ele passa a exigir é que as marcas venham **do manifesto**: seis,
+   * O que ele passa a exigir é que as marcas venham **do manifesto**: cinco,
    * servidas de `/media/marcas`, e nenhuma de outra origem.
    */
-  test("os créditos aplicam as seis marcas do manifesto", async ({ page }) => {
+  test("os créditos aplicam as cinco marcas do manifesto", async ({ page }) => {
     const marcas = page.locator("main .regua__marca");
-    await expect(marcas).toHaveCount(6);
+    await expect(marcas).toHaveCount(5);
     const origens = await marcas.evaluateAll((imagens) =>
       imagens.map((img) => img.getAttribute("src") ?? "?"),
     );
