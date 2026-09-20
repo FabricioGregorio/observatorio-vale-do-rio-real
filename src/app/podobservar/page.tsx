@@ -68,6 +68,12 @@ export default async function PaginaPodObservar() {
               uma linguagem clara e acessível.
             </p>
             <p className="mt-4 max-w-prose">
+              Um relatório técnico não é lido por quem mora ao lado do lugar que
+              ele descreve. O podcast existe para isso: é por onde a pesquisa
+              volta ao território em forma de história, com as estradas, os
+              povoados e as pessoas que ela encontrou pelo caminho.
+            </p>
+            <p className="mt-4 max-w-prose">
               Os episódios são ouvidos no Spotify. Aqui ficam a apresentação de
               cada um e a transcrição revisada completa, para quem prefere ler
               ou não pode ouvir.
@@ -85,6 +91,13 @@ export default async function PaginaPodObservar() {
         <h2 className="mt-2 text-2xl" id="pod-episodios-titulo">
           Todos os episódios publicados
         </h2>
+        <p className="mt-4 max-w-prose">
+          A primeira temporada acompanha a primeira pesquisa do Observatório: os
+          potenciais ecoturísticos e culturais do Vale do Rio Real, lidos pela
+          economia solidária, pela preservação ambiental e pela cultura local.
+          Ela começa pelo território e pelo coletivo que o pesquisa, e segue
+          pelos lugares acompanhados de perto.
+        </p>
 
         {episodios.length === 0 ? (
           <p className="pod-vazio mt-6">

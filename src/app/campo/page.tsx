@@ -56,7 +56,7 @@ export const metadata = metadadosDaRota({
  * conjunto e o caminho para o acervo: omiti-lo afirmaria que não houve
  * registro, e houve.
  *
- * ## O gate
+ * ## O critério de publicação
  *
  * O conjunto só é apresentado quando ele **está** no acervo público, resolvido
  * em build contra `vw_anexo_publico`. Sem isso a página mostra o estado vazio
@@ -82,7 +82,7 @@ export default async function PaginaCampo() {
       termo: "Estado",
       valor: conjuntoPublico
         ? "Conjunto publicado no acervo, com hash por arquivo"
-        : "Conjunto não resolvido nesta compilação",
+        : "Conjunto ainda sem ficha pública no acervo",
     },
   ];
 
@@ -119,7 +119,7 @@ export default async function PaginaCampo() {
             <p className="doc-guia">
               {lugar.noConjunto === 0
                 ? "Este lugar ainda não tem fotografia no conjunto público."
-                : `As ${lugar.noConjunto} fotografias deste lugar estão no conjunto publicado no acervo. Nenhuma delas foi derivada para exibição nesta página.`}
+                : `As ${lugar.noConjunto} fotografias deste lugar estão no conjunto publicado no acervo, e podem ser vistas ali, uma a uma.`}
             </p>
           ) : (
             <>
@@ -213,8 +213,9 @@ export default async function PaginaCampo() {
           </p>
         ) : (
           <p className="doc-guia">
-            O conjunto não está resolvido nesta compilação, e por isso nenhum
-            link é construído para ele.
+            O conjunto ainda não tem ficha pública no acervo. Enquanto não
+            tiver, esta página não oferece um caminho que levaria a lugar
+            nenhum.
           </p>
         )}
       </SecaoDocumental>

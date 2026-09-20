@@ -46,7 +46,8 @@ export const SINTESE =
 
 export const ABERTURA: readonly string[] = [
   "Chegar a alguns destes lugares fez parte da pesquisa. Estrada de terra, ponte de madeira sobre riacho e, no caso de Ilha Grande, travessia de barco — o percurso não é anedota de bastidor, é condição de acesso ao equipamento cultural, e é uma das coisas que o campo veio medir.",
-  "As fotografias abaixo são comprovação documental, não ilustração. Cada uma tem texto alternativo, procedência declarada e crédito quando a autoria é de terceiro. As que aparecem aqui são uma seleção; o conjunto inteiro está no acervo, arquivo por arquivo, com hash de integridade.",
+  "A visitação foi mensal, e é por isso que estas imagens existem. Entre uma visita e a seguinte a paisagem mudava: um museu que estava em obra abria à visitação, um terreno dos fundos virava área de observação da natureza, um chalé ganhava alicerce. O formulário registra quanto entrou e quanto saiu; a fotografia registra o que o formulário não alcança.",
+  "Por isso as imagens abaixo são comprovação documental, e não ilustração. Cada uma tem texto alternativo, procedência declarada e crédito quando a autoria é de terceiro. As que aparecem aqui são uma seleção; o conjunto inteiro está no acervo, arquivo por arquivo, com hash de integridade.",
 ];
 
 /** Slug do conjunto fotográfico no acervo. */
