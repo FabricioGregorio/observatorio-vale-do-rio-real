@@ -149,18 +149,26 @@ export const SIMBOLO_OBSERVATORIO = {
   alt: "Símbolo oficial do Observatório: telescópio, serra e caminho",
 } as const;
 
-/** Ícone oficial escolhido exclusivamente para o cabeçalho do site. */
+/**
+ * Ícone oficial escolhido exclusivamente para o cabeçalho do site.
+ *
+ * Republicado em WebP sem perda em 2026-09-19. O PNG anterior tinha 11.299
+ * bytes — saía do `canvas.toDataURL` do Chromium, que grava RGBA sem otimizar.
+ * Os pixels são os mesmos: `derivar-icone-observatorio.ts` decodifica o arquivo
+ * gravado e falha se uma amostra divergir do redimensionamento. Como a marca
+ * está no cabeçalho, os 3.807 bytes economizados valem em toda página.
+ */
 export const ICONE_OBSERVATORIO_CABECALHO = {
-  arquivo: "observatorio-icone-oficial-96.png",
+  arquivo: "observatorio-icone-oficial-96.webp",
   origem: "identidade-visual/observatorio/icon.png",
   sha256Original:
     "20722639dba1b44885121e72fda6b7c1749f0607047215c513817d3619a1881f",
   largura: 96,
   altura: 96,
-  bytes: 11_299,
-  sha256: "566a5a07bef4c6207e3bf36238ff5dfe8cc89b9ab13adf05b7f2b553fbc177b9",
+  bytes: 7_492,
+  sha256: "d0bd0db9b4450db9d87fb9d8dff6213020d3d2e292bd360f420cc3a1d0941df5",
   transformacao:
-    "redimensionamento integral de 565x565 para 96x96 em PNG, sem recorte, recoloração ou fundo acrescentado",
+    "redimensionamento integral de 565x565 para 96x96 e codificação WebP sem perda, sem recorte, recoloração ou fundo acrescentado",
   alt: "Símbolo oficial do Observatório: telescópio voltado para o céu sobre a serra e um caminho",
 } as const;
 

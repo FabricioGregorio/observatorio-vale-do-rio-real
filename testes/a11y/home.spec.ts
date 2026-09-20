@@ -155,7 +155,7 @@ test.describe("Home", () => {
     await page.goto("/");
     const cabecalho = page.locator("#cabecalho-home");
     await expect(
-      cabecalho.locator('img[src$="observatorio-icone-oficial-96.png"]'),
+      cabecalho.locator('img[src$="observatorio-icone-oficial-96.webp"]'),
     ).toHaveCount(1);
     await expect(
       cabecalho.locator('img[src$="observatorio-monocromatica-escura.svg"]'),
