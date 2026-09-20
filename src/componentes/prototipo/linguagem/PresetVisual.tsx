@@ -4,7 +4,7 @@ import {
   PASTA_PUBLICA_DA_PESQUISA,
 } from "../../../dados/pesquisa/derivados";
 import type { DadosDoMapa } from "../../../dados/territorio/mapa";
-import { DEFINICAO_VALE_DO_RIO_REAL } from "../../../dados/territorio/recorte";
+import { RESUMO_PUBLICO_DO_VALE } from "../../../dados/territorio/recorte";
 
 /**
  * Cruz de registro — família cartográfica.
@@ -78,7 +78,7 @@ export function PresetVisual({
             <h2 id={`territorio-${preset}`}>
               Cartografia viva do Vale do Rio Real
             </h2>
-            <p>{DEFINICAO_VALE_DO_RIO_REAL}</p>
+            <p>{RESUMO_PUBLICO_DO_VALE}</p>
             <details>
               <summary>Municípios do recorte</summary>
               <ul>

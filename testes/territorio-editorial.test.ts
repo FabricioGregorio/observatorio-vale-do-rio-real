@@ -1,3 +1,5 @@
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -6,6 +8,11 @@ import {
   DEFINICOES,
   LUGARES_EDITORIAIS,
 } from "../src/componentes/home/recortes";
+import {
+  ABERTURA_DO_TERRITORIO,
+  TERRITORIO,
+} from "../src/componentes/observatorio/conteudo";
+import { RESUMO_PUBLICO_DO_VALE } from "../src/dados/territorio/recorte";
 import {
   IDS_DOS_LUGARES,
   REFERENCIAS_TERRITORIAIS,
@@ -58,6 +65,85 @@ describe("texto recusado pela equipe", () => {
     "município não consolidado",
   ])("não reintroduz %j", (trecho) => {
     expect(TODO_O_TEXTO).not.toContain(trecho);
+  });
+});
+
+/**
+ * A recusa vale para **toda** superfície pública, e não só para a Home.
+ *
+ * Até 2026-09-20 a trava acima olhava apenas `ALVOS_EDITORIAIS`. `/territorio`
+ * e `/observatorio` serviam `DEFINICAO_VALE_DO_RIO_REAL` literalmente, e
+ * passavam por fora dela — foi assim que a formulação recusada voltou ao ar
+ * numa página institucional. A constante continua existindo como nota
+ * metodológica interna; o que não pode é chegar ao HTML.
+ */
+describe("a formulação recusada não alcança superfície pública", () => {
+  const RAIZ = "src";
+  const DONA_DA_CONSTANTE = join("src", "dados", "territorio", "recorte.ts");
+
+  function arquivosDeCodigo(pasta: string): string[] {
+    return readdirSync(pasta, { withFileTypes: true }).flatMap((entrada) => {
+      const caminho = join(pasta, entrada.name);
+      if (entrada.isDirectory()) return arquivosDeCodigo(caminho);
+      return /\.tsx?$/.test(entrada.name) ? [caminho] : [];
+    });
+  }
+
+  /*
+    Comentário não vai para o HTML, e explicar por que a frase saiu é
+    justamente o que mantém a decisão legível daqui a um ano. A trava olha o
+    código servido, não a documentação dele.
+  */
+  function semComentarios(fonte: string): string {
+    return fonte
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/^\s*\/\/.*$/gm, " ");
+  }
+
+  const CODIGO = arquivosDeCodigo(RAIZ).map((caminho) => ({
+    caminho,
+    fonte: semComentarios(readFileSync(caminho, "utf8")),
+  }));
+
+  it("nenhum componente ou rota importa a nota metodológica interna", () => {
+    const consumidores = CODIGO.filter(
+      ({ caminho, fonte }) =>
+        caminho !== DONA_DA_CONSTANTE &&
+        fonte.includes("DEFINICAO_VALE_DO_RIO_REAL"),
+    ).map(({ caminho }) => caminho);
+    expect(consumidores).toEqual([]);
+  });
+
+  it("nenhuma fonte de `src/` repete a frase recusada à mão", () => {
+    const reincidentes = CODIGO.filter(
+      ({ caminho, fonte }) =>
+        caminho !== DONA_DA_CONSTANTE &&
+        (fonte.includes("Não é divisão administrativa oficial") ||
+          fonte.includes(
+            "Região socioeconômica associada ao curso superior e médio",
+          )),
+    ).map(({ caminho }) => caminho);
+    expect(reincidentes).toEqual([]);
+  });
+
+  it("o resumo público do Vale afirma, e não nega", () => {
+    expect(RESUMO_PUBLICO_DO_VALE).not.toContain("Não é");
+    expect(RESUMO_PUBLICO_DO_VALE).not.toContain("não é");
+    expect(RESUMO_PUBLICO_DO_VALE.length).toBeGreaterThan(60);
+  });
+
+  it("o texto territorial de /observatorio segue a grafia da equipe", () => {
+    const texto = [ABERTURA_DO_TERRITORIO, ...TERRITORIO].join(" ");
+    expect(texto).toContain("Itanhi");
+    expect(texto).not.toContain("Itanhy");
+    expect(texto).not.toContain("divisão administrativa");
+  });
+
+  it("/observatorio não repete parágrafo da seção III da Home", () => {
+    const daHome = new Set(DEFINICOES.flatMap((d) => d.paragrafos));
+    for (const paragrafo of TERRITORIO) {
+      expect(daHome.has(paragrafo), paragrafo.slice(0, 50)).toBe(false);
+    }
   });
 });
 

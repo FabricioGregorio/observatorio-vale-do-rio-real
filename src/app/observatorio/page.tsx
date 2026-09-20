@@ -1,7 +1,7 @@
 import type { Route } from "next";
 import Link from "next/link";
 import {
-  DEFINICAO_DO_VALE,
+  ABERTURA_DO_TERRITORIO,
   EDITAL,
   EPISODIO_DA_ORIGEM,
   MUNICIPIOS_DE_COMPARACAO,
@@ -167,9 +167,9 @@ export default function PaginaObservatorio() {
           <p className="meta-ficha obs-secao__rotulo">Território</p>
           <div className="obs-secao__corpo">
             <h2 id="obs-territorio-titulo">
-              O recorte não é um mapa administrativo
+              O território que o Observatório escolheu olhar
             </h2>
-            <p className="obs-definicao">{DEFINICAO_DO_VALE}</p>
+            <p className="obs-definicao">{ABERTURA_DO_TERRITORIO}</p>
             {TERRITORIO.map((paragrafo) => (
               <p key={paragrafo}>{paragrafo}</p>
             ))}
@@ -190,7 +190,7 @@ export default function PaginaObservatorio() {
                   ))}
                 </ul>
                 <p className="obs-recorte__nota">
-                  Fora do Vale e dentro da pesquisa: entrou como terceiro ponto
+                  Dentro da pesquisa e fora do Vale: entrou como terceiro ponto
                   de comparação de políticas públicas de cultura.
                 </p>
               </div>

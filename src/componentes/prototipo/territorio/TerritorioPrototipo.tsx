@@ -1,5 +1,5 @@
 import type { DadosDoMapa } from "../../../dados/territorio/mapa";
-import { DEFINICAO_VALE_DO_RIO_REAL } from "../../../dados/territorio/recorte";
+import { RESUMO_PUBLICO_DO_VALE } from "../../../dados/territorio/recorte";
 import {
   CLASSE_RAIZ,
   CSS_DO_MAPA,
@@ -297,7 +297,7 @@ export function TerritorioPrototipo({
                 Real em um arquivo público. A cartografia parte de Sergipe
                 inteiro e evidencia as relações territoriais já documentadas.
               </p>
-              <p>{DEFINICAO_VALE_DO_RIO_REAL}</p>
+              <p>{RESUMO_PUBLICO_DO_VALE}</p>
               <p className="meta-ficha">
                 Uma iniciativa do Coletivo Cultural “Tobias, sou Eu!”
               </p>
@@ -310,7 +310,7 @@ export function TerritorioPrototipo({
                 A cartografia apresenta os 75 municípios de Sergipe e distingue
                 as relações territoriais declaradas no projeto.
               </p>
-              <p>{DEFINICAO_VALE_DO_RIO_REAL}</p>
+              <p>{RESUMO_PUBLICO_DO_VALE}</p>
               <p className="meta-ficha territorio-cartografico__assinatura">
                 Idealizado e realizado pelo Coletivo Cultural “Tobias, sou Eu!”
               </p>

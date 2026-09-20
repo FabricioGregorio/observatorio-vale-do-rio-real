@@ -27,8 +27,8 @@
  */
 
 import {
-  DEFINICAO_VALE_DO_RIO_REAL,
   RECORTE_TERRITORIAL,
+  RESUMO_PUBLICO_DO_VALE,
 } from "../../dados/territorio/recorte";
 import {
   ACOMPANHAMENTO,
@@ -165,8 +165,15 @@ export const VINCULOS: readonly {
   },
 ];
 
-/** Definição do Vale, palavra por palavra como a camada territorial a declara. */
-export const DEFINICAO_DO_VALE = DEFINICAO_VALE_DO_RIO_REAL;
+/**
+ * Abertura do território — a linha editorial aprovada, e não a metodológica.
+ *
+ * Até 2026-09-20 esta página servia `DEFINICAO_VALE_DO_RIO_REAL`, que define o
+ * Vale por negação administrativa. A equipe já tinha recusado essa formulação
+ * para o texto público; a trava existia só para a seção III da Home, e esta
+ * rota passou por fora dela.
+ */
+export const ABERTURA_DO_TERRITORIO = RESUMO_PUBLICO_DO_VALE;
 
 /** Municípios do recorte, derivados — nunca listados à mão. */
 export const MUNICIPIOS_DO_VALE = RECORTE_TERRITORIAL.filter((municipio) =>
@@ -177,10 +184,24 @@ export const MUNICIPIOS_DE_COMPARACAO = RECORTE_TERRITORIAL.filter(
   (municipio) => municipio.relacoesTerritoriais.includes("comparacao"),
 );
 
+/**
+ * O território como ele é vivido e pesquisado — base factual nas transcrições
+ * revisadas do PodObservar, EP01.
+ *
+ * Redação própria, e não cópia da seção III da Home. As duas contam o mesmo
+ * território e respondem a perguntas diferentes: a Home abre a cartografia e
+ * enumera a vocação de cada cidade; aqui a pergunta é **por que este recorte**
+ * é o território do Observatório. Enumerar de novo o bordado, a moda, o
+ * celeiro, as pedras e os Kiriris seria repetir a Home sem acrescentar.
+ *
+ * `Itanhi`, e não `Itanhy`: grafia decidida pela equipe para o texto
+ * editorial do site. A transcrição, que é documento, permanece como está no
+ * corpus.
+ */
 export const TERRITORIO: readonly string[] = [
-  "O Vale do Rio Real atravessa Sergipe e a Bahia. Antes de se chamar Real, o rio era o Itanhy: o nome mudou quando a família real portuguesa, de passagem, acampou às suas margens.",
-  "As cidades do recorte não se reconhecem vizinhas apenas por dividirem o rio. O que as liga vem da história dos povos originários do território e das antigas rotas comerciais de sertanejos e tropeiros — e continua vivo na articulação por conta própria de fazedores de cultura dos dois estados.",
-  "O Observatório pesquisa dentro desse recorte. Não foi ele quem o desenhou.",
+  "O rio foi chamado Itanhi pelos povos originários, e passou a Real depois que a família real portuguesa acampou em suas margens. Dessa história, e das antigas rotas comerciais de sertanejos e tropeiros, vêm os laços que as cidades do recorte reconhecem entre si.",
+  "Quando o Observatório chegou, fazedores de cultura dos dois estados já se articulavam por conta própria, no Movimento Turístico Cultural do Vale do Rio Real. O recorte que a pesquisa percorre é esse: construído no território, e não desenhado de fora.",
+  "Cada cidade entra nele com vocação própria, e é no mapa que essa diferença se lê lugar a lugar — junto dos quatro pontos onde a pesquisa esteve em campo.",
 ];
 
 /**

@@ -15,13 +15,36 @@ import type { RelacaoTerritorial } from "./tipos";
  */
 
 /**
- * O Vale do Rio Real é uma **região socioeconômica** associada ao curso
- * superior e médio do rio Real — não uma divisão administrativa oficial. O
- * projeto não cria divisão geográfica nova: destaca os municípios do recorte
- * que utiliza.
+ * Delimitação metodológica do recorte — **nota interna, não renderizável**.
+ *
+ * O Vale do Rio Real é uma região socioeconômica associada ao curso superior e
+ * médio do rio Real, e não uma divisão administrativa oficial. O projeto não
+ * cria divisão geográfica nova: destaca os municípios do recorte que utiliza.
+ * Isso continua verdadeiro e continua sendo o que sustenta esta camada.
+ *
+ * O que mudou é onde a frase pode aparecer. A equipe recusou definir o Vale
+ * por negação administrativa em texto público: o território é apresentado como
+ * vivido e pesquisado, e a precisão metodológica, quando precisa existir, é
+ * secundária. A recusa já estava travada para a seção III da Home
+ * (`testes/territorio-editorial.test.ts`) e não alcançava `/territorio` nem
+ * `/observatorio`, que serviam esta string literalmente.
+ *
+ * Para texto público use `RESUMO_PUBLICO_DO_VALE`. Um teste confere que
+ * nenhuma superfície pública volta a renderizar esta constante.
  */
 export const DEFINICAO_VALE_DO_RIO_REAL =
   "Região socioeconômica associada ao curso superior e médio do rio Real. Não é divisão administrativa oficial.";
+
+/**
+ * O Vale como território vivido, na linha editorial aprovada para a seção III
+ * da Home e sustentada pelas transcrições revisadas do PodObservar.
+ *
+ * Diz o que liga as cidades — o rio, as rotas que as atravessaram, o que
+ * circula entre elas —, sem definir o recorte por aquilo que ele não é. É a
+ * única frase de abertura do Vale que pode ser servida ao público.
+ */
+export const RESUMO_PUBLICO_DO_VALE =
+  "Um território de travessia: cidades de Sergipe e da Bahia ligadas pelo rio, pelas rotas antigas que as atravessaram e pelo que circula entre elas hoje.";
 
 export type MunicipioDoRecorte = {
   /**

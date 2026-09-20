@@ -1,5 +1,5 @@
 import type { ArquivosPublicados } from "../../../dados/materiais-de-campo";
-import { DEFINICAO_VALE_DO_RIO_REAL } from "../../../dados/territorio/recorte";
+import { RESUMO_PUBLICO_DO_VALE } from "../../../dados/territorio/recorte";
 import type { PosicaoConfirmada } from "../../../dados/territorio/referencias";
 import { caminhoDoPin } from "../../mapa/caminhoDoPin";
 import { CSS_DO_TERRITORIO_VIVO } from "./estilos";
@@ -677,7 +677,7 @@ export function TerritorioVivo({
           >
             <p className="meta-ficha">Visão geral</p>
             <h2 id="tv-painel-vale-titulo">Vale do Rio Real</h2>
-            <p className="tv__resumo">{DEFINICAO_VALE_DO_RIO_REAL}</p>
+            <p className="tv__resumo">{RESUMO_PUBLICO_DO_VALE}</p>
             <section>
               <h3>O recorte</h3>
               <p>{doVale.map((m) => m.nome).join(", ")}.</p>
