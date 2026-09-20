@@ -69,15 +69,19 @@
   border-bottom: 1px solid var(--pc-fio);
 }
 
+/* Mesma escala das demais aberturas do site. O `preflight` do Tailwind zera o
+   tamanho dos títulos, e sem esta linha o h1 saía menor que a síntese. */
 .pc-abertura h1 {
   margin: 0;
+  max-width: 14ch;
+  font-size: clamp(var(--text-3xl), 8vw, var(--text-5xl));
 }
 
 .pc-abertura__sintese {
   margin: 0;
-  max-width: 54ch;
-  font-size: clamp(var(--text-lg), 2.4vw, var(--text-xl));
-  line-height: 1.45;
+  max-width: 56ch;
+  font-size: clamp(var(--text-base), 2.4vw, var(--text-lg));
+  line-height: 1.5;
 }
 
 /* Ficha de identificação: pares termo/valor em duas colunas quando cabe.

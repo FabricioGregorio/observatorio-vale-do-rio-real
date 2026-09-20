@@ -1,27 +1,120 @@
+import Link from "next/link";
+
+import {
+  ACOMPANHAMENTO,
+  COLETIVO,
+  CONTATO_ABERTURA,
+  CONTATO_CANAIS,
+  CONTATO_PENDENCIA,
+  CONTATO_SINTESE,
+  EDITAL,
+  NOME_OFICIAL,
+} from "../../componentes/institucional/conteudo";
+import {
+  AberturaDocumental,
+  Documento,
+  ItemVerificavel,
+  SecaoDocumental,
+} from "../../componentes/institucional/Documento";
 import { metadadosDaRota } from "../../lib/site-url";
 
 export const metadata = metadadosDaRota({
   pathname: "/contato",
   titulo: "Contato — Observatório do Vale do Rio Real",
+  descricao:
+    "Identificação institucional do Observatório do Vale do Rio Real e o " +
+    "que existe hoje como forma de chegar ao projeto.",
 });
 
 /**
- * Stub de rota — Tarefa 03.
+ * `/contato` — o que existe, dito sem preencher a lacuna.
  *
- * Existe para que o destino de navegação exista de fato: com
- * `typedRoutes: true`, um `<Link>` para rota inexistente reprova em
- * `pnpm tipos`. A alternativa seria `as Route`, que anularia a checagem, ou
- * desligar `typedRoutes` — ambas proibidas.
+ * A auditoria de completude editorial registrou que **nenhum canal
+ * institucional publicável foi localizado** no repositório nem na fonte
+ * canônica: o campo de e-mail do banco é interno e nunca renderizado, o
+ * domínio não recebe correio, e o perfil do Instagram não deve virar canal
+ * oficial por inferência.
  *
- * Traz apenas estrutura: título e estado vazio explícito. **Nenhum conteúdo
- * institucional inventado** — texto de apresentação, missão ou dado de
- * pesquisa entram quando houver fonte, nunca por estimativa (AGENTS.md).
+ * Um e-mail publicado aqui teria de existir e ter alguém do outro lado.
+ * Inventar um não seria um detalhe de interface: seria criar um endereço para
+ * onde mensagens sobre um projeto de recurso público iriam se perder.
+ *
+ * Então a página faz três coisas que são verdadeiras: identifica o projeto,
+ * mostra o que já funciona sem intermediário — o acervo aberto, que responde
+ * à razão mais comum de alguém escrever —, e **declara a lacuna** em vez de
+ * escondê-la. O perfil do Instagram aparece pelo que ele é, registrado no
+ * inventário, e com a ressalva de que não é canal de atendimento.
+ *
+ * Server Component sem consulta ao banco e **sem formulário**: não há
+ * destinatário, e um formulário sem destinatário é pior que um endereço
+ * inventado.
  */
-export default function Pagina() {
+export default function PaginaContato() {
+  const identificacao = [
+    { termo: "Projeto", valor: NOME_OFICIAL },
+    { termo: "Realização", valor: COLETIVO },
+    { termo: "Fomento", valor: EDITAL },
+    { termo: "Prestação de contas", valor: ACOMPANHAMENTO },
+  ];
+
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-12">
-      <h1>Contato</h1>
-      <p>Esta seção ainda não tem conteúdo publicado.</p>
-    </div>
+    <Documento>
+      <AberturaDocumental
+        rotulo="Contato institucional"
+        sintese={CONTATO_SINTESE}
+        titulo="Contato"
+      >
+        <p className="doc-abertura__nota">{CONTATO_ABERTURA}</p>
+      </AberturaDocumental>
+
+      <SecaoDocumental
+        id="ct-identificacao"
+        rotulo="Identificação"
+        titulo="De quem é este projeto"
+      >
+        <dl className="doc-ficha">
+          {identificacao.map((linha) => (
+            <div key={linha.termo}>
+              <dt>{linha.termo}</dt>
+              <dd>{linha.valor}</dd>
+            </div>
+          ))}
+        </dl>
+        <p className="doc-guia">
+          O histórico do Coletivo e a origem do Observatório estão em{" "}
+          <Link href="/observatorio" prefetch={false}>
+            O Observatório
+          </Link>
+          .
+        </p>
+      </SecaoDocumental>
+
+      <SecaoDocumental
+        id="ct-canais"
+        rotulo="O que existe"
+        titulo="Como chegar ao projeto hoje"
+      >
+        <ul className="doc-itens">
+          {CONTATO_CANAIS.map((canal) => (
+            <ItemVerificavel
+              key={canal.titulo}
+              prova={canal.prova}
+              texto={canal.texto}
+              titulo={canal.titulo}
+            />
+          ))}
+        </ul>
+      </SecaoDocumental>
+
+      <SecaoDocumental
+        id="ct-pendencia"
+        rotulo="O que falta"
+        titulo="Canal de atendimento: pendente de decisão"
+      >
+        <div className="doc-leitura">
+          <p>{CONTATO_PENDENCIA}</p>
+        </div>
+      </SecaoDocumental>
+    </Documento>
   );
 }

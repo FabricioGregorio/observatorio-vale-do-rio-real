@@ -1,0 +1,305 @@
+/*
+  Superfície documental — as páginas institucionais curtas.
+
+  `/acessibilidade`, `/privacidade`, `/contato`, `/imprensa`, `/campo` e
+  `/educacao` têm a mesma forma: uma coluna de leitura com margem de ficha à
+  esquerda no desktop, rótulo em mono de um lado e texto do outro. É a família
+  de `/observatorio` e de `/prestacao-de-contas`, e existe uma folha só porque
+  seis folhas iguais seriam seis lugares para divergir.
+
+  Cor, família, raio e espessura saem de `tokens.css`; nenhum hex entra aqui.
+
+  ## O que esta folha recusa
+
+  Cartão com sombra, ícone decorativo, selo de conformidade e cor de status.
+  São páginas que afirmam coisas verificáveis sobre um projeto de recurso
+  público: o que separa blocos é filete.
+*/
+
+.doc {
+  --doc-fio: color-mix(
+    in srgb,
+    var(--color-borda-forte) 45%,
+    var(--color-fundo)
+  );
+  --doc-respiro: clamp(2.25rem, 5vw, 3.5rem);
+  margin-inline: auto;
+  width: min(100% - 2rem, var(--largura-conteudo));
+  display: flex;
+  flex-direction: column;
+  padding-bottom: clamp(3rem, 7vw, 5rem);
+}
+
+.doc a {
+  color: var(--color-link);
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+}
+.doc a:hover {
+  color: var(--color-link-hover);
+}
+
+.doc h2 {
+  margin: 0;
+  max-width: 26ch;
+  font-size: clamp(var(--text-xl), 3.6vw, var(--text-2xl));
+}
+.doc h3 {
+  margin: 0;
+  font-size: var(--text-lg);
+}
+
+/* ---------------------------------------------------------------- abertura */
+
+.doc-abertura {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding-block: clamp(2.5rem, 6vw, 4rem) var(--doc-respiro);
+  border-bottom: 1px solid var(--doc-fio);
+}
+
+/* Mesma escala de título das demais aberturas do site (`dados.css`,
+   `observatorio.css`). O `preflight` do Tailwind zera o tamanho dos títulos,
+   então cada superfície declara o seu — e o h1 precisa ser maior que a
+   síntese, ou a hierarquia se inverte na tela. */
+.doc-abertura h1 {
+  margin: 0;
+  max-width: 14ch;
+  font-size: clamp(var(--text-3xl), 8vw, var(--text-5xl));
+}
+
+.doc-abertura__sintese {
+  margin: 0;
+  max-width: 56ch;
+  font-size: clamp(var(--text-base), 2.4vw, var(--text-lg));
+  line-height: 1.5;
+}
+
+.doc-abertura__nota {
+  margin: 0;
+  max-width: 66ch;
+  line-height: 1.6;
+}
+
+/* ------------------------------------------------------------------ seções */
+
+.doc-secao {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.9rem;
+  padding-block: var(--doc-respiro);
+  border-bottom: 1px solid var(--doc-fio);
+}
+
+.doc-secao:last-of-type {
+  border-bottom: 0;
+}
+
+.doc-secao__rotulo {
+  margin: 0;
+}
+
+.doc-secao__corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+@media (width >= 60rem) {
+  .doc-secao {
+    grid-template-columns: 10rem minmax(0, 1fr);
+    gap: 0 2.5rem;
+  }
+  .doc-secao__rotulo {
+    padding-top: 0.35rem;
+  }
+}
+
+.doc-leitura {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.doc-leitura p,
+.doc-guia {
+  margin: 0;
+  max-width: 66ch;
+  line-height: 1.6;
+}
+
+.doc-guia {
+  color: var(--color-texto-suave);
+}
+
+/* ------------------------------------------------------- listas de afirmação
+
+   Cada item é uma afirmação sobre o site com a sua prova ao lado. O filete à
+   esquerda é o mesmo recurso das pendências da Prestação de Contas: separa sem
+   encaixotar. */
+
+.doc-itens {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doc-item {
+  border-inline-start: 2px solid var(--color-borda-forte);
+  padding-inline-start: 1rem;
+}
+
+.doc-item p {
+  margin: 0.25rem 0 0;
+  max-width: 62ch;
+  line-height: 1.55;
+}
+
+.doc-item__prova {
+  margin-top: 0.35rem;
+  color: var(--color-texto-suave);
+  font-size: var(--text-sm);
+}
+
+/* ------------------------------------------------------------------- ficha
+
+   Pares termo/valor. `dl` porque são pares, não uma matriz. */
+
+.doc-ficha {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.85rem 2.5rem;
+  margin: 0;
+  padding: 0;
+}
+
+.doc-ficha > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  border-top: 1px solid var(--doc-fio);
+  padding-top: 0.55rem;
+}
+
+.doc-ficha dt {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+}
+
+.doc-ficha dd {
+  margin: 0;
+  max-width: 48ch;
+  line-height: 1.45;
+}
+
+@media (width >= 48rem) {
+  .doc-ficha {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ------------------------------------------------------------------ fichas
+
+   Grade de cartões separados por filete, como as entregas da Prestação de
+   Contas: `gap: 1px` sobre fundo de filete desenha a grade inteira. */
+
+.doc-cartoes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background-color: var(--doc-fio);
+  border: 1px solid var(--doc-fio);
+  border-radius: var(--radius-ficha);
+  overflow: hidden;
+}
+
+.doc-cartao {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1.15rem 1.25rem 1.35rem;
+  background-color: var(--color-fundo);
+}
+
+.doc-cartao p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.doc-cartao__medida {
+  margin: 0;
+}
+
+.doc-cartao__acao {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  font-size: var(--text-sm);
+}
+
+/* ---------------------------------------------------------------- galeria
+
+   Fotografias de campo. `figure` com legenda visível: a fotografia é prova
+   documental, e prova sem procedência é ilustração. */
+
+.doc-galeria {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doc-foto {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.doc-foto img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-ficha);
+  background-color: var(--color-fundo-elevado);
+}
+
+.doc-foto figcaption {
+  line-height: 1.5;
+  font-size: var(--text-sm);
+}
+
+.doc-foto__credito {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--color-texto-suave);
+}
+
+/* ------------------------------------------------------------------- fecho */
+
+.doc-fecho {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: var(--doc-respiro);
+  border-top: 1px solid var(--doc-fio);
+  padding-top: 1.5rem;
+}
+
+.doc-fecho p {
+  margin: 0;
+  max-width: 66ch;
+  line-height: 1.6;
+}
