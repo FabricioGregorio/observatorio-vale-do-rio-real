@@ -40,6 +40,8 @@ export const ACOMPANHAMENTO = "FUNCAP — Sergipe";
  * que fez a ficha do Borda da Mata afirmar "restrito" depois de o relatório
  * ter sido publicado.
  */
+import type { ArquivosPublicados } from "../../dados/materiais-de-campo";
+
 export {
   type EstadoDoMaterial,
   ROTULO_DO_ESTADO,
@@ -109,6 +111,20 @@ export type Entrevista = {
    * como lacuna, não como suposição.
    */
   readonly municipio: string | null;
+  /**
+   * `documento.slug` do acervo que guarda esta entrevista.
+   *
+   * Existe para que o estado de cada uma seja **resolvido**, e não afirmado:
+   * quem tem arquivo em `vw_anexo_publico` está público, quem não tem,
+   * não está. Até 2026-09-19 a Home afirmava em texto fixo que os áudios e as
+   * transcrições seguiam restritos; as oito já estavam públicas havia dias, e
+   * a frase só não era desmentida por não haver nada ligando a ficha ao
+   * documento. É esse elo que falta aqui.
+   *
+   * A correspondência é declarada, nunca inferida de nome: três delas já
+   * apareciam em `dados/materiais-de-campo.ts`, pelos mesmos slugs.
+   */
+  readonly documento: string;
 };
 
 /**
@@ -122,20 +138,68 @@ export type Entrevista = {
  * 2026-09-19.
  */
 export const ENTREVISTAS: readonly Entrevista[] = [
-  { numero: "01", onde: "Secretaria de Cultura", municipio: "Tobias Barreto" },
+  {
+    numero: "01",
+    onde: "Secretaria de Cultura",
+    municipio: "Tobias Barreto",
+    documento: "entrevista-josenilson-bispo",
+  },
   {
     numero: "02",
     onde: "Centro Cultural e Museu Borda da Mata",
     municipio: "Tobias Barreto",
+    documento: "entrevista-oviedo-e-neide-abreu",
   },
-  { numero: "03", onde: "Fundação de Cultura", municipio: "São Cristóvão" },
-  { numero: "04", onde: "Diretoria de Turismo", municipio: "São Cristóvão" },
-  { numero: "05", onde: "Recanto da Serra", municipio: "Tobias Barreto" },
-  { numero: "06", onde: "Prefeitura", municipio: "Tobias Barreto" },
+  {
+    numero: "03",
+    onde: "Fundação de Cultura",
+    municipio: "São Cristóvão",
+    documento: "entrevista-paola-santana",
+  },
+  {
+    numero: "04",
+    onde: "Diretoria de Turismo",
+    municipio: "São Cristóvão",
+    documento: "entrevista-marcio-andre",
+  },
+  {
+    numero: "05",
+    onde: "Recanto da Serra",
+    municipio: "Tobias Barreto",
+    documento: "entrevista-pedro-menezes",
+  },
+  {
+    numero: "06",
+    onde: "Prefeitura",
+    municipio: "Tobias Barreto",
+    documento: "entrevista-prefeito-tobias-barreto",
+  },
   {
     numero: "07",
     onde: "Secretaria Municipal de Cultura",
     municipio: "Tomar do Geru",
+    documento: "entrevista-laerte-aguiar",
   },
-  { numero: "08", onde: "Ilha Grande", municipio: "São Cristóvão" },
+  {
+    numero: "08",
+    onde: "Ilha Grande",
+    municipio: "São Cristóvão",
+    documento: "entrevista-lideranca-ilha-grande",
+  },
 ];
+
+/**
+ * As entrevistas que têm arquivo público hoje.
+ *
+ * Estado resolvido contra `vw_anexo_publico`, nunca afirmado — o mesmo
+ * princípio das fichas dos lugares, onde "público" só existe quando há URL
+ * por trás. A Home e `/pesquisa` leem daqui, e por isso não têm como divergir
+ * sobre a mesma entrevista.
+ */
+export function entrevistasPublicas(
+  publicados: ArquivosPublicados,
+): readonly Entrevista[] {
+  return ENTREVISTAS.filter(
+    (entrevista) => (publicados.get(entrevista.documento) ?? []).length > 0,
+  );
+}

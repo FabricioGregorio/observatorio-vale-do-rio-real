@@ -30,6 +30,7 @@ import {
   ENTREVISTAS,
   EQUIPAMENTOS,
   type Equipamento,
+  entrevistasPublicas,
   FOTOGRAFIAS_DO_BORDA_NO_ACERVO,
   LINHA_DO_EDITAL,
   NOME_OFICIAL,
@@ -655,7 +656,13 @@ export function Leitura() {
 
 /* -------------------------------------------------------------------------- */
 
-export function Escuta() {
+export function Escuta({
+  publicados = new Map(),
+}: {
+  publicados?: ArquivosPublicados;
+}) {
+  const publicas = entrevistasPublicas(publicados);
+
   return (
     <Capitulo
       id="hl-escuta"
@@ -676,11 +683,28 @@ export function Escuta() {
             Tomar do Geru e São Cristóvão — da sede do município ao povoado de
             Ilha Grande.
           </p>
-          <p>
-            Os áudios e as transcrições seguem restritos. As vozes entram no
-            site quando a relação entre cada participante, sua entrevista e o
-            consentimento gravado estiver registrada.
-          </p>
+          {/*
+            Estado resolvido, e não declarado. A frase anterior — "os áudios e
+            as transcrições seguem restritos" — continuou no ar depois de as
+            oito serem publicadas, porque nada ligava esta lista aos
+            documentos do acervo. Agora liga, e a Home não tem como afirmar
+            restrição sobre material público.
+          */}
+          {publicas.length === 0 ? (
+            <p>
+              Os áudios e as transcrições seguem restritos. As vozes entram no
+              site quando cada entrevista passar pela revisão de privacidade.
+            </p>
+          ) : (
+            <p>
+              {publicas.length === ENTREVISTAS.length
+                ? "As oito estão públicas no acervo, com áudio e transcrição."
+                : `${publicas.length} de ${ENTREVISTAS.length} já estão públicas no acervo, com áudio e transcrição.`}{" "}
+              Nenhuma foi publicada por associação: cada documento passou pelo
+              mesmo gate dos demais arquivos do site, que exige revisão de
+              privacidade concluída antes de existir endereço público.
+            </p>
+          )}
           <p className="hl-metodo">
             A pesquisa reúne fotografia, entrevista gravada e formulário de
             resposta. Nem todo lugar recebeu as três.
@@ -867,14 +891,15 @@ export function Produtos({
         </li>
       </ul>
 
+      {/*
+        Só continua aqui o que de fato está em preparação. `/podobservar`
+        saiu com a página do podcast; `/pesquisa` saiu com a página do
+        percurso. Manter uma rota concluída nesta lista é afirmar sobre o
+        próprio site algo que ele desmente na tela seguinte.
+      */}
       <nav aria-label="Seções em preparação" className="hl-secoes">
         <p className="meta-ficha">Seções do site em preparação</p>
         <ul>
-          <li>
-            <Link href="/pesquisa" prefetch={false}>
-              Pesquisa
-            </Link>
-          </li>
           <li>
             <Link href="/dados" prefetch={false}>
               Dados
@@ -883,11 +908,6 @@ export function Produtos({
           <li>
             <Link href="/campo" prefetch={false}>
               Diário de Campo
-            </Link>
-          </li>
-          <li>
-            <Link href="/podobservar" prefetch={false}>
-              PodObservar
             </Link>
           </li>
         </ul>

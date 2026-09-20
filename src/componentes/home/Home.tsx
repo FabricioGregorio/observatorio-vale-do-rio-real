@@ -68,7 +68,7 @@ export function Home({
       <Territorio />
       <Lugares publicados={publicados} />
       <Leitura />
-      <Escuta />
+      <Escuta publicados={publicados} />
       <Produtos publicados={publicados} />
       <Conferencia />
       <RodapeDaHome />
