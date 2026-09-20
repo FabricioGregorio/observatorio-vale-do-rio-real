@@ -139,8 +139,9 @@ export default async function PaginaDados() {
           ))}
         </div>
         <p className="dd-ponte">
-          O desenho do método — quem preencheu, com que instrumento e em que
-          etapa do campo — está em{" "}
+          Quem mantém cada equipamento é chamado, na pesquisa, de ator-chave — e
+          é dele o registro que sustenta estas páginas. Por que o método foi
+          desenhado assim, e o que isso implica, está em{" "}
           <Link href="/pesquisa" prefetch={false}>
             A Pesquisa
           </Link>
@@ -227,8 +228,8 @@ export default async function PaginaDados() {
         <h2 id="dd-fontes-titulo">As fontes, abertas</h2>
         {fontes.length === 0 ? (
           <p className="dd-leitura">
-            Nenhum arquivo do conjunto está resolvido nesta compilação. A ficha
-            completa continua no acervo.
+            Nenhum arquivo do conjunto está listado aqui nesta versão da página.
+            A ficha completa continua no acervo.
           </p>
         ) : (
           <>

@@ -119,21 +119,20 @@ export type Limite = {
  * Os limites da leitura. Não são ressalva de rodapé: são o que impede a
  * página de ser lida como retrato de uma região.
  *
- * Os dois primeiros saem do próprio `derivados.ts`; o terceiro, das
- * transcrições revisadas do PodObservar (EP02 e EP03), que registram a janela
- * de baixa visitação; o quarto é a consequência direta do desenho do método,
- * descrito em `/pesquisa`.
+ * O primeiro sai do próprio `derivados.ts`; o segundo, das transcrições
+ * revisadas do PodObservar (EP02 e EP03), que registram a janela de baixa
+ * visitação; o terceiro é consequência direta do desenho do método, descrito
+ * em `/pesquisa`.
+ *
+ * Havia um quarto, "Como ler estes dados", que dizia em linguagem genérica o
+ * que os outros três já dizem com precisão. Saiu na revisão editorial de
+ * 2026-09-20: numa lista de limites, o item vago enfraquece os específicos.
  */
 export const LIMITES: readonly Limite[] = [
   {
     titulo: "A amostra são dois equipamentos",
     texto:
-      "Nenhum número aqui foi apurado fora do Recanto da Serra e do Centro Cultural e Museu Borda da Mata. Eles não representam os cinco municípios do recorte nem o conjunto dos equipamentos culturais do Vale.",
-  },
-  {
-    titulo: "Como ler estes dados",
-    texto:
-      "Os indicadores apresentam um retrato do período e do recorte pesquisado pelo Observatório. Eles foram construídos a partir dos registros reunidos durante o trabalho de campo e devem ser lidos em conjunto com a metodologia, as entrevistas e os demais materiais publicados. Não representam um censo de todo o Vale do Rio Real, mas evidências produzidas dentro do percurso desta pesquisa.",
+      "Nenhum número aqui foi apurado fora do Recanto da Serra e do Centro Cultural e Museu Borda da Mata. Eles não representam os cinco municípios do recorte nem o conjunto dos equipamentos culturais do Vale — são evidências produzidas dentro deste percurso, e se leem ao lado das entrevistas e dos relatórios que o acompanham.",
   },
   {
     titulo: "A janela cai na baixa temporada",

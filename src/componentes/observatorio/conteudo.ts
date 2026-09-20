@@ -20,10 +20,10 @@
  * ## O que esta página não diz
  *
  * Não nomeia pessoas, como o resto do site público. Não descreve produto que
- * ainda não existe como rota concluída, e não antecipa crédito institucional:
- * ordem e proporção das marcas de fomento dependem do manual de aplicação do
- * edital (item E02 do inventário, `Pendente`), e o rodapé do layout já declara
- * essa ausência. Um segundo bloco aproximado aqui seria pior que o silêncio.
+ * ainda não existe como rota concluída, e não repete o crédito institucional:
+ * a régua de marcas de fomento tem fonte única em `institucional/creditos.ts`
+ * e aparece no rodapé de toda rota. Um segundo bloco aproximado aqui seria
+ * pior que o silêncio.
  */
 
 import {
@@ -260,7 +260,7 @@ export const PRODUTOS: readonly Produto[] = [
     nome: "Diário de Campo",
     href: "/campo",
     texto:
-      "O registro fotográfico da pesquisa, lugar a lugar, com legenda, crédito e procedência de cada imagem. Chegar a alguns destes lugares fez parte do que o campo veio medir.",
+      "O registro fotográfico da pesquisa, lugar a lugar, com legenda, crédito e procedência de cada imagem — o que a equipe viu, e não ilustração escolhida depois.",
     acao: "Ver o registro de campo",
   },
   {

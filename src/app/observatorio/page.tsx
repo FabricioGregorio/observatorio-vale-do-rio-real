@@ -208,7 +208,7 @@ export default function PaginaObservatorio() {
           <p className="meta-ficha obs-secao__rotulo">O que publicamos</p>
           <div className="obs-secao__corpo">
             <h2 id="obs-produtos-titulo">
-              Quatro entradas para o mesmo acervo
+              {PRODUTOS.length} entradas para o mesmo acervo
             </h2>
             <p className="obs-guia">
               As seções do site não são assuntos diferentes: são formas

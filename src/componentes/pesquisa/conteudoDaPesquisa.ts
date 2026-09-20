@@ -157,9 +157,9 @@ export type Etapa = {
 export const PERCURSO: readonly Etapa[] = [
   {
     numeral: "I",
-    titulo: "Seis meses dentro dos dois equipamentos",
+    titulo: "Dentro dos dois equipamentos, mês a mês",
     paragrafos: [
-      "O acompanhamento do Recanto da Serra e do Museu Borda da Mata foi contínuo, em rotina de visitação, enquanto os formulários eram preenchidos dia a dia. O Recanto registrava em ritmo semanal e, em alguns períodos, quase diário.",
+      "O acompanhamento do Recanto da Serra e do Museu Borda da Mata foi contínuo, em rotina mensal de visitação, enquanto os formulários eram preenchidos dia a dia. O Recanto registrava em ritmo semanal e, em alguns períodos, quase diário — foi essa regularidade que mostrou, cedo, que a coleta seguia no caminho certo.",
       "No mesmo intervalo, a equipe fez o reconhecimento da Serra dos Macacos — comunidade agrícola entre serras, alcançada por estrada de terra e por uma ponte de madeira sobre o Riacho do Caripau.",
     ],
   },
@@ -201,7 +201,7 @@ export const ESCUTA: readonly string[] = [
 
 /** Frase de estado quando todas as entrevistas têm arquivo público. */
 export const ESCUTA_PUBLICA =
-  "Nenhuma delas foi publicada por associação: cada documento passou pelo mesmo gate dos demais arquivos do site, que exige revisão de privacidade concluída antes de existir endereço público.";
+  "Nenhuma delas foi publicada por semelhança de nome: como todo arquivo deste site, cada documento só passa a ter endereço público depois de concluída a revisão de privacidade.";
 
 /** Frase de estado enquanto nenhuma tem arquivo público. */
 export const ESCUTA_RESTRITA =
@@ -209,6 +209,7 @@ export const ESCUTA_RESTRITA =
 
 export const LEITURA: readonly string[] = [
   "A leitura quantitativa não aparece isolada do campo. Os registros, formulários e indicadores foram analisados junto às entrevistas, às visitas e à observação dos lugares pesquisados. Essa combinação permite compreender não apenas números, mas também trajetórias, práticas culturais e relações construídas no território.",
+  "Os formulários mostraram que o dinheiro circulava pelos equipamentos e não parava neles: cada visita puxava compra de alimento produzido na região, contratação de morador, aquisição de artesanato e pagamento de serviço local. As entrevistas explicaram por que isso acontece, e a observação direta mostrou o que nenhum dos dois alcança — a mudança da paisagem e da oferta a cada retorno da equipe.",
 ];
 
 export type Limite = {

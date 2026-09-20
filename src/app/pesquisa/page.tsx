@@ -319,9 +319,9 @@ export default async function PaginaPesquisa() {
                       entrevista.onde
                     )}
                   </span>
-                  <span className="meta-ficha">
-                    {entrevista.municipio ?? "município não consolidado"}
-                  </span>
+                  {entrevista.municipio === null ? null : (
+                    <span className="meta-ficha">{entrevista.municipio}</span>
+                  )}
                 </li>
               );
             })}
@@ -339,10 +339,13 @@ export default async function PaginaPesquisa() {
           ))}
         </div>
         <p className="pq-ponte">
-          A leitura quantitativa publicada — o que o recurso movimentou e onde
-          ele foi executado — está na{" "}
-          <a href="/#hl-leitura">seção Onde o recurso circula</a>, na página
-          inicial.
+          A leitura quantitativa publicada — o que o recurso movimentou, onde a
+          despesa foi executada e o que os números deliberadamente não dizem —
+          está em{" "}
+          <Link href="/dados" prefetch={false}>
+            Dados
+          </Link>
+          .
         </p>
       </section>
 
