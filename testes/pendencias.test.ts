@@ -164,6 +164,25 @@ describe("o comando falha onde não há configuração", () => {
 /**
  * Integração: prova que a view denuncia o caso real e que o script falharia.
  * Só roda com banco; ver o cabeçalho deste arquivo.
+ *
+ * ## Por que a fixture não é comitada
+ *
+ * Até 2026-09-20 este bloco inseria o documento de teste em autocommit, rodava
+ * os dois casos contra ele e o apagava no `afterAll`. Durante essa janela
+ * `documento` valia 34 no banco inteiro, para qualquer conexão — e
+ * `testes/espelhamento-privado.test.ts` afere `documento = 33` de um pool
+ * próprio. Como o Vitest roda arquivos em paralelo, a sobreposição derrubava
+ * aquela asserção de forma intermitente: 2 falhas em 5 execuções da suíte
+ * completa, nenhuma isolada.
+ *
+ * A regra já existia no bloco seguinte deste mesmo arquivo, escrita na Tarefa
+ * 11 exatamente por causa desse risco; o que faltava era aplicá-la aqui. Agora
+ * cada caso abre a sua transação e a desfaz, então nenhuma contagem global vê
+ * a fixture, e cada teste é independente da ordem.
+ *
+ * Consequência do isolamento: os casos leem a view **pela conexão da própria
+ * transação**. `listarPendenciasDePublicacao()` continua exercida contra o
+ * banco real logo abaixo, onde o que importa é justamente o que está comitado.
  */
 describe.skipIf(
   !process.env.DATABASE_URL || !process.env.DATABASE_URL_MANUTENCAO,
@@ -177,32 +196,32 @@ describe.skipIf(
     typeof import("../src/dados/clienteManutencao")
   >["dbManutencao"];
   let documento: typeof import("../db/schema")["documento"];
+  let vwPendenciaPublicacao: typeof import("../db/schema")["vwPendenciaPublicacao"];
   let listar: typeof import("../src/dados/consultas/pendencias")["listarPendenciasDePublicacao"];
   let eq: typeof import("drizzle-orm")["eq"];
 
-  async function limpar(): Promise<void> {
-    await db.delete(documento).where(eq(documento.slug, SLUG));
+  type Transacao = Parameters<Parameters<typeof db.transaction>[0]>[0];
+
+  /** Desfaz a transação sem que o erro sentinela escape do teste. */
+  class RollbackDeTeste extends Error {}
+
+  async function emTransacaoDesfeita<T>(
+    corpo: (tx: Transacao) => Promise<T>,
+  ): Promise<T> {
+    let valor: T | undefined;
+    try {
+      await db.transaction(async (tx) => {
+        valor = await corpo(tx);
+        throw new RollbackDeTeste();
+      });
+    } catch (erro) {
+      if (!(erro instanceof RollbackDeTeste)) throw erro;
+    }
+    return valor as T;
   }
 
-  beforeAll(async () => {
-    ({ dbManutencao: db } = await import("../src/dados/clienteManutencao"));
-    ({ documento } = await import("../db/schema"));
-    ({ eq } = await import("drizzle-orm"));
-    ({ listarPendenciasDePublicacao: listar } = await import(
-      "../src/dados/consultas/pendencias"
-    ));
-    await limpar();
-  });
-
-  afterAll(async () => {
-    await limpar();
-  });
-
-  test("documento exigido e publicado sem arquivo espelhado é denunciado", async () => {
-    const antes = await listar();
-    expect(antes.some((p) => p.slug === SLUG)).toBe(false);
-
-    await db.insert(documento).values({
+  async function criarDocumentoDoCaso(tx: Transacao): Promise<void> {
+    await tx.insert(documento).values({
       slug: SLUG,
       titulo: "Documento de teste do gate",
       tipo: "relatorio_tecnico",
@@ -213,8 +232,34 @@ describe.skipIf(
       status: "publicado",
       publicadoEm: new Date(),
     });
+  }
 
-    const depois = await listar();
+  /** As pendências como a view as entrega, lidas dentro da transação. */
+  async function pendencias(tx: Transacao): Promise<Pendencia[]> {
+    return tx.select().from(vwPendenciaPublicacao);
+  }
+
+  beforeAll(async () => {
+    ({ dbManutencao: db } = await import("../src/dados/clienteManutencao"));
+    ({ documento, vwPendenciaPublicacao } = await import("../db/schema"));
+    ({ eq } = await import("drizzle-orm"));
+    ({ listarPendenciasDePublicacao: listar } = await import(
+      "../src/dados/consultas/pendencias"
+    ));
+  });
+
+  test("o banco real não tem a fixture deste bloco, nem pendência alguma", async () => {
+    const linhas = await listar();
+    expect(linhas.some((p) => p.slug === SLUG)).toBe(false);
+    expect(resultado(linhas).codigo).toBe(0);
+  });
+
+  test("documento exigido e publicado sem arquivo espelhado é denunciado", async () => {
+    const depois = await emTransacaoDesfeita(async (tx) => {
+      await criarDocumentoDoCaso(tx);
+      return pendencias(tx);
+    });
+
     const linha = depois.find((p) => p.slug === SLUG);
 
     expect(linha).toBeDefined();
@@ -223,12 +268,16 @@ describe.skipIf(
   });
 
   test("o mesmo documento em rascunho não é denunciado", async () => {
-    await db
-      .update(documento)
-      .set({ status: "rascunho" })
-      .where(eq(documento.slug, SLUG));
+    const linhas = await emTransacaoDesfeita(async (tx) => {
+      await criarDocumentoDoCaso(tx);
+      await tx
+        .update(documento)
+        .set({ status: "rascunho" })
+        .where(eq(documento.slug, SLUG));
 
-    const linhas = await listar();
+      return pendencias(tx);
+    });
+
     expect(linhas.some((p) => p.slug === SLUG)).toBe(false);
   });
 });
