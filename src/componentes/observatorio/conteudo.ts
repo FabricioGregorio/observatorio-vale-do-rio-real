@@ -1,0 +1,261 @@
+/**
+ * Conteúdo editorial de `/observatorio`.
+ *
+ * ## De onde sai cada afirmação
+ *
+ * Três fontes, e só três:
+ *
+ * 1. **`docs/01-arquitetura-informacao.md`**, cabeçalho — executor, fomento e
+ *    quem recebe a prestação de contas. Os mesmos valores já publicados na
+ *    Home vêm reexportados de `componentes/home/conteudo.ts`, que continua
+ *    sendo a fonte única deles: repetir a string aqui criaria dois nomes
+ *    oficiais possíveis.
+ * 2. **Transcrição revisada do EP01 do PodObservar**, pública em
+ *    `/podobservar/t1/01-o-que-e-o-vale-do-rio-real`. É a fonte de tudo o que
+ *    esta página diz sobre a origem do Coletivo e sobre como o Observatório
+ *    nasceu. Nada aqui é cópia literal da transcrição.
+ * 3. **`dados/territorio/recorte.ts`**, para a definição do Vale e para os
+ *    municípios — derivados em tempo de render, nunca escritos à mão.
+ *
+ * ## O que esta página não diz
+ *
+ * Não nomeia pessoas, como o resto do site público. Não descreve produto que
+ * ainda não existe como rota concluída, e não antecipa crédito institucional:
+ * ordem e proporção das marcas de fomento dependem do manual de aplicação do
+ * edital (item E02 do inventário, `Pendente`), e o rodapé do layout já declara
+ * essa ausência. Um segundo bloco aproximado aqui seria pior que o silêncio.
+ */
+
+import {
+  DEFINICAO_VALE_DO_RIO_REAL,
+  RECORTE_TERRITORIAL,
+} from "../../dados/territorio/recorte";
+import {
+  ACOMPANHAMENTO,
+  COLETIVO,
+  EDITAL_CURTO,
+  LINHA_DO_EDITAL,
+} from "../home/conteudo";
+
+export {
+  ACOMPANHAMENTO,
+  COLETIVO,
+  EDITAL,
+  EDITAL_CURTO,
+  LINHA_DO_EDITAL,
+  NOME_OFICIAL,
+} from "../home/conteudo";
+
+/**
+ * Chamada da abertura. Diz o que o Observatório é antes de dizer quem o faz —
+ * quem chega pelo menu ainda não sabe nem uma coisa nem outra.
+ */
+export const SINTESE =
+  "Um observatório de cultura e economia criativa que acompanhou, de dentro, " +
+  "o funcionamento de equipamentos turísticos e culturais do Vale do Rio Real " +
+  "— e publica aqui o que encontrou.";
+
+/**
+ * O que um observatório de cultura faz, dito no que este fez de fato.
+ *
+ * Cada item corresponde a uma prática documentada na pesquisa: visita
+ * continuada e formulário (EP02), entrevista com gestores públicos
+ * (`ENTREVISTAS`), leitura quantitativa (`indicadores/derivados.ts`) e
+ * publicação em endereço próprio (Acervo e Sala do Avaliador).
+ */
+export const O_QUE_FAZ: readonly {
+  readonly verbo: string;
+  readonly texto: string;
+}[] = [
+  {
+    verbo: "Observa",
+    texto:
+      "Acompanha equipamentos culturais no tempo em que eles funcionam, e não " +
+      "só no dia da visita: registro diário de entrada e saída de recursos, " +
+      "feito por quem mantém o lugar.",
+  },
+  {
+    verbo: "Escuta",
+    texto:
+      "Entrevista quem mantém os espaços e quem responde pela política " +
+      "cultural nos municípios, para confrontar o que os formulários medem " +
+      "com o que só a conversa alcança.",
+  },
+  {
+    verbo: "Lê",
+    texto:
+      "Organiza o que foi coletado em indicadores com regra de cálculo, base " +
+      "e período declarados — cada número diz também o que não mede.",
+  },
+  {
+    verbo: "Publica",
+    texto:
+      "Devolve o material ao território e ao público em endereço próprio, " +
+      "estável, sem login e com hash de integridade.",
+  },
+];
+
+/**
+ * Origem — do Coletivo ao Observatório.
+ *
+ * Toda a cronologia sai do EP01. A ordem dos três blocos é a ordem dos fatos:
+ * o Coletivo existe antes do edital, e o Observatório nasce do encontro dos
+ * dois. Inverter isso faria o projeto parecer criado para o edital.
+ */
+export const ORIGEM: readonly {
+  readonly quando: string;
+  readonly titulo: string;
+  readonly paragrafos: readonly string[];
+}[] = [
+  {
+    quando: "Junho de 2024",
+    titulo: "Um coletivo cultural em Tobias Barreto",
+    paragrafos: [
+      "Artistas, fazedores de cultura, produtores culturais e pesquisadores da cidade se reuniram em torno de uma convicção comum: a de que a cultura, junto da arte, da educação e da pesquisa, contribui para a transformação social.",
+      "Depois de meses de conversas e de coleta de assinaturas, o manifesto do Coletivo foi lançado. Desde então vieram oficinas artísticas em escolas públicas, o Sarau Cultural Tobias, Sou Eu — realizado no aniversário do poeta Tobias Barreto de Menezes e hoje em sua quarta edição — e reuniões com representantes públicos e organizações da sociedade civil.",
+    ],
+  },
+  {
+    quando: "Antes do projeto",
+    titulo: "Dois lugares conhecidos pelo boca a boca",
+    paragrafos: [
+      "O Recanto da Serra e o Museu Borda da Mata eram nomes que circulavam na região havia anos, sem que o Coletivo os tivesse visitado. A primeira visita aconteceu já em meio à formação do grupo.",
+      "O que chamou atenção não foi a paisagem: foi a dimensão do trabalho acumulado ali, a organização do espaço e o sinal, no zelo com o lugar, de que ele era muito visitado. A pesquisa começou como inquietação antes de existir como projeto.",
+    ],
+  },
+  {
+    quando: "2025",
+    titulo: "Um edital para observatórios",
+    paragrafos: [
+      "Com os primeiros editais da Política Nacional Aldir Blanc em Sergipe, apareceu uma linha destinada à criação de observatórios de cultura e economia criativa. O projeto foi inscrito, e o Observatório passou a existir.",
+      "O recorte não parou no Recanto da Serra. O Vale do Rio Real, apresentado pela própria região como ecossistema turístico e cultural, tornou-se o horizonte da primeira pesquisa.",
+    ],
+  },
+];
+
+/**
+ * Os três vínculos institucionais, na ordem em que respondem às perguntas de
+ * quem chega: quem faz, com que recurso, e para quem se presta contas.
+ *
+ * Mesma cadeia do capítulo I da Home — e de propósito: é a estrutura
+ * institucional do projeto, que não pode ser contada de dois jeitos. O que
+ * muda aqui é a profundidade do texto, não o fato.
+ */
+export const VINCULOS: readonly {
+  readonly papel: string;
+  readonly nome: string;
+  readonly texto: string;
+}[] = [
+  {
+    papel: "Realização",
+    nome: COLETIVO,
+    texto:
+      "Idealiza e realiza o Observatório. A equipe da pesquisa é do próprio Coletivo.",
+  },
+  {
+    papel: "Fomento",
+    nome: EDITAL_CURTO,
+    texto: `Financia a pesquisa e a publicação dos seus resultados, na linha ${LINHA_DO_EDITAL}.`,
+  },
+  {
+    papel: "Prestação de contas",
+    nome: ACOMPANHAMENTO,
+    texto:
+      "Recebe a comprovação da execução do objeto — a mesma que este site publica em endereço permanente.",
+  },
+];
+
+/** Definição do Vale, palavra por palavra como a camada territorial a declara. */
+export const DEFINICAO_DO_VALE = DEFINICAO_VALE_DO_RIO_REAL;
+
+/** Municípios do recorte, derivados — nunca listados à mão. */
+export const MUNICIPIOS_DO_VALE = RECORTE_TERRITORIAL.filter((municipio) =>
+  municipio.relacoesTerritoriais.includes("vale-rio-real"),
+);
+
+export const MUNICIPIOS_DE_COMPARACAO = RECORTE_TERRITORIAL.filter(
+  (municipio) => municipio.relacoesTerritoriais.includes("comparacao"),
+);
+
+export const TERRITORIO: readonly string[] = [
+  "O Vale do Rio Real atravessa Sergipe e a Bahia. Antes de se chamar Real, o rio era o Itanhy: o nome mudou quando a família real portuguesa, de passagem, acampou às suas margens.",
+  "As cidades do recorte não se reconhecem vizinhas apenas por dividirem o rio. O que as liga vem da história dos povos originários do território e das antigas rotas comerciais de sertanejos e tropeiros — e continua vivo na articulação por conta própria de fazedores de cultura dos dois estados.",
+  "O Observatório pesquisa dentro desse recorte. Não foi ele quem o desenhou.",
+];
+
+/**
+ * O que o site publica, e o que cada superfície é.
+ *
+ * `href` aponta apenas para rota concluída. Seção em preparação **não** entra
+ * nesta lista: anunciar destino vazio numa página institucional é promessa
+ * falsa, e o menu já dá acesso a tudo o que existe.
+ */
+export type Produto = {
+  readonly id: string;
+  readonly nome: string;
+  readonly href: "/pesquisa" | "/territorio" | "/podobservar" | "/acervo";
+  readonly texto: string;
+  readonly acao: string;
+};
+
+export const PRODUTOS: readonly Produto[] = [
+  {
+    id: "pesquisa",
+    nome: "A Pesquisa",
+    href: "/pesquisa",
+    texto:
+      "O percurso da investigação: objetivo, recorte, quem foi a campo, com que instrumentos, em que período e com que limites declarados.",
+    acao: "Ver o percurso da pesquisa",
+  },
+  {
+    id: "territorio",
+    nome: "Território",
+    href: "/territorio",
+    texto:
+      "A cartografia viva do recorte, sobre a malha oficial de Sergipe, com os quatro lugares visitados em campo na posição confirmada e a ficha de cada um.",
+    acao: "Abrir a cartografia",
+  },
+  {
+    id: "podobservar",
+    nome: "PodObservar",
+    href: "/podobservar",
+    texto:
+      "O podcast do Observatório: a pesquisa contada em áudio, com transcrição revisada e integral de cada episódio para quem prefere ler ou não pode ouvir.",
+    acao: "Ouvir e ler os episódios",
+  },
+  {
+    id: "acervo",
+    nome: "Acervo",
+    href: "/acervo",
+    texto:
+      "Os documentos e registros já liberados para publicação: relatórios técnicos, fotografias de campo e peças de identidade, cada arquivo com endereço próprio.",
+    acao: "Percorrer o acervo",
+  },
+];
+
+/**
+ * Permanência — por que o site é também repositório.
+ *
+ * A base factual é a própria arquitetura do projeto: espelho local obrigatório
+ * de todo anexo, hash SHA-256 por arquivo, inventário legível por máquina em
+ * `/anexos.json` e versão imprimível da Sala do Avaliador. Nada aqui promete
+ * DOI, Internet Archive ou ZIP, que o doc 01 §6 e §11 listam como recomendação
+ * e como pendência, não como fato consumado.
+ */
+export const PERMANENCIA: readonly string[] = [
+  "Boa parte do material de um projeto como este costuma viver em pasta compartilhada, link de edição e painel que depende de conta. Endereços assim mudam de permissão, quebram e não sobrevivem a uma consulta feita daqui a alguns anos.",
+  "Cada arquivo publicado aqui tem endereço próprio neste domínio, data de publicação e hash SHA-256 para conferência de integridade — sem login e sem pedido de acesso. O que ainda não pode ser publicado aparece como ausência declarada, nunca como texto de ocasião.",
+];
+
+/**
+ * Episódio que conta a origem, na forma `t<temporada>/<slug>`.
+ *
+ * Apontar para `/podobservar` mandaria quem quer o EP01 procurá-lo numa
+ * lista. O destino é a ficha do próprio episódio, que serve a apresentação,
+ * os links de escuta e a transcrição revisada integral.
+ *
+ * Declarado, e não consultado: esta página não toca o banco. Um episódio
+ * despublicado derrubaria a rota, e `pnpm build` acusa — `/podobservar/
+ * [temporada]/[episodio]` é gerado a partir da view pública.
+ */
+export const EPISODIO_DA_ORIGEM = "t1/01-o-que-e-o-vale-do-rio-real";

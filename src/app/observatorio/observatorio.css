@@ -1,0 +1,422 @@
+/*
+  `/observatorio` — superfície institucional.
+
+  Nenhum valor literal de cor, família ou raio entra aqui: tudo vem de
+  `tokens.css`, direto ou por `color-mix` sobre papéis semânticos. Espaçamentos
+  são relativos (rem/ch/clamp), para acompanhar o redimensionamento do
+  navegador.
+
+  A composição é a de uma **pasta de documentação**: margem de ficha à
+  esquerda com o rótulo em mono, coluna de leitura à direita, filetes finos
+  separando seções. Não há card com sombra, não há grade de painéis e não há
+  faixa de números — a Home já tem a dela, e repeti-la aqui transformaria a
+  página institucional em segunda Home.
+
+  ## Contraste na abertura
+
+  A abertura é `--color-fundo-inverso` nos dois temas (mata no claro,
+  mata-claro no escuro). Sobre essa superfície a assinatura institucional
+  chega a 4,33:1 e **não pode ser texto** — `tokens.css` registra a restrição.
+  Por isso todo texto ali é `--color-texto-inverso` (11,4:1 e 8,5:1) e o único
+  acento é milho, que o mesmo registro mede em 7,4:1 e 5,5:1.
+*/
+
+.obs {
+  --obs-linha: color-mix(
+    in srgb,
+    var(--color-borda-forte) 45%,
+    var(--color-fundo)
+  );
+  --obs-rotulo: 9.5rem;
+  --obs-respiro: clamp(2.75rem, 6vw, 4.5rem);
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Abertura ------------------------------------------------------------ */
+
+.obs-abertura {
+  position: relative;
+  overflow: clip;
+  background: var(--color-fundo-inverso);
+  color: var(--color-texto-inverso);
+  padding-block: clamp(3rem, 9vw, 6.5rem);
+}
+.obs-abertura__interior {
+  position: relative;
+  margin-inline: auto;
+  width: min(100% - 2rem, var(--largura-conteudo));
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.obs-abertura h1 {
+  margin: 0;
+  max-width: 14ch;
+  font-size: clamp(var(--text-3xl), 8vw, var(--text-5xl));
+}
+.obs-abertura__sintese {
+  margin: 0;
+  max-width: 52ch;
+  font-size: clamp(var(--text-base), 2.4vw, var(--text-lg));
+}
+.obs-abertura__nome {
+  margin: 0;
+  max-width: 46ch;
+  padding-top: 1.25rem;
+  border-top: 2px solid var(--color-destaque);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+}
+/*
+  Curva de nível — a mesma família gráfica da cartografia do Território e da
+  abertura do PodObservar. Puro CSS, decorativa, sem custo de rede.
+*/
+.obs-abertura__tracado {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: min(62%, 44rem);
+  opacity: 0.18;
+  pointer-events: none;
+  background: repeating-radial-gradient(
+    ellipse at 92% 30%,
+    transparent 0 2.1rem,
+    var(--color-texto-inverso) 2.15rem 2.2rem,
+    transparent 2.3rem 3.9rem
+  );
+  mask-image: linear-gradient(to left, var(--color-carvao), transparent 80%);
+}
+
+/* --- Corpo em pasta de ficha --------------------------------------------- */
+
+.obs-corpo {
+  margin-inline: auto;
+  width: min(100% - 2rem, var(--largura-conteudo));
+}
+
+.obs-secao {
+  display: grid;
+  gap: 0.75rem clamp(1.5rem, 4vw, 3rem);
+  padding-block: var(--obs-respiro);
+  border-top: 1px solid var(--obs-linha);
+}
+.obs-secao:first-child {
+  border-top: 0;
+}
+.obs-secao__rotulo {
+  margin: 0;
+}
+.obs-secao__corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+}
+.obs-secao__corpo > p {
+  margin: 0;
+  max-width: var(--largura-leitura);
+}
+.obs-secao h2 {
+  margin: 0;
+  max-width: 20ch;
+  font-size: clamp(var(--text-xl), 4.2vw, var(--text-3xl));
+}
+.obs-secao h3 {
+  margin: 0;
+  font-size: var(--text-lg);
+}
+.obs-guia {
+  font-size: clamp(var(--text-base), 2vw, var(--text-lg));
+  color: var(--color-texto);
+}
+.obs-nota {
+  padding-top: 1rem;
+  border-top: 1px solid var(--obs-linha);
+  color: var(--color-texto-suave);
+  font-size: var(--text-sm);
+}
+.obs a {
+  color: var(--color-link);
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+}
+.obs a:hover {
+  color: var(--color-link-hover);
+}
+
+@media (min-width: 60rem) {
+  .obs-secao {
+    grid-template-columns: var(--obs-rotulo) minmax(0, 1fr);
+  }
+  .obs-secao__rotulo {
+    padding-top: 0.5rem;
+  }
+}
+
+/* --- O que é: verbos da prática ------------------------------------------ */
+
+.obs-praticas {
+  margin: 0.5rem 0 0;
+  display: grid;
+  gap: 0;
+}
+.obs-pratica {
+  display: grid;
+  gap: 0.25rem 1.5rem;
+  padding-block: 1.1rem;
+  border-top: 1px solid var(--obs-linha);
+}
+.obs-pratica dt {
+  font-family: var(--font-display);
+  font-weight: var(--peso-titulo);
+  font-size: var(--text-lg);
+  color: var(--color-marca);
+}
+.obs-pratica dd {
+  margin: 0;
+  max-width: 58ch;
+}
+@media (min-width: 48rem) {
+  .obs-pratica {
+    grid-template-columns: 7rem minmax(0, 1fr);
+    align-items: baseline;
+  }
+}
+
+/* --- Origem: três momentos num fio --------------------------------------- */
+
+.obs-origem {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 2.25rem;
+}
+.obs-momento {
+  position: relative;
+  padding-left: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.obs-momento p {
+  margin: 0;
+  max-width: 58ch;
+}
+.obs-momento::before {
+  content: "";
+  position: absolute;
+  inset-block: 0.4rem 0;
+  left: 0.32rem;
+  width: 1px;
+  background: var(--obs-linha);
+}
+.obs-momento::after {
+  content: "";
+  position: absolute;
+  top: 0.4rem;
+  left: 0;
+  width: 0.75rem;
+  height: 0.75rem;
+  background: var(--color-destaque);
+}
+.obs-momento:last-child::before {
+  inset-block-end: auto;
+  height: 1.5rem;
+}
+.obs-momento__quando {
+  color: var(--color-texto-suave);
+}
+
+/* --- Vínculos ------------------------------------------------------------ */
+
+.obs-vinculos {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 1.75rem;
+}
+.obs-vinculo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding-top: 1rem;
+  border-top: 2px solid var(--color-marca);
+}
+.obs-vinculo p {
+  margin: 0;
+}
+.obs-vinculo h3 {
+  font-size: var(--text-base);
+  text-wrap: pretty;
+}
+.obs-vinculo__selo {
+  display: block;
+  width: 3.25rem;
+  height: 3.25rem;
+  overflow: hidden;
+  border-radius: 50%;
+}
+.obs-vinculo__selo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+@media (min-width: 48rem) {
+  .obs-vinculos {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.25rem, 3vw, 2.25rem);
+  }
+}
+
+/* --- Território ---------------------------------------------------------- */
+
+.obs-definicao {
+  border-left: 2px solid var(--color-marca);
+  padding-left: clamp(0.85rem, 2vw, 1.25rem);
+  font-family: var(--font-display);
+  font-size: clamp(var(--text-lg), 2.6vw, var(--text-xl));
+  line-height: var(--leading-titulo);
+  text-wrap: pretty;
+}
+.obs-recorte {
+  display: grid;
+  gap: 1.5rem clamp(1.5rem, 4vw, 3rem);
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--obs-linha);
+}
+.obs-recorte p {
+  margin: 0;
+}
+.obs-recorte ul {
+  list-style: none;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.75rem;
+}
+.obs-recorte li {
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--obs-linha);
+  border-radius: var(--radius-ficha);
+  background: color-mix(in srgb, var(--color-fundo-elevado) 70%, transparent);
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+}
+.obs-recorte p.obs-recorte__nota {
+  margin-top: 0.75rem;
+  max-width: 44ch;
+  color: var(--color-texto-suave);
+  font-size: var(--text-sm);
+}
+@media (min-width: 48rem) {
+  .obs-recorte {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* --- Produtos ------------------------------------------------------------ */
+
+.obs-produtos {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0;
+}
+.obs-produto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-block: 1.35rem;
+  border-top: 1px solid var(--obs-linha);
+}
+.obs-produto p {
+  margin: 0;
+  max-width: 54ch;
+}
+.obs-produto h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+}
+.obs-produto__acao a {
+  font-family: var(--font-display);
+  font-weight: var(--peso-titulo);
+}
+@media (min-width: 52rem) {
+  .obs-produtos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(1.5rem, 4vw, 3rem);
+  }
+}
+
+/* --- Fecho --------------------------------------------------------------- */
+
+.obs-secao__corpo > p.obs-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+.obs-botao {
+  display: inline-block;
+  padding: 0.7rem 1.1rem;
+  border: 1px solid var(--color-fundo-inverso);
+  border-radius: var(--radius-ficha);
+  background: var(--color-fundo-inverso);
+  font-family: var(--font-display);
+  font-weight: var(--peso-titulo);
+}
+.obs a.obs-botao {
+  color: var(--color-texto-inverso);
+  text-decoration: none;
+}
+.obs a.obs-botao:hover {
+  background: var(--color-mata-claro);
+  border-color: var(--color-mata-claro);
+  color: var(--color-texto-inverso);
+}
+.obs a.obs-botao--vazado {
+  background: transparent;
+  border-color: var(--color-borda-forte);
+  color: var(--color-texto);
+}
+.obs a.obs-botao--vazado:hover {
+  background: color-mix(in srgb, var(--color-marca) 12%, transparent);
+  border-color: var(--color-marca);
+  color: var(--color-texto);
+}
+
+.obs-assinatura {
+  margin-inline: auto;
+  width: min(100% - 2rem, var(--largura-conteudo));
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem clamp(1.25rem, 4vw, 2.5rem);
+  margin-bottom: clamp(3rem, 7vw, 5rem);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--obs-linha);
+  border-radius: var(--radius-ficha);
+  background: color-mix(in srgb, var(--color-fundo-elevado) 60%, transparent);
+}
+.obs-assinatura img {
+  width: 3.5rem;
+  height: auto;
+  border-radius: var(--radius-ficha);
+}
+.obs-assinatura p {
+  margin: 0;
+  max-width: 52ch;
+}
+.obs-assinatura > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+  flex: 1 1 18rem;
+}
