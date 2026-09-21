@@ -279,3 +279,112 @@ test("Home e Pesquisa contam a mesma história sobre as entrevistas", async ({
   const restrito = (texto: string) => texto.includes("seguem restritos");
   expect(restrito(naHome)).toBe(restrito(naPesquisa));
 });
+
+/**
+ * O percurso de `/pesquisa`, renderizado.
+ *
+ * A composição do caderno de percurso apoia informação em três recursos
+ * gráficos — o fio vertical, as marcas de evidência e o nó de cada etapa. Os
+ * três são desenho. O que estes testes garantem é que nenhum deles carrega
+ * informação sozinho: a margem de cada etapa continua legível em texto, com
+ * ou sem movimento, e as marcas nunca aparecem sem o nome ao lado.
+ */
+test("cada marca de evidência vem acompanhada do nome escrito", async ({
+  page,
+}) => {
+  await page.goto("/pesquisa");
+
+  const marcas = page.locator(".pq-marca");
+  expect(await marcas.count()).toBeGreaterThan(8);
+  // Desenho é desenho: nenhuma marca se apresenta ao leitor de tela.
+  const expostas = await marcas.evaluateAll(
+    (svgs) =>
+      svgs.filter((svg) => svg.getAttribute("aria-hidden") !== "true").length,
+  );
+  expect(expostas).toBe(0);
+
+  const selos = page.locator(
+    ".pq-etapa__evidencias li, .pq-cruzamento li, .pq-chave dt",
+  );
+  expect(await selos.count()).toBeGreaterThan(8);
+  for (const selo of await selos.all()) {
+    expect((await selo.innerText()).trim().length).toBeGreaterThan(5);
+  }
+});
+
+test("a margem de cada etapa nomeia lugar e evidência em texto", async ({
+  page,
+}) => {
+  await page.goto("/pesquisa");
+
+  const etapas = page.locator(".pq-etapa");
+  await expect(etapas).toHaveCount(4);
+
+  for (const etapa of await etapas.all()) {
+    const margem = etapa.locator(".pq-etapa__margem");
+    await expect(margem).toHaveCount(1);
+    // `innerText` devolve o texto como ele é pintado, e os rótulos de margem
+    // são caixa alta por CSS: a comparação é insensível a caixa de propósito.
+    const texto = (await margem.innerText()).toLowerCase();
+    expect(texto).toContain("onde");
+    expect(texto).toContain("o que ficou");
+    expect(await margem.locator(".pq-etapa__onde li").count()).toBeGreaterThan(
+      0,
+    );
+  }
+});
+
+/**
+ * Com movimento reduzido, o fio do percurso já está inteiro.
+ *
+ * O desenho do fio é animação de rolagem em CSS. Sem a guarda, quem pediu
+ * movimento reduzido veria o fio parado em zero — e o percurso perderia a
+ * linha que o liga. Aqui a altura é medida nos dois modos.
+ */
+for (const movimento of ["reduce", "no-preference"] as const) {
+  test(`o fio do percurso existe com prefers-reduced-motion: ${movimento}`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: movimento });
+    await page.goto("/pesquisa");
+    const medida = await page.locator(".pq-etapas").evaluate((lista) => {
+      const base = getComputedStyle(lista, "::before");
+      return {
+        altura: lista.getBoundingClientRect().height,
+        largura: Number.parseFloat(base.width),
+        visivel: base.backgroundColor,
+      };
+    });
+    expect(medida.altura).toBeGreaterThan(400);
+    expect(medida.largura).toBeGreaterThan(0);
+    expect(medida.visivel).not.toBe("rgba(0, 0, 0, 0)");
+  });
+}
+
+/**
+ * Sem JavaScript, o percurso inteiro continua servido.
+ *
+ * A página é Server Component e não tem ilha de interação nenhuma. O teste
+ * existe para que ela continue assim: um `"use client"` acrescentado sem
+ * necessidade apareceria aqui como conteúdo faltando.
+ */
+test("sem JavaScript, o percurso e a escuta continuam completos", async ({
+  browser,
+}) => {
+  const contexto = await browser.newContext({ javaScriptEnabled: false });
+  const pagina = await contexto.newPage();
+  try {
+    const resposta = await pagina.goto("/pesquisa");
+    expect(resposta?.status()).toBe(200);
+    await expect(pagina.locator(".pq-etapa")).toHaveCount(4);
+    await expect(pagina.locator(".pq-instrumento")).toHaveCount(2);
+    await expect(pagina.locator(".pq-registro")).toHaveCount(2);
+    await expect(pagina.locator(".pq-entrevistas li")).toHaveCount(8);
+    await expect(pagina.locator(".pq-limites li")).toHaveCount(4);
+    const texto = (await pagina.locator("main").innerText()).toLowerCase();
+    expect(texto).toContain("a pergunta de partida");
+    expect(texto).toContain("chave de evidências");
+  } finally {
+    await contexto.close();
+  }
+});

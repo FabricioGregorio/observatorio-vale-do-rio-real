@@ -37,6 +37,11 @@ import {
   MESES_DE_COLETA,
 } from "../../dados/indicadores/derivados";
 
+import {
+  type Entrevista as EntrevistaDaPesquisa,
+  ENTREVISTAS as LISTA_DE_ENTREVISTAS,
+} from "../home/conteudo";
+
 export {
   INDICADORES,
   MESES_DE_COLETA,
@@ -71,6 +76,32 @@ export const OBJETIVO: readonly string[] = [
   "Para respondê-la, o Observatório acompanhou dois equipamentos culturais de Tobias Barreto e mediu a economia solidária que se forma em torno deles — quanto entra, quanto sai, onde a despesa é executada e quem é contratado.",
   "Em paralelo, construiu parâmetros de comparação entre políticas públicas municipais de cultura, ouvindo gestores de três municípios em contextos sociopolíticos diferentes. Um levantamento de informações turísticas e culturais na base de dados do Estado de Sergipe complementou o material reunido em campo.",
 ];
+
+const MARCA_DA_PERGUNTA = "pergunta concreta: ";
+
+/**
+ * A pergunta de partida, recortada do próprio `OBJETIVO`.
+ *
+ * Ela não é escrita duas vezes: a abertura da página exibe este recorte e o
+ * corpo do objetivo segue a partir do parágrafo seguinte. Se a redação do
+ * objetivo deixar de enunciar a pergunta, isto falha em build em vez de
+ * servir uma abertura vazia.
+ */
+function recortarPergunta(paragrafo: string): string {
+  const corte = paragrafo.indexOf(MARCA_DA_PERGUNTA);
+  if (corte < 0) {
+    throw new Error(
+      "O objetivo da pesquisa não enuncia a pergunta de partida.",
+    );
+  }
+  const corpo = paragrafo.slice(corte + MARCA_DA_PERGUNTA.length).trim();
+  return `${corpo.charAt(0).toUpperCase()}${corpo.slice(1).replace(/\.$/, "")}?`;
+}
+
+export const PERGUNTA = recortarPergunta(OBJETIVO[0] ?? "");
+
+/** O objetivo a partir de onde a pergunta já foi feita. */
+export const OBJETIVO_DEPOIS_DA_PERGUNTA: readonly string[] = OBJETIVO.slice(1);
 
 /**
  * Os papéis da equipe, como as transcrições os apresentam. A lista descreve
@@ -115,6 +146,17 @@ export type Instrumento = {
   readonly quemPreenche: string;
   readonly quando: string;
   readonly registra: readonly string[];
+  /**
+   * Indicadores auditados que este instrumento sustenta, por id do dataset.
+   *
+   * A ligação é declarada, e não inferida do nome: `H4-006` conta dias de
+   * operação relatados pelo responsável do equipamento, e `H4-007` conta as
+   * contratações que o mesmo registro anota com data e valor — os dois saem
+   * da rotina de funcionamento. O formulário do visitante fica com a lista
+   * vazia de propósito: as contagens de público têm pendência metodológica
+   * aberta e por isso não estão publicadas em lugar nenhum do site.
+   */
+  readonly indicadores: readonly string[];
 };
 
 export const INSTRUMENTOS: readonly Instrumento[] = [
@@ -129,6 +171,7 @@ export const INSTRUMENTOS: readonly Instrumento[] = [
       "serviços de manutenção do espaço",
       "receita de taxa de funcionamento e de consumo no local",
     ],
+    indicadores: ["H4-006", "H4-007"],
   },
   {
     id: "consumidor",
@@ -141,6 +184,55 @@ export const INSTRUMENTOS: readonly Instrumento[] = [
       "motivo da visita",
       "opinião sobre o espaço",
     ],
+    indicadores: [],
+  },
+];
+
+/**
+ * As quatro naturezas de evidência que a pesquisa produziu em campo.
+ *
+ * Não é taxonomia nova: são os dois instrumentos de coleta declarados acima,
+ * as entrevistas gravadas e a presença da própria equipe no lugar — as mesmas
+ * quatro coisas que `LEITURA` diz terem sido lidas em conjunto. A chave
+ * existe para que o percurso possa dizer, etapa a etapa, o que ficou dela,
+ * sem transformar isso em rótulo decorativo.
+ */
+export type TipoDeEvidencia =
+  | "registro"
+  | "formulario"
+  | "entrevista"
+  | "campo";
+
+export type Evidencia = {
+  readonly id: TipoDeEvidencia;
+  readonly nome: string;
+  readonly texto: string;
+};
+
+export const CHAVE_DE_EVIDENCIAS: readonly Evidencia[] = [
+  {
+    id: "registro",
+    nome: "Registro diário",
+    texto:
+      "O formulário de rotina, preenchido pelo ator-chave a cada entrada ou saída de recurso — houvesse visita ou não.",
+  },
+  {
+    id: "formulario",
+    nome: "Formulário do visitante",
+    texto:
+      "Respondido por quem visita, a partir de QR Code disponível no próprio equipamento.",
+  },
+  {
+    id: "entrevista",
+    nome: "Entrevista gravada",
+    texto:
+      "Conversa registrada com quem mantém os lugares visitados e com quem responde pela política cultural nos municípios.",
+  },
+  {
+    id: "campo",
+    nome: "Trabalho de campo",
+    texto:
+      "A presença da equipe no lugar: visitação rotineira, reconhecimento do território e a oficina de devolução.",
   },
 ];
 
@@ -148,12 +240,37 @@ export type Etapa = {
   readonly numeral: string;
   readonly titulo: string;
   readonly paragrafos: readonly string[];
+  /** Lugares nomeados pela própria etapa, na ordem em que ela os nomeia. */
+  readonly onde: readonly string[];
+  /** Naturezas de evidência que os parágrafos da etapa registram. */
+  readonly evidencias: readonly TipoDeEvidencia[];
+  /** Ausência declarada pela própria etapa, quando existe. */
+  readonly semRegistro: string | null;
 };
 
 /**
  * O percurso, na ordem em que aconteceu (EP01). A troca de Itabaianinha por
  * Tomar do Geru está aqui como etapa, e não como nota de rodapé: alteração de
  * percurso é resultado de pesquisa, não defeito de execução.
+ *
+ * ## De onde sai `onde` e `evidencias`
+ *
+ * Nenhum dos dois campos classifica a etapa por fora. `onde` repete os
+ * lugares que os próprios parágrafos nomeiam, na ordem em que aparecem.
+ * `evidencias` lista a natureza do que cada etapa **diz** ter produzido:
+ *
+ * - I — "os formulários eram preenchidos dia a dia" cobre os dois
+ *   instrumentos; "rotina mensal de visitação" e o reconhecimento da Serra
+ *   dos Macacos são trabalho de campo.
+ * - II — as entrevistas com a fundação de cultura e a diretoria de turismo
+ *   estão escritas na etapa; a travessia de barco até Ilha Grande é campo.
+ * - III — a entrevista de Tomar do Geru é a que fecha, na etapa IV, o
+ *   comparativo "entre os três municípios", e tem documento próprio no
+ *   acervo. Itabaianinha não tem evidência de campo, e a etapa já declara
+ *   isso: a ausência aparece como ausência, não como lacuna de layout.
+ * - IV — a oficina na Serra dos Macacos é campo; as entrevistas com a
+ *   secretaria de cultura e com a prefeitura de Tobias Barreto estão escritas
+ *   na etapa.
  */
 export const PERCURSO: readonly Etapa[] = [
   {
@@ -163,6 +280,9 @@ export const PERCURSO: readonly Etapa[] = [
       "O acompanhamento do Recanto da Serra e do Museu Borda da Mata foi contínuo, em rotina mensal de visitação, enquanto os formulários eram preenchidos dia a dia. O Recanto registrava em ritmo semanal e, em alguns períodos, quase diário — foi essa regularidade que mostrou, cedo, que a coleta seguia no caminho certo.",
       "No mesmo intervalo, a equipe fez o reconhecimento da Serra dos Macacos — comunidade agrícola entre serras, alcançada por estrada de terra e por uma ponte de madeira sobre o Riacho do Caripau.",
     ],
+    onde: ["Recanto da Serra", "Museu Borda da Mata", "Serra dos Macacos"],
+    evidencias: ["registro", "formulario", "campo"],
+    semRegistro: null,
   },
   {
     numeral: "II",
@@ -171,6 +291,9 @@ export const PERCURSO: readonly Etapa[] = [
       "A segunda etapa levou a pesquisa a São Cristóvão, onde foram entrevistadas a fundação municipal de cultura e a diretoria de turismo. De lá, a equipe seguiu de barco para Ilha Grande, povoação do município com cultura pesqueira própria e a tradição do samba de coco preservada ali.",
       "Ilha Grande entrou no percurso porque a própria página oficial da prefeitura a apresentava como território ecoturístico aberto à visitação — e era essa política anunciada que a pesquisa foi conferir.",
     ],
+    onde: ["São Cristóvão", "Ilha Grande"],
+    evidencias: ["entrevista", "campo"],
+    semRegistro: null,
   },
   {
     numeral: "III",
@@ -179,6 +302,10 @@ export const PERCURSO: readonly Etapa[] = [
       "O terceiro ponto de comparação seria Itabaianinha, onde a pesquisa encontrou uma rota turística desativada, a Rota de Pedra Branca. As tentativas de contato com o governo municipal não tiveram sucesso, e o município permaneceu no recorte sem evidência de pesquisa de campo.",
       "O destino passou a ser Tomar do Geru: igreja histórica tombada, economia baseada na mineração de pedra e uma formação sociocultural ligada aos Kiriris. A mudança deu à pesquisa um eixo que ela não tinha — a conexão entre preservação da natureza e cultura dos povos originários.",
     ],
+    onde: ["Itabaianinha", "Tomar do Geru"],
+    evidencias: ["entrevista"],
+    semRegistro:
+      "Itabaianinha permaneceu no recorte sem evidência de pesquisa de campo.",
   },
   {
     numeral: "IV",
@@ -187,6 +314,9 @@ export const PERCURSO: readonly Etapa[] = [
       "O estudo se encerrou onde tinha começado a se abrir: numa oficina de montagem de equipamento cultural com a própria comunidade da Serra dos Macacos, feita para exercitar a autonomia local diante das oportunidades que o território oferece.",
       "Em Tobias Barreto, a pesquisa também entrevistou a secretaria municipal de cultura e a prefeitura, fechando o comparativo entre os três municípios.",
     ],
+    onde: ["Serra dos Macacos", "Tobias Barreto"],
+    evidencias: ["campo", "entrevista"],
+    semRegistro: null,
   },
 ];
 
@@ -200,9 +330,85 @@ export const ESCUTA: readonly string[] = [
   "Esta página identifica cada entrevista pela instituição ou pelo lugar, e não por pessoa. A ficha de cada documento, com áudio, transcrição, data de publicação e hash, está no acervo.",
 ];
 
+/**
+ * Os dois registros da escuta.
+ *
+ * A divisão não é criada aqui: `ESCUTA` já diz que as entrevistas foram
+ * gravadas "com quem mantém os lugares visitados e com quem responde pela
+ * política cultural nos municípios". Isto apenas diz qual das duas pontas
+ * cada entrevista ocupa, por slug de documento — nunca por semelhança de
+ * nome. Uma entrevista que não esteja em nenhuma das listas derruba o
+ * agrupamento em build, em vez de sumir da página.
+ */
+export type RegistroDaEscuta = {
+  readonly id: "lugares" | "gestao";
+  readonly titulo: string;
+  readonly texto: string;
+  readonly documentos: readonly string[];
+};
+
+export const REGISTROS_DA_ESCUTA: readonly RegistroDaEscuta[] = [
+  {
+    id: "lugares",
+    titulo: "Nos lugares visitados",
+    texto:
+      "Com quem mantém o espaço aberto e com quem vive o território em que ele está.",
+    documentos: [
+      "entrevista-oviedo-e-neide-abreu",
+      "entrevista-pedro-menezes",
+      "entrevista-lideranca-ilha-grande",
+    ],
+  },
+  {
+    id: "gestao",
+    titulo: "Na gestão pública municipal",
+    texto:
+      "Com quem responde pela política cultural e de turismo em cada um dos municípios comparados.",
+    documentos: [
+      "entrevista-josenilson-bispo",
+      "entrevista-paola-santana",
+      "entrevista-marcio-andre",
+      "entrevista-prefeito-tobias-barreto",
+      "entrevista-laerte-aguiar",
+    ],
+  },
+];
+
 /** Frase de estado quando todas as entrevistas têm arquivo público. */
 export const ESCUTA_PUBLICA =
   "Nenhuma delas foi publicada por semelhança de nome: como todo arquivo deste site, cada documento só passa a ter endereço público depois de concluída a revisão de privacidade.";
+
+/**
+ * As entrevistas repartidas nos dois registros, sem perder nenhuma.
+ *
+ * O fail-closed é o mesmo das fichas de material: se uma entrevista nova
+ * entrar em `ENTREVISTAS` sem ser classificada, o agrupamento falha em vez de
+ * publicar uma escuta incompleta como se estivesse inteira.
+ */
+export function agruparEntrevistas(): readonly {
+  readonly registro: RegistroDaEscuta;
+  readonly entrevistas: readonly EntrevistaDaPesquisa[];
+}[] {
+  const classificados = new Set(
+    REGISTROS_DA_ESCUTA.flatMap((registro) => registro.documentos),
+  );
+  const sobrando = LISTA_DE_ENTREVISTAS.filter(
+    (entrevista) => !classificados.has(entrevista.documento),
+  );
+  if (sobrando.length > 0) {
+    throw new Error(
+      `Entrevista sem registro de escuta: ${sobrando
+        .map((entrevista) => entrevista.documento)
+        .join(", ")}.`,
+    );
+  }
+  return REGISTROS_DA_ESCUTA.map((registro) => ({
+    registro,
+    entrevistas: LISTA_DE_ENTREVISTAS.filter((entrevista) =>
+      registro.documentos.includes(entrevista.documento),
+    ),
+  }));
+}
 
 /** Frase de estado enquanto nenhuma tem arquivo público. */
 export const ESCUTA_RESTRITA =

@@ -1,20 +1,28 @@
 /*
-  `/pesquisa` — caderno de pesquisa.
+  `/pesquisa` — caderno de percurso.
 
   Cor, família e raio vêm de `tokens.css`, direto ou por `color-mix` sobre
   papéis semânticos; espaçamento é sempre relativo, para acompanhar o
   redimensionamento do navegador.
 
-  A forma é a de um caderno técnico, e não a de uma Home: ficha na capa,
-  percurso numerado num fio vertical, fichas de instrumento lado a lado e
-  pranchas fotográficas ao lado do texto. `/observatorio` usa margem de ficha
-  com rótulo em mono; aqui a hierarquia é vertical e o numeral faz o trabalho
-  que lá cabia ao rótulo. As duas páginas compartilham tokens e filetes, e
-  nenhuma composição.
+  ## O que distingue esta página das irmãs
 
-  O estado de material reaproveita o vocabulário da Home — mono, caixa alta,
-  marca para o que é público — porque é o mesmo significado. Repetir o
-  significado com outra aparência seria pior que repetir a aparência.
+  `/dados` é um caderno de medidas: números abertos, série mensal, escala
+  comum. `/territorio` é uma carta: placa, margem cartográfica, índice de
+  lugares. Aqui a forma é a de um caderno de percurso — a pergunta abre, o
+  expediente fica logo abaixo dela como colofão, e o núcleo é um fio vertical
+  em que cada etapa carrega na margem os lugares que alcançou e a natureza do
+  que ficou dela.
+
+  As três compartilham tokens, filetes, o mono de metadado e a mesma escala
+  editorial. Nenhuma compartilha composição.
+
+  ## Movimento
+
+  Um só: o fio do percurso se desenha conforme a leitura desce. É animação de
+  rolagem em CSS puro, sem JavaScript, e está dentro de `@supports` e de
+  `prefers-reduced-motion: no-preference` — onde qualquer um dos dois não
+  valer, o fio já nasce inteiro. Nenhuma informação depende dele.
 */
 
 .pq {
@@ -23,8 +31,22 @@
     var(--color-borda-forte) 45%,
     var(--color-fundo)
   );
-  --pq-papel: color-mix(in srgb, var(--color-fundo-elevado) 72%, transparent);
+  --pq-linha: color-mix(
+    in srgb,
+    var(--color-borda-forte) 70%,
+    var(--color-fundo)
+  );
+  --pq-papel: color-mix(in srgb, var(--color-fundo) 95%, var(--color-marca));
   --pq-respiro: clamp(2.75rem, 6vw, 4.5rem);
+  --pq-espaco-curto: 0.5rem;
+  --pq-espaco: 1rem;
+  --pq-espaco-medio: 1.5rem;
+  --pq-espaco-amplo: clamp(1.5rem, 4vw, 3rem);
+  --pq-coluna-fio: clamp(2rem, 5cqi, 3rem);
+  --pq-margem: 18rem;
+  --pq-marca: 0.7rem;
+
+  container-type: inline-size;
   margin-inline: auto;
   width: min(100% - 2rem, var(--largura-conteudo));
   display: flex;
@@ -44,31 +66,69 @@
   margin: 0;
   max-width: 22ch;
   font-size: clamp(var(--text-xl), 4.2vw, var(--text-3xl));
+  scroll-margin-top: var(--topo-reserva-rolagem);
 }
 .pq h3 {
   margin: 0;
   font-size: var(--text-lg);
 }
-.pq p {
+/*
+  Os zeramentos entram em `:where()`, de especificidade nula: sem isso
+  `.pq p { margin: 0 }` vence toda classe de componente que precise de um
+  respiro próprio, e o respiro some sem erro nenhum aparecer.
+*/
+.pq :where(p, dl, dd) {
   margin: 0;
 }
+.pq :where(ul, ol) {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
 
-/* --- Capa ---------------------------------------------------------------- */
+/* --- Marcas de evidência --------------------------------------------------
+   Quatro desenhos distintos; a cor só reforça o que a forma já separa. */
+
+.pq-marca {
+  flex: none;
+  width: 0.72rem;
+  height: 0.72rem;
+  translate: 0 0.04em;
+}
+.pq-marca[data-evidencia="registro"],
+.pq-marca[data-evidencia="formulario"] {
+  color: var(--color-marca);
+}
+.pq-marca[data-evidencia="entrevista"] {
+  color: var(--color-acento);
+}
+.pq-marca[data-evidencia="campo"] {
+  color: var(--color-texto);
+}
+
+/* --- Abertura: a pergunta antes da ficha ---------------------------------- */
 
 .pq-abertura {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
+  display: grid;
+  gap: var(--pq-espaco-medio);
   padding-block: clamp(2.5rem, 7vw, 4.5rem) var(--pq-respiro);
+}
+.pq-abertura__texto {
+  display: grid;
+  gap: var(--pq-espaco-medio);
+  align-content: start;
+  min-width: 0;
 }
 .pq-abertura h1 {
   margin: 0;
   max-width: 12ch;
-  font-size: clamp(var(--text-3xl), 8vw, var(--text-5xl));
+  font-size: clamp(var(--text-2xl), 6cqi, var(--text-4xl));
+  line-height: 1;
 }
 .pq-abertura__sintese {
-  max-width: 58ch;
-  font-size: clamp(var(--text-base), 2.4vw, var(--text-lg));
+  max-width: 54ch;
+  font-size: clamp(var(--text-base), 2.2vw, var(--text-lg));
+  text-wrap: pretty;
 }
 .pq-abertura__nota {
   max-width: var(--largura-leitura);
@@ -76,41 +136,149 @@
   font-size: var(--text-sm);
 }
 
-.pq-ficha {
-  margin: 0.75rem 0 0;
+/*
+  A pergunta é o maior elemento da página, e é ela que diz que houve uma
+  investigação: quem chega lê o que a pesquisa foi saber antes de ler quantos
+  meses ela durou.
+*/
+.pq-pergunta {
+  display: grid;
+  gap: var(--pq-espaco-curto);
+  align-content: start;
+  min-width: 0;
+}
+.pq-pergunta__texto {
+  max-width: 24ch;
+  font-family: var(--font-display);
+  font-weight: var(--peso-titulo);
+  font-size: clamp(var(--text-xl), 4.6cqi, var(--text-4xl));
+  line-height: 1.08;
+  letter-spacing: var(--tracking-display);
+  color: var(--color-marca);
+  text-wrap: pretty;
+}
+
+/* Expediente: as linhas longas da ficha, em registro de colofão. */
+.pq-expediente {
   border-top: 2px solid var(--color-marca);
 }
-.pq-ficha > div {
+.pq-expediente > div {
   display: grid;
   gap: 0.15rem 1.5rem;
   padding-block: 0.7rem;
   border-bottom: 1px solid var(--pq-fio);
 }
-.pq-ficha dt {
+.pq-expediente dt {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   letter-spacing: var(--tracking-mono);
   text-transform: uppercase;
   color: var(--color-texto-suave);
 }
-.pq-ficha dd {
-  margin: 0;
+.pq-expediente dd {
   min-width: 0;
+  font-size: var(--text-sm);
   text-wrap: pretty;
 }
-@media (min-width: 48rem) {
-  .pq-ficha > div {
-    grid-template-columns: 14rem minmax(0, 1fr);
+
+/*
+  As medidas curtas vêm em mono, e não em tipo de display: mono é o registro
+  documental desta página, e um numeral gigante aqui transformaria a abertura
+  no painel que ela não é. Os números de /dados continuam sendo os de /dados.
+*/
+.pq-medidas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--pq-espaco-medio);
+}
+.pq-medidas > div {
+  display: grid;
+  gap: 0.2rem;
+  align-content: start;
+  padding-block: 0.7rem;
+  border-top: 1px solid var(--pq-fio);
+}
+/*
+  O rótulo de uma medida ocupa duas linhas e o da vizinha, uma. Sem a grade
+  compartilhada, os números saem desalinhados entre si — e um expediente com
+  a base torta deixa de parecer expediente.
+*/
+@supports (grid-template-rows: subgrid) {
+  .pq-medidas {
+    grid-auto-rows: auto auto;
+  }
+  .pq-medidas > div {
+    grid-row: span 2;
+    grid-template-rows: subgrid;
+  }
+}
+@container (min-width: 34rem) {
+  .pq-medidas {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@container (min-width: 60rem) {
+  .pq-medidas {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+.pq-medidas dt {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+  text-wrap: pretty;
+}
+.pq-medidas dd {
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  font-variant-numeric: tabular-nums;
+}
+
+@container (min-width: 52rem) {
+  .pq-abertura {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    grid-template-areas:
+      "chamada    chamada"
+      "texto      pergunta"
+      "expediente expediente"
+      "medidas    medidas"
+      "nota       nota";
+    column-gap: var(--pq-espaco-amplo);
+    align-items: start;
+  }
+  .pq-abertura__chamada {
+    grid-area: chamada;
+  }
+  .pq-abertura__texto {
+    grid-area: texto;
+  }
+  .pq-pergunta {
+    grid-area: pergunta;
+  }
+  .pq-expediente {
+    grid-area: expediente;
+    margin-top: var(--pq-espaco);
+  }
+  .pq-medidas {
+    grid-area: medidas;
+  }
+  .pq-abertura__nota {
+    grid-area: nota;
+  }
+  .pq-expediente > div {
+    grid-template-columns: 12rem minmax(0, 1fr);
     align-items: baseline;
   }
 }
 
-/* --- Seções -------------------------------------------------------------- */
+/* --- Seções --------------------------------------------------------------- */
 
 .pq-secao {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--pq-espaco-medio);
   padding-block: var(--pq-respiro);
   border-top: 1px solid var(--pq-fio);
 }
@@ -122,14 +290,14 @@
   min-width: 0;
 }
 .pq-ponte {
-  padding-top: 1rem;
+  padding-top: var(--pq-espaco);
   border-top: 1px solid var(--pq-fio);
   max-width: var(--largura-leitura);
   color: var(--color-texto-suave);
   font-size: var(--text-sm);
 }
 
-/* --- Prancha fotográfica -------------------------------------------------- */
+/* --- Prancha fotográfica --------------------------------------------------- */
 
 .pq-prancha {
   margin: 0;
@@ -150,35 +318,22 @@
   font-size: var(--text-sm);
 }
 
-.pq-metodo,
-.pq-percurso,
-.pq-escuta {
+/* --- Método: ator-chave ao lado dos papéis --------------------------------- */
+
+.pq-metodo {
   display: grid;
-  gap: clamp(1.5rem, 4vw, 3rem);
+  gap: var(--pq-espaco-amplo);
   align-items: start;
 }
-@media (min-width: 64rem) {
-  .pq-metodo,
-  .pq-percurso {
-    grid-template-columns: minmax(0, 1fr) 22rem;
-  }
-  .pq-escuta {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  }
-}
-
-/* --- Papéis --------------------------------------------------------------- */
-
 .pq-papeis > .meta-ficha {
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--pq-espaco-curto);
 }
 .pq-papeis dl {
-  margin: 0;
   border-top: 1px solid var(--pq-fio);
 }
-.pq-papeis > dl > div {
+.pq-papeis :where(dl) > div {
   display: grid;
-  gap: 0.2rem 1.5rem;
+  gap: 0.2rem;
   padding-block: 0.9rem;
   border-bottom: 1px solid var(--pq-fio);
 }
@@ -188,133 +343,443 @@
   color: var(--color-marca);
 }
 .pq-papeis dd {
-  margin: 0;
   max-width: 62ch;
+  font-size: var(--text-sm);
 }
-@media (min-width: 48rem) {
-  .pq-papeis > dl > div {
-    grid-template-columns: 12rem minmax(0, 1fr);
-    align-items: baseline;
+@container (min-width: 60rem) {
+  .pq-metodo {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 24rem);
   }
 }
 
-/* --- Instrumentos --------------------------------------------------------- */
+/* --- Instrumentos: a ficha mostra a lógica do formulário ------------------- */
 
-.pq-instrumentos > .meta-ficha {
-  margin-bottom: 0.5rem;
-}
-.pq-instrumentos > ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.pq-instrumentos {
   display: grid;
-  gap: clamp(1.25rem, 3vw, 2rem);
+  gap: var(--pq-espaco-amplo);
 }
 .pq-instrumento {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: clamp(1rem, 2.5vw, 1.5rem);
-  border: 1px solid var(--pq-fio);
-  border-top: 3px solid var(--color-acento);
-  border-radius: var(--radius-ficha);
-  background: var(--pq-papel);
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: 0.3rem var(--pq-espaco);
+  align-content: start;
+  padding: var(--pq-espaco-medio) 0 var(--pq-espaco-medio);
+  border-top: 2px solid var(--color-marca);
+  min-width: 0;
 }
-.pq-instrumento > dl {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+.pq-instrumento__ordem {
+  grid-column: 1;
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  color: var(--color-marca);
+  line-height: 1.1;
 }
-.pq-instrumento dt {
+.pq-instrumento > :not(.pq-instrumento__ordem) {
+  grid-column: 2;
+}
+.pq-instrumento h3 {
+  max-width: 26ch;
+}
+.pq-instrumento__ficha {
+  margin-top: var(--pq-espaco-curto);
+}
+.pq-instrumento__ficha > div {
+  display: grid;
+  gap: 0.1rem;
+  padding-block: 0.45rem;
+  border-bottom: 1px solid var(--pq-fio);
+}
+.pq-instrumento__ficha dt {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   letter-spacing: var(--tracking-mono);
   text-transform: uppercase;
   color: var(--color-texto-suave);
 }
-.pq-instrumento dd {
-  margin: 0;
-}
-.pq-instrumento__itens {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.pq-instrumento__itens li {
-  padding: 0.4rem 0 0.4rem 1rem;
-  border-bottom: 1px solid var(--pq-fio);
-  position: relative;
+.pq-instrumento__ficha dd {
   font-size: var(--text-sm);
 }
-.pq-instrumento__itens li::before {
+.pq-instrumento__secao {
+  margin-top: var(--pq-espaco-amplo);
+}
+
+/*
+  Os campos aparecem como campos. A linha ao lado do rótulo é o espaço em
+  branco que o formulário de papel teria — desenho, nunca dado: nenhuma
+  resposta é exibida aqui, e nenhuma está guardada nesta página.
+*/
+.pq-campos {
+  margin-top: 0.4rem;
+}
+.pq-campos li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding-block: 0.5rem;
+  font-size: var(--text-sm);
+  text-wrap: pretty;
+}
+.pq-campos__linha {
+  flex: 1 1 2.5rem;
+  min-width: 1.5rem;
+  border-bottom: 1px solid var(--pq-linha);
+  translate: 0 -0.18em;
+  transition: border-bottom-color var(--duracao-hover) var(--easing-padrao);
+}
+.pq-instrumento:hover .pq-campos__linha,
+.pq-instrumento:focus-within .pq-campos__linha {
+  border-bottom-color: var(--color-marca);
+}
+
+.pq-produzido {
+  margin-top: 0.4rem;
+  border-top: 1px solid var(--pq-fio);
+}
+.pq-produzido > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--pq-espaco);
+  padding-block: 0.6rem;
+  border-bottom: 1px solid var(--pq-fio);
+}
+.pq-produzido dt {
+  font-size: var(--text-sm);
+  text-wrap: pretty;
+}
+.pq-produzido dd {
+  font-family: var(--font-mono);
+  font-size: var(--text-xl);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-marca);
+}
+.pq-instrumento__nota {
+  margin-top: var(--pq-espaco-medio);
+  padding-left: var(--pq-espaco);
+  border-left: 2px solid var(--color-acento);
+  max-width: 48ch;
+  font-size: var(--text-sm);
+  color: var(--color-texto-suave);
+}
+@container (min-width: 56rem) {
+  .pq-instrumentos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--pq-espaco-amplo);
+  }
+}
+
+/* --- Chave de evidências --------------------------------------------------- */
+
+.pq-chave {
+  display: grid;
+  gap: var(--pq-espaco-curto);
+}
+.pq-chave dl {
+  display: grid;
+  gap: 0 var(--pq-espaco-medio);
+  border-top: 1px solid var(--pq-linha);
+}
+.pq-chave :where(dl) > div {
+  display: grid;
+  gap: 0.25rem;
+  align-content: start;
+  padding-block: 0.8rem;
+  border-bottom: 1px solid var(--pq-fio);
+}
+.pq-chave dt {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  font-family: var(--font-display);
+  font-weight: var(--peso-titulo);
+}
+.pq-chave dd {
+  font-size: var(--text-sm);
+  color: var(--color-texto-suave);
+  text-wrap: pretty;
+}
+@container (min-width: 44rem) {
+  .pq-chave dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .pq-chave :where(dl) > div {
+    border-bottom: 0;
+    border-top: 1px solid var(--pq-fio);
+    margin-top: -1px;
+  }
+}
+@container (min-width: 72rem) {
+  .pq-chave dl {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* --- O percurso: um fio, quatro etapas, uma chegada ------------------------ */
+
+.pq-percurso {
+  display: grid;
+  margin-top: var(--pq-espaco-medio);
+}
+.pq-etapas {
+  position: relative;
+  display: grid;
+  gap: clamp(2.5rem, 6vw, 4rem);
+}
+/*
+  O fio que atravessa as quatro etapas, em duas camadas: a base neutra e, por
+  cima dela, o fio do percurso. Em repouso o de cima já está inteiro — é ele
+  que se desenha, mais abaixo, quando o navegador suporta animação de rolagem
+  e quem lê não pediu movimento reduzido.
+*/
+.pq-etapas::before,
+.pq-etapas::after {
   content: "";
   position: absolute;
-  top: 0.95em;
-  left: 0;
-  width: 0.35rem;
-  height: 0.35rem;
-  background: var(--color-acento);
+  top: 1.4rem;
+  bottom: 0;
+  left: calc(var(--pq-coluna-fio) / 2);
+  width: 1px;
 }
-@media (min-width: 52rem) {
-  .pq-instrumentos > ul {
+.pq-etapas::before {
+  background: var(--pq-linha);
+}
+.pq-etapas::after {
+  background: var(--color-marca);
+}
+
+.pq-etapa {
+  display: grid;
+  grid-template-columns: var(--pq-coluna-fio) minmax(0, 1fr);
+  grid-template-areas:
+    "numeral titulo"
+    ".       texto"
+    ".       margem";
+  column-gap: var(--pq-espaco);
+  row-gap: 0.7rem;
+  align-items: start;
+  min-width: 0;
+}
+/*
+  O numeral é o nó da etapa sobre o fio: placa quadrada vazada, do tamanho de
+  um marcador de carta. Sem a placa, o algarismo romano "I" desaparecia dentro
+  do próprio fio.
+*/
+.pq-etapa__numeral {
+  grid-area: numeral;
+  position: relative;
+  z-index: var(--z-conteudo);
+  justify-self: center;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--color-marca);
+  border-radius: var(--radius-ficha);
+  background: var(--color-fundo);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1;
+  color: var(--color-marca);
+  transition:
+    color var(--duracao-hover) var(--easing-padrao),
+    border-color var(--duracao-hover) var(--easing-padrao);
+}
+.pq-etapa__titulo {
+  grid-area: titulo;
+  max-width: 28ch;
+  font-size: clamp(var(--text-lg), 2.4cqi, var(--text-xl));
+}
+.pq-etapa__texto {
+  grid-area: texto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  min-width: 0;
+}
+.pq-etapa__texto p {
+  max-width: 58ch;
+  text-wrap: pretty;
+}
+/*
+  A fotografia entra na narrativa da etapa, e não na margem: a margem é
+  aparato documental curto, e uma prancha alta ali deixaria a coluna do texto
+  com meio metro de vazio ao lado.
+*/
+.pq-etapa__texto .pq-prancha {
+  margin-top: 0.4rem;
+  max-width: 20rem;
+}
+/* A etapa que não teve campo diz isso; ausência é resultado, não lacuna. */
+.pq-etapa__ausencia {
+  padding-left: var(--pq-espaco);
+  border-left: 2px solid var(--color-acento);
+  font-size: var(--text-sm);
+  color: var(--color-texto-suave);
+}
+
+.pq-etapa__margem {
+  grid-area: margem;
+  display: grid;
+  gap: var(--pq-espaco) var(--pq-espaco-medio);
+  align-content: start;
+  margin-top: 0.4rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--pq-fio);
+  min-width: 0;
+}
+.pq-etapa__margem > div {
+  display: grid;
+  gap: 0.3rem;
+  align-content: start;
+  min-width: 0;
+}
+.pq-etapa__onde li {
+  padding-block: 0.3rem;
+  border-bottom: 1px solid var(--pq-fio);
+  font-size: var(--text-sm);
+  text-wrap: pretty;
+}
+.pq-etapa__onde li:last-child,
+.pq-etapa__evidencias li:last-child {
+  border-bottom: 0;
+}
+.pq-etapa__evidencias li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  padding-block: 0.3rem;
+  border-bottom: 1px solid var(--pq-fio);
+  font-size: var(--text-sm);
+}
+.pq-etapa:hover .pq-etapa__numeral,
+.pq-etapa:focus-within .pq-etapa__numeral {
+  color: var(--color-acento);
+  border-color: var(--color-acento);
+}
+
+/* A chegada do percurso: o fio continua e termina num nó. */
+.pq-fecho-do-percurso {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--pq-coluna-fio) minmax(0, 1fr);
+  column-gap: var(--pq-espaco);
+  row-gap: 0.3rem;
+  padding-top: clamp(2rem, 5vw, 3rem);
+}
+.pq-fecho-do-percurso > * {
+  grid-column: 2;
+}
+.pq-fecho-do-percurso::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: calc(var(--pq-coluna-fio) / 2);
+  width: 1px;
+  height: clamp(2rem, 5vw, 3rem);
+  background: var(--pq-linha);
+}
+.pq-fecho-do-percurso::after {
+  content: "";
+  position: absolute;
+  top: clamp(2rem, 5vw, 3rem);
+  left: calc(var(--pq-coluna-fio) / 2);
+  width: var(--pq-marca);
+  height: var(--pq-marca);
+  translate: -50% -50%;
+  rotate: 45deg;
+  background: var(--color-marca);
+}
+.pq-fecho-do-percurso p:not(.meta-ficha) {
+  max-width: 58ch;
+  text-wrap: pretty;
+}
+
+@container (min-width: 64rem) {
+  .pq-etapa {
+    grid-template-columns:
+      var(--pq-coluna-fio) minmax(0, 1fr)
+      var(--pq-margem);
+    grid-template-areas:
+      "numeral titulo margem"
+      ".       texto  margem";
+    grid-template-rows: auto minmax(0, 1fr);
+    column-gap: var(--pq-espaco-amplo);
+  }
+  .pq-etapa__texto {
+    align-self: start;
+  }
+  .pq-etapa__margem {
+    margin-top: 0.35rem;
+  }
+}
+@container (min-width: 34rem) and (max-width: 63.999rem) {
+  .pq-etapa__margem {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-/* --- Percurso ------------------------------------------------------------- */
+/*
+  O fio se desenha conforme a leitura desce. Sem JavaScript, sem observador e
+  sem dependência: fora de `@supports` — ou com movimento reduzido — o fio já
+  está inteiro desde o primeiro quadro, porque o estado inicial encolhido só
+  existe dentro das duas guardas.
+*/
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .pq-etapas::after {
+      transform-origin: top center;
+      scale: 1 0;
+      animation: pq-desenhar-fio linear both;
+      animation-timeline: view();
+      animation-range: entry 100% exit 0%;
+    }
+    @keyframes pq-desenhar-fio {
+      to {
+        scale: 1 1;
+      }
+    }
+  }
+}
 
-.pq-etapas {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+/* --- Escuta: dois registros, não uma lista só ------------------------------ */
+
+.pq-escuta {
   display: grid;
-  gap: 2.25rem;
+  gap: var(--pq-espaco-amplo);
+  align-items: start;
 }
-.pq-etapa {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  padding-left: clamp(2.75rem, 6vw, 3.75rem);
+.pq-escuta .pq-prancha {
+  margin-top: 0.4rem;
+  max-width: 22rem;
 }
-.pq-etapa p {
-  max-width: 58ch;
+.pq-registros {
+  display: grid;
+  gap: var(--pq-espaco-amplo);
+  align-content: start;
+  min-width: 0;
 }
-.pq-etapa .numeral-ficha {
-  position: absolute;
-  top: -0.15rem;
-  left: 0;
-  font-size: var(--text-2xl);
-  color: var(--color-marca);
+.pq-registro {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
 }
-.pq-etapa::before {
-  content: "";
-  position: absolute;
-  top: 2.4rem;
-  bottom: -2.25rem;
-  left: 0.55rem;
-  width: 1px;
-  background: var(--pq-fio);
+.pq-registro__texto {
+  margin-bottom: var(--pq-espaco-curto);
+  max-width: 46ch;
+  font-size: var(--text-sm);
+  color: var(--color-texto-suave);
+  text-wrap: pretty;
 }
-.pq-etapa:last-child::before {
-  display: none;
-}
-
-/* --- Escuta --------------------------------------------------------------- */
-
 .pq-entrevistas {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  margin-top: var(--pq-espaco-curto);
   border-top: 2px solid var(--color-texto);
   min-width: 0;
 }
 .pq-entrevistas li {
   display: grid;
-  grid-template-columns: 2.5rem minmax(0, 1fr);
-  gap: 0.1rem 1rem;
-  padding-block: 0.7rem;
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  gap: 0.1rem var(--pq-espaco);
+  padding-block: 0.65rem;
   border-bottom: 1px solid var(--pq-fio);
   align-items: baseline;
 }
@@ -328,50 +793,79 @@
 .pq-entrevistas__onde {
   font-family: var(--font-display);
   font-weight: var(--peso-titulo);
+  text-wrap: pretty;
 }
-@media (min-width: 30rem) {
+@container (min-width: 30rem) {
   .pq-entrevistas li {
-    grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+    grid-template-columns: 2.25rem minmax(0, 1fr) auto;
   }
   .pq-entrevistas li .meta-ficha {
     grid-column: auto;
     text-align: right;
   }
 }
-
-/* --- Limites -------------------------------------------------------------- */
-
-.pq-limites {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: clamp(1.25rem, 3vw, 2rem);
-}
-.pq-limites li {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding-top: 1rem;
-  border-top: 2px solid var(--color-acento);
-}
-.pq-limites p {
-  max-width: 54ch;
-}
-@media (min-width: 52rem) {
-  .pq-limites {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+@container (min-width: 64rem) {
+  .pq-escuta {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 }
 
-/* --- Materiais reunidos --------------------------------------------------- */
+/* --- O cruzamento das evidências ------------------------------------------- */
+
+.pq-cruzamento {
+  display: grid;
+  gap: var(--pq-espaco-curto);
+  padding-top: var(--pq-espaco-curto);
+}
+.pq-cruzamento ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem var(--pq-espaco-medio);
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--pq-linha);
+}
+.pq-cruzamento li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+}
+
+/* --- Limites: uma coluna, o ordinal na margem ------------------------------ */
+
+.pq-limites {
+  display: grid;
+  gap: var(--pq-espaco-amplo);
+  max-width: 68ch;
+}
+.pq-limites li {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr);
+  gap: 0.4rem var(--pq-espaco);
+  padding-top: 0.9rem;
+  border-top: 2px solid var(--color-acento);
+}
+.pq-limites__ordem {
+  grid-row: span 2;
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  line-height: 1.2;
+  color: var(--color-acento);
+}
+.pq-limites h3,
+.pq-limites li > p:not(.pq-limites__ordem) {
+  grid-column: 2;
+}
+.pq-limites li > p:not(.pq-limites__ordem) {
+  text-wrap: pretty;
+}
+
+/* --- Materiais reunidos ---------------------------------------------------- */
 
 .pq-materiais {
-  list-style: none;
-  margin: 0;
-  padding: 0;
   display: grid;
-  gap: clamp(1.5rem, 4vw, 2.5rem);
+  gap: var(--pq-espaco-amplo);
 }
 .pq-materiais > li {
   display: flex;
@@ -380,15 +874,13 @@
   min-width: 0;
 }
 .pq-material {
-  list-style: none;
-  margin: 0.6rem 0 0;
-  padding: 0;
-  border-top: 1px solid var(--pq-fio);
+  margin-top: 0.6rem;
+  border-top: 1px solid var(--pq-linha);
 }
 .pq-material li {
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
+  gap: var(--pq-espaco);
   padding-block: 0.55rem;
   border-bottom: 1px solid var(--pq-fio);
   font-size: var(--text-sm);
@@ -405,19 +897,20 @@
   color: var(--color-marca);
   font-weight: 500;
 }
-@media (min-width: 52rem) {
+@container (min-width: 52rem) {
   .pq-materiais {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--pq-espaco-amplo);
   }
 }
 
-/* --- Ações e ponte final -------------------------------------------------- */
+/* --- Ações e ponte final --------------------------------------------------- */
 
 .pq-acoes {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  padding-top: 0.5rem;
+  padding-top: var(--pq-espaco-curto);
 }
 .pq a.pq-botao {
   display: inline-block;
