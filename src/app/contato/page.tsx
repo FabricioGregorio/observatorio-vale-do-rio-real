@@ -71,6 +71,9 @@ export default function PaginaContato() {
             </div>
 
             <div className="ct-canais">
+              <span className="sr-only" id={`${canal.id}-aviso-nova-guia`}>
+                Abre em nova guia.
+              </span>
               <div className="ct-canal ct-canal--email">
                 <p className="ct-canal__tipo">
                   Contato direto <span> / E-mail</span>
@@ -82,6 +85,7 @@ export default function PaginaContato() {
                   Acompanhar <span> / Instagram</span>
                 </p>
                 <a
+                  aria-describedby={`${canal.id}-aviso-nova-guia`}
                   href={canal.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -98,6 +102,7 @@ export default function PaginaContato() {
                     Vídeos <span> / YouTube</span>
                   </p>
                   <a
+                    aria-describedby={`${canal.id}-aviso-nova-guia`}
                     href={canal.youtubeUrl}
                     target="_blank"
                     rel="noopener noreferrer"
