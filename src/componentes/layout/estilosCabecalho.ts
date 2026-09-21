@@ -1,6 +1,7 @@
 /** CSS do cabeçalho público compartilhado. */
 export const CSS_DO_CABECALHO = `
 /* Topo */
+html:not(:has(.home-observatorio)) main#conteudo{scroll-margin-top:var(--topo-reserva-salto)}
 html:has(.home-observatorio){scroll-padding-top:var(--topo-reserva-rolagem)}
 html:has(.home-observatorio) body > .hl-topo{position:fixed;inset:0 0 auto;background:var(--topo-fundo-translucido);backdrop-filter:blur(var(--topo-desfoque))}
 .home-observatorio .ab-b2__base{min-height:100vh;min-height:var(--hero-altura-tela);justify-content:flex-end;gap:var(--hero-espaco-texto);padding-top:calc(var(--hero-espaco-texto) + var(--topo-reserva-rolagem));padding-bottom:var(--hero-rodape-tela)}

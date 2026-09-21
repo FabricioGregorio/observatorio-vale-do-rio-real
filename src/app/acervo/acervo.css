@@ -31,6 +31,9 @@
 .acervo-controles {
   border-color: var(--acervo-linha);
 }
+.acervo-controles > div {
+  min-width: 0;
+}
 .acervo-controles label {
   font-family: var(--font-display);
   font-weight: var(--peso-titulo);

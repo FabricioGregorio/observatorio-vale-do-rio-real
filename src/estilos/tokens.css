@@ -180,6 +180,7 @@
   --topo-fundo-translucido: rgb(14 22 17 / 0.82);
   --topo-desfoque: 8px;
   --topo-reserva-rolagem: 11rem;
+  --topo-reserva-salto: 9rem;
   --topo-altura-utilidade: 2.5rem;
   --hero-altura-tela: 100svh;
   --hero-rodape-tela: 4rem;
@@ -278,6 +279,18 @@
   --color-cabecalho-texto-suave: var(--color-pedra-suave);
   --color-cabecalho-acento: var(--color-observatorio-claro);
   --color-cabecalho-borda: var(--color-noite-borda-forte);
+}
+
+@media (min-width: 640px) {
+  :root {
+    --topo-reserva-salto: 8rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --topo-reserva-salto: 5.25rem;
+  }
 }
 
 /* =============================================================================

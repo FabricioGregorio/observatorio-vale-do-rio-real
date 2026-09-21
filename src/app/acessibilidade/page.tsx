@@ -98,14 +98,12 @@ export default function PaginaAcessibilidade() {
       >
         <div className="doc-leitura">
           <p>
-            O Observatório ainda não designou um canal de atendimento para o
-            site, e esta página não inventa um: uma barreira relatada para um
-            endereço que ninguém lê é uma barreira que continua de pé. A página
-            de{" "}
-            <Link href="/contato" prefetch={false}>
-              Contato
-            </Link>{" "}
-            registra exatamente o que existe hoje e o que falta decidir.
+            Se encontrar uma barreira de acesso ou uso neste site, informe o
+            Observatório pelo e-mail{" "}
+            <a href="mailto:obstobiassoueu@gmail.com">
+              obstobiassoueu@gmail.com
+            </a>
+            .
           </p>
           <p>
             Se a barreira for o acesso a um documento, ela provavelmente já está
