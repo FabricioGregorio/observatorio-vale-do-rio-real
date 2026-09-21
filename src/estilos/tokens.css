@@ -833,6 +833,233 @@
   color: var(--regua-tinta);
 }
 
+/* Contato: duas folhas de uma mesma publicação, com endereços distintos. */
+.ct {
+  --ct-largura: var(--largura-conteudo);
+  --ct-margem: clamp(1.25rem, 4vw, 4rem);
+  --ct-fio: var(--color-borda-forte);
+  --ct-espaco: clamp(1.5rem, 4vw, 3.5rem);
+  --ct-espaco-curto: 0.75rem;
+  --ct-espaco-medio: 1.25rem;
+  --ct-toque: 2.75rem;
+  color: var(--color-texto);
+}
+
+.ct-abertura,
+.ct-lista {
+  width: min(100% - 2 * var(--ct-margem), var(--ct-largura));
+  margin-inline: auto;
+}
+
+.ct-abertura {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--ct-espaco);
+  padding-block: clamp(3rem, 7vw, 6.5rem) clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.ct-sobretitulo,
+.ct-rotulo,
+.ct-numero,
+.ct-canal__tipo,
+.ct-abertura__indice {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.ct-sobretitulo,
+.ct-rotulo,
+.ct-numero,
+.ct-canal__tipo {
+  color: var(--color-texto-suave);
+}
+
+.ct-sobretitulo {
+  margin: 0 0 var(--ct-espaco-medio);
+}
+
+.ct-abertura h1 {
+  margin: 0;
+  max-width: 12ch;
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 8vw, 7.5rem);
+  font-weight: var(--peso-numeral);
+  letter-spacing: var(--tracking-display);
+  line-height: 0.94;
+}
+
+.ct-abertura__texto {
+  max-width: 47ch;
+  margin: var(--ct-espaco) 0 0;
+  font-size: var(--text-lg);
+  line-height: 1.45;
+}
+
+.ct-abertura__indice {
+  margin: 0;
+  color: var(--color-marca);
+  white-space: nowrap;
+}
+
+.ct-lista {
+  border-top: 1px solid var(--ct-fio);
+  margin-bottom: clamp(4rem, 8vw, 7rem);
+}
+
+.ct-entidade {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: var(--ct-espaco);
+  padding-block: clamp(2rem, 5vw, 4.5rem);
+  border-bottom: 1px solid var(--ct-fio);
+}
+
+.ct-entidade__cabecalho {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  align-content: start;
+  gap: var(--ct-espaco-medio);
+}
+
+.ct-numero,
+.ct-rotulo,
+.ct-chamada,
+.ct-canal__tipo {
+  margin: 0;
+}
+
+.ct-rotulo {
+  margin-bottom: var(--ct-espaco-curto);
+}
+
+.ct-entidade h2 {
+  margin: 0;
+  max-width: 16ch;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.5vw, 3.5rem);
+  font-weight: var(--peso-titulo);
+  letter-spacing: var(--tracking-display);
+  line-height: 1.08;
+}
+
+.ct-entidade--observatorio h2 {
+  color: var(--color-marca);
+}
+
+.ct-chamada {
+  max-width: 36ch;
+  padding-top: var(--ct-espaco-medio);
+  color: var(--color-texto-suave);
+  line-height: 1.5;
+}
+
+.ct-canais {
+  display: grid;
+  align-content: start;
+}
+
+.ct-canal {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: var(--ct-espaco-medio);
+  align-items: center;
+  min-width: 0;
+  padding-block: var(--ct-espaco-medio);
+  border-top: 1px solid var(--color-borda);
+}
+
+.ct-canal--email {
+  border-color: var(--ct-fio);
+}
+
+.ct-canal__tipo span {
+  display: block;
+}
+
+.ct-canal a {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  min-height: var(--ct-toque);
+  max-width: 100%;
+  color: var(--color-link);
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  transition:
+    color var(--duracao-hover) var(--easing-padrao),
+    text-underline-offset var(--duracao-hover) var(--easing-padrao);
+}
+
+.ct-canal a:hover {
+  color: var(--color-link-hover);
+  text-underline-offset: 0.4em;
+}
+
+.ct-seta {
+  margin-inline-start: 0.4em;
+  text-decoration: none;
+}
+
+@media (width <= 850px) {
+  .ct-entidade {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .ct-canais {
+    margin-inline-start: 3.25rem;
+  }
+}
+
+@media (width <= 520px) {
+  .ct-abertura {
+    padding-block: 2.5rem 2rem;
+  }
+
+  .ct-abertura h1 {
+    font-size: clamp(3.25rem, 14vw, 4.5rem);
+  }
+
+  .ct-abertura__indice {
+    display: none;
+  }
+
+  .ct-abertura__texto {
+    font-size: var(--text-base);
+  }
+
+  .ct-entidade__cabecalho {
+    grid-template-columns: 1.5rem minmax(0, 1fr);
+    gap: 0.75rem;
+  }
+
+  .ct-entidade h2 {
+    font-size: var(--text-2xl);
+  }
+
+  .ct-canais {
+    margin-inline-start: 0;
+  }
+
+  .ct-canal {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.25rem;
+    padding-block: 1rem;
+  }
+
+  .ct-canal__tipo span {
+    display: inline;
+  }
+}
+
 .regua--destaque {
   gap: clamp(1.75rem, 3vw, 2.5rem);
 }

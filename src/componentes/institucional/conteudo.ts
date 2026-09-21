@@ -252,38 +252,3 @@ export const PRIVACIDADE_PESQUISA: readonly ItemDeclarado[] = [
     prova: null,
   },
 ];
-
-/* ─────────────────────────────────── contato ──────────────────────────── */
-
-export const CONTATO_SINTESE =
-  "O Observatório ainda não disponibiliza um canal de atendimento pelo site. " +
-  "Veja os caminhos públicos para consultar seus materiais.";
-
-export const CONTATO_ABERTURA =
-  "Não há endereço de e-mail ou formulário de atendimento disponível neste " +
-  "site. Os documentos públicos podem ser consultados diretamente no Acervo " +
-  "e na Prestação de Contas.";
-
-export const CONTATO_CANAIS: readonly ItemDeclarado[] = [
-  {
-    titulo: "O acervo não precisa de pedido",
-    texto:
-      "A razão mais comum para escrever a um projeto como este é pedir acesso a um documento. Aqui não é preciso: todo material público tem endereço permanente, sem login e sem autorização. Se você procura um arquivo, ele está no Acervo ou listado na Prestação de Contas, com hash para conferência.",
-    prova: null,
-  },
-  {
-    titulo: "Perfil público no Instagram",
-    texto:
-      "O Observatório mantém o perfil @obs_tobiassoueu, que abre publicamente. Ele é superfície de divulgação, registrada no inventário do projeto — não é canal de atendimento nem endereço para correspondência de prestação de contas, e o projeto não se compromete com prazo de resposta por ali.",
-    prova: "Item D02 do inventário do edital",
-  },
-  {
-    titulo: "Prestação de contas do edital",
-    texto:
-      "A comprovação da execução deste projeto é apresentada à FUNCAP, em Sergipe. Quem avalia encontra na Prestação de Contas todos os anexos com endereço permanente, data de publicação e hash SHA-256, além da versão legível por máquina e da versão imprimível.",
-    prova: null,
-  },
-];
-
-export const CONTATO_PENDENCIA =
-  "Ainda não há canal de atendimento institucional disponível neste site.";

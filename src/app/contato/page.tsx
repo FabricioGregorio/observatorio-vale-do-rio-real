@@ -1,120 +1,118 @@
-import Link from "next/link";
-
-import {
-  ACOMPANHAMENTO,
-  COLETIVO,
-  CONTATO_ABERTURA,
-  CONTATO_CANAIS,
-  CONTATO_PENDENCIA,
-  CONTATO_SINTESE,
-  EDITAL,
-  NOME_OFICIAL,
-} from "../../componentes/institucional/conteudo";
-import {
-  AberturaDocumental,
-  Documento,
-  ItemVerificavel,
-  SecaoDocumental,
-} from "../../componentes/institucional/Documento";
 import { metadadosDaRota } from "../../lib/site-url";
 
 export const metadata = metadadosDaRota({
   pathname: "/contato",
   titulo: "Contato — Observatório do Vale do Rio Real",
   descricao:
-    "Identificação institucional do Observatório do Vale do Rio Real e o " +
-    "que existe hoje como forma de chegar ao projeto.",
+    "E-mail e redes do Observatório do Vale do Rio Real e do Coletivo Tobias Sou Eu.",
 });
 
-/**
- * `/contato` — o que existe, dito sem preencher a lacuna.
- *
- * A auditoria de completude editorial registrou que **nenhum canal
- * institucional publicável foi localizado** no repositório nem na fonte
- * canônica: o campo de e-mail do banco é interno e nunca renderizado, o
- * domínio não recebe correio, e o perfil do Instagram não deve virar canal
- * oficial por inferência.
- *
- * Um e-mail publicado aqui teria de existir e ter alguém do outro lado.
- * Inventar um não seria um detalhe de interface: seria criar um endereço para
- * onde mensagens sobre um projeto de recurso público iriam se perder.
- *
- * Então a página faz três coisas que são verdadeiras: identifica o projeto,
- * mostra o que já funciona sem intermediário — o acervo aberto, que responde
- * à razão mais comum de alguém escrever —, e **declara a lacuna** em vez de
- * escondê-la. O perfil do Instagram aparece pelo que ele é, registrado no
- * inventário, e com a ressalva de que não é canal de atendimento.
- *
- * Server Component sem consulta ao banco e **sem formulário**: não há
- * destinatário, e um formulário sem destinatário é pior que um endereço
- * inventado.
- */
+const canais = [
+  {
+    id: "observatorio",
+    numero: "01",
+    nome: "Observatório",
+    chamada: "Para falar sobre o Observatório",
+    email: "obstobiassoueu@gmail.com",
+    instagram: "@obs_tobiassoueu",
+    instagramUrl: "https://www.instagram.com/obs_tobiassoueu/",
+  },
+  {
+    id: "coletivo",
+    numero: "02",
+    nome: "Coletivo Tobias Sou Eu",
+    chamada: "Para falar com o Coletivo ou acompanhar seus canais",
+    email: "coletivotobiassoueu@gmail.com",
+    instagram: "@tobiassoueu",
+    instagramUrl: "https://www.instagram.com/tobiassoueu/",
+    youtube: "@TobiassouEu",
+    youtubeUrl: "https://www.youtube.com/@TobiassouEu",
+  },
+] as const;
+
 export default function PaginaContato() {
-  const identificacao = [
-    { termo: "Projeto", valor: NOME_OFICIAL },
-    { termo: "Realização", valor: COLETIVO },
-    { termo: "Fomento", valor: EDITAL },
-    { termo: "Prestação de contas", valor: ACOMPANHAMENTO },
-  ];
-
   return (
-    <Documento>
-      <AberturaDocumental
-        rotulo="Contato institucional"
-        sintese={CONTATO_SINTESE}
-        titulo="Contato"
-      >
-        <p className="doc-abertura__nota">{CONTATO_ABERTURA}</p>
-      </AberturaDocumental>
-
-      <SecaoDocumental
-        id="ct-identificacao"
-        rotulo="Identificação"
-        titulo="De quem é este projeto"
-      >
-        <dl className="doc-ficha">
-          {identificacao.map((linha) => (
-            <div key={linha.termo}>
-              <dt>{linha.termo}</dt>
-              <dd>{linha.valor}</dd>
-            </div>
-          ))}
-        </dl>
-        <p className="doc-guia">
-          O histórico do Coletivo e a origem do Observatório estão em{" "}
-          <Link href="/observatorio" prefetch={false}>
-            O Observatório
-          </Link>
-          .
-        </p>
-      </SecaoDocumental>
-
-      <SecaoDocumental
-        id="ct-canais"
-        rotulo="O que existe"
-        titulo="Como chegar ao projeto hoje"
-      >
-        <ul className="doc-itens">
-          {CONTATO_CANAIS.map((canal) => (
-            <ItemVerificavel
-              key={canal.titulo}
-              prova={canal.prova}
-              texto={canal.texto}
-              titulo={canal.titulo}
-            />
-          ))}
-        </ul>
-      </SecaoDocumental>
-
-      <SecaoDocumental
-        id="ct-pendencia"
-        rotulo="O que falta"
-        titulo="Canal de atendimento ainda não disponível"
-      >
-        <div className="doc-leitura">
-          <p>{CONTATO_PENDENCIA}</p>
+    <div className="ct">
+      <header className="ct-abertura">
+        <div className="ct-abertura__miolo">
+          <p className="ct-sobretitulo">
+            Observatório do Vale do Rio Real / Contato
+          </p>
+          <h1>
+            Por onde <br />
+            conversar.
+          </h1>
+          <p className="ct-abertura__texto">
+            Escolha o canal de quem você procura. O Observatório e o Coletivo
+            Tobias Sou Eu têm contatos próprios.
+          </p>
         </div>
-      </SecaoDocumental>
-    </Documento>
+        <p className="ct-abertura__indice" aria-hidden="true">
+          01 / 02
+        </p>
+      </header>
+
+      <div className="ct-lista">
+        {canais.map((canal) => (
+          <section
+            aria-labelledby={`${canal.id}-titulo`}
+            className={`ct-entidade ct-entidade--${canal.id}`}
+            key={canal.id}
+          >
+            <div className="ct-entidade__cabecalho">
+              <span className="ct-numero" aria-hidden="true">
+                {canal.numero}
+              </span>
+              <div>
+                <p className="ct-rotulo">Canal institucional</p>
+                <h2 id={`${canal.id}-titulo`}>{canal.nome}</h2>
+                <p className="ct-chamada">{canal.chamada}</p>
+              </div>
+            </div>
+
+            <div className="ct-canais">
+              <div className="ct-canal ct-canal--email">
+                <p className="ct-canal__tipo">
+                  Contato direto <span> / E-mail</span>
+                </p>
+                <a href={`mailto:${canal.email}`}>{canal.email}</a>
+              </div>
+              <div className="ct-canal">
+                <p className="ct-canal__tipo">
+                  Acompanhar <span> / Instagram</span>
+                </p>
+                <a
+                  href={canal.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {canal.instagram}
+                  <span className="ct-seta" aria-hidden="true">
+                    ↗
+                  </span>
+                </a>
+              </div>
+              {"youtube" in canal ? (
+                <div className="ct-canal">
+                  <p className="ct-canal__tipo">
+                    Vídeos <span> / YouTube</span>
+                  </p>
+                  <a
+                    href={canal.youtubeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {canal.youtube}
+                    <span className="ct-seta" aria-hidden="true">
+                      ↗
+                    </span>
+                  </a>
+                </div>
+              ) : null}
+            </div>
+          </section>
+        ))}
+      </div>
+    </div>
   );
 }
