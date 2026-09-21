@@ -525,6 +525,22 @@ describe("H4.5.2: nenhuma dependência e nenhuma ilha nova", () => {
        */
       "@aws-sdk/lib-storage",
       "@tailwindcss/postcss",
+      /**
+       * Acrescentada em 21/09/2026, deliberadamente e com justificativa
+       * registrada na ADR-022.
+       *
+       * O proprietário habilitou Web Analytics no painel da Vercel e a
+       * aplicação precisava ser instrumentada para que o painel recebesse
+       * qualquer coisa. `@vercel/analytics/next` é o componente oficial: uma
+       * montagem única no layout raiz, sem cookie, sem identificador
+       * persistente e sem evento customizado. A alternativa — injetar a tag
+       * `<script>` à mão — perderia o rastreamento de rota do App Router e
+       * duplicaria código que o fornecedor mantém.
+       *
+       * O que esta dependência pode e não pode virar está travado em
+       * `testes/analytics-privacidade.test.ts`.
+       */
+      "@vercel/analytics",
       "drizzle-orm",
       "fflate",
       "next",

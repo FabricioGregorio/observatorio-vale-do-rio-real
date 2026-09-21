@@ -19,8 +19,9 @@ export const metadata = metadadosDaRota({
   pathname: "/privacidade",
   titulo: "Privacidade — Observatório do Vale do Rio Real",
   descricao:
-    "Este site não usa cookies, analytics nem script de terceiro. O que ele " +
-    "guarda, o que ele não guarda e como o material da pesquisa foi tratado.",
+    "Este site não usa cookies e mede audiência de forma agregada, sem " +
+    "identificar ninguém. O que ele guarda, o que ele não guarda e como o " +
+    "material da pesquisa foi tratado.",
 });
 
 /**
@@ -34,9 +35,22 @@ export const metadata = metadadosDaRota({
  * sobre este site**, o que é pior do que não ter página nenhuma.
  *
  * Cada afirmação abaixo foi conferida no código que gera estas páginas:
- * nenhuma escrita de cookie, nenhum script de terceiro, nenhuma medição de
- * audiência, nenhum formulário, nenhum player incorporado, e uma única chave
- * de armazenamento local com a preferência de tema.
+ * nenhuma escrita de cookie, nenhum formulário, nenhum player incorporado, e
+ * uma única chave de armazenamento local com a preferência de tema.
+ *
+ * ## A revisão de 2026-09-21 — medição de audiência
+ *
+ * Até esta data a página declarava "nenhuma medição de audiência". Deixou de
+ * ser verdade quando o Vercel Web Analytics foi instrumentado no layout raiz
+ * (ver `src/app/layout.tsx` e a ADR-022), e a declaração foi corrigida no
+ * mesmo commit que instrumentou — nunca depois.
+ *
+ * O que a página passou a dizer é o que o serviço documenta e nada além:
+ * contagem agregada, sem cookie, sem identificador persistente, com o
+ * visitante distinguido por um hash do próprio pedido descartado em 24 horas.
+ * Não se afirma cidade, porque o painel do projeto é lido no nível de país;
+ * não se afirma conformidade jurídica com a LGPD, porque isso é parecer, não
+ * fato conferível no código.
  *
  * ## A divisão em quatro
  *

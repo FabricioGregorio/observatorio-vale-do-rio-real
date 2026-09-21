@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Archivo, IBM_Plex_Mono, Literata } from "next/font/google";
 import { Cabecalho } from "../componentes/layout/Cabecalho";
@@ -117,6 +118,36 @@ export default function RootLayout({
           {children}
         </main>
         <Rodape />
+        {/*
+          Vercel Web Analytics — medição agregada de audiência.
+
+          Por que isto não viola o "sem rastreador de terceiro" do `AGENTS.md`
+          e da `/privacidade`:
+
+          - **Sem cookie e sem armazenamento.** O script não escreve cookie,
+            `localStorage` nem `sessionStorage`. A única chave gravada por este
+            site continua sendo a preferência de tema (`src/lib/tema.ts`).
+          - **Sem identificador de pessoa.** Não há `userId`, e-mail, nome,
+            fingerprint próprio nem evento com dado pessoal. Nenhum evento
+            customizado é emitido: só a visualização de página automática.
+          - **Mesma origem.** O `src` é sempre um caminho deste domínio:
+            `/_vercel/insights/script.js` por padrão, ou o caminho por build do
+            *Resilient Intake* da versão 2, que a Vercel injeta em
+            `NEXT_PUBLIC_VERCEL_OBSERVABILITY_CLIENT_CONFIG`. Em nenhum dos dois
+            casos sai requisição para um host de terceiro enquanto a pessoa lê.
+          - **Identificação por hash do pedido, descartada em 24 h.** É o
+            mecanismo documentado pela Vercel para contar visitante sem cookie
+            e sem identificador persistente.
+
+          O doc 01 §7 já previa "analytics sem cookies" como requisito de
+          privacidade; esta é a execução dele. Decisão registrada na ADR-022.
+
+          O componente vem com `"use client"` de fábrica e devolve `null`: não
+          renderiza marcação, não desloca layout e não converte nada em volta
+          dele em Client Component. Fica ao fim do `<body>`, depois do rodapé,
+          para não competir com a pintura do conteúdo.
+        */}
+        <Analytics />
       </body>
     </html>
   );

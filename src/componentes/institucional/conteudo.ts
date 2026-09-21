@@ -151,9 +151,10 @@ export const ACESSIBILIDADE_LIMITES: readonly ItemDeclarado[] = [
 /* ──────────────────────────────── privacidade ─────────────────────────── */
 
 export const PRIVACIDADE_SINTESE =
-  "Este site não usa cookies, não tem analytics, não carrega script de " +
-  "terceiro e não pede nenhum dado seu. O que ele guarda no seu navegador é " +
-  "uma preferência de tema, e ela não sai dali.";
+  "Este site não usa cookies e não pede nenhum dado seu. Ele mede audiência " +
+  "de forma agregada, para saber quantas pessoas leem cada página, e essa " +
+  "medição não identifica ninguém. O que ele guarda no seu navegador é uma " +
+  "preferência de tema, e ela não sai dali.";
 
 export const PRIVACIDADE_ABERTURA =
   "Veja quais dados este site usa durante a navegação, o que fica no seu " +
@@ -163,19 +164,31 @@ export const PRIVACIDADE_NAVEGACAO: readonly ItemDeclarado[] = [
   {
     titulo: "Nenhum cookie",
     texto:
-      "O site não grava cookie nenhum — nem de sessão, nem de preferência, nem de terceiro. Por isso também não existe aviso de cookies: não há nada a consentir.",
+      "O site não grava cookie nenhum — nem de sessão, nem de preferência, nem de terceiro. A medição de audiência descrita abaixo também funciona sem cookie. Por isso não existe aviso de cookies aqui: não há nada a consentir.",
     prova: null,
   },
   {
-    titulo: "Nenhum analytics e nenhum rastreador",
+    titulo: "Uma medição de audiência, agregada e sem cookie",
     texto:
-      "Não há Google Analytics, pixel, tag manager, mapa de calor, gravação de sessão ou qualquer medição de audiência. O projeto não sabe quantas pessoas visitaram uma página, e essa é uma escolha, não um esquecimento.",
+      "O site usa o Vercel Web Analytics, do mesmo serviço que hospeda estas páginas, para saber quantas pessoas leem o material publicado e quais páginas elas procuram. A cada acesso são registrados o horário, a página visitada, o endereço que trouxe você até aqui, uma localização aproximada derivada da rede — o painel do projeto trabalha sobretudo no nível de país —, o tipo de aparelho, o navegador e o sistema operacional. São esses os dados que o serviço disponibiliza, e eles são lidos em conjunto, como contagem.",
+    prova: "Componente Analytics, no layout raiz do site",
+  },
+  {
+    titulo: "O que essa medição não recebe",
+    texto:
+      "Ela não recebe seu nome, e-mail, telefone ou endereço residencial, não usa GPS nem localização exata, não cria perfil seu e não acompanha sua navegação fora deste site. Não há cookie nem identificador que sobreviva à visita: quem acessa é distinguido por um código derivado do próprio pedido de rede, que o serviço descarta depois de 24 horas. O projeto não configurou nenhum evento personalizado e não envia nada além da visualização de página.",
     prova: null,
   },
   {
-    titulo: "Nenhum script de terceiro",
+    titulo: "Nenhum outro analytics e nenhum rastreador de publicidade",
     texto:
-      "Todo código executado no seu navegador vem deste domínio. As fontes tipográficas também são servidas daqui: nenhuma requisição sai para o Google enquanto você lê.",
+      "Não há Google Analytics, pixel de rede social, tag manager, mapa de calor nem gravação de sessão. A medição descrita acima é a única, e nada do que ela reúne é vendido, cruzado com outra base ou usado para anúncio.",
+    prova: null,
+  },
+  {
+    titulo: "Todo código vem deste domínio",
+    texto:
+      "O script da medição de audiência é servido por um endereço deste próprio site, e não por um domínio de terceiro. As fontes tipográficas também são servidas daqui: nenhuma requisição sai para o Google enquanto você lê. Fora esses dois, nenhum outro código executa no seu navegador.",
     prova: null,
   },
   {
@@ -193,7 +206,7 @@ export const PRIVACIDADE_NAVEGACAO: readonly ItemDeclarado[] = [
   {
     titulo: "O que fica gravado no seu navegador",
     texto:
-      "Uma única chave de armazenamento local, com a sua escolha de tema — claro, escuro ou seguir o sistema. Ela existe para que a escolha sobreviva à próxima visita, fica no seu aparelho, nunca é enviada a lugar nenhum e desaparece quando você limpa os dados do site.",
+      "Uma única chave de armazenamento local, com a sua escolha de tema — claro, escuro ou seguir o sistema. Ela existe para que a escolha sobreviva à próxima visita, fica no seu aparelho, nunca é enviada a lugar nenhum e desaparece quando você limpa os dados do site. A medição de audiência não grava nada aqui.",
     prova: "Chave observatorio-tema, em armazenamento local",
   },
 ];
@@ -214,7 +227,7 @@ export const PRIVACIDADE_FRONTEIRAS: readonly ItemDeclarado[] = [
   {
     titulo: "Infraestrutura, e o que ela inevitavelmente vê",
     texto:
-      "Como em qualquer site, o servidor que entrega as páginas processa o endereço de IP e o tipo de navegador de quem as pede — é o mínimo técnico para que uma página chegue até você. O projeto não usa esses registros para medir audiência, não os cruza com nada e não os publica.",
+      "Como em qualquer site, o servidor que entrega as páginas processa o endereço de IP e o tipo de navegador de quem as pede — é o mínimo técnico para que uma página chegue até você. O projeto não tem acesso a esses registros brutos, não os cruza com nada e não os publica. A medição de audiência fica de outro lado dessa fronteira: ela não guarda o IP, e é dele que deriva, já convertida em código descartável, a localização aproximada que o painel mostra.",
     prova: null,
   },
   {
