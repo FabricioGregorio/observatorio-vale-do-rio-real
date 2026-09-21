@@ -1,38 +1,5 @@
-/*
-  `/dados` — dados como evidência documental.
-
-  Cor, família, raio e espessura saem de `tokens.css`; nenhum hex entra aqui.
-  Espaçamento é sempre relativo, para acompanhar o redimensionamento do
-  navegador.
-
-  ## O que esta folha recusa
-
-  Cartão de KPI, sombra, gradiente, fundo colorido por métrica e grade de
-  painéis. O número grande é seco: o tamanho é o único recurso de ênfase, e
-  cada valor vive dentro de uma ficha que carrega o seu denominador. O que
-  separa as fichas é filete, como nas demais superfícies do site.
-
-  ## Contêiner, e não viewport
-
-  A tipografia dos valores cresce com `cqi` — a largura da própria seção. Com
-  `vw` o número estourava a caixa em zoom de 200%: `vw` continua medindo o
-  viewport enquanto o contêiner encolhe.
-
-  ## Cor nunca é o único canal
-
-  Receita e despesa se distinguem por forma — círculo e losango — antes de se
-  distinguirem por cor, e a legenda nomeia as duas em texto. Nas barras das
-  atividades, receita direta e indireta aparecem escritas ao lado do nome.
-*/
-
+/* /dados: caderno de medidas. Escalas derivadas; movimento só no controle de abertura. */
 .dd {
-  --dd-fio: color-mix(
-    in srgb,
-    var(--color-borda-forte) 45%,
-    var(--color-fundo)
-  );
-  --dd-papel: color-mix(in srgb, var(--color-fundo-elevado) 72%, transparent);
-  --dd-respiro: clamp(2.75rem, 6vw, 4.5rem);
   container-type: inline-size;
   margin-inline: auto;
   width: min(100% - 2rem, var(--largura-conteudo));
@@ -164,54 +131,106 @@
   font-size: var(--text-sm);
 }
 
-/* --- Indicadores ---------------------------------------------------------- */
-
+/* Medidas abertas: uma proporção protagonista, pares monetários e contagens. */
 .dd-indicadores {
   display: grid;
-  gap: 0;
-  border-top: 1px solid var(--dd-fio);
-  border-left: 1px solid var(--dd-fio);
+  gap: var(--dd-espaco-amplo);
 }
-/*
-  Borda por célula, e não gap pintado: quando a última linha não fecha, o gap
-  pintado desenharia um bloco vazio no lugar da célula que não existe. Com
-  borda por célula, a grade simplesmente termina.
-*/
 .dd-indicador {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: clamp(1rem, 2.4vw, 1.6rem) clamp(0.85rem, 2vw, 1.4rem);
-  border-right: 1px solid var(--dd-fio);
-  border-bottom: 1px solid var(--dd-fio);
   min-width: 0;
+  padding-block: var(--dd-espaco-medio);
+  border-top: 1px solid var(--dd-fio);
+}
+.dd-indicador__medida,
+.dd-indicador__contexto {
+  display: grid;
+  gap: var(--dd-espaco);
+  align-content: start;
+}
+.dd-indicador__contexto {
+  margin-top: var(--dd-espaco-medio);
 }
 .dd-indicador__valor {
   font-family: var(--font-display);
-  font-weight: var(--peso-titulo);
-  font-size: clamp(var(--text-2xl), 5cqi, var(--text-4xl));
+  font-size: var(--dd-numero);
+  font-weight: var(--peso-numeral);
   line-height: 1;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--tracking-display);
   font-variant-numeric: tabular-nums;
 }
 .dd-indicador h3 {
-  font-family: var(--font-leitura);
-  font-weight: 400;
-  font-size: var(--text-base);
-  line-height: 1.35;
+  font-size: var(--text-lg);
+  max-width: 30ch;
 }
-.dd-indicador .dd-ficha {
-  margin-top: 0.35rem;
-}
+
 .dd-indicador__nota {
-  padding-left: 0.85rem;
-  border-left: 2px solid var(--color-borda-forte);
-  color: var(--color-texto-suave);
   font-size: var(--text-sm);
+  color: var(--color-texto-suave);
+  border-left: 2px solid var(--color-acento);
+  padding-left: var(--dd-espaco);
+}
+.dd-indicador[data-indicador="H4-001"] {
+  border-top: 2px solid var(--color-marca);
+}
+.dd-indicador[data-indicador="H4-001"] .dd-indicador__valor {
+  font-size: var(--dd-numero-principal);
+  color: var(--color-marca);
+}
+.dd-proporcao {
+  margin-block: var(--dd-espaco-curto);
+}
+.dd-proporcao__trilho {
+  height: var(--dd-espaco);
+  border: 1px solid var(--color-borda-forte);
+  position: relative;
+}
+.dd-proporcao__trilho > span {
+  display: block;
+  height: 100%;
+  background: var(--color-marca);
+  border-right: 2px solid var(--color-texto);
+}
+.dd-proporcao__eixo {
+  display: flex;
+  justify-content: space-between;
+  padding-top: var(--dd-espaco-curto);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-texto-suave);
+}
+.dd-detalhes {
+  border-top: 1px solid var(--dd-fio);
+  font-size: var(--text-sm);
+}
+.dd-detalhes summary {
+  padding-block: var(--dd-espaco);
+  cursor: pointer;
+  font-family: var(--font-display);
+  color: var(--color-link);
+}
+.dd-detalhes summary:hover {
+  text-decoration: underline;
 }
 @container (min-width: 44rem) {
   .dd-indicadores {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    column-gap: var(--dd-espaco-largo);
+  }
+  .dd-indicador {
+    grid-column: span 3;
+  }
+  .dd-indicador[data-unidade="contagem"] {
+    grid-column: span 2;
+  }
+  .dd-indicador[data-indicador="H4-001"] {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--dd-espaco-largo);
+    padding-block: var(--dd-espaco-largo);
+  }
+  .dd-indicador[data-indicador="H4-001"] .dd-indicador__contexto {
+    margin: 0;
   }
 }
 
@@ -272,49 +291,192 @@
 .dd-figura figcaption {
   max-width: 62ch;
 }
-.dd-grafico {
-  display: none;
-  width: 100%;
-  height: auto;
-  overflow: visible;
-}
-/* A legenda pertence ao gráfico: onde ele não aparece, ela também não. */
+/* Série: escala e pontos em CSS, rótulos em HTML, sem encolher fontes. */
 .dd-legenda {
-  display: none;
+  display: flex;
   flex-wrap: wrap;
-  gap: 1.25rem;
+  gap: var(--dd-espaco-medio);
+  list-style: none;
   margin: 0;
   padding: 0;
-  list-style: none;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
 }
 .dd-legenda li {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  letter-spacing: var(--tracking-mono);
-  text-transform: uppercase;
-  color: var(--color-texto-suave);
+  gap: var(--dd-espaco-curto);
 }
 .dd-marca-serie {
-  flex: 0 0 auto;
-  width: 0.7rem;
-  height: 0.7rem;
-  border-radius: 50%;
+  width: var(--dd-ponto);
+  height: var(--dd-ponto);
   background: var(--color-marca);
+  border-radius: 50%;
 }
 .dd-marca-serie[data-serie="despesa"] {
+  background: var(--color-acento);
   border-radius: 0;
   rotate: 45deg;
+}
+.dd-serie__leitura {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+}
+.dd-serie__leitura strong {
+  color: var(--color-acento);
+}
+.dd-serie__eixo {
+  margin-block: var(--dd-espaco-medio) var(--dd-espaco-curto);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+.dd-serie__regua {
+  display: flex;
+  justify-content: space-between;
+  margin-inline: var(--dd-espaco);
+}
+.dd-serie__meses {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.dd-mes {
+  border-top: 1px solid var(--dd-fio);
+}
+.dd-mes summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--dd-espaco-curto) var(--dd-espaco);
+  padding: var(--dd-espaco) var(--dd-espaco-curto);
+  cursor: pointer;
+  list-style: none;
+}
+.dd-mes summary::-webkit-details-marker {
+  display: none;
+}
+.dd-mes__nome {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+}
+.dd-mes small {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  color: var(--color-texto-suave);
+}
+.dd-mes__abrir {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+  font-size: var(--text-xl);
+  transition: rotate var(--duracao-hover) var(--easing-padrao);
+}
+.dd-mes[open] .dd-mes__abrir {
+  rotate: 45deg;
+}
+.dd-comparacao {
+  display: block;
+  position: relative;
+  height: var(--dd-altura-escala);
+  grid-column: 1 / -1;
+  margin-inline: var(--dd-espaco-curto);
+  border-inline: 1px solid var(--color-borda-forte);
+}
+.dd-comparacao::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  border-top: 1px solid var(--dd-fio);
+}
+.dd-comparacao::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  height: 100%;
+  border-left: 1px dashed var(--dd-fio);
+}
+.dd-comparacao__intervalo {
+  position: absolute;
+  top: 50%;
+  border-top: 2px solid var(--color-texto-suave);
+}
+.dd-comparacao__ponto {
+  position: absolute;
+  top: 50%;
+  translate: -50% -50%;
+  width: var(--dd-ponto);
+  height: var(--dd-ponto);
+  background: var(--color-marca);
+  border-radius: 50%;
+}
+.dd-comparacao__ponto[data-serie="despesa"] {
+  rotate: 45deg;
+  border-radius: 0;
   background: var(--color-acento);
 }
-@container (min-width: 40rem) {
-  .dd-grafico {
-    display: block;
+.dd-mes__valores {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-column: 1 / -1;
+  gap: var(--dd-espaco);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+.dd-mes__contexto {
+  padding: var(--dd-espaco);
+  border-top: 1px dashed var(--dd-fio);
+  font-size: var(--text-sm);
+}
+.dd-mes__contexto > span {
+  display: block;
+  color: var(--color-texto-suave);
+}
+.dd-mes[open],
+.dd-mes:focus-within,
+.dd-mes:hover {
+  background: var(--dd-papel);
+}
+.dd-mes:is(:hover, :focus-within, [open]) .dd-comparacao__intervalo {
+  border-top-width: 4px;
+}
+.dd-serie__tabela {
+  margin-top: var(--dd-espaco);
+}
+@container (min-width: 44rem) {
+  .dd-mes summary {
+    grid-template-columns: var(--dd-coluna-mes) minmax(0, 1fr) var(
+        --dd-coluna-valores
+      ) var(--dd-espaco);
+    gap: var(--dd-espaco);
+    align-items: center;
   }
-  .dd-legenda {
-    display: flex;
+  .dd-comparacao,
+  .dd-mes__valores,
+  .dd-mes__abrir {
+    grid-column: auto;
+    grid-row: auto;
+  }
+  .dd-serie__eixo {
+    display: grid;
+    grid-template-columns: var(--dd-coluna-mes) minmax(0, 1fr) var(
+        --dd-coluna-valores
+      ) var(--dd-espaco);
+    gap: var(--dd-espaco);
+    padding-inline: var(--dd-espaco-curto);
+  }
+}
+@container (min-width: 44rem) {
+  .dd-serie__regua {
+    grid-column: 2;
+    margin-inline: var(--dd-espaco-curto);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dd-mes__abrir {
+    transition: none;
   }
 }
 
@@ -322,6 +484,12 @@
   width: 100%;
   border-collapse: collapse;
   font-size: var(--text-sm);
+}
+.dd-tabela--ranking th {
+  width: 44%;
+}
+.dd-tabela--ranking td {
+  width: 56%;
 }
 .dd-tabela caption {
   text-align: left;
@@ -377,34 +545,48 @@
 }
 .dd-barra {
   display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 0.75rem;
-  min-width: 9rem;
+  gap: var(--dd-espaco-curto);
 }
-.dd-trilho {
-  position: relative;
-  height: 0.55rem;
-  background: var(--color-borda);
-  border-radius: 1px;
+.dd-marcas {
+  width: 100%;
+  min-width: 0;
+  height: var(--dd-espaco-medio);
 }
-.dd-preenchimento {
-  position: absolute;
-  inset-block: 0;
-  left: 0;
-  background: var(--color-marca);
-  border-radius: 1px;
+.dd-marcas path {
+  stroke: var(--color-borda-forte);
+  stroke-width: 2;
 }
-.dd-preenchimento[data-receita="direta"] {
-  background: var(--color-acento);
+.dd-marcas [data-preenchida="true"] {
+  stroke: var(--color-marca);
+  stroke-width: 5;
 }
-.dd-barra span {
+.dd-barra > span {
   font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  letter-spacing: var(--tracking-mono);
+  font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
-  color: var(--color-texto-suave);
-  white-space: nowrap;
+}
+
+.dd-tabela--ranking tbody tr:hover {
+  background: var(--dd-papel);
+}
+@container (max-width: 34rem) {
+  .dd-tabela--ranking tbody tr {
+    display: grid;
+    padding-block: var(--dd-espaco);
+    border-bottom: 1px solid var(--dd-fio);
+  }
+  .dd-tabela--ranking tbody :is(th, td) {
+    width: 100%;
+    padding: 0;
+    border: 0;
+  }
+  .dd-tabela--ranking thead {
+    position: absolute;
+    left: -9999px;
+  }
+  .dd-tabela--ranking td {
+    padding-top: var(--dd-espaco-curto);
+  }
 }
 
 /*
@@ -523,4 +705,47 @@
 }
 .dd-ponte-final p {
   max-width: 62ch;
+}
+
+/* Capa editorial e atalhos de leitura. */
+.dd-abertura h1 {
+  font-size: var(--dd-titulo-capa);
+  line-height: 1;
+  color: var(--color-marca);
+}
+.dd-indice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--dd-espaco) var(--dd-espaco-amplo);
+  border-top: 1px solid var(--color-marca);
+  padding-block: var(--dd-espaco);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+.dd h2 {
+  scroll-margin-top: var(--topo-reserva-rolagem);
+}
+@container (min-width: 52rem) {
+  .dd-abertura {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: var(--dd-espaco-medio) var(--dd-espaco-largo);
+  }
+  .dd-abertura > .meta-ficha {
+    grid-column: 1 / -1;
+  }
+  .dd-abertura h1 {
+    grid-row: span 2;
+    align-self: start;
+  }
+  .dd-abertura .dd-ficha {
+    grid-column: 1 / -1;
+  }
+}
+
+.dd-indicador .dd-ficha > div {
+  grid-template-columns: 1fr;
+  gap: var(--dd-espaco-minimo);
+  border: 0;
+  padding-block: var(--dd-espaco-minimo);
 }

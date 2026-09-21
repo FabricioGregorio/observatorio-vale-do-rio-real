@@ -1,5 +1,29 @@
 @import "tailwindcss";
 
+/* Caderno quantitativo: papéis exclusivos de /dados, sem efeito em outras rotas. */
+.dd {
+  --dd-fio: color-mix(
+    in srgb,
+    var(--color-borda-forte) 45%,
+    var(--color-fundo)
+  );
+  --dd-papel: color-mix(in srgb, var(--color-fundo) 95%, var(--color-marca));
+  --dd-respiro: clamp(2.75rem, 6vw, 4.5rem);
+  --dd-espaco-minimo: 0.25rem;
+  --dd-espaco-curto: 0.5rem;
+  --dd-espaco: 1rem;
+  --dd-espaco-medio: 1.5rem;
+  --dd-espaco-amplo: 2rem;
+  --dd-espaco-largo: 3rem;
+  --dd-titulo-capa: clamp(4rem, 12cqi, 8rem);
+  --dd-numero-principal: clamp(3.815rem, 10cqi, 7.5rem);
+  --dd-numero: clamp(var(--text-2xl), 4.5cqi, var(--text-4xl));
+  --dd-altura-escala: 2.5rem;
+  --dd-ponto: 0.65rem;
+  --dd-coluna-mes: 7rem;
+  --dd-coluna-valores: 18rem;
+}
+
 /* =============================================================================
    Observatório do Vale do Rio Real — tokens de design
    Fonte única de cor, tipografia e espaçamento do projeto.
