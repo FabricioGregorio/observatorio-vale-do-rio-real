@@ -23,6 +23,12 @@ import { useEffect } from "react";
  *   o mapa fica na aproximação regional. Falha de rede mantém a aproximação e
  *   é anunciada.
  *
+ * ## Teclado
+ *
+ * Setas andam entre as abas, Enter e Espaço selecionam, Home e End vão aos
+ * extremos e **Escape** devolve a leitura ao território — o mesmo destino do
+ * link de retorno da ficha.
+ *
  * Sem JavaScript, a lista é de âncoras e todas as fichas ficam visíveis.
  */
 export function InteracaoTerritorioVivo({ idRaiz }: { idRaiz: string }) {
@@ -48,10 +54,9 @@ export function InteracaoTerritorioVivo({ idRaiz }: { idRaiz: string }) {
       if (painel !== null) paineis.set(id, painel);
     }
 
-    raiz.setAttribute("data-interativo", "true");
     lista.setAttribute("role", "tablist");
     // No celular o seletor é uma faixa horizontal; a orientação anunciada acompanha.
-    const estreita = window.matchMedia("(max-width: 767px)");
+    const estreita = window.matchMedia("(max-width: 639px)");
     const orientar = () =>
       lista.setAttribute(
         "aria-orientation",
@@ -203,6 +208,16 @@ export function InteracaoTerritorioVivo({ idRaiz }: { idRaiz: string }) {
         evento.preventDefault();
         selecionar(indice, true);
         return;
+      } else if (evento.key === "Escape") {
+        /*
+          Escape volta ao território, como o link de retorno da ficha. Sem
+          isso, quem chegou ao índice pelo teclado só desfazia a aproximação
+          andando até a primeira aba e confirmando.
+        */
+        evento.preventDefault();
+        selecionar(0, true);
+        abas[0]?.focus();
+        return;
       }
       if (destino !== null) {
         evento.preventDefault();
@@ -235,9 +250,18 @@ export function InteracaoTerritorioVivo({ idRaiz }: { idRaiz: string }) {
       (aba) => `#lugar-${aba.dataset.tvAba}` === window.location.hash,
     );
     selecionar(inicial >= 0 ? inicial : ativo, false);
+    /*
+      `data-interativo` só entra depois da primeira seleção, e num quadro
+      seguinte. A ficha inicial não é uma troca: animá-la faria a página
+      piscar na hidratação. Daí em diante toda troca anima.
+    */
+    const quadro = requestAnimationFrame(() => {
+      raiz.setAttribute("data-interativo", "true");
+    });
 
     return () => {
       geracao += 1;
+      cancelAnimationFrame(quadro);
       lista.removeEventListener("keydown", aoTeclar);
       lista.removeEventListener("click", aoClicar);
       for (const voltar of voltas) {

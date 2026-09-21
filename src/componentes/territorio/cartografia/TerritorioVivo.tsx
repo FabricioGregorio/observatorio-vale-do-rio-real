@@ -8,6 +8,7 @@ import {
   barraDeEscala,
   compor,
   type Enquadramento,
+  projetarContinuo,
 } from "./geometria";
 import { InteracaoTerritorioVivo } from "./InteracaoTerritorioVivo";
 import {
@@ -39,6 +40,20 @@ import { destinosDeRota } from "./local/rota";
  *
  * O HTML inicial leva pins e enquadramentos. Vias, cursos d'água e localidades
  * não vão nele.
+ *
+ * ## Três escalas, e não um mapa com texto ao lado (Tarefa 28)
+ *
+ * A pesquisa opera em três escalas, e as três já existiam como número nos
+ * dados: o estado onde o recorte se situa, o recorte, e o entorno de cada
+ * lugar. A régua do topo apenas **declara** onde a leitura está, com a largura
+ * de cada enquadramento em quilômetros calculada pela própria projeção — não
+ * há número escrito à mão.
+ *
+ * Pelo mesmo critério, a visão geral desenha a **janela** de cada mapa
+ * detalhado: o retângulo é o envelope real do derivado local, o mesmo que a
+ * seleção usa para aproximar. Ele diz onde a pesquisa abriu escala, e não
+ * afirma percurso nenhum entre os pontos — rota exigiria fonte de rota, e não
+ * existe.
  */
 
 const ID_RAIZ = "territorio-vivo";
@@ -47,6 +62,7 @@ const SEM_LOCAL = "sem-local";
 const IDENTIDADE: Enquadramento = { s: 1, tx: 0, ty: 0 };
 
 const focoDoLugar = (id: string) => `lugar-${id}`;
+const focoLocalDoLugar = (id: string) => `local-${id}`;
 const urlDaCamada = (base: string, id: string) => `${base}/${id}`;
 const px = (n: number) => `${n.toFixed(2)}px`;
 const transformacao = (e: Enquadramento) =>
@@ -64,6 +80,10 @@ const varsDoMundo = (e: Enquadramento) =>
  */
 const coordenada = (p: PosicaoConfirmada) =>
   `${p.latitude.toFixed(6)}, ${p.longitude.toFixed(6)}`;
+
+/** Largura de um enquadramento em quilômetros, arredondada para leitura. */
+const larguraEmKm = (unidades: number, kmPorUnidade: number) =>
+  Math.round(unidades * kmPorUnidade);
 
 export function TerritorioVivo({
   baseDasCamadas,
@@ -87,6 +107,21 @@ export function TerritorioVivo({
   const foraDoVale = posicionados.filter((l) => !l.dentroDoVale);
   const raioDoPin = raio * 0.62;
 
+  /*
+    Pertencer ao recorte é relação declarada em `recorte.ts`, e não o acaso de
+    o ponto cair dentro do enquadramento. As duas coisas coincidem nos quatro
+    lugares de hoje; misturá-las faria o primeiro lugar fora do quadro herdar
+    uma afirmação editorial que ninguém escreveu.
+  */
+  const codigosDoRecorte = new Set(doVale.map((m) => m.codigoIbge));
+  const doRecorte = (lugar: LugarNoMapa) =>
+    lugar.municipioId !== null && codigosDoRecorte.has(lugar.municipioId);
+  const dentroDoRecorte = lugares.filter(doRecorte);
+  const foraDoRecorte = lugares.filter((l) => !doRecorte(l));
+  const municipioDeComparacao = dados.municipios.find((m) =>
+    m.relacoesTerritoriais.includes("comparacao"),
+  );
+
   const porMunicipio = new Map<string, LugarNoMapa[]>();
   for (const lugar of lugares) {
     if (lugar.municipioId === null) continue;
@@ -95,8 +130,8 @@ export function TerritorioVivo({
     porMunicipio.set(lugar.municipioId, lista);
   }
 
-  function estadosDoRotulo(codigo: string, doRecorte: boolean): string {
-    const estados: string[] = doRecorte ? [FOCO_GERAL, SEM_LOCAL] : [];
+  function estadosDoRotulo(codigo: string, noRecorte: boolean): string {
+    const estados: string[] = noRecorte ? [FOCO_GERAL, SEM_LOCAL] : [];
     const c = caixaDe(codigo);
     for (const l of posicionados) {
       const [x, y] = aplicar(l.regional, c.cx, c.cy);
@@ -117,26 +152,39 @@ export function TerritorioVivo({
   */
   const duracaoLocal = "var(--tv-duracao-local)";
   const css: string[] = [
-    ".tv{--tv-tx:0px;--tv-ty:0px;--tv-s:1}",
+    /*
+      A placa toma a proporção do próprio enquadramento. Sem isso ela era um
+      retângulo arbitrário com a carta encolhida e centrada dentro: cerca de um
+      terço da largura sobrava em papel liso no desktop, e o mapa — a peça
+      principal da página — aparecia menor do que a coluna que o segurava.
+    */
+    `.tv{--tv-tx:0px;--tv-ty:0px;--tv-s:1;--tv-passo:2;--tv-proporcao-mapa:${(vw / vh).toFixed(4)}}`,
     `.tv[data-foco="${FOCO_GERAL}"] .tv-rot[data-estados~="${FOCO_GERAL}"],.tv[data-foco="${SEM_LOCAL}"] .tv-rot[data-estados~="${SEM_LOCAL}"]{opacity:1}`,
     `.tv[data-foco="${FOCO_GERAL}"] .escala[data-foco="${FOCO_GERAL}"],.tv[data-foco="${SEM_LOCAL}"] .escala[data-foco="${FOCO_GERAL}"]{opacity:1}`,
     `.tv[data-foco="${SEM_LOCAL}"] .tv-semlocal{opacity:1}`,
     `.tv[data-foco="${SEM_LOCAL}"] .m,.tv[data-foco="${SEM_LOCAL}"] .h{opacity:.5}`,
+    /* A régua nasce no recorte: é a escala de trabalho da visão geral. */
+    `.tv__regua [data-foco="${FOCO_GERAL}"]{display:block}`,
   ];
   for (const l of posicionados) {
     const foco = focoDoLugar(l.id);
+    const focoLocal = focoLocalDoLugar(l.id);
     const noFoco = `.tv[data-foco="${foco}"]`;
     const pinSelecionado = `.tv[data-lugar="${l.id}"] .tv-pin[data-pin="${l.id}"]`;
     css.push(
-      `${noFoco}{${varsDoMundo(l.regional)}}`,
+      `${noFoco}{${varsDoMundo(l.regional)};--tv-passo:3}`,
       `${noFoco} .tv-rot[data-estados~="${foco}"]{opacity:1}`,
       `${noFoco}:not([data-escala="local"]) .escala[data-foco="${foco}"]{opacity:1}`,
       `${noFoco} .tv-pin .nome{opacity:1}`,
+      `${noFoco} .tv-janela[data-janela="${l.id}"]{opacity:1;stroke-width:2.2}`,
       `${pinSelecionado}{--tv-pin-escala:1.4}`,
       `${pinSelecionado} .forma{fill:var(--tv-pin-selecionado);stroke:var(--tv-contorno-foco);stroke-width:2.5px}`,
       `${pinSelecionado} .miolo{fill:var(--tv-contorno-foco)}`,
       `${pinSelecionado} .nome{opacity:1;font-weight:700}`,
       `${pinSelecionado} .sel{display:inline}`,
+      /* Régua: a variante do lugar substitui a do recorte, sem JavaScript. */
+      `${noFoco} .tv__regua [data-foco="${FOCO_GERAL}"]{display:none}`,
+      `${noFoco} .tv__regua [data-foco="${foco}"]{display:block}`,
     );
     if (l.municipioId !== null) {
       const m = l.municipioId;
@@ -156,7 +204,9 @@ export function TerritorioVivo({
         `${local} .tv-mundo{opacity:0;transition-duration:${duracaoLocal},calc(${duracaoLocal} * .35);transition-delay:0s,calc(${duracaoLocal} * .5)}`,
         `${local} .tv-contra{transition-duration:${duracaoLocal}}`,
         `${local} ${camada}{opacity:1;pointer-events:auto;transform:${transformacao(IDENTIDADE)};transition-duration:${duracaoLocal},calc(${duracaoLocal} * .4);transition-delay:0s,calc(${duracaoLocal} * .4)}`,
-        `${local} .escala[data-foco="local-${l.id}"]{opacity:1}`,
+        `${local} .escala[data-foco="${focoLocal}"]{opacity:1}`,
+        `${local} .tv__regua [data-foco="${foco}"]{display:none}`,
+        `${local} .tv__regua [data-foco="${focoLocal}"]{display:block}`,
       );
     }
   }
@@ -185,8 +235,51 @@ export function TerritorioVivo({
         ? []
         : [
             {
-              foco: `local-${l.id}`,
+              foco: focoLocalDoLugar(l.id),
               barra: barraDeEscala(kmU, l.local.enquadramento.s, vw * 0.22),
+            },
+          ],
+    ),
+  ];
+
+  /*
+    Larguras da régua. Todas saem da mesma projeção que desenha a malha: a do
+    estado é o envelope inteiro; a do recorte, a vista dos cinco municípios; a
+    de cada lugar, o quadro que a seleção usa. Nenhuma é digitada.
+  */
+  const kmDoEstado = larguraEmKm(dados.projecao.largura, kmU);
+  const kmDoRecorte = larguraEmKm(vw, kmU);
+  const kmDoEnquadramento = (e: Enquadramento) => larguraEmKm(vw / e.s, kmU);
+
+  /**
+   * Variantes do degrau "Lugar", trocadas por CSS conforme a seleção.
+   *
+   * A medida vem partida em duas: o número, que o celular sempre mostra, e o
+   * qualificador, que ele esconde. Assim a régua continua dizendo a escala
+   * numa tela de 375 px sem quebrar em quatro linhas.
+   */
+  const degrausDoLugar = [
+    {
+      foco: FOCO_GERAL,
+      nome: "Entorno de um lugar",
+      medida: "Escolha um ponto",
+      qualificador: " para descer de escala",
+    },
+    ...posicionados.map((l) => ({
+      foco: focoDoLugar(l.id),
+      nome: l.nome,
+      medida: `${kmDoEnquadramento(l.regional)} km`,
+      qualificador: " de largura · aproximação",
+    })),
+    ...posicionados.flatMap((l) =>
+      l.local === null
+        ? []
+        : [
+            {
+              foco: focoLocalDoLugar(l.id),
+              nome: l.nome,
+              medida: `${kmDoEnquadramento(l.local.enquadramento)} km`,
+              qualificador: " de largura · entorno detalhado",
             },
           ],
     ),
@@ -203,33 +296,21 @@ export function TerritorioVivo({
       <style>{CSS_DO_TERRITORIO_VIVO}</style>
       <style>{css.join("\n")}</style>
 
-      <div className="tv__cab">
-        <p className="meta-ficha">Território da pesquisa</p>
-        <h1>Cartografia Viva</h1>
-        <p className="tv__abertura">
-          Uma leitura espacial dos lugares, equipamentos e evidências que
-          fizeram parte da pesquisa do Observatório.
-        </p>
-        <p className="tv__instrucao">
-          Escolha um lugar para aproximar o mapa e consultar seus registros
-          públicos.
-        </p>
-        <div className="tv__contexto">
-          <p>
-            <strong>Cinco municípios</strong> formam o recorte do Vale do Rio
-            Real.
+      <header className="tv__abertura">
+        <div className="tv__abertura-texto">
+          <p className="meta-ficha">Território da pesquisa</p>
+          <h1>Cartografia Viva</h1>
+          <p className="tv__lead">
+            Uma leitura espacial dos lugares, equipamentos e evidências que
+            fizeram parte da pesquisa do Observatório.
           </p>
-          <p>
-            <strong>Ilha Grande</strong> integra a pesquisa em São Cristóvão,
-            fora desse recorte.
+          <p className="tv__instrucao">
+            Escolha um lugar para aproximar o mapa e consultar seus registros
+            públicos.
           </p>
         </div>
-      </div>
 
-      <p aria-live="polite" className="sr-only" data-tv-regiao-anuncio="" />
-
-      <div className="tv__grade">
-        <figure className="tv__mapa">
+        <figure className="tv__situacao">
           <div className="tv__escala-territorial">
             <svg
               aria-hidden="true"
@@ -272,14 +353,104 @@ export function TerritorioVivo({
                   />
                 ))}
             </svg>
-            <p>
+            <figcaption>
+              <span className="fonte">Situação</span>
               <strong>Sergipe → Vale do Rio Real</strong>
               <span>
-                O mapa abaixo aproxima o recorte em milho. São Cristóvão, em
-                traço anil, fica fora dele.
+                O recorte aparece em milho. São Cristóvão, em traço anil, fica
+                fora dele.
               </span>
-            </p>
+            </figcaption>
           </div>
+
+          {/* Informação de margem da carta: o que este mapa cobre, e de onde vem. */}
+          <dl className="tv__carta">
+            <div>
+              <dt>Recorte do Vale</dt>
+              <dd>
+                {doVale.length} municípios ·{" "}
+                {doVale.map((m) => m.nome).join(", ")}
+              </dd>
+            </div>
+            {municipioDeComparacao === undefined ? null : (
+              <div>
+                <dt>Fora do recorte</dt>
+                <dd>
+                  {municipioDeComparacao.nome} · referência de comparação em
+                  políticas públicas
+                </dd>
+              </div>
+            )}
+            <div>
+              <dt>Lugares no mapa</dt>
+              <dd>
+                {posicionados.length} com posição confirmada ·{" "}
+                {dentroDoRecorte.length} no recorte, {foraDoRecorte.length} fora
+              </dd>
+            </div>
+            <div>
+              <dt>Base cartográfica</dt>
+              <dd>IBGE; os entornos acrescentam OpenStreetMap</dd>
+            </div>
+          </dl>
+        </figure>
+      </header>
+
+      <p aria-live="polite" className="sr-only" data-tv-regiao-anuncio="" />
+
+      {/*
+        Régua de escala. Não é enfeite de margem: os três degraus são os três
+        enquadramentos que esta página realmente desenha, e a largura de cada
+        um vem da projeção. O degrau ativo acompanha a seleção por CSS, então
+        ele continua correto sem JavaScript.
+      */}
+      <ol aria-label="Escalas desta cartografia" className="tv__regua">
+        <li data-passo="estado">
+          <p className="tv__regua-nivel">Estado</p>
+          <p className="tv__regua-nome">Sergipe</p>
+          <p className="tv__regua-medida">
+            {kmDoEstado} km
+            <span className="q"> de largura · contexto</span>
+          </p>
+        </li>
+        <li data-passo="recorte">
+          <p className="tv__regua-nivel">Recorte</p>
+          <p className="tv__regua-nome">
+            Vale do Rio Real
+            <span className="sel"> · escala em uso</span>
+          </p>
+          <p className="tv__regua-medida">
+            {kmDoRecorte} km
+            <span className="q"> de largura · {doVale.length} municípios</span>
+          </p>
+        </li>
+        <li data-passo="lugar">
+          <p className="tv__regua-nivel">Lugar</p>
+          {degrausDoLugar.map((degrau) => (
+            <p
+              className="tv__regua-nome"
+              data-foco={degrau.foco}
+              key={`nome-${degrau.foco}`}
+            >
+              {degrau.nome}
+              <span className="sel"> · escala em uso</span>
+            </p>
+          ))}
+          {degrausDoLugar.map((degrau) => (
+            <p
+              className="tv__regua-medida"
+              data-foco={degrau.foco}
+              key={`medida-${degrau.foco}`}
+            >
+              {degrau.medida}
+              <span className="q">{degrau.qualificador}</span>
+            </p>
+          ))}
+        </li>
+      </ol>
+
+      <div className="tv__grade">
+        <figure className="tv__mapa">
           <div className="tv__plano">
             <svg
               aria-labelledby="tv-mapa-titulo"
@@ -346,6 +517,40 @@ export function TerritorioVivo({
                     key={`anel-${codigo}`}
                   />
                 ))}
+
+                {/*
+                  Janelas da pesquisa: o retângulo é o envelope do derivado
+                  local — a mesma caixa que a seleção usa para aproximar. Ele
+                  mostra onde a pesquisa desceu de escala e não liga um ponto
+                  ao outro: ligação exigiria fonte de percurso, que não há.
+                */}
+                <g data-camada="janelas-dos-entornos">
+                  {posicionados.flatMap((l) => {
+                    if (l.local === null) return [];
+                    const g = l.local.geografico;
+                    const [x0, y0] = projetarContinuo(
+                      g.lonMin,
+                      g.latMax,
+                      dados.projecao,
+                    );
+                    const [x1, y1] = projetarContinuo(
+                      g.lonMax,
+                      g.latMin,
+                      dados.projecao,
+                    );
+                    return [
+                      <rect
+                        className="tv-janela"
+                        data-janela={l.id}
+                        height={(y1 - y0).toFixed(2)}
+                        key={`janela-${l.id}`}
+                        width={(x1 - x0).toFixed(2)}
+                        x={x0.toFixed(2)}
+                        y={y0.toFixed(2)}
+                      />,
+                    ];
+                  })}
+                </g>
 
                 {visiveis.map((m) => {
                   const c = caixaDe(m.codigoIbge);
@@ -511,93 +716,123 @@ export function TerritorioVivo({
             </svg>
           </div>
 
-          <figcaption className="tv__nota tv__nota--geral">
-            Base cartográfica: IBGE. Os pins usam coordenadas confirmadas em
-            campo. Ilha Grande aparece ao selecionar o lugar, pois está fora do
-            enquadramento do Vale.
+          <figcaption className="tv__aparato">
+            <ul
+              aria-label="Legenda do mapa"
+              className="tv__legenda tv__legenda--geral"
+            >
+              <li>
+                <span
+                  aria-hidden="true"
+                  className="tv__amostra tv__amostra--estado"
+                />
+                Sergipe
+              </li>
+              <li>
+                <span aria-hidden="true" className="tv__amostra" />
+                Vale
+              </li>
+              <li>
+                <span
+                  aria-hidden="true"
+                  className="tv__amostra tv__amostra--campo"
+                />
+                Pesquisa
+              </li>
+              <li>
+                <span
+                  aria-hidden="true"
+                  className="tv__amostra tv__amostra--comparacao"
+                />
+                Comparação · São Cristóvão
+              </li>
+              <li>
+                <span aria-hidden="true" className="tv__amostra--pin" />
+                Lugar da pesquisa (posição confirmada)
+              </li>
+              <li>
+                <span
+                  aria-hidden="true"
+                  className="tv__amostra tv__amostra--janela"
+                />
+                Janela do mapa detalhado
+              </li>
+            </ul>
+            <ul
+              aria-label="Legenda do mapa detalhado"
+              className="tv__legenda tv__legenda--local"
+            >
+              <li>
+                <span aria-hidden="true" className="tv__amostra--pin" />
+                Lugar visitado
+              </li>
+              <li>
+                <span
+                  aria-hidden="true"
+                  className="tv__amostra tv__amostra--referencia"
+                />
+                Localidade do lugar
+              </li>
+              <li>
+                <span
+                  aria-hidden="true"
+                  className="tv__amostra tv__amostra--sede"
+                />
+                Sede
+              </li>
+              <li>
+                <span
+                  aria-hidden="true"
+                  className="tv__amostra tv__amostra--localidade"
+                />
+                Outra localidade ou referência IBGE
+              </li>
+              <li>
+                <span aria-hidden="true" className="tv__traco" />
+                Rodovia principal
+              </li>
+            </ul>
+            <p className="tv__nota tv__nota--geral">
+              Base cartográfica: IBGE. Os pins usam coordenadas confirmadas em
+              campo. Ilha Grande aparece ao selecionar o lugar, pois está fora
+              do enquadramento do Vale.
+            </p>
+            <p className="tv__nota tv__nota--local">
+              Base cartográfica: IBGE + OpenStreetMap. Vias e cursos d'água:{" "}
+              <a href="https://www.openstreetmap.org/copyright">
+                {FONTES_DAS_CAMADAS.vias}
+              </a>
+              . O pin mantém a coordenada humana confirmada.
+            </p>
           </figcaption>
-          <p className="tv__nota tv__nota--local">
-            Base cartográfica: IBGE + OpenStreetMap. Vias e cursos d'água:{" "}
-            <a href="https://www.openstreetmap.org/copyright">
-              {FONTES_DAS_CAMADAS.vias}
-            </a>
-            . O pin mantém a coordenada humana confirmada.
-          </p>
-          <ul
-            aria-label="Legenda do mapa"
-            className="tv__legenda tv__legenda--geral"
-          >
-            <li>
-              <span
-                aria-hidden="true"
-                className="tv__amostra tv__amostra--estado"
-              />
-              Sergipe
-            </li>
-            <li>
-              <span aria-hidden="true" className="tv__amostra" />
-              Vale
-            </li>
-            <li>
-              <span
-                aria-hidden="true"
-                className="tv__amostra tv__amostra--campo"
-              />
-              Pesquisa
-            </li>
-            <li>
-              <span
-                aria-hidden="true"
-                className="tv__amostra tv__amostra--comparacao"
-              />
-              Comparação · São Cristóvão
-            </li>
-            <li>
-              <span aria-hidden="true" className="tv__amostra--pin" />
-              Lugar da pesquisa (posição confirmada)
-            </li>
-          </ul>
-          <ul
-            aria-label="Legenda do mapa detalhado"
-            className="tv__legenda tv__legenda--local"
-          >
-            <li>
-              <span aria-hidden="true" className="tv__amostra--pin" />
-              Lugar visitado
-            </li>
-            <li>
-              <span
-                aria-hidden="true"
-                className="tv__amostra tv__amostra--referencia"
-              />
-              Localidade do lugar
-            </li>
-            <li>
-              <span
-                aria-hidden="true"
-                className="tv__amostra tv__amostra--sede"
-              />
-              Sede
-            </li>
-            <li>
-              <span
-                aria-hidden="true"
-                className="tv__amostra tv__amostra--localidade"
-              />
-              Outra localidade ou referência IBGE
-            </li>
-            <li>
-              <span aria-hidden="true" className="tv__traco" />
-              Rodovia principal
-            </li>
-          </ul>
         </figure>
 
-        <nav aria-labelledby="tv-lista-titulo" className="tv__lista">
-          <div className="tv__lista-cab">
-            <p className="meta-ficha">Percurso</p>
-            <h2 id="tv-lista-titulo">Explore os lugares</h2>
-            <p>Veja o território inteiro ou escolha um ponto da pesquisa.</p>
+        <nav aria-labelledby="tv-lista-titulo" className="tv__trilha">
+          <div className="tv__trilha-cab">
+            <p className="meta-ficha">Índice territorial</p>
+            <h2 id="tv-lista-titulo">Os lugares da pesquisa</h2>
+            {/*
+              Equivalente textual do agrupamento que a lista desenha com um
+              filete: quem não vê o filete recebe o mesmo fato em palavras.
+            */}
+            <p>
+              {dentroDoRecorte.length} lugares em{" "}
+              {[...new Set(dentroDoRecorte.map((l) => nomeDe(l.municipioId)))]
+                .filter((n): n is string => n !== null)
+                .join(", ")}
+              , dentro do recorte
+              {foraDoRecorte.length > 0
+                ? `; ${foraDoRecorte.length} em ${[
+                    ...new Set(
+                      foraDoRecorte.map(
+                        (l) =>
+                          nomeDe(l.municipioId) ?? "município não publicado",
+                      ),
+                    ),
+                  ].join(", ")}, fora dele`
+                : ""}
+              .
+            </p>
           </div>
           <ul data-tv-lista="">
             <li>
@@ -609,13 +844,16 @@ export function TerritorioVivo({
                 href={`#tv-painel-${FOCO_GERAL}`}
               >
                 <span className="nome">Vale do Rio Real</span>
-                <span className="meta">Visão geral</span>
+                <span className="meta">
+                  Visão geral · {doVale.length} municípios
+                </span>
               </a>
             </li>
             {lugares.map((lugar) => {
               const municipio = nomeDe(lugar.municipioId);
               const p = estaPosicionado(lugar) ? lugar : null;
               const fora = p !== null && !p.dentroDoVale;
+              const noRecorte = doRecorte(lugar);
               const rotulo =
                 p === null
                   ? `Mapa do Vale do Rio Real. ${lugar.nome} não está posicionado: sem coordenada confirmada disponível.`
@@ -636,12 +874,13 @@ export function TerritorioVivo({
                   : `${lugar.nome} selecionado. O mapa se desloca até a posição confirmada${fora ? ", fora do recorte do Vale" : ""}.`;
               const meta = [
                 municipio ?? "Município não publicado",
-                fora ? "fora do recorte do Vale" : null,
-              ]
-                .filter(Boolean)
-                .join(" · ");
+                noRecorte ? "no recorte do Vale" : "fora do recorte do Vale",
+              ].join(" · ");
               return (
-                <li key={lugar.id}>
+                <li
+                  data-municipio={lugar.municipioId ?? "sem-municipio"}
+                  key={lugar.id}
+                >
                   <a
                     data-tv-aba={lugar.id}
                     data-tv-anuncio={anuncio}
@@ -659,56 +898,100 @@ export function TerritorioVivo({
                   >
                     <span className="nome">{lugar.nome}</span>
                     <span className="meta">{meta}</span>
+                    {p === null ? (
+                      <span className="coord">sem coordenada confirmada</span>
+                    ) : (
+                      <span className="coord">{coordenada(p.posicao)}</span>
+                    )}
                   </a>
                 </li>
               );
             })}
           </ul>
         </nav>
+      </div>
 
-        <div className="tv__paineis">
-          <section
-            aria-labelledby="tv-painel-vale-titulo"
-            data-tv-painel=""
-            id={`tv-painel-${FOCO_GERAL}`}
-          >
-            <p className="meta-ficha">Visão geral</p>
+      <div className="tv__paineis">
+        <section
+          aria-labelledby="tv-painel-vale-titulo"
+          data-tv-painel=""
+          id={`tv-painel-${FOCO_GERAL}`}
+        >
+          <header className="tv__ficha-cab">
+            <p className="meta-ficha">Visão geral · recorte da pesquisa</p>
             <h2 id="tv-painel-vale-titulo">Vale do Rio Real</h2>
             <p className="tv__resumo">{RESUMO_PUBLICO_DO_VALE}</p>
-            <section>
-              <h3>O recorte</h3>
-              <p>{doVale.map((m) => m.nome).join(", ")}.</p>
-            </section>
-            <section>
-              <h3>A pesquisa no território</h3>
-              <p>
-                Três dos quatro lugares desta cartografia ficam em Tobias
-                Barreto, dentro do recorte: dois equipamentos culturais
-                acompanhados mês a mês e uma comunidade agrícola entre serras,
-                onde a pesquisa terminou com uma oficina aberta aos moradores.
-                Cada ponto abre a sua própria ficha.
-              </p>
-            </section>
-            <section>
-              <h3>Ilha Grande</h3>
-              <p>
-                O quarto ponto está em São Cristóvão, fora do Vale. A pesquisa
-                chegou até lá porque o próprio portal da prefeitura apresentava
-                a povoação como território ecoturístico aberto à visitação — e
-                foi conferir. Isso não inclui São Cristóvão entre os cinco
-                municípios do recorte.
-              </p>
-            </section>
-          </section>
+          </header>
+          <div className="tv__ficha-corpo">
+            <div className="tv__ficha-texto">
+              <section>
+                <h3>A pesquisa no território</h3>
+                <p>
+                  Três dos quatro lugares desta cartografia ficam em Tobias
+                  Barreto, dentro do recorte: dois equipamentos culturais
+                  acompanhados mês a mês e uma comunidade agrícola entre serras,
+                  onde a pesquisa terminou com uma oficina aberta aos moradores.
+                  Cada ponto abre a sua própria ficha.
+                </p>
+              </section>
+              <section>
+                <h3>Ilha Grande</h3>
+                <p>
+                  O quarto ponto está em São Cristóvão, fora do Vale. A pesquisa
+                  chegou até lá porque o próprio portal da prefeitura
+                  apresentava a povoação como território ecoturístico aberto à
+                  visitação — e foi conferir. Isso não inclui São Cristóvão
+                  entre os cinco municípios do recorte.
+                </p>
+              </section>
+            </div>
+            <aside className="tv__ficha-margem">
+              <section>
+                <h3>O recorte</h3>
+                <ul className="tv__municipios">
+                  {doVale.map((m) => {
+                    const contagem =
+                      porMunicipio.get(m.codigoIbge)?.length ?? 0;
+                    /*
+                      Três estados, e não dois. Tomar do Geru tem pesquisa de
+                      campo declarada no recorte e nenhum lugar posicionado:
+                      chamá-lo de "sem ponto de campo" transformaria a ausência
+                      de pin numa afirmação sobre a pesquisa, que a fonte não
+                      sustenta.
+                    */
+                    const rotulo =
+                      contagem > 0
+                        ? contagem === 1
+                          ? "1 lugar no mapa"
+                          : `${contagem} lugares no mapa`
+                        : m.relacoesTerritoriais.includes("pesquisa-campo")
+                          ? "pesquisa de campo"
+                          : "sem ponto de campo";
+                    return (
+                      <li key={m.codigoIbge}>
+                        <span>{m.nome}</span>
+                        <span className="estado">{rotulo}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <p className="fonte">
+                  Lugares posicionados nesta cartografia e relações declaradas
+                  no recorte.
+                </p>
+              </section>
+            </aside>
+          </div>
+        </section>
 
-          {lugares.map((lugar) => (
-            <FichaDoLugar
-              key={lugar.id}
-              lugar={lugar}
-              municipio={nomeDe(lugar.municipioId)}
-            />
-          ))}
-        </div>
+        {lugares.map((lugar) => (
+          <FichaDoLugar
+            key={lugar.id}
+            lugar={lugar}
+            municipio={nomeDe(lugar.municipioId)}
+            noRecorte={doRecorte(lugar)}
+          />
+        ))}
       </div>
 
       <section className="tv__fecho">
@@ -726,19 +1009,35 @@ export function TerritorioVivo({
   );
 }
 
+/**
+ * Dossiê territorial de um lugar.
+ *
+ * A coordenada sobe para a linha de identificação — é o dado mais territorial
+ * da ficha e estava no rodapé de um `dl`. "Como chegar" deixa de repeti-la e
+ * fica com o que é referência documental. O aparato — evidências, registros,
+ * acesso — vai para a margem; a narrativa e as fotografias ficam na coluna de
+ * leitura. Fichas com mais fonte ocupam mais margem, e nenhuma é preenchida
+ * para alcançar a outra.
+ */
 function FichaDoLugar({
   lugar,
   municipio,
+  noRecorte,
 }: {
   lugar: LugarNoMapa;
   municipio: string | null;
+  noRecorte: boolean;
 }) {
   const idTitulo = `tv-painel-${lugar.id}-titulo`;
   const materiaisPublicos = lugar.materiais.filter(
     (material) => material.estado === "publico",
   );
   const posicao = lugar.posicao;
-  const temComoChegar = lugar.comoChegar !== null || posicao !== null;
+  const temComoChegar =
+    lugar.localidade !== null ||
+    lugar.comoChegar?.referencia != null ||
+    lugar.camadaLocal?.referenciaCartografica != null ||
+    posicao !== null;
 
   return (
     <section
@@ -746,204 +1045,211 @@ function FichaDoLugar({
       data-tv-painel=""
       id={`tv-painel-${lugar.id}`}
     >
-      <p className="meta-ficha">
-        {["Lugar visitado", municipio].filter(Boolean).join(" · ")}
-      </p>
-      <h2 id={idTitulo}>{lugar.nome}</h2>
-      {lugar.nomeCompleto !== null && lugar.nomeCompleto !== lugar.nome ? (
-        <p className="tv__subtitulo">{lugar.nomeCompleto}</p>
-      ) : null}
+      <header className="tv__ficha-cab">
+        <p className="meta-ficha">
+          {[
+            "Lugar visitado",
+            municipio,
+            noRecorte ? "no recorte" : "fora do recorte",
+          ]
+            .filter(Boolean)
+            .join(" · ")}
+        </p>
+        <h2 id={idTitulo}>{lugar.nome}</h2>
+        {lugar.nomeCompleto !== null && lugar.nomeCompleto !== lugar.nome ? (
+          <p className="tv__subtitulo">{lugar.nomeCompleto}</p>
+        ) : null}
 
-      {lugar.localidade !== null ? (
-        <div className="tv__identificacao">
-          <p className="fonte">Localização</p>
-          <p>
-            <strong>{lugar.localidade.texto}</strong>
-            {municipio !== null ? ` · ${municipio} (SE)` : ""}
-          </p>
-          <p className="tv__vinculo">
-            Lugar visitado em campo
-            {lugar.dentroDoVale ? "." : "; fora do recorte principal do Vale."}
-          </p>
-        </div>
-      ) : null}
-
-      {lugar.lacunaDeLocalizacao !== null ? (
-        <p className="lacuna">{lugar.lacunaDeLocalizacao}</p>
-      ) : null}
-
-      {lugar.descricao !== null ? (
-        <section>
-          <p>{lugar.descricao.texto}</p>
-          <p className="fonte">Fonte: {lugar.descricao.fonte}</p>
-        </section>
-      ) : null}
-
-      {materiaisPublicos.length > 0 ? (
-        <section>
-          <h3>Evidências públicas</h3>
-          <ul className="materiais">
-            {materiaisPublicos.map((m) => (
-              <li key={m.material}>
-                <span>
-                  {m.href !== null ? (
-                    <a href={m.href}>{m.material}</a>
-                  ) : (
-                    m.material
-                  )}
-                </span>
-                <span className="estado">Disponível</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
-
-      {lugar.dados.length > 0 ? (
-        <section>
-          <h3>Registros do período</h3>
-          <dl className="dados">
-            {lugar.dados.map((d) => (
-              <div key={d.rotulo}>
-                <dd>{d.valor}</dd>
-                <dt>{d.rotulo}</dt>
-              </div>
-            ))}
-          </dl>
-          <p className="fonte">Fonte: {lugar.dados[0]?.fonte}</p>
-        </section>
-      ) : null}
-
-      {lugar.fotos.length === 0 ? (
-        /*
-          A frase descreve o estado **da ficha**, e nada além dele.
-          "Nenhuma fotografia pública está vinculada a este lugar", que estava
-          aqui antes, afirmava mais do que se podia provar: dizia do acervo
-          inteiro a partir do que a ficha reúne. Serra dos Macacos tem
-          fotografias de origem que nunca foram derivadas nem publicadas — o
-          que não torna a ficha errada, torna a frase anterior errada.
-
-          Também não se diz o contrário. Anunciar que existe material ainda não
-          publicado exporia a existência de acervo fora do universo público, e
-          o fail-closed vale nos dois sentidos.
-        */
-        <section>
-          <h3>Fotografias</h3>
-          <p className="lacuna">
-            Esta ficha ainda não reúne fotografia pública.
-          </p>
-        </section>
-      ) : (
-        <section>
-          <h3>Fotografias</h3>
-          <div className="fotos">
-            {lugar.fotos.map((foto) => (
-              <figure key={foto.src}>
-                <img
-                  alt={foto.alt}
-                  decoding="async"
-                  height={foto.altura}
-                  loading="lazy"
-                  src={foto.src}
-                  width={foto.largura}
-                />
-                <figcaption>
-                  {foto.legenda}
-                  {foto.credito !== null ? (
-                    <span className="credito">{foto.credito}</span>
-                  ) : null}
-                  {foto.pendencia !== null ? (
-                    <span className="pendencia">{foto.pendencia}</span>
-                  ) : null}
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {temComoChegar ? (
-        <section className="tv__acesso">
-          <h3>Como chegar</h3>
-          {lugar.localidade !== null || lugar.comoChegar?.referencia != null ? (
-            <dl className="chegar">
-              {posicao !== null ? (
-                <div>
-                  <dt className="fonte">Coordenada do lugar</dt>
-                  <dd>
-                    <span className="coordenada">{coordenada(posicao)}</span>
-                    {/*
-                      Duas frases, e não uma. A primeira diz de que ponto se
-                      trata; a segunda prende a data ao que ela de fato
-                      data — a confirmação da coordenada, evento editorial.
-                      Emendadas, a data encostaria em "lugar" e se leria como
-                      data de visita, que este projeto não possui para
-                      nenhum dos quatro lugares.
-                    */}
-                    <span className="tv__procedencia">
-                      Ponto do próprio lugar, não do município.
-                      <br />
-                      {`Coordenada: ${posicao.fonteDaCoordenada}.`}
-                    </span>
-                  </dd>
-                </div>
-              ) : null}
-              {lugar.localidade !== null ? (
-                <div>
-                  <dt className="fonte">Localização documental</dt>
-                  <dd>
-                    {lugar.localidade.texto}
-                    {municipio !== null ? `, ${municipio} (SE)` : ""}
-                  </dd>
-                </div>
-              ) : null}
-              {lugar.camadaLocal?.referenciaCartografica != null ? (
-                <div>
-                  <dt className="fonte">Referência cartográfica</dt>
-                  <dd>
-                    {lugar.camadaLocal.referenciaCartografica.rotulo} —
-                    referência territorial próxima; não representa o lugar
-                    visitado.
-                  </dd>
-                </div>
-              ) : null}
-              {lugar.comoChegar?.referencia != null ? (
-                <div>
-                  <dt className="fonte">Referência de acesso</dt>
-                  <dd>{lugar.comoChegar.referencia.texto}</dd>
-                </div>
-              ) : null}
-            </dl>
-          ) : null}
-          {posicao !== null ? (
-            <div className="rota">
-              <p className="fonte">
-                Consulta externa opcional. Nenhum serviço de mapas é carregado
-                antes do clique.
+        {posicao !== null || lugar.localidade !== null ? (
+          <div className="tv__identificacao">
+            {posicao !== null ? (
+              <p className="coordenada">{coordenada(posicao)}</p>
+            ) : null}
+            {lugar.localidade !== null ? (
+              <p className="tv__localizacao">
+                <strong>{lugar.localidade.texto}</strong>
+                {municipio !== null ? ` · ${municipio} (SE)` : ""}
               </p>
-              <ul>
-                {destinosDeRota(posicao).map((destino) => (
-                  <li key={destino.servico}>
-                    <a
-                      className="rota__link"
-                      href={destino.href}
-                      referrerPolicy="no-referrer"
-                      rel="noopener noreferrer external"
-                      target="_blank"
-                    >
-                      {destino.servico}
-                    </a>
+            ) : null}
+            {posicao !== null ? (
+              /*
+                Duas frases, e não uma. A primeira diz de que ponto se trata; a
+                segunda prende a data ao que ela de fato data — a confirmação
+                da coordenada, evento editorial. Emendadas, a data encostaria
+                em "lugar" e se leria como data de visita, que este projeto não
+                possui para nenhum dos quatro lugares.
+              */
+              <p className="tv__procedencia">
+                Ponto do próprio lugar, não do município.
+                <br />
+                {`Coordenada: ${posicao.fonteDaCoordenada}.`}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
+
+        {lugar.lacunaDeLocalizacao !== null ? (
+          <p className="lacuna">{lugar.lacunaDeLocalizacao}</p>
+        ) : null}
+      </header>
+
+      <div className="tv__ficha-corpo">
+        <div className="tv__ficha-texto">
+          {lugar.descricao !== null ? (
+            <section className="tv__narrativa">
+              <p>{lugar.descricao.texto}</p>
+              <p className="tv__credito-fonte">{lugar.descricao.fonte}</p>
+            </section>
+          ) : null}
+
+          {lugar.fotos.length === 0 ? (
+            /*
+              A frase descreve o estado **da ficha**, e nada além dele.
+              "Nenhuma fotografia pública está vinculada a este lugar", que
+              estava aqui antes, afirmava mais do que se podia provar: dizia do
+              acervo inteiro a partir do que a ficha reúne. Serra dos Macacos
+              tem fotografias de origem que nunca foram derivadas nem
+              publicadas — o que não torna a ficha errada, torna a frase
+              anterior errada.
+
+              Também não se diz o contrário. Anunciar que existe material ainda
+              não publicado exporia a existência de acervo fora do universo
+              público, e o fail-closed vale nos dois sentidos.
+            */
+            <section>
+              <h3>Fotografias</h3>
+              <p className="lacuna">
+                Esta ficha ainda não reúne fotografia pública.
+              </p>
+            </section>
+          ) : (
+            <section>
+              <h3>Fotografias</h3>
+              <div className="fotos">
+                {lugar.fotos.map((foto) => (
+                  <figure key={foto.src}>
+                    <img
+                      alt={foto.alt}
+                      decoding="async"
+                      height={foto.altura}
+                      loading="lazy"
+                      src={foto.src}
+                      width={foto.largura}
+                    />
+                    <figcaption>
+                      {foto.legenda}
+                      {foto.credito !== null ? (
+                        <span className="credito">{foto.credito}</span>
+                      ) : null}
+                      {foto.pendencia !== null ? (
+                        <span className="pendencia">{foto.pendencia}</span>
+                      ) : null}
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+
+        <aside className="tv__ficha-margem">
+          {materiaisPublicos.length > 0 ? (
+            <section>
+              <h3>Evidências públicas</h3>
+              <ul className="materiais">
+                {materiaisPublicos.map((m) => (
+                  <li key={m.material}>
+                    <span>
+                      {m.href !== null ? (
+                        <a href={m.href}>{m.material}</a>
+                      ) : (
+                        m.material
+                      )}
+                    </span>
+                    <span className="estado">Disponível</span>
                   </li>
                 ))}
               </ul>
-            </div>
-          ) : (
-            <p>
-              Rota externa indisponível: não há destino geográfico confirmado.
-            </p>
-          )}
-        </section>
-      ) : null}
+            </section>
+          ) : null}
+
+          {lugar.dados.length > 0 ? (
+            <section>
+              <h3>Registros do período</h3>
+              <dl className="dados">
+                {lugar.dados.map((d) => (
+                  <div key={d.rotulo}>
+                    <dd>{d.valor}</dd>
+                    <dt>{d.rotulo}</dt>
+                  </div>
+                ))}
+              </dl>
+              <p className="tv__credito-fonte">{lugar.dados[0]?.fonte}</p>
+            </section>
+          ) : null}
+
+          {temComoChegar ? (
+            <section className="tv__acesso">
+              <h3>Como chegar</h3>
+              <dl className="chegar">
+                {lugar.localidade !== null ? (
+                  <div>
+                    <dt className="fonte">Localização documental</dt>
+                    <dd>
+                      {lugar.localidade.texto}
+                      {municipio !== null ? `, ${municipio} (SE)` : ""}
+                    </dd>
+                  </div>
+                ) : null}
+                {lugar.camadaLocal?.referenciaCartografica != null ? (
+                  <div>
+                    <dt className="fonte">Referência cartográfica</dt>
+                    <dd>
+                      {lugar.camadaLocal.referenciaCartografica.rotulo} —
+                      referência territorial próxima; não representa o lugar
+                      visitado.
+                    </dd>
+                  </div>
+                ) : null}
+                {lugar.comoChegar?.referencia != null ? (
+                  <div>
+                    <dt className="fonte">Referência de acesso</dt>
+                    <dd>{lugar.comoChegar.referencia.texto}</dd>
+                  </div>
+                ) : null}
+              </dl>
+              {posicao !== null ? (
+                <div className="rota">
+                  <ul>
+                    {destinosDeRota(posicao).map((destino) => (
+                      <li key={destino.servico}>
+                        <a
+                          className="rota__link"
+                          href={destino.href}
+                          referrerPolicy="no-referrer"
+                          rel="noopener noreferrer external"
+                          target="_blank"
+                        >
+                          {destino.servico}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="fonte">
+                    Consulta externa opcional. Nenhum serviço de mapas é
+                    carregado antes do clique.
+                  </p>
+                </div>
+              ) : (
+                <p className="fonte">
+                  Rota externa indisponível: não há destino geográfico
+                  confirmado.
+                </p>
+              )}
+            </section>
+          ) : null}
+        </aside>
+      </div>
 
       <a className="tv__voltar" data-tv-voltar="" href="#tv-painel-vale">
         ← Voltar à visão do território

@@ -24,6 +24,7 @@ test("Território aprofunda a malha e a legenda cartográfica da Home", async ({
     "Vale",
     "Pesquisa",
     "Comparação · São Cristóvão",
+    "Janela do mapa detalhado",
   ]) {
     await expect(legenda).toContainText(rotulo);
   }
@@ -58,7 +59,9 @@ test("Território público preserva quatro lugares e lazy loading das camadas", 
   ).toBeVisible();
   expect(camadas).toHaveLength(0);
 
-  const percurso = page.getByRole("navigation", { name: "Explore os lugares" });
+  const percurso = page.getByRole("navigation", {
+    name: "Os lugares da pesquisa",
+  });
   for (const lugar of [
     "Recanto da Serra",
     "Museu Borda da Mata",
@@ -190,5 +193,94 @@ test.describe("Território — teclado e estado", () => {
     );
     expect(animado).toBe(false);
     await expect(page.getByRole("tab")).toHaveCount(5);
+  });
+});
+
+/**
+ * Contrato da composição cartográfica (Tarefa 28).
+ *
+ * A régua e as janelas são informação, e não ornamento: se um dia virarem
+ * desenho sem correspondência nos dados, estes testes falham antes de a
+ * página ir ao ar. O que eles protegem é a amarração — três escalas
+ * declaradas, uma janela por entorno publicado, equivalente textual do
+ * agrupamento — e nunca a redação de um rótulo.
+ */
+test.describe("Território — cartografia como informação", () => {
+  test("a régua declara as três escalas e acompanha a seleção", async ({
+    page,
+  }) => {
+    await page.goto("/territorio");
+    const regua = page.getByRole("list", { name: "Escalas desta cartografia" });
+    for (const nivel of ["Estado", "Recorte", "Lugar"]) {
+      await expect(regua).toContainText(nivel);
+    }
+    // Toda escala visível declara a largura do enquadramento em quilômetros.
+    await expect(regua).toContainText(/\d+ km de largura/);
+
+    const raiz = page.locator("#territorio-vivo");
+    await expect(raiz).toHaveAttribute("data-foco", "vale");
+    await expect(regua).toContainText("Vale do Rio Real");
+
+    await page.getByRole("tab", { name: /Serra dos Macacos/ }).click();
+    await expect(raiz).toHaveAttribute("data-foco", "lugar-serra-dos-macacos");
+    await expect(regua).toContainText("Serra dos Macacos");
+    // O degrau em uso é dito em texto, e não só pela barra colorida.
+    await expect(regua).toContainText("escala em uso");
+  });
+
+  test("cada entorno publicado tem uma janela desenhada no mapa geral", async ({
+    page,
+  }) => {
+    await page.goto("/territorio");
+    const janelas = page.locator("[data-tv-mapa] .tv-janela");
+    const camadas = page.locator("[data-tv-camada-local]");
+    await expect(janelas).toHaveCount(await camadas.count());
+    expect(await janelas.count()).toBeGreaterThan(0);
+
+    /*
+      A janela é o envelope real do derivado: cada retângulo tem lado
+      positivo. Retângulo degenerado significaria geometria perdida na
+      projeção, e o mapa afirmaria um recorte que não existe.
+    */
+    const lados = await janelas.evaluateAll((nos) =>
+      nos.map((no) => ({
+        largura: Number(no.getAttribute("width")),
+        altura: Number(no.getAttribute("height")),
+      })),
+    );
+    for (const lado of lados) {
+      expect(lado.largura).toBeGreaterThan(0);
+      expect(lado.altura).toBeGreaterThan(0);
+    }
+  });
+
+  test("o índice traz coordenada e agrupamento em texto", async ({ page }) => {
+    await page.goto("/territorio");
+    const indice = page.getByRole("navigation", {
+      name: "Os lugares da pesquisa",
+    });
+    // O agrupamento que o filete desenha existe também como frase.
+    await expect(indice).toContainText(/dentro do recorte/);
+    await expect(indice).toContainText(/fora dele/);
+
+    const aba = indice.getByRole("tab", { name: /Serra dos Macacos/ });
+    await expect(aba).toContainText("-10.881100, -37.986700");
+
+    await aba.click();
+    await expect(
+      page.locator("#tv-painel-serra-dos-macacos .coordenada"),
+    ).toHaveText("-10.881100, -37.986700");
+  });
+
+  test("Escape devolve a leitura à visão do território", async ({ page }) => {
+    await page.goto("/territorio");
+    const raiz = page.locator("#territorio-vivo");
+    await page.getByRole("tab", { name: /Ilha Grande/ }).click();
+    await expect(raiz).toHaveAttribute("data-foco", "lugar-ilha-grande");
+
+    await page.locator('[role="tab"][aria-selected="true"]').focus();
+    await page.keyboard.press("Escape");
+    await expect(raiz).toHaveAttribute("data-foco", "vale");
+    await expect(page.locator("#tv-painel-vale")).toBeVisible();
   });
 });
