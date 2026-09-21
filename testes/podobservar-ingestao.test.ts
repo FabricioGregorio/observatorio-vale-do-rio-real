@@ -7,6 +7,7 @@ import { describe, expect, test } from "vitest";
 
 import {
   EPISODIOS_TEMPORADA_1,
+  FORMATOS_DE_MASTER,
   TEMPORADA_1,
 } from "../src/dados/podobservar-temporada-1";
 import {
@@ -19,6 +20,7 @@ import type { ObjetoPrivadoDescrito } from "../src/lib/storage-privado-grande";
 import { hashDeArquivo } from "../src/lib/storage-privado-grande";
 import {
   contemMarcacaoInterna,
+  extrairCorpoDaTranscricao,
   limparTranscricao,
   MARCACOES_INTERNAS,
   preservouConteudo,
@@ -257,19 +259,69 @@ describe("limpeza editorial da transcrição", () => {
   });
 });
 
+describe("corpo da transcrição sem o cabeçalho editorial do PDF", () => {
+  const pdf = [
+    "PodObservar — 1ª Temporada",
+    "",
+    "Episódio 04 — Entre dados e fatos",
+    "",
+    "Publicado em: [data não informada nos anexos]",
+    "Duração: aproximadamente 26:15",
+    "Participações: Galileu Santana e Luiz",
+    "",
+    " Sobre esta transcrição:",
+    "",
+    " Esta é uma transcrição revisada do episódio, produzida a partir do áudio e do",
+    " roteiro de produção. Sem alterar o conteúdo.",
+    "",
+    "LAURA AGUIAR — APRESENTADORA",
+    "",
+    "Antes de falar da Serra dos Macacos…",
+    "",
+    "[vinheta de transição]",
+  ].join("\n");
+
+  test("começa na primeira linha depois da nota e preserva o resto", () => {
+    const corpo = extrairCorpoDaTranscricao(pdf);
+    expect(corpo?.startsWith("LAURA AGUIAR — APRESENTADORA")).toBe(true);
+    expect(corpo?.endsWith("[vinheta de transição]")).toBe(true);
+  });
+
+  test("data não informada, duração aproximada e roteiro não chegam ao corpo", () => {
+    const corpo = extrairCorpoDaTranscricao(pdf) ?? "";
+    expect(corpo).not.toContain("não informada nos anexos");
+    expect(corpo).not.toContain("aproximadamente 26:15");
+    expect(corpo).not.toContain("Publicado em:");
+    expect(corpo).not.toContain("roteiro de produção");
+    expect(contemMarcacaoInterna(corpo)).toBe(false);
+  });
+
+  test("a marca de data não informada é resíduo proibido", () => {
+    expect(contemMarcacaoInterna(pdf)).toBe(true);
+  });
+
+  test("sem a nota, não adivinha onde o cabeçalho termina", () => {
+    expect(extrairCorpoDaTranscricao("LAURA AGUIAR\nOi, gente!")).toBeNull();
+  });
+});
+
 describe("plano aprovado da temporada 1", () => {
-  test("três episódios, números e slugs únicos", () => {
-    expect(EPISODIOS_TEMPORADA_1).toHaveLength(3);
+  test("quatro episódios, números e slugs únicos", () => {
+    expect(EPISODIOS_TEMPORADA_1).toHaveLength(4);
     const numeros = EPISODIOS_TEMPORADA_1.map((e) => e.numero);
     const slugs = EPISODIOS_TEMPORADA_1.map((e) => e.slug);
-    expect(new Set(numeros).size).toBe(3);
-    expect(new Set(slugs).size).toBe(3);
-    expect(numeros).toEqual([1, 2, 3]);
+    expect(new Set(numeros).size).toBe(4);
+    expect(new Set(slugs).size).toBe(4);
+    expect(numeros).toEqual([1, 2, 3, 4]);
+    expect(slugs[3]).toBe("04-entre-dados-e-fatos");
+    expect(EPISODIOS_TEMPORADA_1[3]?.titulo).toBe(
+      "#04 Episódio - Entre dados e fatos",
+    );
   });
 
   test("chaves de storage são únicas e cabem no contrato do espelhamento", () => {
     const chaves = EPISODIOS_TEMPORADA_1.map((e) => e.master.chave);
-    expect(new Set(chaves).size).toBe(3);
+    expect(new Set(chaves).size).toBe(4);
     for (const chave of chaves) {
       expect(chave).toMatch(
         /^arquivos\/[a-z0-9-]+\/[a-z0-9-]+-v[1-9][0-9]*\.[a-z0-9]+$/,
@@ -280,7 +332,7 @@ describe("plano aprovado da temporada 1", () => {
 
   test("SHA-256 auditados têm forma válida e são distintos", () => {
     const hashes = EPISODIOS_TEMPORADA_1.map((e) => e.master.sha256);
-    expect(new Set(hashes).size).toBe(3);
+    expect(new Set(hashes).size).toBe(4);
     for (const h of hashes) expect(h).toMatch(/^[a-f0-9]{64}$/);
   });
 
@@ -297,6 +349,13 @@ describe("plano aprovado da temporada 1", () => {
     expect(EPISODIOS_TEMPORADA_1[0]?.urlYoutube).toContain("youtube.com/watch");
     expect(EPISODIOS_TEMPORADA_1[1]?.urlYoutube).toBeNull();
     expect(EPISODIOS_TEMPORADA_1[2]?.urlYoutube).toBeNull();
+    expect(EPISODIOS_TEMPORADA_1[3]?.urlYoutube).toBeNull();
+  });
+
+  test("o EP04 aponta para o episódio conferido no Spotify", () => {
+    expect(EPISODIOS_TEMPORADA_1[3]?.urlSpotify).toBe(
+      "https://open.spotify.com/episode/7Johkhb6BqDx1gVolyz8iE",
+    );
   });
 
   test("publicado_em é meio-dia local de Sergipe, preservando a data editorial", () => {
@@ -305,19 +364,22 @@ describe("plano aprovado da temporada 1", () => {
       "2026-08-31T15:00:00Z",
       "2026-09-07T15:00:00Z",
       "2026-09-14T15:00:00Z",
+      "2026-09-21T15:00:00Z",
     ]);
     // A data renderizada em Sergipe é a data editorial, não a véspera.
     for (const [i, iso] of datas.entries()) {
       const emSergipe = new Date(iso).toLocaleDateString("pt-BR", {
         timeZone: "America/Maceio",
       });
-      expect(emSergipe).toBe(["31/08/2026", "07/09/2026", "14/09/2026"][i]);
+      expect(emSergipe).toBe(
+        ["31/08/2026", "07/09/2026", "14/09/2026", "21/09/2026"][i],
+      );
     }
   });
 
   test("durações auditadas conferem com a temporada", () => {
     expect(EPISODIOS_TEMPORADA_1.map((e) => e.master.duracaoSeg)).toEqual([
-      1433, 1938, 1907,
+      1433, 1938, 1907, 1575,
     ]);
   });
 
@@ -328,10 +390,24 @@ describe("plano aprovado da temporada 1", () => {
     expect(TEMPORADA_1.capaId).toBeNull();
   });
 
-  test("todo master é audio/wav privado por contrato do plano", () => {
-    for (const ep of EPISODIOS_TEMPORADA_1) {
-      expect(ep.master.mimeType).toBe("audio/wav");
+  test("EP01–03 continuam WAV; o EP04 é o MP3 entregue, sem conversão", () => {
+    expect(EPISODIOS_TEMPORADA_1.map((e) => e.master.mimeType)).toEqual([
+      "audio/wav",
+      "audio/wav",
+      "audio/wav",
+      "audio/mpeg",
+    ]);
+    for (const ep of EPISODIOS_TEMPORADA_1.slice(0, 3))
       expect(ep.master.bytes).toBeGreaterThan(300 * 1024 ** 2);
+    expect(EPISODIOS_TEMPORADA_1[3]?.master.bytes).toBe(50_495_795);
+  });
+
+  test("extensão de origem, chave e nome acompanham o MIME do master", () => {
+    for (const ep of EPISODIOS_TEMPORADA_1) {
+      const extensao = FORMATOS_DE_MASTER[ep.master.mimeType];
+      expect(ep.master.origem.endsWith(extensao), ep.slug).toBe(true);
+      expect(ep.master.chave.endsWith(extensao), ep.slug).toBe(true);
+      expect(ep.master.nomeOriginal.endsWith(extensao), ep.slug).toBe(true);
     }
   });
 });

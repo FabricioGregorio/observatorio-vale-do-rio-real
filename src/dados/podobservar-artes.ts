@@ -3,7 +3,7 @@ import { z } from "zod";
 import manifestoBruto from "./podobservar-artes.json";
 
 const arteSchema = z.object({
-  id: z.enum(["logo", "ep01", "ep02", "ep03"]),
+  id: z.enum(["logo", "ep01", "ep02", "ep03", "ep04"]),
   papel: z.enum(["logo", "capa_episodio"]),
   origem: z.string().min(1),
   sha256_original: z.string().regex(/^[a-f0-9]{64}$/),
@@ -32,7 +32,7 @@ const arteSchema = z.object({
 
 export const ARTES_PODOBSERVAR = z
   .array(arteSchema)
-  .length(4)
+  .length(5)
   .parse(manifestoBruto);
 
 export const LOGO_PODOBSERVAR = (() => {

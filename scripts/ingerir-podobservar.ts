@@ -8,7 +8,9 @@
  * 2. extrai e limpa a transcrição candidata de cada PDF;
  * 3. envia cada master ao bucket **privado**, por streaming e multipart;
  * 4. registra um `arquivo` privado por master;
- * 5. cria a temporada 1 e os três episódios em `rascunho`.
+ * 5. cria a temporada 1 e os episódios do plano em `rascunho`;
+ * 6. com `--publicar=<slug>`, e só então, muda aquele episódio para
+ *    `publicado` — desde que já tenha Spotify, capa e transcrição.
  *
  * O que ele **não** faz, por decisão de arquitetura (ADR-021):
  *
@@ -24,6 +26,12 @@
  * Uso:
  *   pnpm tsx scripts/ingerir-podobservar.ts --conferir   (só audita, não escreve)
  *   pnpm tsx scripts/ingerir-podobservar.ts --executar
+ *   pnpm tsx scripts/ingerir-podobservar.ts --executar --publicar=<slug>
+ *
+ * A publicação é passo separado e nominal porque a capa só existe depois
+ * deste script (`publicar-artes-podobservar.ts` precisa da linha do
+ * episódio). EP01–03 foram publicados por UPDATE manual em 2026-09-19; a
+ * partir do EP04 o passo fica versionado aqui.
  */
 import { execFileSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
@@ -35,6 +43,7 @@ import { Pool, type PoolClient } from "pg";
 import {
   EPISODIOS_TEMPORADA_1,
   type EpisodioPlanejado,
+  FORMATOS_DE_MASTER,
   TEMPORADA_1,
 } from "../src/dados/podobservar-temporada-1";
 import {
@@ -49,6 +58,7 @@ import {
 } from "../src/lib/storage-privado-grande";
 import {
   contemMarcacaoInterna,
+  extrairCorpoDaTranscricao,
   limparTranscricao,
   preservouConteudo,
   type RemocaoEditorial,
@@ -104,14 +114,24 @@ function prepararTranscricao(
     throw new Bloqueador(`Transcrição ausente: ${ep.transcricaoPdf}`);
 
   const bruto = extrairPdf(caminho);
-  const { texto, remocoes, total } = limparTranscricao(bruto);
+  const { texto: limpo, remocoes, total } = limparTranscricao(bruto);
 
-  if (contemMarcacaoInterna(texto))
-    throw new Bloqueador(`Marcação interna sobrevivente em ${ep.slug}.`);
-  if (!preservouConteudo(bruto, texto))
+  if (!preservouConteudo(bruto, limpo))
     throw new Bloqueador(
       `Limpeza alterou conteúdo em ${ep.slug}; nenhuma fala pode mudar.`,
     );
+
+  // O cabeçalho do PDF (data, duração, participações, nota) não é
+  // transcrição: data e duração públicas vêm dos metadados do episódio.
+  const texto = extrairCorpoDaTranscricao(limpo);
+  if (texto === null)
+    throw new Bloqueador(
+      `Nota "Sobre esta transcrição" ausente em ${ep.slug}; ` +
+        "sem ela o fim do cabeçalho não é conhecido.",
+    );
+
+  if (contemMarcacaoInterna(texto))
+    throw new Bloqueador(`Marcação interna sobrevivente em ${ep.slug}.`);
   if (texto.trim().length === 0)
     throw new Bloqueador(`Transcrição vazia em ${ep.slug}.`);
 
@@ -132,6 +152,17 @@ async function conferirMaster(
   raiz: string,
   ep: EpisodioPlanejado,
 ): Promise<string> {
+  const extensao = FORMATOS_DE_MASTER[ep.master.mimeType];
+  for (const nome of [
+    ep.master.origem,
+    ep.master.chave,
+    ep.master.nomeOriginal,
+  ])
+    if (!nome.toLowerCase().endsWith(extensao))
+      throw new Bloqueador(
+        `${nome} não termina em ${extensao}, mas o plano declara ${ep.master.mimeType}.`,
+      );
+
   const caminho = resolve(raiz, ep.master.origem);
   if (!existsSync(caminho))
     throw new Bloqueador(`Master ausente: ${ep.master.origem}`);
@@ -309,7 +340,57 @@ async function criarEpisodio(
   log(`episódio ${ep.numero} criado em rascunho: ${ep.slug}`);
 }
 
-async function principal(executar: boolean): Promise<void> {
+/**
+ * Publica um episódio já criado, pelo slug.
+ *
+ * Só sai de `rascunho` o que já satisfaz o gate da view por conta própria:
+ * Spotify, capa, transcrição e data não futura. Nada é completado aqui — se
+ * faltar algo, para. Reexecutar sobre um episódio já publicado não escreve.
+ */
+async function publicarEpisodio(pool: Pool, slug: string): Promise<void> {
+  const plano = EPISODIOS_TEMPORADA_1.find((ep) => ep.slug === slug);
+  if (!plano) throw new Bloqueador(`${slug} não está no plano aprovado.`);
+
+  const { rows } = await pool.query<{
+    status: string;
+    pronto: boolean;
+  }>(
+    `select status,
+            (url_spotify = $2
+             and capa_id is not null
+             and length(btrim(transcricao)) > 0
+             and publicado_em = $3::timestamptz
+             and publicado_em <= now()) as pronto
+       from episodio where slug = $1`,
+    [slug, plano.urlSpotify, plano.publicadoEm],
+  );
+  const atual = rows[0];
+  if (!atual) throw new Bloqueador(`${slug} não existe no banco.`);
+  if (atual.status === "publicado") {
+    log(`${slug} já publicado; não alterado`);
+    return;
+  }
+  if (atual.status !== "rascunho")
+    throw new Bloqueador(`${slug} está em ${atual.status}; decisão humana.`);
+  if (!atual.pronto)
+    throw new Bloqueador(
+      `${slug} ainda não tem Spotify do plano, capa, transcrição ou data válida.`,
+    );
+
+  const alterado = await pool.query(
+    `update episodio set status = 'publicado'
+      where slug = $1 and status = 'rascunho'`,
+    [slug],
+  );
+  if (alterado.rowCount !== 1)
+    throw new Bloqueador(`${slug}: publicação não aplicada.`);
+  log(`${slug} publicado`);
+}
+
+async function principal(
+  executar: boolean,
+  publicar: string | null,
+): Promise<void> {
   const raiz = exigir("OBSERVATORIO_FONTES_DIR");
   const bucket = exigir("STORAGE_PRIVATE_BUCKET");
   const url = exigir("DATABASE_URL_MANUTENCAO");
@@ -363,7 +444,12 @@ async function principal(executar: boolean): Promise<void> {
       cliente.release();
     }
 
-    log("4. conferência final");
+    if (publicar) {
+      log(`4. publicação de ${publicar}`);
+      await publicarEpisodio(pool, publicar);
+    }
+
+    log("5. conferência final");
     const { rows } = await pool.query(
       `select (select count(*) from temporada) temporada,
               (select count(*) from episodio) episodio,
@@ -387,7 +473,15 @@ if (process.argv[1]?.includes("ingerir-podobservar")) {
     console.error("Use --conferir (audita) ou --executar (ingere).");
     process.exit(2);
   }
-  principal(executar)
+  const publicar =
+    process.argv
+      .find((arg) => arg.startsWith("--publicar="))
+      ?.slice("--publicar=".length) ?? null;
+  if (publicar !== null && !executar) {
+    console.error("--publicar exige --executar.");
+    process.exit(2);
+  }
+  principal(executar, publicar)
     .then(() => process.exit(0))
     .catch((erro) => {
       console.error(

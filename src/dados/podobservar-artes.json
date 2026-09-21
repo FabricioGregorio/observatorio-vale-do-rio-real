@@ -106,5 +106,32 @@
       "metadados_removidos": ["EXIF", "XMP", "ICC"],
       "transformacao": "orientação EXIF aplicada; RGB; redimensionamento Lanczos para 1200x1200; WebP quality=84 method=6; metadados removidos"
     }
+  },
+  {
+    "id": "ep04",
+    "papel": "capa_episodio",
+    "origem": "podcast/ep-04/capa-ep-04.jpg",
+    "sha256_original": "c9ca565a76b4e3f1fe70c3a67051f25d51a858b8231a99437f6ca8f58ae8cedb",
+    "arquivo": "podobservar-ep04-1200.webp",
+    "chave_privada": "originais/podobservar/t1-ep-04-capa.jpg",
+    "chave_publica": "arquivos/podobservar-artes/t1-ep-04-capa-v1.webp",
+    "slug_episodio": "04-entre-dados-e-fatos",
+    "original": {
+      "largura": 1080,
+      "altura": 1350,
+      "bytes": 1544894,
+      "sha256": "c9ca565a76b4e3f1fe70c3a67051f25d51a858b8231a99437f6ca8f58ae8cedb",
+      "alpha": false,
+      "formato": "JPEG"
+    },
+    "derivado": {
+      "largura": 1200,
+      "altura": 1200,
+      "bytes": 200818,
+      "sha256": "52957794085d9bfcd765c89a6121de0b31e263c0f9d5a6aaa880c7c09750beb1",
+      "mime_type": "image/webp",
+      "metadados_removidos": ["EXIF", "XMP", "ICC"],
+      "transformacao": "orientação EXIF aplicada; RGB; redimensionamento Lanczos da arte inteira para 960x1200, sem recorte; centralizada em 1200x1200 com laterais em cor sólida #798345 (mediana das colunas de borda do original); WebP quality=84 method=6; metadados removidos"
+    }
   }
 ]

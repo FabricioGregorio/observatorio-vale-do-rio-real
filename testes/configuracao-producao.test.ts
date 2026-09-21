@@ -54,7 +54,8 @@ describe("configuração de produção", () => {
   test("sitemap contém páginas institucionais, documentos e evidências públicas", async () => {
     const urls = (await sitemap()).map((item) => item.url);
 
-    expect(urls).toHaveLength(140);
+    // 141 desde o EP04 (2026-09-21): uma página de episódio a mais.
+    expect(urls).toHaveLength(141);
     expect(urls).toContain("https://observatoriotobiassoueu.com.br/");
     expect(urls).toContain("https://observatoriotobiassoueu.com.br/territorio");
     expect(urls).toContain("https://observatoriotobiassoueu.com.br/acervo");
@@ -66,6 +67,9 @@ describe("configuração de produção", () => {
     );
     expect(urls).toContain(
       "https://observatoriotobiassoueu.com.br/podobservar/t1/03-conheca-o-museu-borda-da-mata",
+    );
+    expect(urls).toContain(
+      "https://observatoriotobiassoueu.com.br/podobservar/t1/04-entre-dados-e-fatos",
     );
     expect(urls.some((url) => url.includes("open.spotify.com"))).toBe(false);
     expect(urls).not.toContain(

@@ -46,6 +46,7 @@ const RESIDUOS_PROIBIDOS = [
   "continuação do bloco",
   "bloco sobre educação",
   "resultados da pesquisa",
+  "não informada nos anexos",
 ] as const;
 
 /**
@@ -153,4 +154,36 @@ export function preservouConteudo(bruto: string, limpo: string): boolean {
   );
   const comparavel = (t: string) => t.replace(/\s+/g, "");
   return comparavel(semMarcacoes) === comparavel(limpo);
+}
+
+/**
+ * Separa o corpo da transcrição do cabeçalho editorial do PDF.
+ *
+ * Os PDFs abrem com um cabeçalho (temporada, título, "Publicado em:",
+ * "Duração:", participações, tema) seguido da nota "Sobre esta transcrição".
+ * Nada disso é transcrição: data e duração públicas vêm dos metadados
+ * canônicos do episódio, e a nota é renderizada pelo próprio site. O que o
+ * banco guarda para EP01–03 é exatamente o texto limpo **depois** do
+ * parágrafo da nota — conferido caractere a caractere em 2026-09-21.
+ *
+ * O cabeçalho do EP04 traz "Publicado em: [data não informada nos anexos]" e
+ * "Duração: aproximadamente 26:15"; por isso o corte não é opcional.
+ *
+ * Sem a nota não há como saber onde o cabeçalho termina: devolve `null`, e
+ * quem chama para em vez de adivinhar.
+ */
+export function extrairCorpoDaTranscricao(texto: string): string | null {
+  const linhas = texto.split("\n");
+  const nota = linhas.findIndex((linha) =>
+    /^\s*Sobre esta transcrição:?\s*$/.test(linha),
+  );
+  if (nota === -1) return null;
+
+  let i = nota + 1;
+  while (i < linhas.length && linhas[i]?.trim() === "") i++;
+  while (i < linhas.length && linhas[i]?.trim() !== "") i++;
+  while (i < linhas.length && linhas[i]?.trim() === "") i++;
+
+  const corpo = linhas.slice(i).join("\n").trim();
+  return corpo.length > 0 ? corpo : null;
 }

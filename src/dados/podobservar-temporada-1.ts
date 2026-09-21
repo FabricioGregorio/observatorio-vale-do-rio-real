@@ -12,6 +12,17 @@
  * o gate de `vw_episodio_publico` continua sendo a única porta pública.
  */
 
+/**
+ * Formatos de master aceitos, com a extensão que a chave de storage e o arquivo
+ * de origem precisam ter. EP01–03 chegaram em WAV; o EP04, em MP3 — que é
+ * guardado como veio, sem conversão: o master é o arquivo entregue pela
+ * equipe, e converter criaria um segundo "original" sem motivo.
+ */
+export const FORMATOS_DE_MASTER = {
+  "audio/wav": ".wav",
+  "audio/mpeg": ".mp3",
+} as const;
+
 /** Bucket privado, `arquivo.visibilidade = 'privado'`, sem `url_publica`. */
 export type MasterPodObservar = {
   /** Caminho relativo dentro de `OBSERVATORIO_FONTES_DIR`. */
@@ -19,7 +30,7 @@ export type MasterPodObservar = {
   chave: string;
   sha256: string;
   bytes: number;
-  mimeType: string;
+  mimeType: keyof typeof FORMATOS_DE_MASTER;
   duracaoSeg: number;
   nomeOriginal: string;
 };
@@ -58,7 +69,7 @@ export type EpisodioPlanejado = {
 
 export const TEMPORADA_1 = {
   numero: 1,
-  /** Fonte documental: cabeçalho dos três PDFs, "PodObservar — 1ª Temporada". */
+  /** Fonte documental: cabeçalho dos PDFs, "PodObservar — 1ª Temporada". */
   titulo: "1ª Temporada",
   ano: 2026,
   descricao: null,
@@ -144,6 +155,43 @@ export const EPISODIOS_TEMPORADA_1: readonly EpisodioPlanejado[] = [
       mimeType: "audio/wav",
       duracaoSeg: 1907,
       nomeOriginal: "ep-03.wav",
+    },
+  },
+  {
+    numero: 4,
+    slug: "04-entre-dados-e-fatos",
+    titulo: "#04 Episódio - Entre dados e fatos",
+    /**
+     * Derivado do bloco `Tema:` do PDF do EP04, como os três anteriores, e
+     * aprovado para publicação pela decisão humana de 2026-09-21.
+     */
+    resumoCandidato:
+      "Episódio de apresentação e análise dos dados coletados durante cinco " +
+      "meses de pesquisa no Ecoparque e Museu Recanto da Serra e no Centro " +
+      "Cultural e Museu Borda da Mata. A conversa aborda visitação, " +
+      "funcionamento, economia solidária, sustentabilidade e preservação da " +
+      "memória, e as possibilidades de desenvolvimento turístico e cultural " +
+      "da Serra dos Macacos.",
+    transcricaoPdf: "podcast/ep-04/Transcrição episódio 4.pdf",
+    /** Conferido na página oficial do programa no Spotify em 2026-09-21. */
+    urlSpotify: "https://open.spotify.com/episode/7Johkhb6BqDx1gVolyz8iE",
+    urlYoutube: null,
+    /** Data humana 21/09/2026, na mesma convenção de meio-dia local. */
+    publicadoEm: "2026-09-21T15:00:00Z",
+    master: {
+      origem: "podcast/ep-04/ep04-v2.mp3",
+      chave: "arquivos/podobservar/t1-ep-04-entre-dados-e-fatos-master-v1.mp3",
+      sha256:
+        "833bba2178cfb578a9e2ccb56ccd0c4256e6a947ce64c1fc861a66a030d1789d",
+      bytes: 50495795,
+      mimeType: "audio/mpeg",
+      /**
+       * 60.282 quadros MPEG-1 Layer III a 44,1 kHz = 1574,71 s, contados
+       * quadro a quadro (o quadro Xing/Info fica de fora). Arredondado ao
+       * segundo mais próximo, como os WAV anteriores (EP01: 1432,94 → 1433).
+       */
+      duracaoSeg: 1575,
+      nomeOriginal: "ep04-v2.mp3",
     },
   },
 ];

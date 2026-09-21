@@ -1,9 +1,15 @@
 """Deriva as artes oficiais do PodObservar sem alterar os originais.
 
-Os quatro originais são identificados por caminho e SHA-256. A saída WebP
+Os originais são identificados por caminho e SHA-256. A saída WebP
 quadrada preserva a composição integral, limita o lado a 1200 px e não leva
 EXIF, XMP ou ICC. O logo também é copiado para ``public/``; capas de episódio
 são servidas pelo storage público e chegam à interface por ``capa_id``.
+
+A capa do EP04 chegou em 4:5 (1080x1350). Decisão humana de 2026-09-21: não
+recortar. A arte inteira é reduzida para caber no quadrado e as laterais são
+preenchidas com uma cor sólida tirada das bordas da própria capa — mediana
+por canal das duas colunas extremas. Nada da arte é reconstruído, estendido
+ou gerado.
 """
 
 from __future__ import annotations
@@ -61,7 +67,47 @@ ARTES = (
         "chave_publica": "arquivos/podobservar-artes/t1-ep-03-capa-v1.webp",
         "slug_episodio": "03-conheca-o-museu-borda-da-mata",
     },
+    {
+        "id": "ep04",
+        "papel": "capa_episodio",
+        "origem": "podcast/ep-04/capa-ep-04.jpg",
+        "sha256_original": "c9ca565a76b4e3f1fe70c3a67051f25d51a858b8231a99437f6ca8f58ae8cedb",
+        "arquivo": "podobservar-ep04-1200.webp",
+        "chave_privada": "originais/podobservar/t1-ep-04-capa.jpg",
+        "chave_publica": "arquivos/podobservar-artes/t1-ep-04-capa-v1.webp",
+        "slug_episodio": "04-entre-dados-e-fatos",
+    },
 )
+
+TRANSFORMACAO_QUADRADA = (
+    "orientação EXIF aplicada; RGB; redimensionamento Lanczos "
+    "para 1200x1200; WebP quality=84 method=6; metadados removidos"
+)
+
+
+def cor_das_bordas(imagem: Image.Image) -> tuple[int, int, int]:
+    """Mediana por canal das colunas extremas, esquerda e direita."""
+    largura, altura = imagem.size
+    pixels = [imagem.getpixel((x, y)) for x in (0, largura - 1) for y in range(altura)]
+    return tuple(sorted(p[canal] for p in pixels)[len(pixels) // 2] for canal in range(3))
+
+
+def enquadrar(imagem: Image.Image) -> tuple[Image.Image, str]:
+    """Reduz a arte inteira para caber em LADOxLADO, sem recorte."""
+    if imagem.width == imagem.height:
+        imagem.thumbnail((LADO, LADO), Image.Resampling.LANCZOS)
+        return imagem, TRANSFORMACAO_QUADRADA
+    cor = cor_das_bordas(imagem)
+    imagem.thumbnail((LADO, LADO), Image.Resampling.LANCZOS)
+    quadro = Image.new("RGB", (LADO, LADO), cor)
+    quadro.paste(imagem, ((LADO - imagem.width) // 2, (LADO - imagem.height) // 2))
+    hexa = "#%02x%02x%02x" % cor
+    return quadro, (
+        "orientação EXIF aplicada; RGB; redimensionamento Lanczos da arte "
+        f"inteira para {imagem.width}x{imagem.height}, sem recorte; centralizada "
+        f"em {LADO}x{LADO} com laterais em cor sólida {hexa} (mediana das "
+        "colunas de borda do original); WebP quality=84 method=6; metadados removidos"
+    )
 
 
 def sha256(caminho: Path) -> str:
@@ -85,7 +131,7 @@ def principal() -> None:
         with Image.open(origem) as aberta:
             imagem = ImageOps.exif_transpose(aberta).convert("RGB")
             dimensoes_originais = imagem.size
-            imagem.thumbnail((LADO, LADO), Image.Resampling.LANCZOS)
+            imagem, transformacao = enquadrar(imagem)
             saida = destino / declarada["arquivo"]
             imagem.save(saida, "WEBP", quality=QUALIDADE, method=METODO)
             dimensoes_derivadas = imagem.size
@@ -111,10 +157,7 @@ def principal() -> None:
                     "sha256": sha256(saida),
                     "mime_type": "image/webp",
                     "metadados_removidos": ["EXIF", "XMP", "ICC"],
-                    "transformacao": (
-                        "orientação EXIF aplicada; RGB; redimensionamento Lanczos "
-                        "para 1200x1200; WebP quality=84 method=6; metadados removidos"
-                    ),
+                    "transformacao": transformacao,
                 },
             }
         )

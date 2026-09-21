@@ -1,4 +1,4 @@
-/** Publica as artes derivadas do PodObservar e vincula as três capas. */
+/** Publica as artes derivadas do PodObservar e vincula as capas dos episódios. */
 import { createHash, randomUUID } from "node:crypto";
 import { readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -188,12 +188,26 @@ async function persistir(): Promise<void> {
         }
       }
     }
-    const prova = await c.query<{ capas: number; publicos: number }>(
-      "select count(*) filter (where capa_url is not null)::int capas, count(*)::int publicos from vw_episodio_publico",
+    // Toda capa do manifesto vinculada, e nenhum episódio público sem capa.
+    // O total público não é fixo: um episódio pode receber a capa ainda em
+    // rascunho e só depois ser publicado.
+    const esperadas = ARTES_PODOBSERVAR.filter(
+      (arte) => arte.slug_episodio !== null,
+    ).length;
+    const prova = await c.query<{
+      vinculadas: number;
+      capas: number;
+      publicos: number;
+    }>(
+      `select (select count(*) from episodio where capa_id is not null)::int vinculadas,
+              count(*) filter (where capa_url is not null)::int capas,
+              count(*)::int publicos
+         from vw_episodio_publico`,
     );
-    if (prova.rows[0]?.capas !== 3 || prova.rows[0]?.publicos !== 3)
+    const linha = prova.rows[0];
+    if (linha?.vinculadas !== esperadas || linha.capas !== linha.publicos)
       throw new FalhaPublicacao(
-        `Gate final divergente: ${JSON.stringify(prova.rows[0])}`,
+        `Gate final divergente: ${JSON.stringify(linha)}`,
       );
     await c.query("commit");
     console.log(

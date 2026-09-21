@@ -20,18 +20,41 @@ describe("artes oficiais do PodObservar", () => {
       ["ep01", "01-o-que-e-o-vale-do-rio-real"],
       ["ep02", "02-conheca-o-recanto-da-serra"],
       ["ep03", "03-conheca-o-museu-borda-da-mata"],
+      ["ep04", "04-entre-dados-e-fatos"],
     ]);
   });
 
   test("todos os derivados têm dimensões e peso controlados", () => {
     for (const arte of ARTES_PODOBSERVAR) {
-      expect(arte.original.largura).toBe(3000);
-      expect(arte.original.altura).toBe(3000);
       expect(arte.derivado.largura).toBe(1200);
       expect(arte.derivado.altura).toBe(1200);
       expect(arte.derivado.bytes).toBeLessThan(300_000);
       expect(arte.derivado.metadados_removidos).toEqual(["EXIF", "XMP", "ICC"]);
     }
+  });
+
+  test("originais quadrados de 3000 px, exceto a capa 4:5 do EP04", () => {
+    expect(
+      ARTES_PODOBSERVAR.map((arte) => [
+        arte.id,
+        arte.original.largura,
+        arte.original.altura,
+      ]),
+    ).toEqual([
+      ["logo", 3000, 3000],
+      ["ep01", 3000, 3000],
+      ["ep02", 3000, 3000],
+      ["ep03", 3000, 3000],
+      ["ep04", 1080, 1350],
+    ]);
+  });
+
+  test("a capa do EP04 é encaixada inteira, sem recorte", () => {
+    const ep04 = ARTES_PODOBSERVAR.find((arte) => arte.id === "ep04");
+    expect(ep04?.derivado.transformacao).toContain("arte inteira");
+    expect(ep04?.derivado.transformacao).toContain("sem recorte");
+    expect(ep04?.derivado.transformacao).toContain("960x1200");
+    expect(ep04?.derivado.transformacao).not.toMatch(/\bcrop|recortad/i);
   });
 
   test("o logo local é exatamente o derivado declarado e não o original", () => {
@@ -68,6 +91,7 @@ describe("artes oficiais do PodObservar", () => {
       expect(fonte).not.toContain("01-o-que-e-o-vale-do-rio-real");
       expect(fonte).not.toContain("02-conheca-o-recanto-da-serra");
       expect(fonte).not.toContain("03-conheca-o-museu-borda-da-mata");
+      expect(fonte).not.toContain("04-entre-dados-e-fatos");
     }
   });
 });
