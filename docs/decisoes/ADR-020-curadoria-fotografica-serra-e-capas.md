@@ -18,8 +18,9 @@ identificáveis — uma delas com criança — e a escolha da imagem de capa.
 Duas classificações anteriores tocam o assunto e precisam ser situadas, não
 apagadas. A auditoria de fontes de 2026-09-05 marcou como `RESTRITO`, com
 triagem humana obrigatória, as fotografias cujo nome sinaliza pessoa
-identificável. O doc 01 §266 e §310 mantém em aberto a pendência de
-consentimento LGPD por pessoa publicada.
+identificável. O doc 01 §266 e §310 mantinha em aberto, à época, a pendência
+de consentimento LGPD por pessoa publicada — resolvida para o corpus público
+atual em 2026-09-21 (ver "Consentimento — 2026-09-21").
 
 ## Decisão
 
@@ -38,8 +39,9 @@ automaticamente a qualquer fotografia futura; qualquer outro conjunto exige
 verificação própria. A classificação `RESTRITO` de 2026-09-05 continua vigente
 onde esta decisão não alcança.
 
-A pendência de consentimento LGPD do doc 01 §310 **não é resolvida por este
-ADR** e segue aberta.
+Em 2026-09-17, a pendência de consentimento LGPD do doc 01 §310 não foi
+resolvida por esta decisão. Foi resolvida depois, para o corpus público atual —
+ver "Consentimento — 2026-09-21".
 
 ### 2. Tarjamento obrigatório de placa de veículo
 
@@ -166,4 +168,22 @@ contra uma cópia do corpus, reproduziu byte a byte os 58 derivados e o
   apenas para os protótipos de `/dev`, que respondem 404 em produção.
 - **Home:** três fotografias por lugar, declaradas em `FOTOGRAFIAS_DA_HOME`.
 
-A pendência de consentimento LGPD do doc 01 §310 continua aberta, como antes.
+## Consentimento — 2026-09-21
+
+Decisão do responsável humano, vigente a partir de 2026-09-21: **os
+consentimentos necessários para as pessoas identificáveis do corpus fotográfico
+público atual foram obtidos.** As comprovações são mantidas internamente e não
+integram o repositório público nem o site; nenhum dado pessoal ou prova de
+consentimento deve ser publicado para sustentar esta decisão.
+
+- O corpus público atual — inclusive as fotografias de grupo, de reunião e a
+  que mostra uma criança — permanece autorizado para publicação.
+- Com isso, a pendência do doc 01 §310 está fechada **para este corpus**. O
+  checklist do doc 01 que ainda aparece desmarcado é estado anterior a esta
+  decisão; para o corpus atual, prevalece este registro.
+- **Escopo:** somente as fotografias hoje publicadas. Toda fotografia nova, e
+  toda ampliação do corpus, exige verificação própria de consentimento antes
+  de publicar.
+
+Este registro não é declaração genérica de conformidade com a LGPD; trata
+apenas do consentimento das pessoas identificáveis neste corpus.
