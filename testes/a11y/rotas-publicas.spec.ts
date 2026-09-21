@@ -26,6 +26,32 @@ for (const [rota, titulo] of ROTAS_PUBLICAS) {
   });
 }
 
+test("as duas rotas removidas respondem 404", async ({ request }) => {
+  for (const rota of ["/educacao", "/imprensa"]) {
+    const resposta = await request.get(rota);
+    expect(resposta.status(), rota).toBe(404);
+  }
+});
+
+test("nenhuma página pública aponta para as rotas removidas", async ({
+  page,
+}) => {
+  for (const rota of ENDERECOS_PUBLICOS) {
+    await page.goto(rota);
+    const destinos = await page
+      .locator("a[href]")
+      .evaluateAll((links) =>
+        links.map((link) => link.getAttribute("href") ?? ""),
+      );
+    expect(
+      destinos.filter((href) =>
+        /^\/(educacao|imprensa)\/?(?:[?#]|$)/.test(href),
+      ),
+      rota,
+    ).toEqual([]);
+  }
+});
+
 for (const rota of ENDERECOS_PUBLICOS) {
   test(`${rota} não se anuncia incompleta`, async ({ page }) => {
     await page.goto(rota);
@@ -84,9 +110,7 @@ const ROTAS_NOVAS = [
   "/acessibilidade",
   "/privacidade",
   "/contato",
-  "/imprensa",
   "/campo",
-  "/educacao",
 ] as const;
 
 for (const rota of ROTAS_NOVAS) {

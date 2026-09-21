@@ -37,7 +37,6 @@ import {
   entrevistasPublicas,
   FOTOGRAFIAS_DO_BORDA_NO_ACERVO,
   LINHA_DO_EDITAL,
-  NOME_OFICIAL,
   RELATORIO_DO_RECANTO,
   ROTULO_DO_ESTADO,
 } from "./conteudo";
@@ -996,11 +995,6 @@ export function Produtos({
           <li>
             <Link href="/campo" prefetch={false}>
               Diário de Campo
-            </Link>
-          </li>
-          <li>
-            <Link href="/educacao" prefetch={false}>
-              Uso educativo do acervo
             </Link>
           </li>
         </ul>

@@ -1,11 +1,11 @@
 /*
   Superfície documental — as páginas institucionais curtas.
 
-  `/acessibilidade`, `/privacidade`, `/contato`, `/imprensa`, `/campo` e
-  `/educacao` têm a mesma forma: uma coluna de leitura com margem de ficha à
+  `/acessibilidade`, `/privacidade`, `/contato` e `/campo` têm a mesma forma:
+  uma coluna de leitura com margem de ficha à
   esquerda no desktop, rótulo em mono de um lado e texto do outro. É a família
   de `/observatorio` e de `/prestacao-de-contas`, e existe uma folha só porque
-  seis folhas iguais seriam seis lugares para divergir.
+  quatro folhas iguais seriam quatro lugares para divergir.
 
   Cor, família, raio e espessura saem de `tokens.css`; nenhum hex entra aqui.
 

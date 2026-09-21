@@ -24,6 +24,33 @@ const SEM_RODAPE = "/prestacao-de-contas/imprimir";
 
 const COM_RODAPE = ENDERECOS_PUBLICOS.filter((rota) => rota !== SEM_RODAPE);
 
+for (const largura of [375, 768, 1440]) {
+  test(`navegação institucional íntegra em ${largura}px`, async ({ page }) => {
+    await page.setViewportSize({ width: largura, height: 900 });
+    await page.goto("/");
+    const rodape = page.locator("body > footer");
+    const institucional = rodape.getByRole("navigation", {
+      name: "Páginas institucionais",
+    });
+    await expect(institucional.getByRole("link")).toHaveText([
+      "Acessibilidade",
+      "Privacidade",
+      "Contato",
+    ]);
+    expect(
+      await institucional.evaluate(
+        (elemento) =>
+          elemento.getBoundingClientRect().right <= window.innerWidth + 1,
+      ),
+    ).toBe(true);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth + 1,
+      ),
+    ).toBe(true);
+  });
+}
+
 for (const rota of COM_RODAPE) {
   test(`${rota} serve o rodapé completo`, async ({ page }) => {
     await page.goto(rota);

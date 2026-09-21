@@ -14,7 +14,6 @@ const ROTAS_PUBLICAS = [
   "/podobservar",
   "/acervo",
   "/prestacao-de-contas",
-  "/imprensa",
   "/acessibilidade",
   "/privacidade",
   "/contato",

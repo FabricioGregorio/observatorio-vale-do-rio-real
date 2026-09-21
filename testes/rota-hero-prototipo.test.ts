@@ -80,7 +80,6 @@ describe("menu alvo do protótipo", () => {
       "/dados",
       "/podobservar",
       "/campo",
-      "/educacao",
       "/prestacao-de-contas",
     ]);
 

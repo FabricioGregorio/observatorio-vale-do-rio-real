@@ -238,9 +238,8 @@ export default function PaginaObservatorio() {
             */}
             <p className="obs-nota">
               As páginas institucionais curtas — acessibilidade, privacidade,
-              imprensa, contato e uso educativo do acervo — estão no rodapé de
-              cada página. O que o projeto ainda não produziu é declarado como
-              ausência na{" "}
+              contato — estão no rodapé de cada página. O que o projeto ainda
+              não produziu é declarado como ausência na{" "}
               <Link href="/prestacao-de-contas" prefetch={false}>
                 Prestação de Contas
               </Link>

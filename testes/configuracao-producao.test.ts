@@ -54,7 +54,7 @@ describe("configuração de produção", () => {
   test("sitemap contém páginas institucionais, documentos e evidências públicas", async () => {
     const urls = (await sitemap()).map((item) => item.url);
 
-    expect(urls).toHaveLength(141);
+    expect(urls).toHaveLength(140);
     expect(urls).toContain("https://observatoriotobiassoueu.com.br/");
     expect(urls).toContain("https://observatoriotobiassoueu.com.br/territorio");
     expect(urls).toContain("https://observatoriotobiassoueu.com.br/acervo");
@@ -70,6 +70,9 @@ describe("configuração de produção", () => {
     expect(urls.some((url) => url.includes("open.spotify.com"))).toBe(false);
     expect(urls).not.toContain(
       "https://observatoriotobiassoueu.com.br/educacao",
+    );
+    expect(urls).not.toContain(
+      "https://observatoriotobiassoueu.com.br/imprensa",
     );
     expect(urls).not.toContain(
       "https://observatoriotobiassoueu.com.br/dev/estilos",
