@@ -287,11 +287,12 @@ test.describe("Home", () => {
   });
 
   /*
-    Os dois desdobramentos do campo, Serra antes de Ilha. As fotografias de
-    Ilha Grande são de 11/04/2026 (manifesto da pesquisa); a da Serra não tem
-    data em fonte pública, e a legenda diz isso em vez de inventar uma.
+    Os dois desdobramentos do campo, Serra antes de Ilha, com a mesma forma:
+    três fotografias cada. As de Ilha Grande são de 11/04/2026; as da Serra
+    trazem a data de cada visita (EXIF confirmado pelo calendário do doc 02).
+    Nenhuma legenda diz "data não informada".
   */
-  test("mostra Serra dos Macacos e depois Ilha Grande, com datas da fonte", async ({
+  test("mostra Serra dos Macacos e depois Ilha Grande, três fotografias cada", async ({
     page,
   }) => {
     await page.goto("/");
@@ -303,25 +304,52 @@ test.describe("Home", () => {
       "Também em campo: Ilha Grande",
     ]);
 
-    const serra = page.locator(".hl-serra");
-    await expect(serra.locator("img")).toHaveCount(1);
-    await expect(serra.locator("img")).toHaveAttribute("loading", "lazy");
-    await expect(serra.locator("img")).toHaveAttribute("width", "1280");
-    await expect(serra.locator("img")).toHaveAttribute("height", "1707");
-    await expect(serra.locator("img")).toHaveAttribute(
+    const serra = page.locator('.hl-ilha[data-lugar="serra-dos-macacos"]');
+    const ilha = page.locator('.hl-ilha[data-lugar="ilha-grande"]');
+    for (const bloco of [serra, ilha]) {
+      const imagens = bloco.locator("img");
+      await expect(imagens).toHaveCount(3);
+      for (const imagem of await imagens.all()) {
+        await expect(imagem).toHaveAttribute("loading", "lazy");
+        await expect(imagem).toHaveAttribute("sizes", /.+/);
+        await expect(imagem).toHaveAttribute("alt", /\S{3,}/);
+        await expect(imagem).not.toHaveAttribute("alt", /\.webp|imagem de/i);
+      }
+      // Três legendas diferentes: nenhuma repete o nome do lugar.
+      const legendas = await bloco.locator("figcaption strong").allInnerTexts();
+      expect(new Set(legendas).size).toBe(3);
+    }
+    await expect(serra.locator("img").first()).toHaveAttribute(
       "alt",
       /ponte de madeira/,
     );
 
-    const ilha = page.locator(".hl-ilha:not(.hl-serra) .meta-ficha");
-    await expect(ilha).toHaveText([
-      "Ilha Grande · 11/04/2026",
-      "Ilha Grande · 11/04/2026",
-      "Ilha Grande · 11/04/2026",
+    await expect(ilha.locator(".meta-ficha")).toHaveText([
+      "11/04/2026",
+      "11/04/2026",
+      "11/04/2026",
     ]);
-    await expect(page.locator("main")).not.toContainText(
-      "Ilha Grande · data não informada",
-    );
+    await expect(serra.locator(".meta-ficha")).toHaveText([
+      "02/08/2025",
+      "05/04/2026",
+      "05/04/2026",
+    ]);
+    await expect(page.locator("main")).not.toContainText("data não informada");
+  });
+
+  /* As seis fotografias existem de fato: nenhuma referência quebrada. */
+  test("as fotografias dos dois blocos carregam", async ({ page }) => {
+    await page.goto("/");
+    const imagens = page.locator(".hl-ilha img");
+    await expect(imagens).toHaveCount(6);
+    for (const imagem of await imagens.all()) {
+      await imagem.scrollIntoViewIfNeeded();
+      await expect
+        .poll(() =>
+          imagem.evaluate((el) => (el as HTMLImageElement).naturalWidth),
+        )
+        .toBeGreaterThan(0);
+    }
   });
 });
 

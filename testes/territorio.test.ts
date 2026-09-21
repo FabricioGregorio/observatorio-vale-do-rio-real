@@ -32,7 +32,6 @@ import { MARCAS_DERIVADAS } from "../src/dados/institucional/marcas";
 import {
   DERIVADOS_DA_PESQUISA,
   DERIVADOS_DOS_LUGARES,
-  FOTOGRAFIA_DA_SERRA_NA_HOME,
 } from "../src/dados/pesquisa/derivados";
 import { ARTES_PODOBSERVAR } from "../src/dados/podobservar-artes";
 import { FONTES_TERRITORIAIS } from "../src/dados/territorio/fontes";
@@ -137,7 +136,6 @@ describe("ausência de dado territorial inventado", () => {
       ...DERIVADOS_DO_HERO.map((d) => d.arquivo),
       ...DERIVADOS_DA_PESQUISA.map((d) => d.arquivo),
       ...DERIVADOS_DOS_LUGARES.map((d) => d.arquivo),
-      FOTOGRAFIA_DA_SERRA_NA_HOME.arquivo,
       MARCA_OBSERVATORIO.arquivo,
       SIMBOLO_OBSERVATORIO.arquivo,
       ICONE_OBSERVATORIO_CABECALHO.arquivo,

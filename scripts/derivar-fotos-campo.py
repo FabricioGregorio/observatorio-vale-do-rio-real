@@ -158,16 +158,132 @@ FICHAS = {
         "borda-entrevista-campo.webp",
         "Entrevista de campo dentro do Centro Cultural e Museu Borda da Mata.",
     ),
+    # Serra dos Macacos: as oito do conjunto, todas publicadas no Acervo em
+    # 2026-09-18 sob o ADR-020. O nome da ponte é o que a Home já servia —
+    # mesmos bytes, mesmo endereço.
+    "serra-dos-macacos/atravessando-a-ponte.jpg": (
+        "serra-dos-macacos-atravessando-a-ponte.webp",
+        "Carro vermelho atravessa uma ponte de madeira ladeada por estacas amarelas, com um morro coberto de mata ao fundo, visto de dentro de outro veículo.",
+    ),
+    "serra-dos-macacos/cafe-na-casa-de-um-dos-moradores.jpg": (
+        "serra-dos-macacos-mesa-compartilhada.webp",
+        "Mesa posta com cuscuz, macaxeira cozida, pães e uma panela, com pessoas sentadas ao redor.",
+    ),
+    "serra-dos-macacos/dentro-da-igreja-do-mata-7.jpg": (
+        "serra-dos-macacos-interior-da-igreja.webp",
+        "Altar circular diante de uma parede rosa, com cruzes enfeitadas de fitas, flores, velas acesas e um arco de flores pintadas acima.",
+    ),
+    "serra-dos-macacos/igreja-do-mata-7.jpg": (
+        "serra-dos-macacos-pequena-igreja-branca.webp",
+        "Pequena igreja de paredes brancas, com cruzes pintadas na fachada, porta aberta e uma cruz no alto.",
+    ),
+    "serra-dos-macacos/igreja-serra-dos-macacos.jpg": (
+        "serra-dos-macacos-igreja.webp",
+        "Igreja branca com torre e cruz, porta sob arco e janelas vazadas, em terreno de chão batido.",
+    ),
+    "serra-dos-macacos/principal-capa.jpg": (
+        "serra-dos-macacos-paisagem.webp",
+        "Pessoas caminham em fila por um pasto de capim alto, com árvores, um poste e uma casa ao fundo.",
+    ),
+    "serra-dos-macacos/serra-na-serra-dos-macacos.jpg": (
+        "serra-dos-macacos-caminho-entre-os-morros.webp",
+        "Trilha por um pasto verde, com árvores isoladas e um morro coberto de mata ao fundo, sob céu nublado.",
+    ),
+    "serra-dos-macacos/serras-da-serra-dos-macacos.jpg": (
+        "serra-dos-macacos-serras-e-nuvens.webp",
+        "Morros cobertos de mata e roçados no vale, com capim alto e arbustos em primeiro plano, sob céu com nuvens.",
+    ),
+    # Ilha Grande: as oito do conjunto publicado. Substituem, nas superfícies
+    # públicas, os três derivados da H3, feitos de originais que o
+    # responsável retirou ou trocou em 2026-09-18.
+    "ilha-grande/arvores-preservadas.png": (
+        "ilha-grande-area-arborizada.webp",
+        "Árvores e vegetação junto a uma cerca, sob céu azul com nuvens.",
+    ),
+    "ilha-grande/cais-ou-pier-ilha-grande.jpg": (
+        "ilha-grande-pier.webp",
+        "Píer de tábuas vermelhas com guarda-corpo branco avança sobre o rio, com mata na margem oposta.",
+    ),
+    "ilha-grande/campo-verde-de-grama-e-arvores.jpg": (
+        "ilha-grande-campo-gramado.webp",
+        "Capim alto com flores alaranjadas sob árvores frondosas.",
+    ),
+    "ilha-grande/dona-mada.jpg": (
+        "ilha-grande-pessoa-a-porta.webp",
+        "Mulher de cabelos brancos e roupa azul fala e gesticula junto à porta de uma casa.",
+    ),
+    "ilha-grande/forno-a-lenha.jpg": (
+        "ilha-grande-forno-a-lenha.webp",
+        "Forno circular de tijolo e barro com fogo aceso e massa sobre a chapa, numa área coberta.",
+    ),
+    "ilha-grande/forno-a-lenha2.jpg": (
+        "ilha-grande-preparo-junto-ao-forno.webp",
+        "Porções de massa sobre a chapa de um forno a lenha, com uma bacia e um cesto de alimentos ao lado.",
+    ),
+    "ilha-grande/igrejinha.jpg": (
+        "ilha-grande-pequena-igreja.webp",
+        "Fachada branca e azul de uma pequena igreja, com a inscrição 1933 e uma cruz no alto.",
+    ),
+    "ilha-grande/principal-capa.jpg": (
+        "ilha-grande-margem.webp",
+        "O povoado visto do rio, a partir de uma embarcação: casas, coqueiros, um píer com quiosque e uma pequena igreja na margem.",
+    ),
 }
+
+# Data de cada fotografia de ficha, quando há fonte que a sustente.
+#
+# Duas procedências, e nenhuma é estimativa:
+#
+# - **declarada**: Ilha Grande, 11/04/2026, por decisão do responsável em
+#   2026-09-21. Os originais dessa pasta não trazem EXIF de data.
+# - **EXIF confirmado por visita documentada**: a data de captura gravada no
+#   original só vale quando coincide com uma visita registrada no doc 02 §6.4
+#   ("02/08 (III, Serra dos Macacos)" e "II Visita à Serra dos Macacos em
+#   05/04/2026"). Uma fonte sozinha não basta; as duas juntas bastam.
+#
+# Pasta fora das duas tabelas fica sem data, e a interface não a inventa.
+DATA_DECLARADA_POR_PASTA = {
+    "ilha-grande": (
+        "2026-04-11",
+        "declarada pelo responsável em 2026-09-21",
+    ),
+}
+VISITAS_DOCUMENTADAS = {
+    "serra-dos-macacos": frozenset({"2025-08-02", "2026-04-05"}),
+}
+
+EXIF_DATA_ORIGINAL = 36867  # DateTimeOriginal, no IFD Exif
+IFD_EXIF = 0x8769
+
+
+def data_da_fotografia(
+    imagem: Image.Image, pasta: str
+) -> tuple[str | None, str | None]:
+    """Data ISO e procedência, ou ``(None, None)`` quando nada a sustenta."""
+    declarada = DATA_DECLARADA_POR_PASTA.get(pasta)
+    if declarada:
+        return declarada
+    visitas = VISITAS_DOCUMENTADAS.get(pasta)
+    if not visitas:
+        return (None, None)
+    bruta = imagem.getexif().get_ifd(IFD_EXIF).get(EXIF_DATA_ORIGINAL)
+    if not bruta:
+        return (None, None)
+    iso = str(bruta)[:10].replace(":", "-")
+    if iso not in visitas:
+        raise SystemExit(
+            f"fotos/{pasta}: EXIF {bruta} não coincide com visita documentada. "
+            "Nada foi gravado."
+        )
+    return (iso, "EXIF do original, coincidente com visita registrada no doc 02 §6.4")
 
 # Imagem principal de cada ficha, por decisão humana. Capa é a abertura da
 # ficha territorial: não é o `principal` de um documento no Acervo, que é
 # preferência de link (ADR-016), nem a primeira posição de um array.
 #
-# As duas últimas vêm do ADR-020, de 2026-09-17. Ficam declaradas aqui porque é
-# aqui que a decisão de capa mora; só produzem efeito quando o original
-# correspondente entrar em FICHAS, e nenhuma das duas entrou — a derivação está
-# suspensa enquanto o corpus não estabilizar (ADR-020, "execução suspensa").
+# As duas últimas vêm do ADR-020, de 2026-09-17. Passaram a valer em
+# 2026-09-21, quando os originais de Serra dos Macacos e Ilha Grande entraram
+# em FICHAS — os mesmos bytes publicados no Acervo no lote de 2026-09-18.
 #
 # O nome do arquivo não decide nada: o corpus usa `principal-capa` em duas
 # pastas e `capa-principal` numa terceira. Quem identifica é o sha256, e ele
@@ -369,6 +485,7 @@ def principal() -> None:
             "duplicatas_byte_a_byte": [f"fotos/{d}" for d in duplicatas],
         }
 
+        data = fonte_da_data = None
         if origem.suffix.lower() == ".svg":
             saida = destino / f"{base}-v1.svg"
             saida.write_bytes(origem.read_bytes())
@@ -377,6 +494,11 @@ def principal() -> None:
             transformacao = "nenhuma; vetor publicado integral"
         else:
             with Image.open(origem) as aberta:
+                data, fonte_da_data = (
+                    data_da_fotografia(aberta, pasta)
+                    if relativo in FICHAS
+                    else (None, None)
+                )
                 imagem = ImageOps.exif_transpose(aberta).convert("RGB")
                 original["largura"], original["altura"] = imagem.size
                 tarjas = aplicar_tarjas(imagem, relativo)
@@ -438,6 +560,10 @@ def principal() -> None:
                     "autor": item["autor"],
                     "credito": item["credito"],
                     "principal": relativo in PRINCIPAIS,
+                    # ISO 8601 ou null; a procedência viaja junto e nunca é
+                    # exibida — o visitante vê a data, não como ela foi obtida.
+                    "data": data,
+                    "fonte_da_data": fonte_da_data,
                     "acervo": saida.name,
                     "original": {
                         "arquivo": original["arquivo"],

@@ -281,7 +281,8 @@
   font-size: var(--text-sm);
 }
 
-.doc-foto__credito {
+.doc-foto__credito,
+.doc-foto__data {
   display: block;
   margin-top: 0.2rem;
   color: var(--color-texto-suave);

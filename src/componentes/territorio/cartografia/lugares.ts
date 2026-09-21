@@ -5,7 +5,6 @@ import {
   resolverMateriaisDoLugar,
 } from "../../../dados/materiais-de-campo";
 import {
-  DERIVADOS_DA_PESQUISA,
   DERIVADOS_DOS_LUGARES,
   exibirDataDaFotografia,
   PASTA_PUBLICA_DA_PESQUISA,
@@ -167,58 +166,41 @@ function territorio(id: IdDoLugar, entorno: IdDoEntorno) {
 /**
  * Fotografias públicas de um lugar, por identidade.
  *
- * As duas fontes de derivado são varridas com o mesmo critério — `lugar`, o id
- * declarado no manifesto e conferido contra a pasta de origem do corpus. Antes,
- * cada ficha citava o nome de exibição do lugar (`"Borda da Mata"`), Ilha
- * Grande recebia a lista inteira dos derivados da pesquisa sem filtro algum, e
- * Serra dos Macacos trazia `[]` escrito à mão. Nenhum dos três sobrevive a uma
- * fotografia nova no corpus; este filtro sobrevive.
+ * O filtro é `lugar`, o id declarado no manifesto e conferido contra a pasta
+ * de origem do corpus. Antes, cada ficha citava o nome de exibição do lugar
+ * (`"Borda da Mata"`), Ilha Grande recebia a lista inteira dos derivados da
+ * pesquisa sem filtro algum, e Serra dos Macacos trazia `[]` escrito à mão.
+ * Nenhum dos três sobrevive a uma fotografia nova no corpus; este filtro
+ * sobrevive.
  *
  * Lugar sem fotografia no recorte devolve lista vazia, e a ficha diz isso. Não
  * há substituição por fotografia de outro lugar, aqui nem em lugar nenhum.
  *
- * ## O que esta lista é, e o que ela não é
+ * ## O que esta lista é
  *
- * É o **recorte editorial das fichas** — a seleção declarada em `FICHAS`, no
- * gerador, mais os três derivados da H3. Não é o total de fotografias do lugar
- * no Acervo, e muito menos o total no corpus. Ilha Grande deixa a diferença
- * visível: 10 fotografias publicadas no Acervo, 3 escolhidas para a ficha.
+ * O **recorte editorial das fichas** — a seleção declarada em `FICHAS`, no
+ * gerador. Desde 2026-09-21 ele reúne as oito fotografias publicadas de Serra
+ * dos Macacos e as oito de Ilha Grande, com os mesmos bytes do Acervo. Os três
+ * derivados da H3 (`DERIVADOS_DA_PESQUISA`) saíram da ficha: eram de originais
+ * que o responsável retirou ou trocou, e as mesmas cenas estão no recorte.
  *
- * Serra dos Macacos devolve vazio por um motivo que não é o mesmo: em
- * 2026-09-17 a pasta `fotos/serra-dos-macacos/` do corpus tem 11 originais, e
- * nenhum deles foi derivado, publicado ou declarado em `FICHAS`. A ficha está
- * certa ao não mostrar nada — publicar exigiria derivação, revisão de
- * privacidade e seleção editorial, nesta ordem, e nenhuma das três aconteceu.
+ * A data, quando a fonte a tem, vai sob a legenda; sem data, nada é escrito.
  */
 function fotografiasDoLugar(id: IdDoLugar): readonly FotoDoLugar[] {
-  const dasFichas = DERIVADOS_DOS_LUGARES.filter(
-    (foto) => foto.lugar === id,
-  ).map((foto) => ({
-    src: `${PASTA_PUBLICA_DA_PESQUISA}/${foto.arquivo}`,
-    largura: foto.largura,
-    altura: foto.altura,
-    alt: foto.alt,
-    legenda: foto.alt,
-    qualificador: null,
-    credito: foto.credito,
-    pendencia: null,
-    principal: foto.principal,
-  }));
-  const daPesquisa = DERIVADOS_DA_PESQUISA.filter(
-    (foto) => foto.lugar === id,
-  ).map((foto) => ({
-    src: `${PASTA_PUBLICA_DA_PESQUISA}/${foto.arquivo}`,
-    largura: foto.largura,
-    altura: foto.altura,
-    alt: foto.alt,
-    legenda: foto.alt,
-    // A data vem do manifesto; `null` lá vira "data não informada" aqui.
-    qualificador: `${foto.titulo} · ${exibirDataDaFotografia(foto.data)}`,
-    credito: null,
-    pendencia: null,
-    principal: false,
-  }));
-  return [...dasFichas, ...daPesquisa];
+  return DERIVADOS_DOS_LUGARES.filter((foto) => foto.lugar === id).map(
+    (foto) => ({
+      src: `${PASTA_PUBLICA_DA_PESQUISA}/${foto.arquivo}`,
+      largura: foto.largura,
+      altura: foto.altura,
+      alt: foto.alt,
+      legenda: foto.alt,
+      qualificador:
+        foto.data === null ? null : exibirDataDaFotografia(foto.data),
+      credito: foto.credito,
+      pendencia: null,
+      principal: foto.principal,
+    }),
+  );
 }
 
 /** Recorte dos indicadores H4: os dois equipamentos, com nome completo. */

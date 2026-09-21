@@ -2,10 +2,7 @@ import {
   gruposB01NaOrdemTerritorial,
   mapaB01,
 } from "../../dados/editorial/mapa-b01";
-import {
-  DERIVADOS_DA_PESQUISA,
-  DERIVADOS_DOS_LUGARES,
-} from "../../dados/pesquisa/derivados";
+import { DERIVADOS_DOS_LUGARES } from "../../dados/pesquisa/derivados";
 import {
   type IdDoLugar,
   REFERENCIAS_TERRITORIAIS,
@@ -67,6 +64,8 @@ export type FotoDoCampo = {
   readonly altura: number;
   readonly alt: string;
   readonly credito: string | null;
+  /** ISO 8601, ou `null` quando nenhuma fonte data a fotografia. */
+  readonly data: string | null;
 };
 
 export type BlocoDeLugar = {
@@ -103,15 +102,8 @@ export function montarBlocosDeLugar(): readonly BlocoDeLugar[] {
       altura: foto.altura,
       alt: foto.alt,
       credito: foto.credito,
+      data: foto.data,
       lugar: foto.lugar as IdDoLugar,
-    })),
-    ...DERIVADOS_DA_PESQUISA.map((foto) => ({
-      arquivo: foto.arquivo,
-      largura: foto.largura,
-      altura: foto.altura,
-      alt: foto.alt,
-      credito: null,
-      lugar: foto.lugar,
     })),
   ];
 
@@ -126,12 +118,13 @@ export function montarBlocosDeLugar(): readonly BlocoDeLugar[] {
       municipio: referencia.municipio,
       fotos: locais
         .filter((foto) => foto.lugar === referencia.id)
-        .map(({ arquivo, largura, altura, alt, credito }) => ({
+        .map(({ arquivo, largura, altura, alt, credito, data }) => ({
           arquivo,
           largura,
           altura,
           alt,
           credito,
+          data,
         })),
       noConjunto:
         grupo === undefined

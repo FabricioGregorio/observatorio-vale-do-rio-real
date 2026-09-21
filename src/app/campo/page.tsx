@@ -20,6 +20,7 @@ import {
 } from "../../componentes/institucional/Documento";
 import { listarAnexosPublicos } from "../../dados/consultas/anexos";
 import { MESES_DE_COLETA } from "../../dados/indicadores/derivados";
+import { exibirDataDaFotografia } from "../../dados/pesquisa/derivados";
 import { metadadosDaRota } from "../../lib/site-url";
 
 export const metadata = metadadosDaRota({
@@ -160,6 +161,11 @@ export default async function PaginaCampo() {
                       */}
                       <figcaption>
                         <span aria-hidden="true">{foto.alt}</span>
+                        {foto.data === null ? null : (
+                          <span className="doc-foto__data">
+                            {exibirDataDaFotografia(foto.data)}
+                          </span>
+                        )}
                         {foto.credito === null ? null : (
                           <span className="doc-foto__credito">
                             {foto.credito}

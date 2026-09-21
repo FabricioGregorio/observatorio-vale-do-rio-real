@@ -181,7 +181,11 @@ describe("resolução de materiais contra o que está publicado", () => {
     const serra = lugaresDeCampo(publicados).find(
       (l) => l.id === "serra-dos-macacos",
     );
-    expect(serra?.materiais.map((m) => m.estado)).toEqual(["publico"]);
+    // O relato está publicado neste cenário; as fotografias, não.
+    expect(serra?.materiais.map((m) => m.estado)).toEqual([
+      "publico",
+      "pendente",
+    ]);
     expect(
       lugaresDeCampo(new Map())
         .flatMap((l) => l.materiais)

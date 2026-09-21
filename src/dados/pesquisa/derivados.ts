@@ -15,6 +15,7 @@
 export const PASTA_PUBLICA_DA_PESQUISA = "/media/pesquisa";
 export const PASTA_DOS_DERIVADOS_DA_PESQUISA = "public/media/pesquisa";
 
+import { mapaB01 } from "../editorial/mapa-b01";
 import type { IdDoLugar } from "../territorio/referencias";
 import fotosDosLugares from "./lugares-derivados.json";
 
@@ -201,47 +202,73 @@ export const BYTES_TOTAIS_DA_PESQUISA = DERIVADOS_DA_PESQUISA.reduce(
 
 export type DerivadoDeLugar = (typeof fotosDosLugares)[number];
 
-/** Fotografias autorizadas para as fichas de Recanto e Borda da Mata. */
+/**
+ * Recorte das fichas: as fotografias que Home, `/territorio` e `/campo`
+ * servem localmente, uma por original, com os mesmos bytes do Acervo.
+ *
+ * Desde 2026-09-21 inclui as oito de Serra dos Macacos e as oito de Ilha
+ * Grande. As de Ilha Grande substituem, nas superfícies públicas, os três
+ * derivados da H3 acima (`DERIVADOS_DA_PESQUISA`), cujos originais o
+ * responsável retirou ou trocou em 2026-09-18; aqueles ficam só para os
+ * protótipos de `/dev`.
+ *
+ * `data` vem do gerador e é `null` onde nenhuma fonte a sustenta.
+ */
 export const DERIVADOS_DOS_LUGARES =
   fotosDosLugares as readonly DerivadoDeLugar[];
 
 /**
- * Fotografia do bloco "Também em campo: Serra dos Macacos", na Home.
- *
- * Não é derivado novo: são os mesmos bytes do arquivo que o Acervo publicou no
- * lote de 2026-09-18 (`lote-publicacao-2026-09-18.json`, mesma `sha256`), com
- * a placa do veículo tarjada conforme o ADR-020. Vive fora de
- * `DERIVADOS_DOS_LUGARES` de propósito — entrar ali a levaria à ficha de
- * `/territorio`, e a seleção da ficha é decisão editorial própria.
- *
- * `data` é `null`: nenhuma fonte pública data esta fotografia.
+ * Título público de uma fotografia: o mesmo que o Acervo exibe, lido do mapa
+ * editorial do B01 pelo hash do derivado. Uma fotografia, um título, em todas
+ * as superfícies — a Home não escreve legenda própria.
  */
-export const FOTOGRAFIA_DA_SERRA_NA_HOME = {
-  arquivo: "serra-dos-macacos-atravessando-a-ponte.webp",
-  largura: 1280,
-  altura: 1707,
-  bytes: 190_650,
-  sha256: "2500663a4f37678b170ebf390f2d3811f6cdca56e98349f61ad08d6b34b10539",
-  titulo: "Ponte de madeira no caminho",
-  alt: "Carro vermelho atravessa uma ponte de madeira ladeada por estacas amarelas, com um morro coberto de mata ao fundo, visto de dentro de outro veículo.",
-  local: "Serra dos Macacos",
-  lugar: "serra-dos-macacos",
-  data: null,
-  credito: null,
-  acervo:
-    "arquivos/comprovacao-de-campo/b01-serra-dos-macacos-atravessando-a-ponte-v1.webp",
-  original: {
-    arquivo: "fotos/serra-dos-macacos/atravessando-a-ponte.jpg",
-    sha256: "d5683e3b98523d36c81e7f2bb9bf8020c361393dc416b6af27fcffd0eccb225c",
-  },
-} as const satisfies Pick<
-  DerivadoDaPesquisa,
-  "arquivo" | "largura" | "altura" | "bytes" | "sha256" | "titulo" | "alt"
-> & {
-  readonly local: string;
-  readonly lugar: IdDoLugar;
-  readonly data: string | null;
-  readonly credito: string | null;
-  readonly acervo: string;
-  readonly original: { readonly arquivo: string; readonly sha256: string };
-};
+export function tituloPublicoDaFotografia(sha256: string): string | null {
+  return (
+    mapaB01.arquivos.find((entrada) => entrada.sha256 === sha256)
+      ?.tituloPublico ?? null
+  );
+}
+
+export type FotografiaDaHome = DerivadoDeLugar & { readonly titulo: string };
+
+/**
+ * As três fotografias de cada lugar no bloco "Também em campo", da Home.
+ *
+ * Seleção editorial, declarada por arquivo — nunca as três primeiras da
+ * lista. Cada trio mostra três aspectos distintos do lugar:
+ *
+ * - Serra dos Macacos: o acesso (a ponte), a paisagem entre serras e o
+ *   interior de uma igreja da comunidade;
+ * - Ilha Grande: a chegada pelo rio, o preparo junto ao forno a lenha e a
+ *   igreja de 1933.
+ *
+ * As outras cinco de cada lugar seguem em `/territorio` e `/campo`.
+ */
+export const FOTOGRAFIAS_DA_HOME = {
+  "serra-dos-macacos": [
+    "serra-dos-macacos-atravessando-a-ponte.webp",
+    "serra-dos-macacos-serras-e-nuvens.webp",
+    "serra-dos-macacos-interior-da-igreja.webp",
+  ],
+  "ilha-grande": [
+    "ilha-grande-margem.webp",
+    "ilha-grande-preparo-junto-ao-forno.webp",
+    "ilha-grande-pequena-igreja.webp",
+  ],
+} as const satisfies Partial<Record<IdDoLugar, readonly string[]>>;
+
+/** Resolve a seleção da Home contra o manifesto; falha alto se divergir. */
+export function fotografiasDaHome(
+  lugar: keyof typeof FOTOGRAFIAS_DA_HOME,
+): readonly FotografiaDaHome[] {
+  return FOTOGRAFIAS_DA_HOME[lugar].map((arquivo) => {
+    const foto = DERIVADOS_DOS_LUGARES.find(
+      (candidata) => candidata.arquivo === arquivo && candidata.lugar === lugar,
+    );
+    const titulo = foto ? tituloPublicoDaFotografia(foto.sha256) : null;
+    if (!foto || titulo === null) {
+      throw new Error(`Fotografia da Home sem manifesto ou título: ${arquivo}`);
+    }
+    return { ...foto, titulo };
+  });
+}

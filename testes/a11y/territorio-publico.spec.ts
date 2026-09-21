@@ -706,9 +706,15 @@ test.describe("Território — cartografia como informação", () => {
     );
     await expect(prancha).toContainText("Relato técnico (A04)");
     await expect(prancha).not.toContainText(/Restrito|Em revisão/);
-    await expect(prancha).toContainText(
+    // Desde 2026-09-21 a ficha reúne as oito fotografias publicadas do lugar:
+    // abre com a capa e não pode mais afirmar que não tem fotografia.
+    await expect(prancha).toHaveAttribute("data-retrato", "sim");
+    await expect(prancha.locator(".tv-retrato img")).toHaveCount(1);
+    await expect(prancha.locator(".tv-contato img")).toHaveCount(7);
+    await expect(prancha).not.toContainText(
       "Esta ficha ainda não reúne fotografia pública.",
     );
+    await expect(prancha).not.toContainText("data não informada");
   });
 
   test("as pranchas listam evidência pública com link real e nenhum rótulo restrito", async ({

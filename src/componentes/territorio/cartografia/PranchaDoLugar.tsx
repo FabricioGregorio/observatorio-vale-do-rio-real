@@ -26,8 +26,9 @@ import type { FotoDoLugar } from "./lugares";
  *
  * - Recanto da Serra traz registros do período: eles ganham numeral grande,
  *   como dado que são.
- * - Serra dos Macacos não tem fotografia pública nesta ficha. A prancha não
- *   simula uma: o mapa ocupa o lugar do retrato, e a ausência é dita.
+ * - Lugar sem fotografia pública na ficha não ganha uma simulada: o mapa
+ *   ocupa o lugar do retrato, e a ausência é dita. Desde 2026-09-21 nenhum
+ *   dos quatro está nesse caso — Serra dos Macacos abre com a sua capa.
  * - Ilha Grande está fora do recorte, e a prancha muda de papel — o anil é a
  *   cor da comparação na carta geral. O localizador mostra o ponto fora do
  *   milho.

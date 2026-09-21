@@ -7,7 +7,6 @@ import corpusAutorizado from "../src/dados/pesquisa/corpus-b01-autorizado.json";
 import {
   DERIVADOS_DA_PESQUISA,
   DERIVADOS_DOS_LUGARES,
-  FOTOGRAFIA_DA_SERRA_NA_HOME,
   LUGAR_DA_PASTA_DO_CORPUS,
   PASTA_DOS_DERIVADOS_DA_PESQUISA,
 } from "../src/dados/pesquisa/derivados";
@@ -74,26 +73,40 @@ describe("declaração do corpus autorizado", () => {
 describe("o que a interface consome está declarado", () => {
   const declarados = new Set(corpusAutorizado.map((c) => c.sha256));
 
-  test("os 12 derivados das fichas vêm do corpus autorizado", () => {
-    expect(DERIVADOS_DOS_LUGARES).toHaveLength(12);
+  test("os 28 derivados das fichas vêm do corpus autorizado", () => {
+    expect(DERIVADOS_DOS_LUGARES).toHaveLength(28);
     for (const foto of DERIVADOS_DOS_LUGARES) {
       expect(declarados.has(foto.original.sha256), foto.arquivo).toBe(true);
     }
   });
 
   /*
-    A fotografia da Serra na Home não é derivado novo: é o arquivo que o
-    Acervo publicou, byte a byte, com a placa tarjada (ADR-020).
+    As fotografias de Serra dos Macacos e Ilha Grande nas fichas não são
+    derivado novo: são os arquivos que o Acervo publicou no lote de
+    2026-09-18, byte a byte — a da ponte com a placa tarjada (ADR-020).
   */
-  test("a fotografia da Serra na Home é a publicada no Acervo", () => {
-    const f = FOTOGRAFIA_DA_SERRA_NA_HOME;
-    expect(declarados.has(f.original.sha256), f.original.arquivo).toBe(true);
-    const lote = JSON.parse(
-      readFileSync("src/dados/lote-publicacao-2026-09-18.json", "utf8"),
-    ) as readonly { chave: string; sha256: string; bytes: number }[];
-    const publicado = lote.find((item) => item.chave === f.acervo);
-    expect(publicado?.sha256).toBe(f.sha256);
-    expect(publicado?.bytes).toBe(f.bytes);
+  test("Serra e Ilha nas fichas são os mesmos bytes publicados no Acervo", () => {
+    // A área arborizada entrou no lote de 2026-09-16 e o de 09-18 não a
+    // substituiu; as outras quinze são do lote de 09-18.
+    const lotes = [
+      "src/dados/lote-publicacao-2026-09-16.json",
+      "src/dados/lote-publicacao-2026-09-18.json",
+    ].flatMap(
+      (arquivo) =>
+        JSON.parse(readFileSync(arquivo, "utf8")) as readonly {
+          sha256: string;
+          bytes: number;
+        }[],
+    );
+    const publicados = new Map(lotes.map((item) => [item.sha256, item.bytes]));
+    const fotos = DERIVADOS_DOS_LUGARES.filter(
+      (f) => f.lugar === "serra-dos-macacos" || f.lugar === "ilha-grande",
+    );
+    expect(fotos).toHaveLength(16);
+    for (const f of fotos) {
+      expect(declarados.has(f.original.sha256), f.original.arquivo).toBe(true);
+      expect(publicados.get(f.sha256), f.arquivo).toBe(f.bytes);
+    }
   });
 
   test("as pastas declaradas cobrem os lugares com fotografia na ficha", () => {
@@ -120,17 +133,12 @@ describe("nada entra na interface sem estar declarado", () => {
     const declarados = new Set([
       ...DERIVADOS_DOS_LUGARES.map((d) => d.arquivo),
       ...DERIVADOS_DA_PESQUISA.map((d) => d.arquivo),
-      FOTOGRAFIA_DA_SERRA_NA_HOME.arquivo,
     ]);
     expect(new Set(readdirSync(pasta))).toEqual(declarados);
   });
 
   test("cada arquivo publicado conserva o hash declarado", () => {
-    for (const d of [
-      ...DERIVADOS_DOS_LUGARES,
-      ...DERIVADOS_DA_PESQUISA,
-      FOTOGRAFIA_DA_SERRA_NA_HOME,
-    ]) {
+    for (const d of [...DERIVADOS_DOS_LUGARES, ...DERIVADOS_DA_PESQUISA]) {
       const bytes = readFileSync(join(pasta, d.arquivo));
       expect(createHash("sha256").update(bytes).digest("hex"), d.arquivo).toBe(
         d.sha256,

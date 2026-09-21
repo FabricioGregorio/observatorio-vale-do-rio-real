@@ -127,12 +127,18 @@ export const MATERIAIS_POR_LUGAR: Readonly<
     },
   ],
   // A Serra dos Macacos foi visitada, mas não é equipamento acompanhado: o
-  // relato técnico é o único material do acervo que a descreve.
+  // relato técnico a descreve, e as oito fotografias do lugar estão no
+  // conjunto fotográfico publicado em 2026-09-18.
   "serra-dos-macacos": [
     {
       material: "Relato técnico (A04)",
       documentos: ["relatorio-tecnico-serra-dos-macacos"],
       estadoSemPublicacao: "restrito",
+    },
+    {
+      material: "Fotografias de campo",
+      documentos: ["fotografias-visitas-i-vii"],
+      estadoSemPublicacao: "pendente",
     },
   ],
   "ilha-grande": [

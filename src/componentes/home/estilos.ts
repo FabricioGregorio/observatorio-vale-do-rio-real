@@ -286,23 +286,19 @@ export const CSS_DA_HOME = `
   .hl-entrevistas li{grid-template-columns:2.5rem minmax(0,1fr) auto}
   .hl-entrevistas li .meta-ficha{grid-column:auto;text-align:right}
 }
-.hl-ilha{display:grid;gap:1.5rem;margin-top:4.5rem;padding-top:2rem;border-top:1px solid var(--hl-fio);align-items:start}
-@media (min-width:960px){.hl-ilha{grid-template-columns:minmax(0,3fr) minmax(0,8fr)}}
-.hl-ilha h3{font-size:var(--text-lg)}
-.hl-ilha__texto p{margin-top:.5rem;font-size:var(--text-sm);color:var(--color-texto-suave)}
-.hl-ilha__fotos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem}
+/* Também em campo: Serra dos Macacos e Ilha Grande com a mesma forma —
+   texto e três fotografias. No celular as três seguem lado a lado, em
+   miniatura, para o bloco não virar uma coluna de imagens. */
+.hl-ilha{display:grid;gap:1.25rem;margin-top:4.5rem;padding-top:2rem;border-top:1px solid var(--hl-fio);align-items:start}
+.hl-ilha + .hl-ilha{margin-top:3rem}
+@media (min-width:960px){.hl-ilha{grid-template-columns:minmax(0,3fr) minmax(0,8fr);gap:2rem}}
+.hl-ilha h3{font-size:var(--text-lg);text-wrap:balance}
+.hl-ilha__texto p{margin-top:.5rem;font-size:var(--text-sm);color:var(--color-texto-suave);max-width:34rem}
+.hl-ilha__fotos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem}
+@media (min-width:600px){.hl-ilha__fotos{gap:.75rem}}
 .hl-ilha__fotos figure{margin:0}
 .hl-ilha__fotos img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;border-radius:var(--radius-ficha)}
-.hl-ilha__fotos figcaption{display:flex;flex-direction:column;margin-top:.4rem;font-size:var(--text-xs);line-height:1.4}
-/* A Serra usa a grade da Ilha: a fotografia cai na mesma coluna da primeira
-   fotografia de Ilha Grande, e o texto ocupa as outras duas. */
-.hl-serra + .hl-ilha{margin-top:3rem}
-.hl-serra__corpo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;align-items:start}
-.hl-serra__corpo figure{margin:0}
-.hl-serra__corpo img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;border-radius:var(--radius-ficha)}
-.hl-serra__corpo figcaption{display:flex;flex-direction:column;margin-top:.4rem;font-size:var(--text-xs);line-height:1.4}
-.hl-serra__corpo p{grid-column:2/4;font-size:var(--text-sm);color:var(--color-texto-suave);max-width:34rem}
-@media (min-width:600px){.hl-serra__corpo p{padding-left:.75rem}}
+.hl-ilha__fotos figcaption{display:flex;flex-direction:column;gap:.1rem;margin-top:.4rem;font-size:var(--text-xs);line-height:1.35;overflow-wrap:break-word}
 
 /* VII Produtos */
 .hl-catalogo{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));margin-top:3rem;border-top:2px solid var(--color-texto)}

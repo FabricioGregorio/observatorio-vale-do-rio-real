@@ -1,4 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 import { CAMINHO_DAS_MARCAS, MARCA_COLETIVO } from "../../dados/hero/derivados";
 import { INDICADORES } from "../../dados/indicadores/derivados";
@@ -10,10 +12,10 @@ import {
   resolverMateriaisDoLugar,
 } from "../../dados/materiais-de-campo";
 import {
-  DERIVADOS_DA_PESQUISA,
   DERIVADOS_DOS_LUGARES,
   exibirDataDaFotografia,
-  FOTOGRAFIA_DA_SERRA_NA_HOME,
+  type FotografiaDaHome,
+  fotografiasDaHome,
   PASTA_PUBLICA_DA_PESQUISA,
 } from "../../dados/pesquisa/derivados";
 import { RECORTE_TERRITORIAL } from "../../dados/territorio/recorte";
@@ -449,6 +451,67 @@ function FotoDaFicha({
   );
 }
 
+/**
+ * Bloco "Também em campo": um lugar visitado fora dos dois equipamentos
+ * acompanhados, com o seu texto e três fotografias.
+ *
+ * Serra dos Macacos e Ilha Grande usam o mesmo componente para serem, na
+ * página, partes equivalentes da mesma seção. A legenda traz o título público
+ * da fotografia e a data; o nome do lugar já está no título do bloco e não se
+ * repete sob cada imagem.
+ *
+ * `next/image` aqui, e não o derivado cru: a fotografia aparece a ~250 px e o
+ * derivado tem 1280 px. O otimizador serve AVIF ou WebP na largura de
+ * `sizes`, sempre sob `loading="lazy"` — o bloco fica muito abaixo da dobra e
+ * não entra na carga inicial. O arquivo integral continua em `/campo` e no
+ * Acervo.
+ */
+function TambemEmCampo({
+  children,
+  fotos,
+  id,
+  titulo,
+}: {
+  children: ReactNode;
+  fotos: readonly FotografiaDaHome[];
+  id: string;
+  titulo: string;
+}) {
+  const idDoTitulo = `hl-campo-${id}`;
+  return (
+    <section aria-labelledby={idDoTitulo} className="hl-ilha" data-lugar={id}>
+      <div className="hl-ilha__texto">
+        <h3 id={idDoTitulo}>{titulo}</h3>
+        {children}
+      </div>
+      <ul className="hl-ilha__fotos">
+        {fotos.map((foto) => (
+          <li key={foto.arquivo}>
+            <figure>
+              <Image
+                alt={foto.alt}
+                height={foto.altura}
+                loading="lazy"
+                sizes="(min-width: 1280px) 260px, (min-width: 960px) 20vw, 31vw"
+                src={`${PASTA_PUBLICA_DA_PESQUISA}/${foto.arquivo}`}
+                width={foto.largura}
+              />
+              <figcaption>
+                <strong>{foto.titulo}</strong>
+                {foto.data === null ? null : (
+                  <span className="meta-ficha">
+                    {exibirDataDaFotografia(foto.data)}
+                  </span>
+                )}
+              </figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 export function Lugares({
   publicados = new Map(),
 }: {
@@ -740,76 +803,39 @@ export function Escuta({
 
       {/*
         Os dois desdobramentos do campo, na ordem do percurso descrito no
-        EP01. O texto da Serra é o mesmo que sustenta a ficha do lugar em
-        `/territorio`; a fotografia é a do Acervo, pelos mesmos bytes.
+        EP01, com a mesma forma: texto à esquerda, três fotografias à direita.
+        O texto da Serra é o mesmo que sustenta a ficha do lugar em
+        `/territorio`; as fotografias são as do Acervo, pelos mesmos bytes, e
+        a seleção de cada trio mora em `FOTOGRAFIAS_DA_HOME`.
       */}
-      <div className="hl-ilha hl-serra">
-        <div className="hl-ilha__texto">
-          <h3>Também em campo: Serra dos Macacos</h3>
-          <p>
-            Comunidade agrícola entre serras, alcançada por estrada de terra a
-            partir da Vila de Samambaia.
-          </p>
-        </div>
-        <div className="hl-serra__corpo">
-          <figure>
-            <img
-              alt={FOTOGRAFIA_DA_SERRA_NA_HOME.alt}
-              decoding="async"
-              height={FOTOGRAFIA_DA_SERRA_NA_HOME.altura}
-              loading="lazy"
-              src={`${PASTA_PUBLICA_DA_PESQUISA}/${FOTOGRAFIA_DA_SERRA_NA_HOME.arquivo}`}
-              width={FOTOGRAFIA_DA_SERRA_NA_HOME.largura}
-            />
-            <figcaption>
-              <strong>{FOTOGRAFIA_DA_SERRA_NA_HOME.titulo}</strong>
-              <span className="meta-ficha">
-                {FOTOGRAFIA_DA_SERRA_NA_HOME.local} ·{" "}
-                {exibirDataDaFotografia(FOTOGRAFIA_DA_SERRA_NA_HOME.data)}
-              </span>
-            </figcaption>
-          </figure>
-          <p>
-            O caminho cruza uma ponte de madeira sobre o Riacho do Caripau. Foi
-            ali, em área de Mata Atlântica preservada, que a pesquisa se
-            encerrou: numa oficina de criação de equipamento cultural feita com
-            os próprios moradores.
-          </p>
-        </div>
-      </div>
+      <TambemEmCampo
+        fotos={fotografiasDaHome("serra-dos-macacos")}
+        id="serra-dos-macacos"
+        titulo="Também em campo: Serra dos Macacos"
+      >
+        <p>
+          Comunidade agrícola entre serras, alcançada por estrada de terra a
+          partir da Vila de Samambaia.
+        </p>
+        <p>
+          O caminho cruza uma ponte de madeira sobre o Riacho do Caripau. Foi
+          ali, em área de Mata Atlântica preservada, que a pesquisa se encerrou:
+          numa oficina de criação de equipamento cultural feita com os próprios
+          moradores.
+        </p>
+      </TambemEmCampo>
 
-      <div className="hl-ilha">
-        <div className="hl-ilha__texto">
-          <h3>Também em campo: Ilha Grande</h3>
-          <p>
-            Povoado de São Cristóvão, alcançado de barco, com cultura pesqueira
-            própria e a tradição do samba de coco preservada ali. Estes são os
-            registros fotográficos da visita.
-          </p>
-        </div>
-        <ul className="hl-ilha__fotos">
-          {DERIVADOS_DA_PESQUISA.map((foto) => (
-            <li key={foto.id}>
-              <figure>
-                <img
-                  alt={foto.alt}
-                  decoding="async"
-                  height={foto.altura}
-                  loading="lazy"
-                  src={`${PASTA_PUBLICA_DA_PESQUISA}/${foto.arquivo}`}
-                  width={foto.largura}
-                />
-                <figcaption>
-                  <strong>{foto.titulo}</strong>
-                  <span className="meta-ficha">
-                    {foto.local} · {exibirDataDaFotografia(foto.data)}
-                  </span>
-                </figcaption>
-              </figure>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <TambemEmCampo
+        fotos={fotografiasDaHome("ilha-grande")}
+        id="ilha-grande"
+        titulo="Também em campo: Ilha Grande"
+      >
+        <p>
+          Povoado de São Cristóvão, alcançado de barco, com cultura pesqueira
+          própria e a tradição do samba de coco preservada ali. Estes são
+          registros fotográficos da visita.
+        </p>
+      </TambemEmCampo>
     </Capitulo>
   );
 }

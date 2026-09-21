@@ -88,17 +88,15 @@ describe("identidade entre fotografia e lugar", () => {
  * Quantas fotografias o **recorte editorial das fichas** reúne por lugar.
  *
  * O nome importa. Estes números não são o total de fotografias do lugar: são
- * as que a seleção declarada em `FICHAS` — mais os três derivados da H3 —
- * levou à ficha. Ilha Grande mostra a diferença: 10 fotografias suas estão
- * publicadas no Acervo e 3 estão aqui.
+ * as que a seleção declarada em `FICHAS` levou à ficha. Recanto e Borda têm
+ * duas cada no Acervo que ficaram de fora.
  *
  * Números fixos de propósito: mudá-los deve exigir uma decisão editorial, não
  * acontecer de passagem.
  *
- * Serra dos Macacos em zero não significa que não existam fotografias do
- * lugar. Em 2026-09-17 o corpus tem 11 originais em `fotos/serra-dos-macacos/`
- * e nenhum foi derivado, publicado ou declarado em `FICHAS`. Zero aqui é a
- * leitura correta do que existe publicado, não um atestado sobre o corpus.
+ * Serra dos Macacos e Ilha Grande passaram a 8 em 2026-09-21: as oito
+ * fotografias publicadas de cada lugar, com os mesmos bytes do Acervo. Os
+ * três derivados antigos da H3 deixaram a ficha de Ilha Grande.
  */
 describe("recorte das fichas por lugar", () => {
   const porId = new Map(lugaresDeCampo(new Map()).map((l) => [l.id, l]));
@@ -111,8 +109,8 @@ describe("recorte das fichas por lugar", () => {
   test.each([
     ["recanto-da-serra", 6],
     ["borda-da-mata", 6],
-    ["serra-dos-macacos", 0],
-    ["ilha-grande", 3],
+    ["serra-dos-macacos", 8],
+    ["ilha-grande", 8],
   ] as const)("%s leva %i fotografias à ficha", (id, quantas) => {
     expect(porId.get(id)?.fotos).toHaveLength(quantas);
   });
@@ -136,21 +134,45 @@ describe("recorte das fichas por lugar", () => {
     }
   });
 
-  test("Ilha Grande só recebe fotografia cujo original veio da sua pasta", () => {
-    for (const foto of porId.get("ilha-grande")?.fotos ?? []) {
-      const derivado = DERIVADOS_DA_PESQUISA.find((d) =>
-        foto.src.endsWith(d.arquivo),
-      );
-      expect(derivado, foto.src).toBeDefined();
-      expect(derivado?.original.arquivo).toMatch(/^fotos\/ilha-grande\//);
+  test.each(["ilha-grande", "serra-dos-macacos"] as const)(
+    "%s só recebe fotografia cujo original veio da sua pasta",
+    (id) => {
+      for (const foto of porId.get(id)?.fotos ?? []) {
+        const derivado = DERIVADOS_DOS_LUGARES.find((d) =>
+          foto.src.endsWith(`/${d.arquivo}`),
+        );
+        expect(derivado, foto.src).toBeDefined();
+        expect(derivado?.original.arquivo).toMatch(new RegExp(`^fotos/${id}/`));
+      }
+    },
+  );
+
+  /*
+    Os três derivados da H3 saíram das fichas: eram de originais que o
+    responsável retirou ou trocou, e as mesmas cenas estão no recorte.
+  */
+  test("nenhuma ficha serve os derivados antigos da H3", () => {
+    const antigos = new Set<string>(
+      DERIVADOS_DA_PESQUISA.map((d) => d.arquivo),
+    );
+    for (const lugar of porId.values()) {
+      for (const foto of lugar.fotos) {
+        expect(antigos.has(foto.src.split("/").pop() ?? ""), foto.src).toBe(
+          false,
+        );
+      }
     }
   });
 
-  test("Serra dos Macacos não recebe imagem de substituição", () => {
-    const serra = porId.get("serra-dos-macacos");
-    expect(serra?.fotos).toEqual([]);
-    // A ficha continua inteira: o relato técnico A04 é dela e é público.
-    expect(serra?.materiais.length).toBeGreaterThan(0);
+  test("Serra dos Macacos e Ilha Grande abrem com a capa do ADR-020", () => {
+    for (const id of ["serra-dos-macacos", "ilha-grande"] as const) {
+      const principais = porId.get(id)?.fotos.filter((f) => f.principal);
+      expect(principais, id).toHaveLength(1);
+      const derivado = DERIVADOS_DOS_LUGARES.find((d) =>
+        principais?.[0]?.src.endsWith(`/${d.arquivo}`),
+      );
+      expect(derivado?.original.arquivo).toBe(`fotos/${id}/principal-capa.jpg`);
+    }
   });
 });
 
