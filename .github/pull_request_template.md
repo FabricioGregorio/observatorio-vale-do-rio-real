@@ -2,10 +2,6 @@
 
 
 
-## Tarefa relacionada
-
-docs/tarefas/
-
 ## Como verificar
 
 1.
@@ -20,7 +16,7 @@ docs/tarefas/
 - [ ] Navegação por teclado com foco visível verificada
 - [ ] Layout verificado em 360px de largura
 - [ ] Imagens com `alt`; áudios com transcrição vinculada
-- [ ] Documentação em `docs/` atualizada, se alguma decisão mudou
+- [ ] Migração já aplicada não foi editada nem removida
 
 ## Justificativa para `"use client"`, se houver
 
