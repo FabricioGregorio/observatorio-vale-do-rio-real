@@ -27,8 +27,10 @@ import { useEffect } from "react";
  *    navegador —, o último lugar lido fica aceso por um instante antes de a
  *    carta voltar ao estado geral. Pelo teclado, o foco volta ao item da
  *    faixa desse lugar: é de lá que a pessoa saiu.
- * 6. **Setas na faixa.** A faixa continua uma lista de links, cada um com a
- *    sua parada de Tab; as setas, Home e End só encurtam o caminho entre eles.
+ *
+ * O teclado na faixa é o dos links nativos: Tab e Shift+Tab entre eles,
+ * Enter segue a âncora. Nenhuma tecla é interceptada — a faixa é navegação,
+ * e não um padrão de tablist ou menu.
  *
  * O resto — navegação, conteúdo, realce entre faixa e carta — é HTML e CSS.
  * Os estados daqui são atributos na raiz; `estilos.ts` e o CSS gerado em
@@ -395,35 +397,6 @@ export function InteracaoTerritorioVivo({ idRaiz }: { idRaiz: string }) {
       if (raiz.hasAttribute("data-tv-origem")) limparOrigem();
     }
 
-    /* --- 4. Setas na faixa --------------------------------------------- */
-
-    const ordem = [...links.values()];
-    function aoTeclar(evento: KeyboardEvent) {
-      if (evento.altKey || evento.ctrlKey || evento.metaKey) return;
-      const link = evento.target;
-      if (!(link instanceof HTMLAnchorElement)) return;
-      const indice = ordem.indexOf(link);
-      if (indice === -1) return;
-      let proximo: HTMLAnchorElement | undefined;
-      if (evento.key === "ArrowRight") proximo = ordem[indice + 1];
-      else if (evento.key === "ArrowLeft") proximo = ordem[indice - 1];
-      else if (evento.key === "Home") proximo = ordem[0];
-      else if (evento.key === "End") proximo = ordem.at(-1);
-      else if (evento.key === " ") {
-        /*
-          Espaço num link rolaria a página; aqui ele segue o link, como Enter.
-          Como no Enter nativo, o link perde o foco antes: assim o próximo Tab
-          parte do capítulo de destino, e não do item seguinte da faixa.
-        */
-        evento.preventDefault();
-        link.blur();
-        link.click();
-        return;
-      } else return;
-      evento.preventDefault();
-      proximo?.focus();
-    }
-
     aplicar(capituloNaLinha());
     window.addEventListener("scroll", aoRolar, { passive: true });
     window.addEventListener("scrollend", aoTerminarDeRolar);
@@ -431,7 +404,6 @@ export function InteracaoTerritorioVivo({ idRaiz }: { idRaiz: string }) {
     window.addEventListener("popstate", aoNavegarNoHistorico);
     raiz.addEventListener("click", aoClicar);
     raiz.addEventListener("pointerdown", aoExplorar);
-    faixa?.addEventListener("keydown", aoTeclar);
     faixa?.addEventListener("focusin", aoExplorar);
 
     return () => {
@@ -443,7 +415,6 @@ export function InteracaoTerritorioVivo({ idRaiz }: { idRaiz: string }) {
       window.removeEventListener("popstate", aoNavegarNoHistorico);
       raiz.removeEventListener("click", aoClicar);
       raiz.removeEventListener("pointerdown", aoExplorar);
-      faixa?.removeEventListener("keydown", aoTeclar);
       faixa?.removeEventListener("focusin", aoExplorar);
       for (const link of links.values()) link.removeAttribute("aria-current");
       for (const capitulo of capitulos) {

@@ -310,55 +310,87 @@ test.describe("Interação — deep link e histórico", () => {
 });
 
 test.describe("Interação — teclado", () => {
-  test("setas, Home e End percorrem a faixa; Tab continua com as mesmas paradas", async ({
+  /*
+    A faixa é navegação por links nativos, e não tablist nem menu: nenhuma
+    tecla comum é interceptada. Setas, Home, End e Espaço fazem na faixa o
+    que fariam em qualquer link da web.
+  */
+  test("nenhuma tecla de navegação comum é interceptada na faixa", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await abrir(page);
+    await page.evaluate(() => {
+      const registro: string[] = [];
+      (window as unknown as { __impedidas: string[] }).__impedidas = registro;
+      // Fase de bolha na janela: vê o que qualquer ouvinte da página fez.
+      window.addEventListener("keydown", (evento) => {
+        if (evento.defaultPrevented) registro.push(evento.key);
+      });
+    });
+    const borda = itemDaFaixa(page, "borda-da-mata");
+    for (const tecla of ["ArrowRight", "ArrowLeft", "Home", "End"]) {
+      await borda.focus();
+      await page.keyboard.press(tecla);
+      // O foco não muda de item: a tecla fica com o navegador.
+      await expect(borda).toBeFocused();
+    }
+    await borda.focus();
+    await page.keyboard.press(" ");
+    // Espaço mantém o comportamento nativo do link: não segue a âncora.
+    await expect(page).not.toHaveURL(/#lugar-borda-da-mata$/);
+    expect(
+      await page.evaluate(
+        () => (window as unknown as { __impedidas: string[] }).__impedidas,
+      ),
+    ).toEqual([]);
+  });
+
+  test("a faixa mantém os mesmos links, sem papel nem tabindex de widget", async ({
+    page,
+  }) => {
     await abrir(page);
     const links = faixa(page).getByRole("link");
-    await links.first().focus();
-    await page.keyboard.press("ArrowRight");
-    await expect(links.nth(1)).toBeFocused();
-    await page.keyboard.press("End");
-    await expect(links.last()).toBeFocused();
-    await page.keyboard.press("ArrowRight");
-    await expect(links.last()).toBeFocused();
-    await page.keyboard.press("Home");
-    await expect(links.first()).toBeFocused();
-    await page.keyboard.press("ArrowLeft");
-    await expect(links.first()).toBeFocused();
-    // Continuam sendo links comuns: nenhum sai da ordem de Tab.
+    await expect(links).toHaveCount(1 + LUGARES.length);
     for (const link of await links.all()) {
       await expect(link).not.toHaveAttribute("tabindex", /./);
       await expect(link).not.toHaveAttribute("role", /./);
     }
+    await expect(faixa(page).getByRole("tablist")).toHaveCount(0);
+    await expect(faixa(page).getByRole("menu")).toHaveCount(0);
   });
 
-  test("C. o foco que as setas movem acende o pin do lugar", async ({
+  test("C. Tab entre os itens da faixa acende o pin do lugar em foco", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.emulateMedia({ reducedMotion: "reduce" });
     await abrir(page);
     await faixa(page).getByRole("link").first().focus();
-    await page.keyboard.press("ArrowRight");
-    await page.keyboard.press("ArrowRight");
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Tab");
     await expect(itemDaFaixa(page, "borda-da-mata")).toBeFocused();
     await expect
       .poll(() => pertence(page, '.tv-geral [data-pin="borda-da-mata"]'))
       .toBe("1");
+    await page.keyboard.press("Shift+Tab");
+    await expect(itemDaFaixa(page, "recanto-da-serra")).toBeFocused();
   });
 
-  test("Espaço segue o link como Enter, e o Tab seguinte entra na prancha", async ({
+  test("Enter leva à prancha, e o Tab seguinte entra nela", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.emulateMedia({ reducedMotion: "reduce" });
     await abrir(page);
     await itemDaFaixa(page, "borda-da-mata").focus();
-    await page.keyboard.press(" ");
+    await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/#lugar-borda-da-mata$/);
     await expect.poll(() => atual(page)).toBe("borda-da-mata");
+    await expect(
+      page.getByRole("heading", { level: 2, name: "Museu Borda da Mata" }),
+    ).toBeInViewport();
     // Nenhum foco forçado: o próximo Tab parte do destino, pelo navegador.
     await page.keyboard.press("Tab");
     const onde = await page.evaluate(
