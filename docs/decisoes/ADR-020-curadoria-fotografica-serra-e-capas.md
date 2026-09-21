@@ -143,3 +143,27 @@ vínculo por `IdDoLugar` já existe e é testado.
 Preparar derivado não é publicar. Enquanto não houver publicação no universo
 público, a ficha permanece fail-closed e continua dizendo apenas que ainda não
 reúne fotografia pública.
+
+## Execução — 2026-09-21
+
+O corpus estabilizou em 8 originais por pasta, e o conjunto publicado no
+Acervo em 2026-09-18 já seguia estas decisões (placa tarjada, capas). Em
+2026-09-21 as oito fotografias de Serra dos Macacos e as oito de Ilha Grande
+entraram em `FICHAS` (`scripts/derivar-fotos-campo.py`). A regeneração, feita
+contra uma cópia do corpus, reproduziu byte a byte os 58 derivados e o
+`manifesto-b01.json` publicados; os arquivos de ficha são esses mesmos bytes.
+
+- **Capas:** a ficha de cada lugar abre com o `principal-capa.jpg` declarado
+  acima. A frase "Esta ficha ainda não reúne fotografia pública" deixou de
+  aparecer para Serra dos Macacos.
+- **Data:** Ilha Grande, 11/04/2026, por declaração do responsável. Serra dos
+  Macacos, pela data EXIF do original **somente** quando ela coincide com uma
+  visita do doc 02 §6.4: três fotografias de 02/08/2025 (III Visita) e cinco
+  de 05/04/2026 (II Visita à Serra). Divergência interrompe o gerador.
+- **Os três derivados da H3 de Ilha Grande** (`DERIVADOS_DA_PESQUISA`) saíram
+  da Home, de `/territorio` e de `/campo`: eram de originais retirados ou
+  trocados em 2026-09-18, e as mesmas cenas estão no recorte novo. Ficam
+  apenas para os protótipos de `/dev`, que respondem 404 em produção.
+- **Home:** três fotografias por lugar, declaradas em `FOTOGRAFIAS_DA_HOME`.
+
+A pendência de consentimento LGPD do doc 01 §310 continua aberta, como antes.
