@@ -135,7 +135,7 @@ test.describe("Home", () => {
     await expect(nav.locator('a[href="/educacao"]')).toHaveCount(0);
   });
 
-  test("leva à Sala do Avaliador pela ação institucional do cabeçalho", async ({
+  test("leva à Prestação de Contas pela ação institucional do cabeçalho", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });

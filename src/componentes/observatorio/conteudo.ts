@@ -61,7 +61,7 @@ export const SINTESE =
  * Cada item corresponde a uma prática documentada na pesquisa: visita
  * continuada e formulário (EP02), entrevista com gestores públicos
  * (`ENTREVISTAS`), leitura quantitativa (`indicadores/derivados.ts`) e
- * publicação em endereço próprio (Acervo e Sala do Avaliador).
+ * publicação em endereço próprio (Acervo e Prestação de Contas).
  */
 export const O_QUE_FAZ: readonly {
   readonly verbo: string;
@@ -286,7 +286,7 @@ export const PRODUTOS: readonly Produto[] = [
  *
  * A base factual é a própria arquitetura do projeto: espelho local obrigatório
  * de todo anexo, hash SHA-256 por arquivo, inventário legível por máquina em
- * `/anexos.json` e versão imprimível da Sala do Avaliador. Nada aqui promete
+ * `/anexos.json` e versão imprimível da Prestação de Contas. Nada aqui promete
  * DOI, Internet Archive ou ZIP, que o doc 01 §6 e §11 listam como recomendação
  * e como pendência, não como fato consumado.
  */

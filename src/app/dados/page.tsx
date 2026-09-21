@@ -71,7 +71,7 @@ export const metadata = metadadosDaRota({
  *
  * Server Component. Os números vêm do dataset versionado; a lista de fontes
  * públicas é resolvida contra `vw_anexo_publico` em build, pela mesma consulta
- * da Sala do Avaliador. Sem `DATABASE_URL` a seção de fontes fica vazia e
+ * da Prestação de Contas. Sem `DATABASE_URL` a seção de fontes fica vazia e
  * declara isso — nenhum link é construído por convenção de nome.
  */
 
@@ -256,7 +256,8 @@ export default async function PaginaDados() {
             <p className="dd-leitura">
               Os arquivos que sustentam esta página estão publicados em endereço
               permanente, sem login e sem pedido de acesso. O hash SHA-256 de
-              cada um está na Sala do Avaliador e em <code>/anexos.json</code>.
+              cada um está na Prestação de Contas e em <code>/anexos.json</code>
+              .
             </p>
             <ul className="dd-fontes">
               {fontes.map(({ rotulo, descricao, anexo }) => (
@@ -286,7 +287,7 @@ export default async function PaginaDados() {
           </Link>
           , e todos os anexos do projeto estão listados na{" "}
           <Link href="/prestacao-de-contas" prefetch={false}>
-            Sala do Avaliador
+            Prestação de Contas
           </Link>
           .
         </p>

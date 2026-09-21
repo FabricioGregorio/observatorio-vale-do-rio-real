@@ -1,5 +1,5 @@
 /**
- * Testes das funções puras da Sala do Avaliador (Tarefa 08).
+ * Testes das funções puras da Prestação de Contas (Tarefa 08).
  * Sem banco e sem R2: nada aqui abre conexão.
  */
 import { afterEach, describe, expect, test } from "vitest";
@@ -123,7 +123,7 @@ describe("pacote .zip", () => {
 
 /**
  * Antirregressão do bloqueio 1 do primeiro deployment: com o domínio do acervo
- * configurado e oito anexos publicados, a Sala oferecia "Baixar tudo (.zip)"
+ * configurado e oito anexos publicados, a página oferecia "Baixar tudo (.zip)"
  * apontando para um objeto que nunca foi enviado. O gate é a declaração
  * explícita de publicação, e ele falha fechado.
  */

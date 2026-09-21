@@ -10,8 +10,8 @@ import { expect, test } from "@playwright/test";
  * toda URL sob o domínio próprio, nenhuma chave privada, nenhum r2.dev, e os
  * dois itens que a decisão humana manteve fora do acervo público.
  */
-test.describe("Sala do Avaliador e /anexos.json descrevem o mesmo acervo", () => {
-  test("cada anexo público do JSON tem seu link de download na Sala", async ({
+test.describe("Prestação de Contas e /anexos.json descrevem o mesmo acervo", () => {
+  test("cada anexo público do JSON tem seu link de download na página", async ({
     page,
     request,
   }) => {

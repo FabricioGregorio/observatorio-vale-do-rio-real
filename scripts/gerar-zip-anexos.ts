@@ -15,7 +15,7 @@
  * - fora de produção: **não gera** e **termina com sucesso**, dizendo o que
  *   deixou de fazer;
  * - em produção: **falha explícita**, com código diferente de zero. Publicar a
- *   Sala do Avaliador com o botão apontando para um objeto inexistente seria
+ *   Prestação de Contas com o botão apontando para um objeto inexistente seria
  *   pior do que não publicar.
  *
  * Uso:
@@ -55,7 +55,7 @@ export async function principal(
       "credenciais do R2 ausentes: o pacote .zip não foi gerado nem publicado.";
     if (ehProducao) {
       throw new Error(
-        `${recado} Em produção isso é erro: a Sala do Avaliador ofereceria um ` +
+        `${recado} Em produção isso é erro: a Prestação de Contas ofereceria um ` +
           "download que não existe.",
       );
     }
@@ -89,7 +89,7 @@ export async function principal(
     `[zip-anexos] publicado ${CHAVE_ZIP_ANEXOS} — ${resultado.quantidade} arquivo(s), sha ${resultado.sha256.slice(0, 12)}…`,
   );
   console.log(
-    "[zip-anexos] a Sala do Avaliador só oferece o download depois de " +
+    "[zip-anexos] a Prestação de Contas só oferece o download depois de " +
       "ZIP_ANEXOS_PUBLICADO=true no ambiente do build. Enquanto a variável não " +
       "for definida, o pacote existe no R2 mas o botão continua oculto.",
   );

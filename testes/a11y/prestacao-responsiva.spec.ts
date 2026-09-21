@@ -4,9 +4,9 @@ import { expect, test } from "@playwright/test";
  * Antirregressão dos dois bloqueios encontrados no primeiro deployment
  * controlado na Vercel (2026-09-08).
  *
- * 1. A Sala oferecia "Baixar tudo (.zip)" para um objeto que nunca foi enviado
+ * 1. A página oferecia "Baixar tudo (.zip)" para um objeto que nunca foi enviado
  *    ao R2, e o link respondia 404.
- * 2. Em viewport de 375 px, `documentElement.scrollWidth` ia a 629 px na Sala e
+ * 2. Em viewport de 375 px, `documentElement.scrollWidth` ia a 629 px na página e
  *    na versão imprimível. A causa não era a tabela — ela sempre foi clipada
  *    pelo contêiner de rolagem —, e sim os `<code class="sr-only">` do SHA-256
  *    integral: sendo `position: absolute` sem ancestral posicionado, seu bloco
@@ -21,7 +21,7 @@ const LARGURA_DA_PAGINA = `(() => ({
   scrollWidth: document.documentElement.scrollWidth,
 }))()`;
 
-test.describe("Sala do Avaliador em 375 px", () => {
+test.describe("Prestação de Contas em 375 px", () => {
   for (const rota of ROTAS) {
     test(`${rota} não rola na horizontal`, async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 812 });
@@ -64,7 +64,9 @@ test.describe("Sala do Avaliador em 375 px", () => {
   }
 
   for (const largura of [768, 1440]) {
-    test(`a Sala continua sem overflow em ${largura} px`, async ({ page }) => {
+    test(`a página continua sem overflow em ${largura} px`, async ({
+      page,
+    }) => {
       await page.setViewportSize({ width: largura, height: 900 });
       await page.goto("/prestacao-de-contas");
 

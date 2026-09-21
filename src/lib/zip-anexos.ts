@@ -5,7 +5,7 @@
  * objeto: o script que o gera em build e a página que o oferece. Se cada uma
  * montasse o caminho por conta própria, o botão apontaria para um lugar e o
  * arquivo estaria em outro — e link quebrado é exatamente o problema que a
- * Sala do Avaliador existe para resolver (doc 01 §0.2).
+ * Prestação de Contas existe para resolver (doc 01 §0.2).
  *
  * O pacote vive no R2, nunca em `public/` (ADR-006).
  */
@@ -20,7 +20,7 @@ export const CHAVE_ZIP_ANEXOS = "prestacao-de-contas/anexos.zip";
  * nada, e derivar a URL a partir de `STORAGE_PUBLIC_URL` provava apenas que o
  * domínio do acervo está configurado. Foi exatamente esse o defeito do primeiro
  * deployment: os oito anexos existiam, o domínio existia, o pacote não — e a
- * Sala oferecia um download que respondia 404.
+ * Prestação de Contas oferecia um download que respondia 404.
  *
  * Fail-closed, como todo gate do projeto: ausente, vazia ou com qualquer outro
  * valor significa **não publicado**. Nenhuma verificação remota é feita para
@@ -34,7 +34,7 @@ export function zipDeAnexosPublicado(): boolean {
  * URL pública do pacote, ou `null` enquanto não houver pacote publicado.
  *
  * Exige as duas condições ao mesmo tempo: domínio público configurado **e**
- * publicação declarada. Faltando qualquer uma, a Sala do Avaliador não oferece
+ * publicação declarada. Faltando qualquer uma, a Prestação de Contas não oferece
  * o download — em vez de oferecer um link que não abre.
  */
 export function urlDoZipDeAnexos(): string | null {

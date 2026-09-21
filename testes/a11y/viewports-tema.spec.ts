@@ -23,7 +23,7 @@ const TEMAS = ["light", "dark"] as const;
 
 const ROTAS = [
   ["/", "Home"],
-  ["/prestacao-de-contas", "Sala do Avaliador"],
+  ["/prestacao-de-contas", "Prestação de Contas"],
   ["/prestacao-de-contas/imprimir", "versão imprimível"],
 ] as const;
 

@@ -2,7 +2,7 @@
  * Procedência dos dados territoriais — Tarefas 10B.2 e 10B.2.1.
  *
  * Registra **de onde** cada arquivo territorial deve vir, antes de qualquer
- * arquivo existir. É a mesma disciplina que a Sala do Avaliador aplica aos
+ * arquivo existir. É a mesma disciplina que a Prestação de Contas aplica aos
  * anexos: origem declarada, data de obtenção e SHA-256 para conferência
  * (doc 01 §4). Dado de mapa sem procedência registrada é tão indefensável
  * numa auditoria quanto anexo sem espelho.

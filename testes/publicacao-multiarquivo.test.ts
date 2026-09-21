@@ -324,12 +324,15 @@ describe.skipIf(!urlManutencao || !bucketPublico || !urlPublica)(
         ).toHaveLength(8);
         const anexos = selecionarAnexosPublicos(evidencias);
         expect(serializarAnexos(anexos).total).toBe(8);
-        const sala = renderToStaticMarkup(
+        const prestacao = renderToStaticMarkup(
           createElement(TabelaAnexos, { anexos }),
         );
         expect(
-          (sala.match(/>Baixar <span aria-hidden="true">↗<\/span><\/a>/g) ?? [])
-            .length,
+          (
+            prestacao.match(
+              />Baixar <span aria-hidden="true">↗<\/span><\/a>/g,
+            ) ?? []
+          ).length,
         ).toBe(8);
 
         const corpos = new Map<string, Buffer>();

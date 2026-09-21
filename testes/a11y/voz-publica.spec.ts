@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { ENDERECOS_PUBLICOS } from "./rotas";
+import { ENDERECOS_PUBLICOS, NOMENCLATURA_APOSENTADA } from "./rotas";
 
 const BASTIDORES = [
   /confirmad[oa] pelo responsável/i,
@@ -75,7 +75,7 @@ test("a saída HTML pública não revela bastidores", async ({
         .join("\n"),
     }));
     for (const [superficie, texto] of Object.entries(saida)) {
-      for (const padrao of BASTIDORES) {
+      for (const padrao of [...BASTIDORES, ...NOMENCLATURA_APOSENTADA]) {
         if (padrao.test(texto))
           achados.push(`${rota} · ${superficie}: ${padrao.source}`);
       }

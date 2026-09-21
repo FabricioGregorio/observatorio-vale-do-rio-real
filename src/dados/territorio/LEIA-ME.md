@@ -103,7 +103,7 @@ importa para o público rural e escolar em rede fraca.
 - **Nenhuma imagem de mapa pronta.** A malha é dado, não figura.
 - **Todo arquivo de dado precisa de procedência completa** em `fontes.ts`:
   `origem`, `obtidoEm`, `licenca` e `sha256`. Um teste falha se aparecer
-  arquivo sem isso — a mesma disciplina que a Sala do Avaliador aplica aos
+  arquivo sem isso — a mesma disciplina que a Prestação de Contas aplica aos
   anexos.
 - **Nenhum dado de exemplo, nem temporário.** Num site de prestação de contas,
   GeoJSON de exemplo não é protótipo: é dado falso.

@@ -3,7 +3,7 @@ import { separarCredito } from "../../dados/pesquisa/credito-fotografico";
 import { LinkDeDestino } from "../layout/LinkDeDestino";
 
 /**
- * Tabela mestre da Sala do Avaliador (doc 01 §4).
+ * Tabela mestre da Prestação de Contas (doc 01 §4).
  *
  * É `<table>` de verdade, com `<caption>` e `<th scope>`: o avaliador precisa
  * navegar por leitor de tela e imprimir. Em telas estreitas a mesma tabela vira

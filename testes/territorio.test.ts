@@ -374,7 +374,7 @@ describe("malha municipal do IBGE", () => {
   /**
    * O arquivo é dado externo dentro do repositório. O hash registrado em
    * `fontes.ts` é o que permite provar, depois, que é o mesmo arquivo que veio
-   * do IBGE — a mesma conferência que a Sala do Avaliador faz com os anexos.
+   * do IBGE — a mesma conferência que a Prestação de Contas faz com os anexos.
    */
   test.each([
     ["municipios-sergipe.geojson", CAMINHO_DA_MALHA],

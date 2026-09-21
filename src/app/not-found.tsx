@@ -3,8 +3,8 @@ import Link from "next/link";
 /**
  * Página 404.
  *
- * Oferece dois caminhos, como a Tarefa 03 exige: a Sala do Avaliador, que é a
- * página mais importante do site, e a busca. A busca ainda não existe como
+ * Oferece dois caminhos, como a Tarefa 03 exige: a Prestação de Contas, que é
+ * a página mais importante do site, e a busca. A busca ainda não existe como
  * rota — enquanto isso o caminho oferecido é o índice de dados, sem prometer
  * uma página que não está no ar.
  */
@@ -24,7 +24,7 @@ export default function NaoEncontrado() {
               className="underline"
               style={{ color: "var(--color-link)" }}
             >
-              Sala do Avaliador — todos os anexos da prestação de contas
+              Prestação de Contas — anexos e evidências públicas
             </Link>
           </li>
           <li>

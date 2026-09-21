@@ -24,7 +24,8 @@ export default function Erro({
       <h1>Esta página não pôde ser carregada</h1>
       <p>
         Houve uma falha ao montar o conteúdo. Você pode tentar de novo ou seguir
-        para a Sala do Avaliador, que reúne os anexos da prestação de contas.
+        para a Prestação de Contas, que reúne os anexos e as evidências públicas
+        do projeto.
       </p>
       <div className="flex flex-wrap items-center gap-4">
         <button
@@ -44,7 +45,7 @@ export default function Erro({
           className="underline"
           style={{ color: "var(--color-link)" }}
         >
-          Ir para a Sala do Avaliador
+          Ir para a Prestação de Contas
         </Link>
       </div>
       {error.digest ? (

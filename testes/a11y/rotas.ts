@@ -23,7 +23,10 @@ export const ROTAS_PUBLICAS = [
   ["/campo", "Diário de Campo — Observatório do Vale do Rio Real"],
   ["/podobservar", "PodObservar — Observatório do Vale do Rio Real"],
   ["/acervo", "Acervo — Observatório do Vale do Rio Real"],
-  ["/prestacao-de-contas", "Prestação de Contas — Sala do Avaliador"],
+  [
+    "/prestacao-de-contas",
+    "Prestação de Contas — Observatório do Vale do Rio Real",
+  ],
   ["/prestacao-de-contas/imprimir", "Prestação de Contas — versão imprimível"],
   ["/acessibilidade", "Acessibilidade — Observatório do Vale do Rio Real"],
   ["/privacidade", "Privacidade — Observatório do Vale do Rio Real"],
@@ -50,4 +53,24 @@ export const FRASES_PROIBIDAS: readonly RegExp[] = [
   /lorem ipsum/i,
   /\bplaceholder\b/i,
   /conteúdo provisório/i,
+];
+
+/**
+ * Nomenclatura aposentada por decisão humana de 2026-09-21.
+ *
+ * "Sala do Avaliador" era o nome de projeto da página que sempre viveu em
+ * `/prestacao-de-contas`. Nunca houve rota, componente ou dado separado — só
+ * um segundo nome para a mesma coisa, que vazava para o `<title>`, para um
+ * `aria-label`, para a 404 e para o error boundary. O produto passou a ter um
+ * nome só: **Prestação de contas**.
+ *
+ * Esta lista é conferida sobre **toda** a saída servida — corpo, HTML,
+ * atributos e metadados —, e não só sobre o texto de `main`, porque três dos
+ * quatro vazamentos originais estavam fora de `main`. Separada de
+ * `FRASES_PROIBIDAS` de propósito: aquela roda sobre `innerText` de `main`, e
+ * ampliar o alcance dela arrastaria `placeholder` e `em breve` para dentro de
+ * scripts e do payload do RSC, onde casam por acidente.
+ */
+export const NOMENCLATURA_APOSENTADA: readonly RegExp[] = [
+  /sala\s+do\s+avaliador/i,
 ];

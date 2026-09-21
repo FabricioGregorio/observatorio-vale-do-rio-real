@@ -23,7 +23,7 @@ import { urlDoZipDeAnexos } from "../../lib/zip-anexos";
 import "./prestacao.css";
 
 /**
- * Sala do Avaliador — a página mais importante do site (doc 01 §4).
+ * Prestação de Contas — a página mais importante do site (doc 01 §4).
  *
  * Tudo que a FUNCAP precisa em um lugar, sem login e sem link quebrado. É a
  * tradução para a web do PDF "Links de Referência", e resolve o risco técnico
@@ -54,14 +54,14 @@ import "./prestacao.css";
 
 export const metadata = metadadosDaRota({
   pathname: "/prestacao-de-contas",
-  titulo: "Prestação de Contas — Sala do Avaliador",
+  titulo: "Prestação de Contas — Observatório do Vale do Rio Real",
   descricao:
     "A comprovação pública do Observatório do Vale do Rio Real: entregas, " +
     "documentos e evidências, com endereço permanente, data de publicação e " +
     "hash SHA-256 por arquivo.",
 });
 
-export default async function SalaDoAvaliador() {
+export default async function PrestacaoDeContas() {
   const [anexos, episodios] = await Promise.all([
     listarAnexosPublicos(),
     listarEpisodiosPublicos(),
@@ -229,13 +229,13 @@ export default async function SalaDoAvaliador() {
             para conferência de integridade. Sem login, sem pedido de permissão.
           </p>
 
-          <nav aria-label="Formatos da Sala do Avaliador">
+          <nav aria-label="Formatos da Prestação de Contas">
             <ul className="pc-recursos">
               {/*
                 Enquanto o pacote não estiver publicado e declarado, o item não
                 existe — nem como link, nem como aviso. Oferecer o download de
-                um objeto que responde 404 é o oposto do que a Sala do Avaliador
-                existe para fazer (doc 01 §0.2).
+                um objeto que responde 404 é o oposto do que a Prestação de
+                Contas existe para fazer (doc 01 §0.2).
               */}
               {zip ? (
                 <li>

@@ -4,8 +4,8 @@ import { expect, test } from "@playwright/test";
 /**
  * Acessibilidade da Prestação de Contas, depois da reorganização do Lote 3.
  *
- * A rota já tinha cobertura de overflow (`viewports-tema`, `sala-responsiva`)
- * e de conteúdo (`sala`), mas nenhuma varredura axe — e ela deixou de ser uma
+ * A rota já tinha cobertura de overflow (`viewports-tema`, `prestacao-responsiva`)
+ * e de conteúdo (`prestacao-acervo`), mas nenhuma varredura axe — e ela deixou de ser uma
  * tabela numa página para virar seis seções com fichas, tabela de conjunto,
  * lista de definição e régua de créditos. Cada uma dessas formas tem um jeito
  * próprio de errar nome acessível.

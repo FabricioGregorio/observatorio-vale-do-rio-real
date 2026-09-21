@@ -520,7 +520,7 @@ export const documento = pgTable(
     derivadoDeId: uuid("derivado_de_id"),
     derivacaoMetodo: metodoDerivacao("derivacao_metodo"),
     derivacaoEm: timestamp("derivacao_em", { withTimezone: true }),
-    /** ordem na Sala do Avaliador */
+    /** ordem na Prestação de Contas */
     ordemAnexo: integer("ordem_anexo"),
     status: statusPublicacao("status").notNull().default("rascunho"),
     publicadoEm: timestamp("publicado_em", { withTimezone: true }),
@@ -679,7 +679,7 @@ export const episodio = pgTable(
 // ─── View de consumo (doc 02 §13) ──────────────────────────────────
 
 /**
- * `vw_anexo_publico` — alimenta a Sala do Avaliador e o `/anexos.json`.
+ * `vw_anexo_publico` — alimenta a Prestação de Contas e o `/anexos.json`.
  *
  * `.existing()` declara um objeto **que já existe no banco**: a view é criada
  * pela migração 0002, em SQL bruto, como o doc 03 §6.2 determina. Esta

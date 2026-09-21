@@ -52,7 +52,7 @@ export {
  *
  * Lido de `https://observatoriotobiassoueu.com.br/anexos.json` em 2026-09-13.
  * O endereço está fixo aqui; numa integração completa ele viria de
- * `listarAnexosPublicos()`, em build, como na Sala do Avaliador.
+ * `listarAnexosPublicos()`, em build, como na Prestação de Contas.
  */
 export const RELATORIO_DO_RECANTO = {
   codigo: "A02",

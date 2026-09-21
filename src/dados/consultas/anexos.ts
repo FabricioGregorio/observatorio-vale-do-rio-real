@@ -12,18 +12,19 @@ import type {
 } from "../materiais-de-campo";
 
 /**
- * Consulta dos anexos públicos — alimenta a Sala do Avaliador, a versão
+ * Consulta dos anexos públicos — alimenta a Prestação de Contas, a versão
  * imprimível, o `/anexos.json` e o ZIP.
  *
  * Lê `vw_anexo_publico` (migração 0002) e **filtra `espelhado = true`**. A view
- * expõe a coluna mas não filtra por ela: a Sala do Avaliador só mostra anexo
+ * expõe a coluna mas não filtra por ela: a Prestação de Contas só mostra anexo
  * com espelho próprio, porque o site existe justamente para substituir os
  * links frágeis de Drive e Figma (doc 01 §0.2).
  *
  * Sem `DATABASE_URL` — máquina de desenvolvimento sem credencial — a função
  * avisa e devolve lista vazia, e a página renderiza o estado vazio explícito.
  * Em produção, porém, a ausência é erro explícito: um build publicável não
- * pode gerar Sala, Manifesto e `/anexos.json` vazios por configuração faltante.
+ * pode gerar Prestação de Contas, Manifesto e `/anexos.json` vazios por
+ * configuração faltante.
  */
 
 export type AnexoPublico = {
@@ -208,11 +209,11 @@ export function selecionarAnexosPublicos(
   );
 }
 
-/** Anexos publicados e efetivamente espelhados, na ordem da Sala do Avaliador. */
+/** Anexos publicados e efetivamente espelhados, na ordem da Prestação de Contas. */
 export async function listarAnexosPublicos(): Promise<AnexoPublico[]> {
   if (!databaseUrlDisponivel(process.env.NODE_ENV, process.env.DATABASE_URL)) {
     console.warn(
-      "[anexos] DATABASE_URL ausente: a Sala do Avaliador será gerada vazia. " +
+      "[anexos] DATABASE_URL ausente: a Prestação de Contas será gerada vazia. " +
         "Isto é permitido somente em development e test.",
     );
     return [];
