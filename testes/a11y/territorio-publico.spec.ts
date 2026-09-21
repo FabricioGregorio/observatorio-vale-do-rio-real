@@ -1,4 +1,6 @@
+import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { REFERENCIAS_TERRITORIAIS } from "../../src/dados/territorio/referencias";
 
 test("Território aprofunda a malha e a legenda cartográfica da Home", async ({
   page,
@@ -283,4 +285,82 @@ test.describe("Território — cartografia como informação", () => {
     await expect(raiz).toHaveAttribute("data-foco", "vale");
     await expect(page.locator("#tv-painel-vale")).toBeVisible();
   });
+});
+
+for (const largura of [375, 768, 1440]) {
+  for (const tema of ["light", "dark"] as const) {
+    test(`cartografia e fichas acessíveis em ${largura}px, ${tema}`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: largura, height: 900 });
+      await page.emulateMedia({ colorScheme: tema });
+      await page.goto("/territorio");
+      const raiz = page.locator("#territorio-vivo");
+      await expect(raiz).toHaveAttribute("data-interativo", "true");
+
+      // A matriz inclui o Vale e os quatro lugares, inclusive o equipamento
+      // adicional: nenhuma ficha pode herdar a aprovação de outra.
+      for (const id of ["vale", ...REFERENCIAS_TERRITORIAIS.map((l) => l.id)]) {
+        const aba = page.locator(`[data-tv-aba="${id}"]`);
+        await aba.press("Enter");
+        await expect(aba).toHaveAttribute("aria-selected", "true");
+        const painel = page.locator(`#tv-painel-${id}`);
+        await expect(painel).toBeVisible();
+        await expect(page.getByRole("tabpanel")).toHaveCount(1);
+        const caixa = await aba.boundingBox();
+        expect(caixa?.height).toBeGreaterThanOrEqual(44);
+        expect(caixa?.width).toBeGreaterThanOrEqual(44);
+
+        if (id !== "vale") {
+          await expect(raiz).toHaveAttribute("data-escala", "local");
+          const lugar = REFERENCIAS_TERRITORIAIS.find((l) => l.id === id);
+          if (lugar === undefined) throw new Error("Referência ausente.");
+          await expect(painel.locator(".coordenada")).toHaveText(
+            `${lugar.latitude.toFixed(6)}, ${lugar.longitude.toFixed(6)}`,
+          );
+          await expect(painel).toContainText(lugar.localidade);
+          await expect(painel).toContainText(lugar.municipio);
+        }
+        expect(
+          await page.evaluate(
+            () =>
+              document.documentElement.scrollWidth <=
+              document.documentElement.clientWidth,
+          ),
+        ).toBe(true);
+        const auditoria = await new AxeBuilder({ page })
+          .include("#territorio-vivo")
+          .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+          .analyze();
+        expect(auditoria.violations).toEqual([]);
+      }
+    });
+  }
+}
+
+test("movimento reduzido desliga mapa e ficha também depois da seleção", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/territorio");
+  const vale = page.locator('[data-tv-aba="vale"]');
+  await vale.focus();
+  await page.keyboard.press("End");
+  await page.keyboard.press("Space");
+  const raiz = page.locator("#territorio-vivo");
+  await expect(raiz).toHaveAttribute("data-lugar", "ilha-grande");
+  await expect(raiz).toHaveAttribute("data-escala", "local");
+  const movimento = await page
+    .locator(".tv-mundo, .tv-local")
+    .evaluateAll((elementos) =>
+      elementos.map((el) => getComputedStyle(el).transitionProperty),
+    );
+  expect(movimento.every((propriedade) => propriedade === "none")).toBe(true);
+  await expect(page.locator("#tv-painel-ilha-grande")).toHaveCSS(
+    "animation-name",
+    "none",
+  );
+  await page.keyboard.press("Escape");
+  await expect(raiz).toHaveAttribute("data-foco", "vale");
+  await expect(vale).toBeFocused();
 });

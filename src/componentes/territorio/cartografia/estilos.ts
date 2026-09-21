@@ -100,6 +100,7 @@ export const CSS_DO_TERRITORIO_VIVO = `
 .tv ul,.tv ol{list-style:none;margin:0;padding:0}
 .tv p{margin:0}
 .tv a{color:var(--color-link)}
+.tv__nota a{text-decoration:underline}
 
 /* --- Abertura: título, mapa de situação e informação de margem ------------ */
 

@@ -21,6 +21,7 @@ Arquivos autorizados para esta execução:
 - `src/componentes/territorio/cartografia/InteracaoTerritorioVivo.tsx`;
 - `testes/a11y/territorio-publico.spec.ts`;
 - este registro.
+- `docs/frontend/EVOLUCAO_VISUAL_TERRITORIO_2026-09-21.md`: relatório solicitado.
 
 Dados territoriais, camadas locais, rotas, tokens globais, Home e menu ficam
 fora do escopo. Capturas e medições ficam em `tmp/territorio-visual/`, fora do
@@ -30,3 +31,11 @@ Validação: tipos, lint, testes de integridade, axe, teclado, Escape, movimento
 reduzido, temas claro e escuro, 375/768/1440 px, ausência de overflow, build.
 Stage nominal; alterações preexistentes nos documentos de plano, estado e
 arquitetura e o lote de `/dados` ficam fora deste commit.
+
+## Conferência complementar
+
+A retomada encontrou a composição implementada em `e6687bc` e o ajuste de voz
+pública em `8640e80`, já presentes na referência remota local. A continuação
+preserva esse trabalho e completa a matriz de acessibilidade por seleção:
+Vale e quatro lugares, três larguras, dois temas, além de movimento reduzido
+após carregar a camada local. Capturas finais e relatório encerram a avaliação.
