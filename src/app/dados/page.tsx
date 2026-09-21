@@ -64,7 +64,7 @@ export const metadata = metadadosDaRota({
  *
  * Não desenha gráfico decorativo. As duas figuras — o dot plot da série e as
  * barras das atividades — respondem a perguntas que a tabela sozinha responde
- * pior, e as duas têm a tabela ao lado, sempre no DOM.
+ * pior, e as duas têm tabela equivalente, sempre no DOM.
  *
  * ## Dados
  *
@@ -131,6 +131,13 @@ export default async function PaginaDados() {
         </dl>
       </header>
 
+      <nav aria-label="Nesta página" className="dd-indice">
+        <a href="#dd-indicadores-titulo">Indicadores</a>
+        <a href="#dd-serie-secao-titulo">Mês a mês</a>
+        <a href="#dd-atividades-titulo">Atividades</a>
+        <a href="#dd-fontes-titulo">Fontes</a>
+      </nav>
+
       <section aria-labelledby="dd-medido-titulo" className="dd-secao">
         <h2 id="dd-medido-titulo">O que foi medido</h2>
         <div className="dd-leitura">
@@ -159,9 +166,21 @@ export default async function PaginaDados() {
           seu denominador.
         </p>
         <div className="dd-indicadores">
-          {INDICADORES.map((indicador) => (
-            <FichaDoIndicador indicador={indicador} key={indicador.id} />
-          ))}
+          {[
+            "H4-001",
+            "H4-003",
+            "H4-004",
+            "H4-002",
+            "H4-005",
+            "H4-006",
+            "H4-007",
+            "H4-008",
+          ]
+            .map((id) => INDICADORES.find((indicador) => indicador.id === id))
+            .filter((indicador) => indicador !== undefined)
+            .map((indicador) => (
+              <FichaDoIndicador indicador={indicador} key={indicador.id} />
+            ))}
         </div>
       </section>
 

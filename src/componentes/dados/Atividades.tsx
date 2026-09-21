@@ -8,36 +8,12 @@ import {
 } from "../../dados/indicadores/formato";
 
 /**
- * Atividades acionadas no período, por dias com registro.
- *
- * ## Linhagem
- *
- * Mesma forma do laboratório da H4.0 (`prototipo/dados/RankingDeAtividades`),
- * que segue intacto em `/dev/dados`. Os dados são os de `ATIVIDADES`, e
- * existem uma vez só.
- *
- * ## Por que tabela com barra, e não gráfico à parte
- *
- * São dezesseis categorias nominais com uma medida só. Barra horizontal é a
- * forma certa, e a forma certa aqui já é uma tabela: o rótulo precisa de
- * espaço horizontal, a ordem é o próprio dado, e quem lê vai querer o número
- * exato ao lado da barra. Um SVG à parte custaria uma alternativa textual que
- * a tabela já é.
- *
- * A barra é apoio de leitura, não é o dado: ela tem `aria-hidden`, e o valor
- * vive no texto da célula.
- *
- * ## O denominador aparece
- *
- * O percentual é sempre sobre os registros de funcionamento do período, e o
- * número está escrito na legenda da tabela. Percentual sem base é o defeito
- * que a direção editorial deste lote proíbe por nome.
- *
- * ## Cor
- *
- * O preenchimento distingue atividade de receita direta da de receita
- * indireta, e a distinção também está escrita ao lado do nome. Nenhuma
- * informação depende só de cor.
+ * Frequência de cada atividade dentro dos registros de funcionamento.
+ * Marcas inteiras reforçam que a unidade é um registro, não uma pessoa.
+ * A ordem das marcas não representa datas nem permite cruzar atividades.
+ * O denominador comum permite comparar frequências, nunca somar públicos.
+ * Dois padrões SVG por linha evitam um nó por registro; a tabela mantém
+ * nome, categoria original, tipo de receita, valor e proporção em texto.
  */
 export function Atividades() {
   const totalDeRegistros = CONTEXTO_DOS_DADOS.registrosDeFuncionamento;
@@ -46,7 +22,8 @@ export function Atividades() {
     <table className="dd-tabela dd-tabela--ranking">
       <caption>
         Atividades acionadas, por dias com registro em {totalDeRegistros}{" "}
-        registros de funcionamento
+        registros de funcionamento. Cada marca preenchida representa um registro
+        com a atividade; a posição das marcas não indica uma data.
       </caption>
       <thead>
         <tr>
@@ -57,7 +34,7 @@ export function Atividades() {
         </tr>
       </thead>
       <tbody>
-        {ATIVIDADES.map((atividade) => {
+        {ATIVIDADES.map((atividade, indice) => {
           const proporcao = atividade.diasComAtividade / totalDeRegistros;
           return (
             <tr key={atividade.nome}>
@@ -69,13 +46,40 @@ export function Atividades() {
               </th>
               <td>
                 <div className="dd-barra">
-                  <div aria-hidden="true" className="dd-trilho">
-                    <div
-                      className="dd-preenchimento"
-                      data-receita={atividade.receita}
-                      style={{ width: `${proporcao * 100}%` }}
+                  <svg
+                    aria-hidden="true"
+                    className="dd-marcas"
+                    viewBox={`0 0 ${totalDeRegistros * 10} 16`}
+                  >
+                    <defs>
+                      <pattern
+                        id={`dd-vazio-${indice}`}
+                        width={10}
+                        height={16}
+                        patternUnits="userSpaceOnUse"
+                      >
+                        <path d="M5 5V11" />
+                      </pattern>
+                      <pattern
+                        id={`dd-cheio-${indice}`}
+                        width={10}
+                        height={16}
+                        patternUnits="userSpaceOnUse"
+                      >
+                        <path d="M5 1V15" data-preenchida="true" />
+                      </pattern>
+                    </defs>
+                    <rect
+                      width={totalDeRegistros * 10}
+                      height={16}
+                      fill={`url(#dd-vazio-${indice})`}
                     />
-                  </div>
+                    <rect
+                      width={atividade.diasComAtividade * 10}
+                      height={16}
+                      fill={`url(#dd-cheio-${indice})`}
+                    />
+                  </svg>
                   <span>
                     {formatarContagem(atividade.diasComAtividade)} de{" "}
                     {totalDeRegistros} · {formatarPercentual(proporcao)}

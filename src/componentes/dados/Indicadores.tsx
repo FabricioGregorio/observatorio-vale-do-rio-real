@@ -30,36 +30,65 @@ export function FichaDoIndicador({
   const idDoTitulo = `dd-indicador-${indicador.id}`;
 
   return (
-    <article aria-labelledby={idDoTitulo} className="dd-indicador">
-      <p className="dd-indicador__valor">{exibirIndicador(indicador)}</p>
-      <h3 id={idDoTitulo}>{indicador.titulo}</h3>
-      <dl className="dd-ficha">
-        <div>
-          <dt>Cálculo</dt>
-          <dd>{indicador.regra}</dd>
-        </div>
-        {indicador.base === null ? null : (
-          <div>
-            <dt>Base</dt>
-            <dd>{indicador.base}</dd>
+    <article
+      aria-labelledby={idDoTitulo}
+      className="dd-indicador"
+      data-unidade={indicador.unidade}
+      data-indicador={indicador.id}
+    >
+      <div className="dd-indicador__medida">
+        <p className="dd-indicador__valor">{exibirIndicador(indicador)}</p>
+        <h3 id={idDoTitulo}>{indicador.titulo}</h3>
+        {indicador.unidade === "percentual" ? (
+          <div aria-hidden="true" className="dd-proporcao">
+            <div className="dd-proporcao__trilho">
+              <span style={{ width: `${indicador.valorBruto * 100}%` }} />
+            </div>
+            <div className="dd-proporcao__eixo">
+              <span>0%</span>
+              <span>50%</span>
+              <span>100%</span>
+            </div>
           </div>
+        ) : null}
+      </div>
+      <div className="dd-indicador__contexto">
+        <dl className="dd-ficha">
+          <div>
+            <dt>Cálculo</dt>
+            <dd>{indicador.regra}</dd>
+          </div>
+          {indicador.base === null ? null : (
+            <div>
+              <dt>Base</dt>
+              <dd>{indicador.base}</dd>
+            </div>
+          )}
+          <div>
+            <dt>Fonte</dt>
+            <dd>{indicador.fontePublica}</dd>
+          </div>
+        </dl>
+        {indicador.notaMetodologica === null ? null : (
+          <p className="dd-indicador__nota">{indicador.notaMetodologica}</p>
         )}
-        <div>
-          <dt>Período</dt>
-          <dd>{indicador.periodo}</dd>
-        </div>
-        <div>
-          <dt>Recorte</dt>
-          <dd>{indicador.recorte}</dd>
-        </div>
-        <div>
-          <dt>Fonte</dt>
-          <dd>{indicador.fontePublica}</dd>
-        </div>
-      </dl>
-      {indicador.notaMetodologica === null ? null : (
-        <p className="dd-indicador__nota">{indicador.notaMetodologica}</p>
-      )}
+        <details className="dd-detalhes">
+          <summary>
+            Período e recorte
+            <span className="sr-only"> — {indicador.titulo}</span>
+          </summary>
+          <dl className="dd-ficha">
+            <div>
+              <dt>Período</dt>
+              <dd>{indicador.periodo}</dd>
+            </div>
+            <div>
+              <dt>Recorte</dt>
+              <dd>{indicador.recorte}</dd>
+            </div>
+          </dl>
+        </details>
+      </div>
     </article>
   );
 }
