@@ -321,6 +321,15 @@ export function PranchaDoLugar({
           raio={raio}
           vista={vista}
         />
+
+        {/*
+          No celular a faixa dos lugares não fica presa ao topo: este link é o
+          caminho curto de volta à carta. Nas telas maiores a faixa está
+          sempre à vista, e ele sai (inclusive da ordem de Tab).
+        */}
+        <p className="tv-prancha__voltar">
+          <a href="#tv-carta">↑ Voltar à carta dos lugares</a>
+        </p>
       </div>
     </section>
   );
@@ -468,6 +477,23 @@ function CartaDaPrancha({
           {local !== null ? (
             <g className="tv-local" data-tv-camada-local={lugar.id} />
           ) : null}
+          {/*
+            "Você está aqui": anel em volta da gota, por cima da camada local.
+            Acende quando a prancha entra em leitura e quando a leitura chega
+            à localização do lugar na ficha.
+          */}
+          <g
+            className="tv-carta__halo"
+            transform={`translate(${n(px)} ${n(py - 2 * raioDoPin)})`}
+          >
+            {["", " tv-carta__halo--luz"].map((variante) => (
+              <circle
+                className={`anel${variante}`}
+                key={variante}
+                r={n(raioDoPin * 2.1)}
+              />
+            ))}
+          </g>
           <g className="tv-carta__fixo">
             <g
               transform={`translate(${n(vista.x1 - vw * 0.07)} ${n(vista.y0 + vh * 0.05)})`}

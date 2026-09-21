@@ -142,3 +142,42 @@ o-vale,lugar-recanto-da-serra,lugar-borda-da-mata,lugar-serra-dos-macacos,
 lugar-ilha-grande}.png`, `768-` e `375-{abertura,o-vale,lugar-borda-da-mata,
 lugar-serra-dos-macacos}.png`, e `1440-{abertura,lugar-ilha-grande}-escuro.png`.
 A série `antes/` guarda a versão anterior.
+
+## Rodada de interação (2026-09-21)
+
+Sem redesenho: só a resposta da carta à exploração.
+
+- **Lugar apontado.** Ponteiro no pin ou na faixa, foco de teclado na faixa
+  e toque no pin produzem o mesmo estado, por `:has()` e variáveis CSS
+  (`--ap`, `--ap-<id>`, `--eu`), sem JavaScript. O pin cresce e ganha halo
+  em dois traços, o nome acende em milho, o município que contém o lugar
+  (relação declarada em `municipioId`) ganha contorno claro, o resto da
+  carta recua 30% sem sumir, e o item da faixa responde. Apontar o pin
+  acende a faixa e vice-versa.
+- **Ilha Grande.** A segunda linha "São Cristóvão · fora do recorte" fica
+  sob o pin, sempre visível; ao apontar, São Cristóvão ganha preenchimento
+  e o Vale inteiro recua.
+- **Vale do Rio Real.** Não limpa seleção: traz o recorte à frente
+  (contorno claro nos cinco municípios, o resto de Sergipe recua) com todos
+  os lugares no mesmo nível.
+- **Chegada.** Rolagem suave (imediata com movimento reduzido), filete de
+  milho sob o título do destino que se apaga sozinho, e "você está aqui" na
+  prancha em leitura: anel em volta do pin no mapa local e janela do
+  localizador na cor do pin. Links da ficha de localização também acendem o
+  anel.
+- **Toque.** Alvo invisível de 44 px ou mais em cada pin (a gota tem
+  13–18 px). No celular, onde a faixa não fica presa ao topo, cada prancha
+  termina com "↑ Voltar à carta dos lugares", ausente nas telas maiores.
+- **Teclado.** A faixa continua sendo o único controle (cinco paradas de
+  Tab); os pins seguem fora da ordem de Tab. Corrigido o contorno de foco da
+  faixa, que era anil sobre fundo escuro desde que ela saiu da abertura.
+- **Rolagem.** Medida sem pisca-pisca: `– → vale → recanto → borda → serra
+  → ilha → –`, agora coberta por teste.
+- **Peso.** Inalterado: 543 kB (1440, DPR 1) e 455 kB (375, DPR 2); JS 147
+  kB, sem dependência nova. A camada local continua só sob demanda.
+- **Testes.** Novos, de comportamento: pin → faixa e município, teclado →
+  pin, Shift+Tab, Ilha Grande, Vale, chegada e "você está aqui", sequência de
+  rolagem, toque com alvo de 44 px, volta à carta no celular, rolagem
+  imediata com movimento reduzido.
+
+Capturas locais em `tmp/territorio-interacao/final/`.

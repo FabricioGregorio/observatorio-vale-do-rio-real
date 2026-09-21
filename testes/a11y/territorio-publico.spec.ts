@@ -254,6 +254,243 @@ test("Território mantém o conteúdo essencial sem JavaScript", async ({
   await contexto.close();
 });
 
+/**
+ * A carta responde à exploração.
+ *
+ * O estado "lugar apontado" é o mesmo venha de onde vier — ponteiro na
+ * faixa, ponteiro no pin, foco de teclado na faixa, toque no pin — e liga o
+ * pin, o item da faixa e o município que contém o lugar. Os testes leem o
+ * grau de pertinência que cada elemento declara (`--eu`) e o efeito
+ * computado (opacidade), nunca pixels.
+ */
+/*
+  `--eu` não é propriedade registrada: o valor computado chega como a
+  expressão (`max(1,0,0)`). Uma sonda resolve o número pela própria CSS.
+*/
+const pertence = (page: Page, seletor: string) =>
+  page
+    .locator(seletor)
+    .first()
+    .evaluate((el) => {
+      const expressao = getComputedStyle(el).getPropertyValue("--eu").trim();
+      const sonda = document.createElement("div");
+      sonda.style.opacity = `calc(${expressao || "0"})`;
+      document.body.append(sonda);
+      const valor = getComputedStyle(sonda).opacity;
+      sonda.remove();
+      return valor;
+    });
+const opacidade = (page: Page, seletor: string) =>
+  page
+    .locator(seletor)
+    .first()
+    .evaluate((el) => Number(getComputedStyle(el).opacity));
+const TOBIAS_BARRETO = "2807402";
+const SAO_CRISTOVAO = "2806701";
+const POCO_VERDE = "2805505";
+
+test.describe("Território — a carta responde à exploração", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+  });
+
+  test("apontar o pin acende o item da faixa e o município; o resto recua", async ({
+    page,
+  }) => {
+    await abrir(page);
+    await page
+      .locator('.tv-geral [data-pin="recanto-da-serra"] .tv-pin__corpo')
+      .hover();
+    await expect
+      .poll(() => pertence(page, '.tv-faixa [data-tv-ir="recanto-da-serra"]'))
+      .toBe("1");
+    expect(await pertence(page, '.tv-faixa [data-tv-ir="borda-da-mata"]')).toBe(
+      "0",
+    );
+    expect(
+      await pertence(page, `.tv-geral use.m[data-codigo="${TOBIAS_BARRETO}"]`),
+    ).toBe("1");
+    expect(
+      await opacidade(page, '.tv-geral [data-pin="ilha-grande"]'),
+    ).toBeLessThan(1);
+    expect(
+      await opacidade(page, '.tv-geral [data-pin="recanto-da-serra"]'),
+    ).toBe(1);
+
+    // Sair devolve a carta inteira ao mesmo nível.
+    await page.mouse.move(5, 300);
+    await expect
+      .poll(() => opacidade(page, '.tv-geral [data-pin="ilha-grande"]'))
+      .toBe(1);
+  });
+
+  test("o foco de teclado na faixa acende o pin correspondente", async ({
+    page,
+  }) => {
+    await abrir(page);
+    await faixa(page).getByRole("link").first().focus();
+    await page.keyboard.press("Tab");
+    await expect(
+      faixa(page).getByRole("link", { name: /Recanto da Serra/ }),
+    ).toBeFocused();
+    await expect
+      .poll(() => pertence(page, '.tv-geral [data-pin="recanto-da-serra"]'))
+      .toBe("1");
+    expect(await pertence(page, '.tv-geral [data-pin="borda-da-mata"]')).toBe(
+      "0",
+    );
+    // Shift+Tab volta ao Vale: nenhum lugar fica apontado.
+    await page.keyboard.press("Shift+Tab");
+    await expect
+      .poll(() => opacidade(page, '.tv-geral [data-pin="borda-da-mata"]'))
+      .toBe(1);
+  });
+
+  test("Ilha Grande traz São Cristóvão à frente e diz que está fora do recorte", async ({
+    page,
+  }) => {
+    await abrir(page);
+    await expect(page.locator(".tv-geral .tv-pin__fora")).toHaveText(
+      "São Cristóvão · fora do recorte",
+    );
+    await faixa(page)
+      .getByRole("link", { name: /Ilha Grande/ })
+      .hover();
+    await expect
+      .poll(() =>
+        pertence(page, `.tv-geral use.m[data-codigo="${SAO_CRISTOVAO}"]`),
+      )
+      .toBe("1");
+    // O Vale inteiro recua: o ponto apontado está fora dele.
+    expect(
+      await opacidade(page, `.tv-geral use.m[data-codigo="${TOBIAS_BARRETO}"]`),
+    ).toBeLessThan(1);
+    // E o fato continua escrito na faixa, sem depender do ponteiro.
+    await expect(
+      faixa(page).getByRole("link", { name: /Ilha Grande/ }),
+    ).toContainText("fora do recorte");
+  });
+
+  test("Vale do Rio Real é visão geral: o recorte à frente, os lugares no mesmo nível", async ({
+    page,
+  }) => {
+    await abrir(page);
+    await faixa(page)
+      .getByRole("link", { name: /Vale do Rio Real/ })
+      .hover();
+    await expect
+      .poll(() =>
+        opacidade(page, `.tv-geral use.m[data-codigo="${SAO_CRISTOVAO}"]`),
+      )
+      .toBeLessThan(1);
+    for (const lugar of LUGARES) {
+      expect(await opacidade(page, `.tv-geral [data-pin="${lugar.id}"]`)).toBe(
+        1,
+      );
+    }
+    expect(
+      await opacidade(page, `.tv-geral use.m[data-codigo="${POCO_VERDE}"]`),
+    ).toBe(1);
+  });
+
+  test("chegar a uma prancha acende o você-está-aqui e marca o capítulo", async ({
+    page,
+  }) => {
+    await abrir(page);
+    await faixa(page)
+      .getByRole("link", { name: /Museu Borda da Mata/ })
+      .click();
+    const prancha = page.locator("#lugar-borda-da-mata");
+    await expect(prancha).toHaveAttribute("data-em-leitura", "");
+    await expect(
+      faixa(page).locator('[aria-current="location"]'),
+    ).toContainText("Museu Borda da Mata");
+    await expect
+      .poll(() => opacidade(page, "#lugar-borda-da-mata .tv-carta__halo"))
+      .toBe(1);
+    // Só a prancha em leitura acende; as outras ficam em repouso.
+    expect(
+      await opacidade(page, "#lugar-recanto-da-serra .tv-carta__halo"),
+    ).toBe(0);
+    // Com movimento reduzido, a marca de destino fica parada no título.
+    const marca = await prancha
+      .locator("h2")
+      .evaluate((el) => getComputedStyle(el).boxShadow);
+    expect(marca).not.toBe("none");
+  });
+
+  test("o capítulo em leitura avança sem piscar ao rolar a página", async ({
+    page,
+  }) => {
+    await abrir(page);
+    const altura = await page.evaluate(() => document.body.scrollHeight);
+    const sequencia: string[] = [];
+    for (let y = 0; y < altura; y += 60) {
+      await page.evaluate((yy) => window.scrollTo(0, yy), y);
+      await page.waitForTimeout(30);
+      const atual = await page.evaluate(
+        () =>
+          document
+            .querySelector("[data-tv-faixa] [aria-current]")
+            ?.getAttribute("data-tv-ir") ?? "-",
+      );
+      if (sequencia.at(-1) !== atual) sequencia.push(atual);
+    }
+    expect(sequencia).toEqual(["-", "vale", ...LUGARES.map((l) => l.id), "-"]);
+  });
+});
+
+test.describe("Território — toque e celular", () => {
+  test("tocar no pin leva à prancha do lugar", async ({ browser }) => {
+    const contexto = await browser.newContext({
+      viewport: { width: 375, height: 812 },
+      hasTouch: true,
+      isMobile: true,
+    });
+    const pagina = await contexto.newPage();
+    await pagina.goto("/territorio");
+    await expect(pagina.locator("#territorio-vivo")).toHaveAttribute(
+      "data-interativo",
+      "true",
+    );
+    const alvo = pagina.locator(
+      '.tv-geral [data-pin="serra-dos-macacos"] .tv-pin__alvo',
+    );
+    // O alvo de toque tem pelo menos 44 px.
+    const caixa = await alvo.boundingBox();
+    expect(caixa?.width ?? 0).toBeGreaterThanOrEqual(44);
+    await alvo.tap();
+    await expect(pagina).toHaveURL(/#lugar-serra-dos-macacos$/);
+    await expect(
+      pagina.getByRole("heading", { level: 2, name: "Serra dos Macacos" }),
+    ).toBeInViewport();
+    await contexto.close();
+  });
+
+  test("no celular, cada prancha tem o caminho de volta à carta", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await abrir(page);
+    const voltar = page
+      .locator("#lugar-ilha-grande")
+      .getByRole("link", { name: "↑ Voltar à carta dos lugares" });
+    await voltar.scrollIntoViewIfNeeded();
+    await voltar.click();
+    await expect(page).toHaveURL(/#tv-carta$/);
+    await expect(page.locator(".tv-geral__svg")).toBeInViewport();
+    await expect(
+      faixa(page).getByRole("link", { name: /Vale do Rio Real/ }),
+    ).toBeInViewport();
+
+    // Nas telas maiores a faixa fica presa ao topo, e o link sai — inclusive
+    // da ordem de Tab.
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await expect(voltar).toBeHidden();
+  });
+});
+
 test.describe("Território — teclado e estado", () => {
   test("a faixa é navegação comum: cinco paradas de Tab, com contorno visível", async ({
     page,
@@ -340,12 +577,26 @@ test.describe("Território — teclado e estado", () => {
     );
     expect(animado).toBe(false);
     const transicoes = await page
-      .locator(".tv-local, .tv-pin__corpo, .tv-faixa a, .tv-carta__base")
+      .locator(
+        ".tv-local, .tv-pin__corpo, .tv-pin__halo, .tv-faixa a, .tv-carta__base, .tv-carta__halo, .tv-geral .m",
+      )
       .evaluateAll((els) =>
         els.map((el) => getComputedStyle(el).transitionProperty),
       );
     expect(transicoes.length).toBeGreaterThan(0);
     expect(transicoes.every((p) => p === "none")).toBe(true);
+    // A rolagem até o capítulo é imediata para quem pediu menos movimento.
+    expect(
+      await page.evaluate(
+        () => getComputedStyle(document.documentElement).scrollBehavior,
+      ),
+    ).toBe("auto");
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    expect(
+      await page.evaluate(
+        () => getComputedStyle(document.documentElement).scrollBehavior,
+      ),
+    ).toBe("smooth");
   });
 });
 

@@ -17,7 +17,8 @@ import { useEffect } from "react";
  *    altura com a largura da tela.
  * 3. **Capítulo em leitura.** A faixa dos lugares é uma lista de âncoras; a
  *    ilha marca com `aria-current="location"` a que corresponde ao capítulo
- *    na tela. Nada muda de lugar, nada se esconde.
+ *    na tela, e com `data-em-leitura` a própria prancha, que acende o seu
+ *    "você está aqui". Nada muda de lugar, nada se esconde.
  *
  * O resto — navegação, conteúdo, realce entre faixa e carta — é HTML e CSS.
  */
@@ -134,6 +135,13 @@ export function InteracaoTerritorioVivo({ idRaiz }: { idRaiz: string }) {
         if (id === atual) link.setAttribute("aria-current", "location");
         else link.removeAttribute("aria-current");
       }
+      // A prancha em leitura acende o próprio "você está aqui" (só CSS lê).
+      for (const capitulo of capitulos) {
+        capitulo.toggleAttribute(
+          "data-em-leitura",
+          capitulo.dataset.tvCapitulo === atual,
+        );
+      }
     }
     /*
       A linha de leitura é uma faixa fina a 35% da altura: um capítulo conta
@@ -157,6 +165,9 @@ export function InteracaoTerritorioVivo({ idRaiz }: { idRaiz: string }) {
     for (const capitulo of capitulos) observadorDeLeitura.observe(capitulo);
 
     return () => {
+      for (const capitulo of capitulos) {
+        capitulo.removeAttribute("data-em-leitura");
+      }
       observadorDoTopo.disconnect();
       raiz.style.removeProperty("--tv-topo");
       observadorDeCartas.disconnect();

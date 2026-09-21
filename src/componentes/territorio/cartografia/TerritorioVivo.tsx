@@ -184,16 +184,41 @@ export function TerritorioVivo({
   }.`;
 
   /*
-    Estados que dependem de identificadores: a faixa acende o pin e o pin
-    acende a faixa, por `:has()`. Sem JavaScript e sem suporte a `:has()` a
-    página só perde o realce.
+    Lugar apontado — o estado que liga faixa, pin, município e capítulo.
+
+    Apontar um lugar (ponteiro sobre o item da faixa ou sobre o pin, foco de
+    teclado no item, toque no pin) acende, por `:has()`, duas variáveis na
+    raiz: `--ap` (algum lugar está apontado) e `--ap-<id>` (qual). Cada
+    elemento declara em `--eu` o quanto pertence ao lugar apontado — o pin e
+    o item da faixa do próprio lugar, o município que o contém — e o CSS de
+    `estilos.ts` faz o resto: o que pertence ganha peso, o que não pertence
+    recua. "Vale do Rio Real" acende `--ap-vale`, que é outra coisa: o recorte
+    inteiro volta ao primeiro plano, com todos os lugares no mesmo nível.
+
+    O município vem de `municipioId`, a relação declarada; nenhuma relação
+    espacial é inferida do desenho. Tudo isso é CSS: sem JavaScript o realce
+    continua, e sem `:has()` a página só perde o realce.
   */
+  const lugaresPorMunicipio = new Map<string, string[]>();
+  for (const l of posicionados) {
+    if (l.municipioId === null) continue;
+    lugaresPorMunicipio.set(l.municipioId, [
+      ...(lugaresPorMunicipio.get(l.municipioId) ?? []),
+      l.id,
+    ]);
+  }
   const css = [
     `.tv{--tv-placa-proporcao:${(vw / (vista.y1 - vista.y0)).toFixed(4)};--tv-quadro-proporcao:${(qw / qh).toFixed(4)};--tv-vale-proporcao:${(cw / ch).toFixed(4)};--tv-quadro-escala:${(qw / cw).toFixed(4)};--tv-quadro-x:${(((quadro.x0 - caixaDoVale.x0) / cw) * 100).toFixed(3)}%;--tv-quadro-y:${(((quadro.y0 - caixaDoVale.y0) / ch) * 100).toFixed(3)}%}`,
+    `.tv:has(.tv-faixa [data-tv-ir="vale"]:is(:hover,:focus-visible)){--ap-vale:1}`,
+    `.tv-faixa [data-tv-ir="vale"]{--eu:var(--ap-vale,0)}`,
     ...posicionados.map(
       (l) =>
-        `.tv:has([data-tv-ir="${l.id}"]:is(:hover,:focus-visible)) .tv-geral [data-pin="${l.id}"],.tv-geral [data-pin="${l.id}"]:hover{--tv-pin-realce:1}` +
-        `.tv:has(.tv-geral [data-pin="${l.id}"]:hover) [data-tv-ir="${l.id}"]{--tv-faixa-realce:1}`,
+        `.tv:has(.tv-faixa [data-tv-ir="${l.id}"]:is(:hover,:focus-visible)),.tv:has(.tv-geral [data-pin="${l.id}"]:is(:hover,:active)){--ap:1;--ap-${l.id}:1}` +
+        `.tv-geral [data-pin="${l.id}"],.tv-faixa [data-tv-ir="${l.id}"]{--eu:var(--ap-${l.id},0)}`,
+    ),
+    ...[...lugaresPorMunicipio].map(
+      ([codigo, ids]) =>
+        `.tv-geral [data-codigo="${codigo}"]{--eu:max(${ids.map((id) => `var(--ap-${id},0)`).join(",")})}`,
     ),
   ].join("\n");
 
@@ -256,7 +281,7 @@ export function TerritorioVivo({
             </p>
           </div>
 
-          <figure className="tv-geral">
+          <figure className="tv-geral" id="tv-carta">
             <div className="tv-geral__janela">
               <svg
                 aria-hidden="true"
@@ -287,6 +312,7 @@ export function TerritorioVivo({
                     .map((m) => (
                       <use
                         className="h"
+                        data-codigo={m.codigoIbge}
                         href={`#${idDoMunicipio(m.codigoIbge)}`}
                         key={`h-${m.codigoIbge}`}
                       />
@@ -304,6 +330,7 @@ export function TerritorioVivo({
                             ? "rm"
                             : "rm rm--fora"
                         }
+                        data-codigo={m.codigoIbge}
                         key={`rot-${m.codigoIbge}`}
                         textAnchor="middle"
                         x={n(c.cx + deslocamento[0] * fs)}
@@ -318,6 +345,9 @@ export function TerritorioVivo({
                 {/* Pins: ponta exatamente na coordenada confirmada. */}
                 {posicionados.map((l) => {
                   const lado = LADO_DO_ROTULO[l.id] ?? "direita";
+                  const xDoNome =
+                    lado === "direita" ? raioDoPin * 1.5 : -raioDoPin * 1.5;
+                  const municipioDoPin = nomeDe(l.municipioId);
                   return (
                     <a
                       className="tv-pin"
@@ -329,6 +359,30 @@ export function TerritorioVivo({
                       <g
                         transform={`translate(${l.xy[0].toFixed(3)} ${l.xy[1].toFixed(3)})`}
                       >
+                        {/*
+                          Alvo de toque: um círculo invisível de 44 px ou mais
+                          em volta da gota. A gota tem 13–18 px; sem ele,
+                          acertar o pin no celular era questão de sorte.
+                        */}
+                        <circle
+                          className="tv-pin__alvo"
+                          cy={-raioDoPin}
+                          r={raioDoPin * 3.6}
+                        />
+                        {/*
+                          Halo em dois traços, escuro por baixo e claro por
+                          cima: aparece sobre o milho do Vale e sobre a mesa.
+                        */}
+                        {["tv-pin__halo", "tv-pin__halo tv-pin__halo--luz"].map(
+                          (classe) => (
+                            <circle
+                              className={classe}
+                              cy={-2 * raioDoPin}
+                              key={classe}
+                              r={raioDoPin * 1.9}
+                            />
+                          ),
+                        )}
                         <g className="tv-pin__corpo">
                           <path className="forma" d={caminhoDoPin(raioDoPin)} />
                           <circle
@@ -340,15 +394,29 @@ export function TerritorioVivo({
                         <text
                           className="nome"
                           textAnchor={lado === "direita" ? "start" : "end"}
-                          x={
-                            lado === "direita"
-                              ? raioDoPin * 1.5
-                              : -raioDoPin * 1.5
-                          }
+                          x={xDoNome}
                           y={-2 * raioDoPin + fs * 0.4}
                         >
                           {l.nome}
                         </text>
+                        {/*
+                          Para quem está fora do recorte, a segunda linha diz
+                          onde fica. Ela ganha corpo quando o lugar é
+                          apontado; o mesmo fato está escrito na faixa e na
+                          prancha, então nada depende do ponteiro.
+                        */}
+                        {doRecorte(l) ? null : (
+                          <text
+                            className="tv-pin__fora"
+                            dy="1.2em"
+                            textAnchor="middle"
+                            x={0}
+                            y={raioDoPin * 0.4}
+                          >
+                            {municipioDoPin ?? "Município não publicado"} · fora
+                            do recorte
+                          </text>
+                        )}
                       </g>
                     </a>
                   );

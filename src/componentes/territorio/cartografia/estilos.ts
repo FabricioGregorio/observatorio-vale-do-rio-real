@@ -27,12 +27,19 @@
  * Nenhuma imagem usa `object-fit: cover`. A altura é limitada e a largura
  * acompanha a proporção original: a fotografia é documento.
  *
- * ## Movimento
+ * ## Interação e movimento
  *
- * Três, todos curtos: o pin cresce quando o lugar é apontado na faixa, a
- * camada local entra em fade quando chega, e o marcador da faixa desliza para
- * o capítulo em leitura. Sob `prefers-reduced-motion` a propriedade de
- * transição é anulada, e não só a duração.
+ * A carta responde a um estado só, "lugar apontado" (ver `TerritorioVivo`):
+ * o pin cresce e ganha halo, o nome acende, o município que contém o lugar
+ * ganha contorno claro, o resto recua sem sumir, e o item da faixa responde.
+ * Tudo por opacidade, cor, traço e transformações curtas — nada de zoom, pan
+ * ou animação contínua. Ao chegar a uma prancha, a rolagem é suave, um filete
+ * de milho marca o título por um instante e o "você está aqui" acende no
+ * mapa local e no localizador. A camada local entra em fade.
+ *
+ * Sob `prefers-reduced-motion` a propriedade de transição é anulada, e não só
+ * a duração; a rolagem fica imediata e a marca de destino fica parada. O
+ * realce continua: nenhum estado depende de animação.
  */
 export const CSS_DO_TERRITORIO_VIVO = `
 .tv{
@@ -71,6 +78,7 @@ export const CSS_DO_TERRITORIO_VIVO = `
   --tv-faixa:4.25rem;
   --tv-duracao:var(--duracao-revelacao);
   --tv-duracao-camada:calc(var(--duracao-revelacao) * 2.5);
+  --tv-realce:var(--duracao-hover-cabecalho);
   position:relative;
 }
 
@@ -111,7 +119,7 @@ export const CSS_DO_TERRITORIO_VIVO = `
 }
 .tv-abertura a{color:var(--tv-mesa-texto)}
 /* Sobre a mata, o anil do foco sumiria: milho é o foco das superfícies escuras. */
-.tv-abertura :is(a,summary):focus-visible{outline-color:var(--color-destaque)}
+.tv :is(.tv-abertura,.tv-faixa) :is(a,summary):focus-visible{outline-color:var(--color-destaque)}
 
 .tv-abertura__grade{
   display:grid;gap:1.5rem;
@@ -148,22 +156,60 @@ export const CSS_DO_TERRITORIO_VIVO = `
 .tv-geral .rm{
   font-family:var(--font-mono);font-size:var(--u-mun);font-weight:500;
   letter-spacing:.14em;text-transform:uppercase;fill:var(--color-carvao);pointer-events:none;
-  paint-order:stroke;stroke:var(--tv-vale);stroke-width:.4em;stroke-linejoin:round;
 }
-.tv-geral .rm--fora{fill:var(--color-anil-claro);stroke:var(--tv-mesa)}
-.tv-geral .tv-pin{cursor:pointer;--tv-pin-realce:0}
+.tv-geral .rm--fora{fill:var(--color-anil-claro);paint-order:stroke;stroke:var(--tv-mesa);stroke-width:.4em;stroke-linejoin:round}
+.tv-geral .tv-pin{cursor:pointer}
 .tv-geral .tv-pin:focus{outline:none}
+.tv-pin__alvo{fill:transparent;stroke:none}
 .tv-pin__corpo{
   transform-box:fill-box;transform-origin:50% 100%;
-  transform:scale(calc(1 + var(--tv-pin-realce) * .35));
-  transition:transform var(--duracao-hover) var(--easing-padrao);
+  transform:scale(calc(1 + var(--eu,0) * .4));
+  transition:transform var(--tv-realce) var(--easing-padrao);
 }
 .tv-geral .tv-pin .forma{fill:var(--color-pedra);stroke:var(--color-carvao);stroke-width:1.6px;vector-effect:non-scaling-stroke}
 .tv-geral .tv-pin .miolo{fill:var(--color-carvao)}
 .tv-geral .tv-pin .nome{
   font-family:var(--font-display);font-size:var(--u-pin);font-weight:600;letter-spacing:-.01em;
-  fill:var(--color-pedra);paint-order:stroke;stroke:var(--tv-mesa);stroke-width:.34em;stroke-linejoin:round;
+  fill:color-mix(in srgb,var(--color-destaque) calc(var(--eu,0) * 100%),var(--color-pedra));
+  paint-order:stroke;stroke:var(--tv-mesa);stroke-width:.34em;stroke-linejoin:round;
+  font-weight:calc(600 + var(--eu,0) * 100);
+  transition:fill var(--tv-realce) var(--easing-padrao);
 }
+.tv-pin__fora{
+  font-family:var(--font-mono);font-size:var(--u-mun);letter-spacing:.06em;
+  fill:var(--color-anil-claro);paint-order:stroke;stroke:var(--tv-mesa);stroke-width:.45em;stroke-linejoin:round;
+  opacity:calc(.72 + var(--eu,0) * .28);
+}
+
+/*
+  Lugar apontado. "--ap" diz que algum lugar está apontado; "--eu", que este
+  elemento pertence a ele. O que pertence ganha peso, o resto recua — sem
+  sumir: a carta continua legível inteira. "--ap-vale" traz o recorte à
+  frente, com todos os lugares no mesmo nível.
+*/
+.tv-geral :is(.m,.h,.rm,.tv-pin){
+  transition:opacity var(--tv-realce) var(--easing-padrao),stroke var(--tv-realce) var(--easing-padrao),stroke-width var(--tv-realce) var(--easing-padrao),fill var(--tv-realce) var(--easing-padrao);
+}
+.tv-geral :is(.m:not(.v),.rm--fora){--fora-do-vale:1}
+.tv-geral .m{opacity:calc(1 - .3 * var(--ap,0) * (1 - var(--eu,0)) - .45 * var(--ap-vale,0) * var(--fora-do-vale,0))}
+.tv-geral .rm--fora{opacity:calc(1 - .45 * var(--ap-vale,0))}
+.tv-geral .h{opacity:calc(.55 * (1 - .3 * var(--ap,0) * (1 - var(--eu,0))))}
+.tv-geral .m.v{
+  stroke:color-mix(in srgb,var(--color-pedra) calc(max(var(--eu,0),var(--ap-vale,0) * .8) * 100%),var(--tv-mesa));
+  stroke-width:calc(1.1px + 1.4px * max(var(--eu,0),var(--ap-vale,0) * .6));
+}
+.tv-geral .m.c{
+  fill:color-mix(in srgb,var(--color-anil-claro) calc(16% + 22% * var(--eu,0)),var(--tv-mesa));
+  stroke-width:calc(1.6px + 1.2px * var(--eu,0));
+}
+.tv-geral .tv-pin{opacity:calc(1 - .55 * var(--ap,0) * (1 - var(--eu,0)))}
+.tv-pin__halo{
+  fill:none;stroke:var(--tv-mesa);stroke-width:5px;vector-effect:non-scaling-stroke;
+  opacity:var(--eu,0);transform-box:fill-box;transform-origin:center;
+  transform:scale(calc(.55 + var(--eu,0) * .45));
+  transition:opacity var(--tv-realce) var(--easing-padrao),transform var(--tv-realce) var(--easing-padrao);
+}
+.tv-pin__halo--luz{stroke:var(--color-pedra);stroke-width:2px}
 .tv-geral__fixo path{fill:none;stroke:var(--tv-mesa-suave);stroke-width:1.2px;vector-effect:non-scaling-stroke}
 .tv-geral__fixo text{font-family:var(--font-mono);font-size:var(--u-fixo);fill:var(--tv-mesa-suave)}
 
@@ -194,7 +240,7 @@ export const CSS_DO_TERRITORIO_VIVO = `
 }
 .tv-faixa li + li{border-left:1px solid var(--tv-mesa-fio)}
 .tv-faixa a{
-  --tv-faixa-realce:0;
+  --tv-faixa-realce:var(--eu,0);
   display:grid;align-content:center;gap:.1rem;min-height:calc(var(--tv-faixa) - 2px);min-width:44px;
   padding:.55rem .9rem .55rem 1rem;text-decoration:none;color:var(--tv-mesa-texto);
   box-shadow:inset 0 3px 0 0 transparent;
@@ -202,7 +248,11 @@ export const CSS_DO_TERRITORIO_VIVO = `
   transition:box-shadow var(--duracao-painel) var(--easing-padrao),background-color var(--duracao-hover) var(--easing-padrao);
 }
 .tv-faixa a:hover{--tv-faixa-realce:1}
-.tv-faixa .nome{font-family:var(--font-display);font-weight:600;font-size:var(--text-base);line-height:1.15;letter-spacing:-.01em}
+.tv-faixa .nome{
+  font-family:var(--font-display);font-weight:600;font-size:var(--text-base);line-height:1.15;letter-spacing:-.01em;
+  text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.22em;
+  text-decoration-color:color-mix(in srgb,var(--color-pedra) calc(var(--tv-faixa-realce) * 70%),transparent);
+}
 .tv-faixa .meta{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);color:var(--tv-mesa-suave)}
 .tv-faixa [data-fora] .meta{color:var(--color-anil-claro)}
 /* Capítulo em leitura: filete de milho no topo e o nome sublinhado — forma, e não só cor. */
@@ -361,9 +411,50 @@ export const CSS_DO_TERRITORIO_VIVO = `
 .tv-localizador .m.v{fill:var(--tv-vale);stroke:var(--tv-limite);stroke-width:.6}
 .tv-localizador .m.c{fill:none;stroke:var(--color-anil);stroke-width:1;stroke-dasharray:2 1.5}
 .tv-localizador .janela{fill:color-mix(in srgb,var(--color-carvao) 12%,transparent);stroke:var(--color-carvao);stroke-width:1.4px;vector-effect:non-scaling-stroke}
-.tv-localizador .ponto{fill:var(--tv-pin);stroke:var(--color-branco);stroke-width:1px;vector-effect:non-scaling-stroke}
+.tv-localizador .ponto{fill:var(--tv-pin);stroke:var(--color-branco);stroke-width:1px;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center}
+/*
+  Você está aqui. Quando a prancha entra em leitura, a janela do localizador
+  ganha a cor do pin e o anel acende em volta da gota no mapa ao lado — os
+  dois dizem a mesma coisa em escalas diferentes.
+*/
+.tv-localizador{transform-origin:0 0;transition:transform var(--tv-realce) var(--easing-padrao)}
+.tv-localizador:hover{transform:scale(1.6)}
+.tv-localizador :is(.janela,.ponto){transition:fill var(--tv-realce) var(--easing-padrao),stroke var(--tv-realce) var(--easing-padrao),transform var(--tv-realce) var(--easing-padrao)}
+.tv-prancha[data-em-leitura] .tv-localizador .janela{fill:color-mix(in srgb,var(--tv-pin) 28%,transparent);stroke:var(--tv-pin);stroke-width:2px}
+.tv-prancha[data-em-leitura] .tv-localizador .ponto{transform:scale(1.35)}
+.tv-carta__halo .anel{fill:none;stroke:var(--color-carvao);stroke-width:5px;vector-effect:non-scaling-stroke}
+.tv-carta__halo .tv-carta__halo--luz{stroke:var(--tv-pin-selecionado);stroke-width:2.5px}
+.tv-carta__halo{
+  --anel:0;opacity:var(--anel);pointer-events:none;
+  transition:opacity var(--duracao-painel) var(--easing-padrao);
+}
+.tv-carta__halo .anel{transform-box:fill-box;transform-origin:center;transform:scale(calc(1.5 - var(--anel) * .5));transition:transform var(--duracao-painel) var(--easing-entrada)}
+.tv-prancha[data-em-leitura] .tv-carta__halo{--anel:1}
+/* A ficha de localização aponta para o mesmo ponto: o anel engrossa. */
+.tv-prancha:has(.tv-ficha :is(a,summary,.coordenada):is(:hover,:focus-visible)) .tv-carta__halo{--anel:1}
+.tv-prancha:has(.tv-ficha :is(a,summary,.coordenada):is(:hover,:focus-visible)) .tv-carta__halo--luz{stroke-width:4px}
 
 .tv-carta figcaption{display:grid;gap:.35rem;max-width:none}
+
+/* --- Chegada a um capítulo ---------------------------------------------- */
+
+/* O link continua sendo link: a rolagem só fica suave, e só para quem não pediu menos movimento. */
+@media (prefers-reduced-motion:no-preference){
+  html:has(#territorio-vivo){scroll-behavior:smooth}
+}
+/*
+  Destino marcado por um instante: um filete de milho sob o título, que se
+  apaga sozinho. Com movimento reduzido ele fica, parado, enquanto o
+  capítulo for o destino.
+*/
+@keyframes tv-chegada{
+  from{box-shadow:inset 0 -.14em 0 0 var(--color-destaque)}
+  to{box-shadow:inset 0 -.14em 0 0 transparent}
+}
+.tv :is(.tv-prancha,.tv-vale):target h2{animation:tv-chegada 2.2s var(--easing-saida) .45s both}
+
+.tv-prancha__voltar{display:none;grid-area:voltar}
+.tv-prancha__voltar a{display:inline-flex;align-items:center;min-height:2.75rem;font-family:var(--font-display);font-weight:600;color:var(--color-link)}
 .tv-carta__escala{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);color:var(--color-texto)}
 .tv-carta__escala .nivel{text-transform:uppercase;letter-spacing:.12em;color:var(--color-texto-suave)}
 .tv-carta .tv-fonte a{color:inherit;text-decoration:underline}
@@ -455,7 +546,7 @@ export const CSS_DO_TERRITORIO_VIVO = `
   /* O quadro fecha no Vale: a carta inteira encolheria o recorte a um terço. */
   .tv-geral__janela{aspect-ratio:var(--tv-vale-proporcao);overflow:hidden;margin-inline:calc(var(--tv-gutter) * -.5)}
   .tv-geral__svg{position:absolute;width:calc(100% * var(--tv-quadro-escala));left:var(--tv-quadro-x);top:var(--tv-quadro-y)}
-  .tv-geral{--u-pin:16px;--u-mun:10.5px;--u-fixo:10px}
+  .tv-geral{--u-pin:15px;--u-mun:10.5px;--u-fixo:10px}
   .tv-geral__fixo{display:none}
   .tv-geral__fora{display:block}
   .tv-faixa{position:relative;top:auto}
@@ -463,7 +554,8 @@ export const CSS_DO_TERRITORIO_VIVO = `
   .tv-faixa li:first-child{padding-left:calc(var(--tv-gutter) - 1rem)}
   .tv-faixa a{padding-inline:1rem}
   .tv [id]{scroll-margin-top:calc(var(--tv-topo) + .5rem)}
-  .tv-prancha__grade{grid-template-areas:"cab" "retrato" "leitura" "carta" "contato" "ficha"}
+  .tv-prancha__grade{grid-template-areas:"cab" "retrato" "leitura" "carta" "contato" "ficha" "voltar"}
+  .tv-prancha__voltar{display:block}
   .tv-retrato img{max-height:none;width:100%}
   .tv{--tv-h-contato:9.5rem}
   .tv-situacao{grid-template-columns:6rem minmax(0,1fr)}
@@ -568,6 +660,7 @@ export const CSS_DO_TERRITORIO_VIVO = `
 
 @media (prefers-reduced-motion:reduce){
   .tv *,.tv *::before,.tv *::after{transition-property:none !important;animation:none !important}
+  .tv :is(.tv-prancha,.tv-vale):target h2{box-shadow:inset 0 -.14em 0 0 var(--color-destaque)}
 }
 `
   // Os comentários servem a quem lê este arquivo; o HTML servido não os leva.
