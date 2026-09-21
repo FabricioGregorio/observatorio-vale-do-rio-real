@@ -18,11 +18,11 @@ describe("navegação do site", () => {
   test("o menu segue os sete itens e a ordem aprovados", () => {
     expect(MENU_PRINCIPAL).toEqual([
       { href: "/observatorio", rotulo: "O Observatório" },
+      { href: "/podobservar", rotulo: "PodObservar" },
       { href: "/pesquisa", rotulo: "A Pesquisa" },
       { href: "/territorio", rotulo: "Território" },
       { href: "/dados", rotulo: "Dados" },
       { href: "/campo", rotulo: "Diário de Campo" },
-      { href: "/podobservar", rotulo: "PodObservar" },
       { href: "/acervo", rotulo: "Acervo" },
     ]);
   });
@@ -86,8 +86,9 @@ describe("fiação da Home pública", () => {
 
 /**
  * A barra superior é do layout raiz e serve todas as rotas. Os sete destinos
- * continuam presentes, mas três vivem no painel de Conteúdos, para separar
- * navegação principal de acervo editorial.
+ * continuam presentes, mas dois vivem no painel de Conteúdos, para separar
+ * navegação principal de acervo editorial. O PodObservar saiu do painel e é
+ * item de primeiro nível desde 2026-09-21.
  */
 describe("cabeçalho do site", () => {
   const cabecalho = readFileSync(

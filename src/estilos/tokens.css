@@ -173,7 +173,11 @@
   --hero-acento-editorial: var(--color-observatorio-claro);
   --hero-texto-sobre-acento: var(--color-carvao);
   --topo-espaco-editorial: 1rem;
-  --topo-padding-link: 0.75rem 0.5rem;
+  /* Com o PodObservar no primeiro nível (2026-09-21), a navegação larga ganhou
+     um item. Espaço entre links e respiro lateral encolhem para que o nome do
+     Observatório não invada o primeiro link; corpo e peso do texto não mudam. */
+  --topo-espaco-nav: 0.5rem;
+  --topo-padding-link: 0.75rem 0.375rem;
   --topo-padding-mobile: 0.75rem;
   --topo-marca-largura: 12rem;
   --topo-botao-mobile: 5rem;

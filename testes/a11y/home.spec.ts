@@ -119,15 +119,17 @@ test.describe("Home", () => {
     });
     for (const destino of [
       "/observatorio",
+      "/podobservar",
       "/pesquisa",
       "/territorio",
       "/dados",
     ]) {
       await expect(nav.locator(`a[href="${destino}"]`)).toHaveCount(1);
     }
-    await expect(nav.getByRole("link")).toHaveCount(4);
+    await expect(nav.getByRole("link")).toHaveCount(5);
     await nav.getByRole("button", { name: /Conteúdos/ }).click();
-    for (const destino of ["/campo", "/podobservar", "/acervo"]) {
+    await expect(nav.locator('a[href="/podobservar"]')).toHaveCount(1);
+    for (const destino of ["/campo", "/acervo"]) {
       await expect(nav.locator(`a[href="${destino}"]`)).toHaveCount(1);
     }
     await expect(nav.locator('a[href="/educacao"]')).toHaveCount(0);

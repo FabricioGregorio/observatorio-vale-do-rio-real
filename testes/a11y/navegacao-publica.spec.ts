@@ -4,6 +4,7 @@ import { DESCRICOES_DE_CONTEUDO } from "../../src/lib/navegacao";
 
 const ITENS_PRINCIPAIS = [
   ["O Observatório", "/observatorio"],
+  ["PodObservar", "/podobservar"],
   ["A Pesquisa", "/pesquisa"],
   ["Território", "/territorio"],
   ["Dados", "/dados"],
@@ -11,7 +12,6 @@ const ITENS_PRINCIPAIS = [
 
 const ITENS_DE_CONTEUDO = [
   ["Diário de Campo", "/campo"],
-  ["PodObservar", "/podobservar"],
   ["Acervo", "/acervo"],
 ] as const;
 
@@ -68,7 +68,7 @@ for (const largura of [320, 375, 768, 900, 1024, 1280, 1440]) {
       });
       await expect(menu).toBeVisible();
       const links = menu.getByRole("link");
-      await expect(links).toHaveCount(4);
+      await expect(links).toHaveCount(5);
       expect(await links.allTextContents()).toEqual(
         ITENS_PRINCIPAIS.map(([rotulo]) => rotulo),
       );
@@ -77,7 +77,7 @@ for (const largura of [320, 375, 768, 900, 1024, 1280, 1440]) {
       const painel = page.locator(
         `[id="${await conteudos.getAttribute("aria-controls")}"]`,
       );
-      await expect(painel.getByRole("link")).toHaveCount(3);
+      await expect(painel.getByRole("link")).toHaveCount(2);
       expect(await painel.getByRole("link").allTextContents()).toEqual(
         ITENS_DE_CONTEUDO.map(textoDoLink),
       );
@@ -146,3 +146,64 @@ test("equivalente a 1440px com zoom 200% usa a navegação estreita sem overflow
     ),
   ).toBe(true);
 });
+
+/**
+ * Desde 2026-09-21 o PodObservar é item de primeiro nível. Nas páginas do
+ * podcast, é ele quem marca a página atual — e "Conteúdos" não, porque o
+ * PodObservar não pertence mais ao painel.
+ */
+for (const rota of [
+  "/podobservar",
+  "/podobservar/t1/03-conheca-o-museu-borda-da-mata",
+]) {
+  test(`PodObservar marca a página atual em ${rota}`, async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(rota);
+    const menu = page.getByRole("navigation", {
+      name: "Principal",
+      exact: true,
+    });
+    await expect(
+      menu.getByRole("link", { name: "PodObservar", exact: true }),
+    ).toHaveAttribute("aria-current", "page");
+    await expect(menu.locator(".hl-conteudos")).not.toHaveAttribute(
+      "data-ativo",
+    );
+
+    await page.setViewportSize({ width: 375, height: 900 });
+    await page.getByRole("button", { name: "Menu", exact: true }).click();
+    await expect(
+      page
+        .getByRole("navigation", { name: "Principal (telas estreitas)" })
+        .getByRole("link", { name: "PodObservar", exact: true }),
+    ).toHaveAttribute("aria-current", "page");
+  });
+}
+
+/**
+ * Com seis entradas na navegação larga, o nome do Observatório chegou a
+ * invadir o primeiro link. O teste de overflow não pega isso: nada sai da
+ * janela, uma caixa só passa por cima da outra.
+ */
+for (const largura of [1280, 1440]) {
+  test(`marca, navegação e utilidades não colidem em ${largura}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: largura, height: 900 });
+    await page.goto("/");
+    const caixas = await page.evaluate(() => {
+      const direita = (seletor: string) =>
+        document.querySelector(seletor)?.getBoundingClientRect().right ?? 0;
+      const esquerda = (seletor: string) =>
+        document.querySelector(seletor)?.getBoundingClientRect().left ?? 0;
+      return {
+        fimDaMarca: direita(".hl-topo__marca span"),
+        inicioDaNav: esquerda(".hl-topo__nav > ul > li > a"),
+        fimDaNav: direita(".hl-conteudos__gatilho"),
+        inicioDasUtilidades: esquerda(".hl-topo__util"),
+      };
+    });
+    expect(caixas.fimDaMarca).toBeLessThan(caixas.inicioDaNav);
+    expect(caixas.fimDaNav).toBeLessThan(caixas.inicioDasUtilidades);
+  });
+}

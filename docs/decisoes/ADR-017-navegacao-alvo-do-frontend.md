@@ -192,3 +192,23 @@ A implementação permanece condicionada à validação do cabeçalho em 320, 37
 768, 900, 1024, 1280 e 1440 px, a 200% de zoom e por teclado. Se os sete itens
 não couberem sem sobreposição, overflow, abreviação ou redução artificial da
 fonte, a integração deve parar para nova decisão humana.
+
+## Emenda — 2026-09-21
+
+Por decisão humana, o **PodObservar** passa a item de primeiro nível da
+navegação larga, à direita de "O Observatório" e à esquerda de "A Pesquisa", e
+deixa o painel "Conteúdos". Ordem visível no cabeçalho largo:
+
+```
+O Observatório · PodObservar · A Pesquisa · Território · Dados · Conteúdos
+```
+
+O painel "Conteúdos" passa a conter só `Diário de Campo` e `Acervo`. O menu de
+telas estreitas segue a mesma ordem lógica. O PodObservar tem uma única entrada
+de navegação, e é ele — não "Conteúdos" — que marca a página atual em
+`/podobservar` e nas páginas de episódio.
+
+Para caber sem sobreposição, o espaço entre links e o respiro lateral de cada
+link encolheram (`--topo-espaco-nav`, `--topo-padding-link`); corpo, peso e
+fonte do texto não mudaram. Validado em 320, 375, 768, 900, 1024, 1280 e
+1440 px e a 200% de zoom.

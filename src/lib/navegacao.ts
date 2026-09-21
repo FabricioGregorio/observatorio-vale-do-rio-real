@@ -9,14 +9,22 @@ export type ItemNavegacao = {
   readonly rotulo: string;
 };
 
-/** Menu principal (ADR-017, emenda de 2026-09-15). Sete itens, nesta ordem. */
+/**
+ * Menu principal (ADR-017, emendas de 2026-09-15 e 2026-09-21). Sete itens,
+ * nesta ordem.
+ *
+ * Desde 2026-09-21, por decisão humana, o PodObservar é item de primeiro
+ * nível, logo depois de "O Observatório", e não pertence mais ao painel
+ * "Conteúdos". O que vai para o painel é decidido por
+ * `DESCRICOES_DE_CONTEUDO`, não pela posição aqui.
+ */
 export const MENU_PRINCIPAL: readonly ItemNavegacao[] = [
   { href: "/observatorio", rotulo: "O Observatório" },
+  { href: "/podobservar", rotulo: "PodObservar" },
   { href: "/pesquisa", rotulo: "A Pesquisa" },
   { href: "/territorio", rotulo: "Território" },
   { href: "/dados", rotulo: "Dados" },
   { href: "/campo", rotulo: "Diário de Campo" },
-  { href: "/podobservar", rotulo: "PodObservar" },
   { href: "/acervo", rotulo: "Acervo" },
 ] as const;
 
@@ -47,7 +55,6 @@ export const MENU_INSTITUCIONAL: readonly ItemNavegacao[] = [
  */
 export const DESCRICOES_DE_CONTEUDO = {
   "/campo": "Registros das visitas e do trabalho em território",
-  "/podobservar": "A pesquisa em áudio, com transcrição de cada episódio",
   "/acervo": "Fotografias, documentos e memória",
 } as const;
 
