@@ -108,12 +108,19 @@ Custos:
   | desktop 1440×900 DPR1 — normativo | 486.726 B | **488.412 B** | +1.686 B |
   | mobile 375×900 DPR2 — normativo | 443.610 B | **445.296 B** | +1.686 B |
 
-  O número local **subestima a produção**: `next start` responde 404 em
-  `/_vercel/insights/script.js` e o 404 custa 300 B, enquanto o script real
-  pesa 1.604 B comprimido. Somando a diferença e o beacon de visualização, a
-  projeção de produção é de cerca de **490.000 B** em desktop DPR1 — cerca de
-  10.000 B de folga. A conferência contra o domínio real é obrigatória depois
-  do deploy.
+  O número local **não previa bem a produção**, e a projeção feita antes do
+  deploy errou para cima. Medido contra `observatoriotobiassoueu.com.br` no
+  deployment `dpl_6RzbwKXaHaoNwMwpK7FsCbgrZuMZ`, cinco cargas frias, já com o
+  analytics carregando:
+
+  | Perfil | Local | **Produção** | Folga até o teto |
+  |---|---|---|---|
+  | desktop DPR1 | 488.412 B | **471.472 B** | 28.528 B |
+  | mobile DPR2 | 445.296 B | **428.356 B** | 71.644 B |
+
+  A produção é mais leve que o `next start` local porque a borda serve os
+  ativos em brotli. O analytics em si custa o script, servido uma vez e
+  cacheado, mais **302 B** por beacon de visualização.
 - Um dado de audiência passa a existir em infraestrutura de terceiro. Ele é
   agregado e não reidentificável, mas não está sob custódia do projeto.
 - Dependência nova em `package.json`.
@@ -135,3 +142,34 @@ Arquivos ou módulos afetados:
 - `src/app/privacidade/page.tsx` — `description` e nota de revisão
 - `testes/analytics-privacidade.test.ts` — trava a instrumentação única e a
   coerência entre o que o código faz e o que a página declara
+
+## Verificação pós-deploy — 2026-09-21
+
+Publicado em `dpl_6RzbwKXaHaoNwMwpK7FsCbgrZuMZ`, target production, com os
+aliases `observatoriotobiassoueu.com.br` e `www`. Baseline de rollback:
+`dpl_J7jvSfz16vD5HhGxrjtafN1VwaM7`.
+
+**O caminho do script não é `/_vercel/insights/script.js`.** A versão 2 usa
+*Resilient Intake*: a Vercel gera uma semente por build e o SDK monta com ela a
+URL do script e a de intake. Em produção o par observado é
+`/f7dea17ae34d952c/script.js` e `/f7dea17ae34d952c/view` — mesma origem, mas
+sem a palavra `insights` no caminho. Quem for auditar isto no futuro não deve
+procurar por `insights` no DOM: não vai achar, e vai concluir errado que a
+medição não está ativa.
+
+Conferido nas quatro rotas navegadas — `/`, `/podobservar`, `/territorio`,
+`/dados`:
+
+| Verificação | Resultado |
+|---|---|
+| Tags de script injetadas | **1** por página, nenhuma duplicação |
+| Beacon de visualização | **1** por rota, 302 B |
+| `window.va` / `window.vam` | função / `production` |
+| `document.cookie` | **vazio** |
+| `localStorage` / `sessionStorage` | **vazios** |
+| `X-Robots-Tag` em produção | **ausente**, como deve |
+| `robots.txt` | `Allow: /`, `Disallow: /dev/` |
+
+As três linhas de armazenamento são a prova direta do que `/privacidade`
+passou a afirmar. Elas foram medidas no domínio real, não deduzidas da
+documentação do fornecedor.
