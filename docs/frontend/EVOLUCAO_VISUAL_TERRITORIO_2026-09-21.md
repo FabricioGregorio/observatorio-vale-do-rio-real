@@ -148,6 +148,20 @@ público, a tarefa 28 e este relatório. Os documentos protegidos,
 do stage. O lote de `/dados` é separado.
 
 Commits de base: `e6687bc` (composição), `8640e80` (voz pública), confirmados
-na branch remota autorizada por `git ls-remote`. O commit complementar e o
-resultado do push serão informados no encerramento. Nenhum Preview, Production,
-Vercel ou avanço de main foi executado.
+na branch remota autorizada por `git ls-remote`. Commit complementar:
+`3ecca9f`, com a correção do link e a matriz de testes. Push concluído para
+`origin/exp/home-v2-territorio-vivo`, de `8640e80` até `e4ebeb2`, incluindo os
+commits separados de `/dados`. A documentação recebe um commit de encerramento
+separado. Nenhum Preview, Production, Vercel ou avanço de main foi executado.
+
+### Índice das capturas finais
+
+| Largura | Vale | Equipamento | Serra dos Macacos | Ilha Grande |
+|---|---|---|---|---|
+| 1440 | [Vale](../../tmp/territorio-visual/final-1440-vale-claro.png) | [Recanto](../../tmp/territorio-visual/final-1440-recanto-claro.png) | [Serra](../../tmp/territorio-visual/final-1440-serra-claro.png) | [Ilha](../../tmp/territorio-visual/final-1440-ilha-claro.png) |
+| 768 | [Vale](../../tmp/territorio-visual/final-768-vale-claro.png) | [Recanto](../../tmp/territorio-visual/final-768-recanto-claro.png) | [Serra](../../tmp/territorio-visual/final-768-serra-claro.png) | [Ilha](../../tmp/territorio-visual/final-768-ilha-claro.png) |
+| 375 | [Vale](../../tmp/territorio-visual/final-375-vale-claro.png) | [Recanto](../../tmp/territorio-visual/final-375-recanto-claro.png) | [Serra](../../tmp/territorio-visual/final-375-serra-claro.png) | [Ilha](../../tmp/territorio-visual/final-375-ilha-claro.png) |
+
+Ilha Grande no tema escuro: [1440 px](../../tmp/territorio-visual/final-1440-ilha-escuro.png),
+[768 px](../../tmp/territorio-visual/final-768-ilha-escuro.png),
+[375 px](../../tmp/territorio-visual/final-375-ilha-escuro.png).
