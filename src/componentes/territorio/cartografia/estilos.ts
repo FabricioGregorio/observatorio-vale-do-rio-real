@@ -1,65 +1,54 @@
 /**
  * Estilos da Cartografia Viva.
  *
- * ## Tokens locais da Cartografia
+ * ## Três materiais
  *
- * Os papéis globais de `tokens.css` não mudam. Os nomes locais (`--tv-*`)
- * reutilizam a paleta da Home. A geometria mantém pedra, milho, mata, anil e
- * barro nos dois temas; moldura, sombra e controles acompanham o tema.
+ * - **A mesa** — a abertura, escura nos dois temas, como o Hero da Home. Nela
+ *   a carta não é uma placa: o território é desenhado direto sobre a mesa, e
+ *   o que fica fora de Sergipe é a própria mesa, sem papel. O Vale acende em
+ *   milho; o resto do estado é sombra; São Cristóvão, em traço anil.
+ * - **O papel** — as pranchas e o capítulo do Vale, na superfície de leitura
+ *   do site (e no escuro, a do tema escuro).
+ * - **A placa** — o mapa de cada prancha, papel claro nos dois temas. A
+ *   geometria é invariante de tema desde a Fase H0; o que é vazado sobre o
+ *   mapa usa `--tv-sinal`, o mesmo branco.
  *
- * No escuro, a separação entre mapa e fundo **não depende de preto**: a placa
- * ganha borda mais clara e um filete interno claro.
+ * ## Símbolos
  *
- * ## Placa e papel são coisas diferentes
+ * - **Lugar da pesquisa:** pin em gota, com a ponta na coordenada.
+ * - **Vale:** preenchimento em milho. **Pesquisa de campo:** hachura.
+ *   **Comparação:** traço anil tracejado. Nenhuma informação só por cor.
+ * - Nas pranchas, a camada local mantém o vocabulário de antes: localidade do
+ *   lugar em anel tracejado, referência IBGE em quadrado vazado com rótulo
+ *   explícito, sede em quadrado cheio, rodovia com casco.
  *
- * `--tv-plano` é a **placa** — o fundo do quadro, que acompanha o tema — e só
- * o quadro pode usá-la. O que é vazado *sobre o mapa* (escudo de rodovia,
- * quadrado de localidade, núcleo da referência, miolo do pin) é papel, não
- * placa, e usa `--tv-sinal`. A distinção não existia enquanto a geometria
- * também acompanhava o tema; passou a existir quando ela virou invariante,
- * como em `estilosDoMapa.ts` (Fase H0). `--tv-sinal` é exatamente o valor que
- * `--tv-plano` já resolvia no tema claro, então o claro não muda — o escuro
- * deixa de pintar de noite os sinais que deveriam ser vazados.
+ * ## Fotografia sem corte
  *
- * Pela mesma razão, a rosa dos ventos e a barra de escala ganham casco claro:
- * elas são anotações da placa e podem cair fora da malha.
+ * Nenhuma imagem usa `object-fit: cover`. A altura é limitada e a largura
+ * acompanha a proporção original: a fotografia é documento.
  *
- * ## Símbolos (Tarefas 18, 19 e 28)
+ * ## Movimento
  *
- * - **Lugar da pesquisa:** pin em gota. Selecionado: maior, milho, contorno
- *   grosso e etiqueta com "▸" — forma, contorno e texto, não só cor.
- * - **Janela do mapa detalhado:** retângulo vazado com o envelope real do
- *   derivado local. Selecionado: traço mais grosso e opacidade cheia.
- * - **Localidade do lugar (IBGE):** quadrado em anel tracejado, sem milho.
- * - **Referência cartográfica próxima (IBGE):** quadrado vazado e rótulo
- *   explícito; nunca substitui o pin.
- * - **Sede:** quadrado cheio. **Outras localidades:** quadrado vazado.
- * - **Rodovia:** traço grosso com casco; estrada vicinal, traço fino e claro,
- *   para não competir com o pin.
- *
- * Nenhuma informação só por cor: Vale é preenchimento, pesquisa de campo é
- * hachura, foco é espessura, selecionado é forma mais marca textual.
- *
- * ## Composição (Tarefa 28)
- *
- * A página é uma carta, e uma carta tem margem. A abertura traz o mapa de
- * situação e a informação de margem; a régua declara as três escalas; a placa
- * leva o mapa grande com o índice territorial ao lado; o dossiê ocupa a
- * largura inteira em duas colunas, narrativa e aparato documental. Não há
- * coluna vazia esperando a outra rolar.
+ * Três, todos curtos: o pin cresce quando o lugar é apontado na faixa, a
+ * camada local entra em fade quando chega, e o marcador da faixa desliza para
+ * o capítulo em leitura. Sob `prefers-reduced-motion` a propriedade de
+ * transição é anulada, e não só a duração.
  */
 export const CSS_DO_TERRITORIO_VIVO = `
 .tv{
-  --tv-plano:var(--color-fundo-elevado);
+  --tv-mesa:var(--color-mata);
+  --tv-mesa-funda:color-mix(in srgb,var(--color-mata) 72%,var(--color-noite));
+  --tv-mesa-texto:var(--color-pedra);
+  --tv-mesa-suave:color-mix(in srgb,var(--color-pedra) 80%,var(--color-mata));
+  --tv-mesa-fio:color-mix(in srgb,var(--color-pedra) 22%,transparent);
+  --tv-sombra-terra:color-mix(in srgb,var(--color-pedra) 8%,var(--color-mata));
+  --tv-sombra-limite:color-mix(in srgb,var(--color-pedra) 26%,var(--color-mata));
+  --tv-plano:var(--color-branco);
   --tv-sinal:var(--color-branco);
-  --tv-borda-plano:color-mix(in srgb,var(--color-texto) 22%,var(--color-fundo));
-  --tv-filete:color-mix(in srgb,var(--color-texto) 0%,transparent);
-  --tv-sombra:color-mix(in srgb,var(--color-carvao) 16%,transparent);
   --tv-terra:var(--color-pedra);
   --tv-vale:var(--color-milho);
   --tv-hachura:var(--color-mata);
   --tv-limite:var(--color-mata);
-  --tv-limite-externo:var(--color-carvao-suave);
   --tv-stroke-interno:var(--color-carvao-suave);
   --tv-rotulo:var(--color-carvao);
   --tv-pin:var(--color-barro);
@@ -67,7 +56,6 @@ export const CSS_DO_TERRITORIO_VIVO = `
   --tv-pin-selecionado:var(--color-destaque);
   --tv-pin-selecionado-texto:var(--color-texto-sobre-destaque);
   --tv-contorno-foco:var(--color-mata);
-  --tv-hover:color-mix(in srgb,var(--color-marca) 14%,var(--color-fundo-elevado));
   --tv-local-municipio:color-mix(in srgb,var(--color-milho) 14%,var(--color-pedra));
   --tv-via-rodovia:var(--color-carvao);
   --tv-via-casco:var(--color-pedra);
@@ -76,119 +64,335 @@ export const CSS_DO_TERRITORIO_VIVO = `
   --tv-agua:var(--color-anil);
   --tv-localidade:var(--color-carvao);
   --tv-fio:color-mix(in srgb,var(--color-borda-forte) 45%,var(--color-fundo));
-  --tv-papel:color-mix(in srgb,var(--color-fundo) 95%,var(--color-marca));
-  --tv-respiro:clamp(2.25rem,5vw,3.75rem);
-  --tv-duracao:calc(var(--duracao-painel) * 2.75);
-  --tv-duracao-local:calc(var(--duracao-painel) * 4.5);
-  max-width:var(--largura-conteudo);margin-inline:auto;padding:clamp(1.5rem,4vw,3rem) clamp(1rem,4vw,3rem) clamp(3rem,7vw,6rem);
-}
-@media (prefers-color-scheme:dark){
-  :root:not([data-tema="claro"]) .tv{
-    --tv-borda-plano:color-mix(in srgb,var(--color-texto) 42%,var(--color-fundo));
-    --tv-filete:color-mix(in srgb,var(--color-texto) 14%,transparent);
-    --tv-sombra:color-mix(in srgb,var(--color-carvao) 70%,transparent);
-    --tv-hover:color-mix(in srgb,var(--color-marca) 24%,var(--color-fundo-elevado));
-  }
-}
-:root[data-tema="escuro"] .tv{
-  --tv-borda-plano:color-mix(in srgb,var(--color-texto) 42%,var(--color-fundo));
-  --tv-filete:color-mix(in srgb,var(--color-texto) 14%,transparent);
-  --tv-sombra:color-mix(in srgb,var(--color-carvao) 70%,transparent);
-  --tv-hover:color-mix(in srgb,var(--color-marca) 24%,var(--color-fundo-elevado));
+  --tv-fora:color-mix(in srgb,var(--color-fundo) 91%,var(--color-anil));
+  --tv-gutter:clamp(1rem,4.5vw,4rem);
+  --tv-respiro:clamp(3rem,6vw,5.5rem);
+  --tv-topo:var(--altura-cabecalho);
+  --tv-faixa:4.25rem;
+  --tv-duracao:var(--duracao-revelacao);
+  --tv-duracao-camada:calc(var(--duracao-revelacao) * 2.5);
+  position:relative;
 }
 
 .tv ul,.tv ol{list-style:none;margin:0;padding:0}
-.tv p{margin:0}
-.tv a{color:var(--color-link)}
-.tv__nota a{text-decoration:underline}
+.tv :where(p,dl,dd,figure,blockquote,h1,h2,h3){margin:0}
+.tv-defs{position:absolute;width:0;height:0;overflow:hidden}
+.tv [id]{scroll-margin-top:calc(var(--tv-topo) + var(--tv-faixa) + .5rem)}
 
-/* --- Abertura: título, mapa de situação e informação de margem ------------ */
+.tv-sobrescrito{
+  font-family:var(--font-mono);font-size:var(--text-xs);font-weight:500;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--color-texto-suave);
+}
+.tv-fonte{
+  display:block;font-family:var(--font-mono);font-size:var(--text-xs);
+  letter-spacing:var(--tracking-mono);line-height:1.5;color:var(--color-texto-suave);
+}
+.tv-nota{font-size:var(--text-sm);line-height:1.55;color:var(--color-texto-suave)}
+.tv .lacuna{font-family:var(--font-mono);font-size:var(--text-sm);letter-spacing:var(--tracking-mono);color:var(--color-texto-suave);border-left:3px solid var(--color-borda-forte);padding:.35rem 0 .35rem .8rem}
 
-.tv__abertura{display:grid;gap:clamp(1.5rem,4vw,2.5rem);align-items:end;padding-bottom:var(--tv-respiro)}
-.tv__abertura-texto{display:grid;gap:.75rem;align-content:end;min-width:0}
-.tv__abertura h1{margin:0;font-size:clamp(var(--text-3xl),7vw,var(--text-5xl));line-height:.95;max-width:11ch}
-.tv__lead{max-width:40ch;font-size:clamp(var(--text-base),2.2vw,var(--text-lg));line-height:1.45}
-.tv__instrucao{max-width:44ch;font-size:var(--text-sm);color:var(--color-texto-suave)}
+/* =========================================================================
+   A MALHA — os mesmos papéis em toda superfície de papel
+   ========================================================================= */
 
-.tv__situacao{display:grid;gap:1rem;margin:0;min-width:0;align-content:end}
-.tv__escala-territorial{display:flex;align-items:flex-end;gap:1rem;margin:0;padding:0}
-.tv__escala-territorial svg{display:block;flex:none;width:clamp(5rem,14vw,7.5rem);height:auto}
-.tv__escala-territorial figcaption{display:grid;gap:.2rem;font-size:var(--text-sm);min-width:0}
-.tv__escala-territorial strong{font-family:var(--font-display)}
-/* A referência estadual mostra 1000 unidades de projeção em ~110 px: sem traço
-   de espessura de tela, o contorno do Vale e o tracejado de São Cristóvão
-   ficam abaixo de 0,2 px e o texto ao lado apontaria para o que não se vê. O
-   prefixo .tv é o que vence a especificidade das regras da placa. */
-.tv .tv__escala-territorial .m{stroke-width:.5;vector-effect:non-scaling-stroke}
-.tv .tv__escala-territorial .m.v{stroke-width:1}
-.tv .tv__escala-territorial .m.c{stroke-width:1.5;stroke-dasharray:2 1.5}
-.tv .tv__escala-territorial .h{fill:url(#tv-hachura-estado)}
-
-/* Informação de margem: o que a carta cobre, em pares curtos. */
-.tv__carta{display:grid;gap:0;margin:0;border-top:2px solid var(--color-marca)}
-.tv__carta>div{display:grid;gap:.1rem;padding-block:.5rem;border-bottom:1px solid var(--tv-fio)}
-.tv__carta dt{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);text-transform:uppercase;color:var(--color-texto-suave)}
-.tv__carta dd{margin:0;min-width:0;font-size:var(--text-sm);text-wrap:pretty}
-
-/* --- Régua de escala ------------------------------------------------------ */
-
-/*
-  Três degraus, e o traço que os liga. A posição do marcador vem de
-  "--tv-passo", escrito pelas regras de estado geradas no componente: sem
-  JavaScript ele fica no recorte, que é a escala da visão geral.
-*/
-.tv__regua{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto auto auto;gap:.15rem 1rem;padding-top:1.1rem;border-top:1px solid var(--tv-fio)}
-.tv__regua::before{content:"";position:absolute;top:0;left:0;width:100%;height:2px;background:var(--tv-fio)}
-.tv__regua::after{content:"";position:absolute;top:-2px;left:0;width:calc(100% / 3);height:6px;background:var(--color-marca);transform:translateX(calc((var(--tv-passo) - 1) * 100%));transition:transform var(--tv-duracao) var(--easing-padrao)}
-.tv__regua li{display:grid;grid-row:span 3;grid-template-rows:subgrid;gap:.15rem;align-content:start;min-width:0}
-.tv__regua-nivel{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);text-transform:uppercase;color:var(--color-texto-suave)}
-.tv__regua-nome{font-family:var(--font-display);font-weight:600;font-size:var(--text-base);text-wrap:balance}
-.tv__regua-medida{font-family:var(--font-mono);font-size:var(--text-xs);line-height:1.4;letter-spacing:var(--tracking-mono);color:var(--color-texto-suave)}
-.tv__regua [data-foco]{display:none}
-/* A marca de escala em uso é texto, e não só a barra colorida acima. */
-.tv__regua .sel{font-family:var(--font-mono);font-weight:400;font-size:var(--text-xs);letter-spacing:var(--tracking-mono);color:var(--color-marca)}
-.tv__regua li:not([data-passo="recorte"]) .sel{display:none}
-.tv[data-foco]:not([data-foco="vale"]):not([data-foco="sem-local"]) .tv__regua li[data-passo="recorte"] .sel{display:none}
-.tv[data-foco]:not([data-foco="vale"]):not([data-foco="sem-local"]) .tv__regua li[data-passo="lugar"] .sel{display:inline}
-.tv__regua li[data-passo="estado"]{opacity:.72}
-
-/* --- Placa do mapa e índice territorial ----------------------------------- */
-
-.tv__grade{display:grid;gap:clamp(1.25rem,3vw,2rem);margin-top:var(--tv-respiro)}
-.tv__mapa{margin:0;display:grid;gap:.6rem;min-width:0}
-.tv__plano{position:relative;overflow:hidden;background:var(--tv-plano);border:1px solid var(--tv-borda-plano);border-radius:var(--radius-ficha);box-shadow:inset 0 1px 0 var(--tv-filete),0 1.25rem 2.5rem -1.5rem var(--tv-sombra)}
-.tv__plano{aspect-ratio:var(--tv-proporcao-mapa,1)}
-.tv__plano svg{display:block;width:100%;height:100%}
-.tv__aparato{display:grid;gap:.5rem;min-width:0}
-.tv-mundo{transform-box:view-box;transform-origin:0 0;transform:translate(var(--tv-tx),var(--tv-ty)) scale(var(--tv-s));transition-property:transform,opacity;transition-duration:var(--tv-duracao);transition-timing-function:var(--easing-padrao),linear}
-.tv .m{fill:var(--tv-terra);stroke:var(--tv-stroke-interno);stroke-width:.5;vector-effect:non-scaling-stroke;transition:opacity var(--tv-duracao) var(--easing-padrao)}
-.tv .m.v{fill:var(--tv-vale);stroke:var(--tv-limite);stroke-width:1.4}
+.tv .m{fill:var(--tv-terra);stroke:var(--tv-stroke-interno);stroke-width:.5}
+.tv .m.v{fill:var(--tv-vale);stroke:var(--tv-limite);stroke-width:1.2}
 .tv .m.c{stroke:var(--color-anil);stroke-width:1.4;stroke-dasharray:5 2.5}
-.tv .h{fill:url(#tv-hachura);stroke:none;pointer-events:none;transition:opacity var(--tv-duracao) var(--easing-padrao)}
+.tv .h{fill:url(#tv-hachura);stroke:none;pointer-events:none}
 .tv #tv-hachura line{stroke:var(--tv-hachura)}
-.tv .anel{fill:none;stroke:var(--tv-contorno-foco);stroke-width:3;stroke-dasharray:7 4;vector-effect:non-scaling-stroke;opacity:0;transition:opacity var(--tv-duracao) var(--easing-padrao)}
-/* Janela do mapa detalhado: o envelope real do derivado local. */
-.tv-janela{fill:none;stroke:var(--tv-contorno-foco);stroke-width:1.2;stroke-dasharray:6 3;vector-effect:non-scaling-stroke;opacity:.5;pointer-events:none;transition-property:opacity,stroke-width;transition-duration:var(--tv-duracao);transition-timing-function:var(--easing-padrao)}
-.tv-rot{opacity:0;transition:opacity var(--tv-duracao) var(--easing-padrao);pointer-events:none}
-.tv-rot text,.tv-fixo text,.tv-pin text{font-family:var(--font-display)}
-.tv-rot text{fill:var(--tv-rotulo);font-weight:600;paint-order:stroke;stroke:var(--color-pedra);stroke-linejoin:round}
-.tv-contagem text{font-family:var(--font-mono);font-weight:400}
-.tv-fixo text{fill:var(--tv-rotulo);paint-order:stroke;stroke:var(--tv-terra);stroke-width:.3em;stroke-linejoin:round}
-.tv-fixo line,.tv-fixo path{stroke:var(--tv-rotulo);fill:none}
-.tv-fixo .casco{stroke:var(--tv-terra);stroke-linecap:round;stroke-linejoin:round}
-.tv-fixo .escala{opacity:0}
-.tv-semlocal{opacity:0;transition:opacity var(--tv-duracao) var(--easing-padrao)}
-.tv-semlocal rect{fill:var(--tv-sinal);stroke:var(--tv-limite-externo)}
 
-/* Pins na malha: a ponta marca a localização do lugar */
-.tv-pin{pointer-events:none}
-.tv-pin .forma{fill:var(--tv-pin);stroke:var(--tv-pin-texto);stroke-width:1.5px;vector-effect:non-scaling-stroke}
-.tv-pin .miolo{fill:var(--tv-pin-texto)}
-.tv-pin .nome{opacity:0;font-weight:600;fill:var(--tv-rotulo);paint-order:stroke;stroke:var(--color-pedra);stroke-linejoin:round;transition:opacity var(--tv-duracao) var(--easing-padrao)}
-.tv-pin .sel{display:none}
+/* =========================================================================
+   A ABERTURA — a carta sobre a mesa
+   ========================================================================= */
 
-/* Camada local: outra representação, carregada sob demanda */
-.tv-local{opacity:0;pointer-events:none;transform-box:view-box;transform-origin:0 0;transition-property:transform,opacity;transition-duration:var(--tv-duracao-local),calc(var(--tv-duracao-local) * .3);transition-timing-function:var(--easing-padrao),linear}
+.tv-abertura{
+  overflow:hidden;
+  background:var(--tv-mesa);color:var(--tv-mesa-texto);
+  --color-texto-suave:var(--tv-mesa-suave);
+}
+.tv-abertura a{color:var(--tv-mesa-texto)}
+/* Sobre a mata, o anil do foco sumiria: milho é o foco das superfícies escuras. */
+.tv-abertura :is(a,summary):focus-visible{outline-color:var(--color-destaque)}
+
+.tv-abertura__grade{
+  display:grid;gap:1.5rem;
+  max-width:var(--largura-cabecalho);margin-inline:auto;
+  padding:clamp(2rem,5vw,3rem) var(--tv-gutter) 1.5rem;
+}
+.tv-abertura__texto{display:grid;gap:1rem;align-content:start;min-width:0}
+.tv-abertura h1{
+  font-size:clamp(3.35rem,14.5vw,7.25rem);
+  line-height:.86;letter-spacing:-.045em;font-weight:600;
+  max-width:8ch;text-wrap:balance;
+}
+.tv-abertura__lead{
+  max-width:34ch;font-size:clamp(var(--text-base),1.6vw,var(--text-lg));
+  line-height:1.5;color:var(--tv-mesa-suave);
+}
+.tv-abertura__sintese{
+  display:flex;flex-wrap:wrap;gap:.15rem .5rem;max-width:34ch;
+  font-family:var(--font-mono);font-size:var(--text-sm);letter-spacing:var(--tracking-mono);
+  color:var(--tv-mesa-texto);
+  padding-top:.85rem;border-top:1px solid var(--tv-mesa-fio);
+}
+
+/* --- A carta geral ------------------------------------------------------- */
+
+.tv-geral{display:grid;gap:.9rem;min-width:0}
+.tv-geral__janela{position:relative;min-width:0}
+.tv-geral__svg{display:block;width:100%;height:auto;overflow:hidden}
+.tv-geral{--u-pin:13px;--u-mun:8.5px;--u-fixo:8px}
+.tv-geral .m{fill:var(--tv-sombra-terra);stroke:var(--tv-sombra-limite);stroke-width:.7}
+.tv-geral .m.v{fill:var(--tv-vale);stroke:var(--tv-mesa);stroke-width:1.1}
+.tv-geral .m.c{fill:color-mix(in srgb,var(--color-anil-claro) 16%,var(--tv-mesa));stroke:var(--color-anil-claro);stroke-width:1.6;stroke-dasharray:5 3}
+.tv-geral .h{opacity:.55}
+.tv-geral .rm{
+  font-family:var(--font-mono);font-size:var(--u-mun);font-weight:500;
+  letter-spacing:.14em;text-transform:uppercase;fill:var(--color-carvao);pointer-events:none;
+  paint-order:stroke;stroke:var(--tv-vale);stroke-width:.4em;stroke-linejoin:round;
+}
+.tv-geral .rm--fora{fill:var(--color-anil-claro);stroke:var(--tv-mesa)}
+.tv-geral .tv-pin{cursor:pointer;--tv-pin-realce:0}
+.tv-geral .tv-pin:focus{outline:none}
+.tv-pin__corpo{
+  transform-box:fill-box;transform-origin:50% 100%;
+  transform:scale(calc(1 + var(--tv-pin-realce) * .35));
+  transition:transform var(--duracao-hover) var(--easing-padrao);
+}
+.tv-geral .tv-pin .forma{fill:var(--color-pedra);stroke:var(--color-carvao);stroke-width:1.6px;vector-effect:non-scaling-stroke}
+.tv-geral .tv-pin .miolo{fill:var(--color-carvao)}
+.tv-geral .tv-pin .nome{
+  font-family:var(--font-display);font-size:var(--u-pin);font-weight:600;letter-spacing:-.01em;
+  fill:var(--color-pedra);paint-order:stroke;stroke:var(--tv-mesa);stroke-width:.34em;stroke-linejoin:round;
+}
+.tv-geral__fixo path{fill:none;stroke:var(--tv-mesa-suave);stroke-width:1.2px;vector-effect:non-scaling-stroke}
+.tv-geral__fixo text{font-family:var(--font-mono);font-size:var(--u-fixo);fill:var(--tv-mesa-suave)}
+
+.tv-geral figcaption{display:grid;gap:.5rem;justify-items:start}
+.tv-legenda{
+  display:flex;flex-wrap:wrap;gap:.35rem 1.1rem;
+  font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);
+  color:var(--color-texto-suave);
+}
+.tv-legenda li{display:flex;align-items:center;gap:.45rem}
+.tv-amostra{display:inline-block;width:1.05rem;height:.75rem;background:var(--tv-vale);border:1px solid var(--tv-limite)}
+.tv-amostra--campo{background:repeating-linear-gradient(45deg,var(--tv-vale),var(--tv-vale) .15rem,var(--tv-hachura) .15rem,var(--tv-hachura) .25rem)}
+.tv-amostra--comparacao{background:transparent;border:2px dashed var(--color-anil-claro)}
+.tv-amostra--pin{display:inline-block;width:.7rem;height:.7rem;margin-inline:.2rem;background:var(--color-pedra);border:1.5px solid var(--color-carvao);border-radius:50% 50% 50% 0;transform:rotate(-45deg)}
+.tv-geral__fonte{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);color:var(--color-texto-suave)}
+.tv-geral__fora{display:none;font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);color:var(--color-anil-claro)}
+
+/* --- A faixa dos lugares ------------------------------------------------- */
+
+.tv-faixa{
+  position:sticky;top:var(--tv-topo);z-index:calc(var(--z-cabecalho) - 1);
+  background:var(--tv-mesa-funda);color:var(--tv-mesa-texto);
+  border-top:1px solid var(--tv-mesa-fio);border-bottom:1px solid var(--tv-mesa-fio);
+}
+.tv-faixa ul{
+  display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);
+  max-width:var(--largura-cabecalho);margin-inline:auto;padding-inline:var(--tv-gutter);
+}
+.tv-faixa li + li{border-left:1px solid var(--tv-mesa-fio)}
+.tv-faixa a{
+  --tv-faixa-realce:0;
+  display:grid;align-content:center;gap:.1rem;min-height:calc(var(--tv-faixa) - 2px);min-width:44px;
+  padding:.55rem .9rem .55rem 1rem;text-decoration:none;color:var(--tv-mesa-texto);
+  box-shadow:inset 0 3px 0 0 transparent;
+  background:color-mix(in srgb,var(--color-pedra) calc(var(--tv-faixa-realce) * 8%),transparent);
+  transition:box-shadow var(--duracao-painel) var(--easing-padrao),background-color var(--duracao-hover) var(--easing-padrao);
+}
+.tv-faixa a:hover{--tv-faixa-realce:1}
+.tv-faixa .nome{font-family:var(--font-display);font-weight:600;font-size:var(--text-base);line-height:1.15;letter-spacing:-.01em}
+.tv-faixa .meta{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);color:var(--tv-mesa-suave)}
+.tv-faixa [data-fora] .meta{color:var(--color-anil-claro)}
+/* Capítulo em leitura: filete de milho no topo e o nome sublinhado — forma, e não só cor. */
+.tv-faixa a[aria-current]{box-shadow:inset 0 3px 0 0 var(--color-destaque);background:color-mix(in srgb,var(--color-pedra) 7%,transparent)}
+.tv-faixa a[aria-current] .nome{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:.22em;text-decoration-color:var(--color-destaque)}
+
+/* =========================================================================
+   O VALE — o primeiro capítulo
+   ========================================================================= */
+
+.tv-vale{padding:var(--tv-respiro) var(--tv-gutter);border-bottom:1px solid var(--tv-fio)}
+.tv-vale__grade{
+  max-width:var(--largura-cabecalho);margin-inline:auto;
+  display:grid;gap:clamp(2rem,4vw,3.5rem);
+  grid-template-areas:"cab" "leitura" "recorte" "situacao";
+}
+.tv-vale__cab{grid-area:cab;display:grid;gap:.6rem}
+.tv-vale h2,.tv-prancha h2{
+  font-size:clamp(2.6rem,7vw,5.25rem);line-height:.92;letter-spacing:-.04em;font-weight:600;
+  text-wrap:balance;
+}
+.tv-vale__leitura{grid-area:leitura;display:grid;gap:2.25rem;align-content:start}
+.tv-vale__frase{
+  font-family:var(--font-leitura);font-size:clamp(1.45rem,3vw,2.3rem);line-height:1.28;
+  letter-spacing:-.01em;max-width:28ch;text-wrap:pretty;
+}
+.tv-vale__notas{display:grid;gap:1.75rem;max-width:var(--largura-leitura)}
+.tv h3{
+  font-family:var(--font-mono);font-size:var(--text-xs);font-weight:500;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--color-texto-suave);
+  margin-bottom:.6rem;
+}
+.tv-vale__notas p{font-size:var(--text-base);line-height:1.65;max-width:60ch}
+
+.tv-vale__recorte{grid-area:recorte;display:grid;align-content:start;gap:.2rem}
+.tv-municipios{border-top:2px solid var(--color-texto)}
+.tv-municipios li{
+  display:grid;grid-template-columns:2.6rem minmax(0,1fr) auto;align-items:center;gap:.85rem;
+  padding:.55rem 0;border-bottom:1px solid var(--tv-fio);
+}
+.tv-silhueta{width:2.6rem;height:2.6rem;display:block}
+.tv-silhueta .m.v{stroke-width:1}
+.tv-municipios .nome{font-family:var(--font-display);font-weight:600;font-size:var(--text-lg);letter-spacing:-.01em}
+.tv-municipios .estado{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);color:var(--color-texto-suave);text-align:right}
+.tv-municipios [data-campo] .estado{color:var(--color-texto)}
+.tv-vale__recorte .tv-nota{margin-top:.8rem;max-width:52ch}
+
+.tv-situacao{grid-area:situacao;display:grid;grid-template-columns:minmax(6rem,9rem) minmax(0,1fr);gap:1.1rem;align-items:end;align-self:start}
+.tv-situacao svg{display:block;width:100%;height:auto}
+.tv-situacao .m{fill:var(--color-pedra-borda);stroke:var(--color-fundo);stroke-width:.4}
+.tv-situacao .m.v{fill:var(--tv-vale);stroke:var(--tv-limite);stroke-width:.6}
+.tv-situacao .m.c{fill:var(--color-pedra-borda);stroke:var(--color-anil);stroke-width:1;stroke-dasharray:2 1.5}
+.tv-situacao__quadro{fill:none;stroke:var(--color-texto);stroke-width:1px;stroke-dasharray:3 2;vector-effect:non-scaling-stroke}
+.tv-situacao figcaption{display:grid;gap:.3rem;font-size:var(--text-sm);line-height:1.5;color:var(--color-texto-suave)}
+.tv-situacao strong{font-family:var(--font-display);color:var(--color-texto);font-size:var(--text-base)}
+
+/* =========================================================================
+   AS PRANCHAS
+   ========================================================================= */
+
+.tv-prancha{padding:var(--tv-respiro) var(--tv-gutter);border-bottom:1px solid var(--tv-fio)}
+.tv-prancha[data-fora]{background:var(--tv-fora);border-top:2px dashed var(--color-link)}
+.tv-prancha__grade{
+  max-width:var(--largura-cabecalho);margin-inline:auto;
+  display:grid;gap:clamp(1.75rem,3.5vw,2.75rem);
+  grid-template-columns:minmax(0,1fr);
+  grid-template-areas:"cab" "retrato" "leitura" "carta" "contato" "ficha";
+}
+.tv-prancha__cab{grid-area:cab;display:grid;gap:.7rem;align-content:start}
+.tv-prancha[data-fora] .tv-prancha__cab .tv-sobrescrito{color:var(--color-link)}
+.tv-prancha__nome-completo{font-family:var(--font-leitura);font-style:italic;font-size:var(--text-lg);color:var(--color-texto-suave)}
+
+.tv-retrato{grid-area:retrato;display:grid;gap:.6rem;justify-items:start;min-width:0}
+.tv-retrato img{display:block;width:auto;height:auto;max-width:100%;max-height:min(78svh,44rem)}
+.tv figcaption{font-size:var(--text-sm);line-height:1.45;color:var(--color-texto-suave);max-width:46ch}
+.tv figcaption .credito,.tv figcaption .pendencia{display:block;font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono)}
+
+.tv-prancha__leitura{grid-area:leitura;display:grid;gap:2.25rem;align-content:start;min-width:0}
+.tv-prancha__relato{display:grid;gap:.8rem;border-left:3px solid var(--color-marca);padding-left:clamp(1rem,2vw,1.5rem)}
+.tv-prancha__relato p{font-family:var(--font-leitura);font-size:clamp(1.2rem,2.1vw,1.6rem);line-height:1.42;max-width:34ch;text-wrap:pretty}
+
+.tv-registros dl{display:flex;flex-wrap:wrap;gap:1.25rem 2.5rem;border-top:2px solid var(--color-texto);padding-top:1rem}
+.tv-registros dl > div{display:flex;flex-direction:column-reverse;gap:.25rem}
+.tv-registros dd{font-family:var(--font-display);font-weight:var(--peso-numeral);font-size:clamp(var(--text-2xl),3.6vw,var(--text-4xl));line-height:1;letter-spacing:-.03em;color:var(--color-marca);font-variant-numeric:tabular-nums}
+.tv-registros dt{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);color:var(--color-texto-suave);max-width:22ch}
+.tv-registros .tv-fonte{margin-top:.7rem}
+
+.tv-evidencias ul{border-top:1px solid var(--tv-fio)}
+.tv-evidencias li{border-bottom:1px solid var(--tv-fio)}
+.tv-evidencias :is(a,span){display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:2.75rem;padding:.35rem 0;font-family:var(--font-display);font-weight:500}
+.tv-evidencias a{color:var(--color-link);text-decoration:none}
+.tv-evidencias a::after{content:"→";font-family:var(--font-mono);transition:transform var(--duracao-hover) var(--easing-padrao)}
+.tv-evidencias a:hover{text-decoration:underline;text-underline-offset:.2em}
+.tv-evidencias a:hover::after{transform:translateX(.25rem)}
+
+/* Prova de contato: altura única, largura da proporção original, sem corte. */
+.tv-contato{grid-area:contato;min-width:0}
+.tv-contato__folha{display:flex;flex-wrap:wrap;gap:1.5rem 1.25rem;align-items:flex-start}
+/* A figura tem a largura da imagem; a legenda quebra dentro dela, sem alargá-la. */
+.tv-contato__foto{display:grid;gap:.45rem}
+.tv-contato__foto img{display:block;height:var(--tv-h-contato,13rem);width:auto;max-width:none}
+.tv-contato__foto figcaption{font-size:var(--text-xs);line-height:1.45;contain:inline-size}
+
+.tv-ficha{grid-area:ficha;border-top:1px solid var(--tv-fio);border-bottom:1px solid var(--tv-fio);max-width:44rem}
+.tv-ficha summary{
+  display:flex;align-items:center;gap:.6rem;min-height:2.75rem;cursor:pointer;
+  font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.12em;text-transform:uppercase;
+  list-style:none;
+}
+.tv-ficha summary::-webkit-details-marker{display:none}
+.tv-ficha summary::before{content:"+";font-size:var(--text-base);width:1rem;text-align:center}
+.tv-ficha[open] summary::before{content:"−"}
+.tv-ficha__corpo{display:grid;gap:1rem;padding:.25rem 0 1.25rem}
+.tv-ficha .coordenada{font-family:var(--font-mono);font-size:var(--text-base);letter-spacing:var(--tracking-mono)}
+.tv-ficha dl{display:grid;gap:.75rem}
+.tv-ficha dt{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);color:var(--color-texto-suave)}
+.tv-ficha dd{font-size:var(--text-sm);line-height:1.5}
+.tv-ficha__rota ul{display:flex;flex-wrap:wrap;gap:.5rem}
+.tv-ficha__rota a{display:inline-flex;align-items:center;min-height:2.75rem;padding:0 .9rem;border:1px solid var(--color-borda-forte);font-family:var(--font-display);font-size:var(--text-sm);text-decoration:none;color:var(--color-link)}
+.tv-ficha__rota a:hover{background:color-mix(in srgb,var(--color-marca) 10%,transparent)}
+.tv-ficha__rota .tv-fonte{margin-top:.5rem}
+
+/* --- O mapa da prancha --------------------------------------------------- */
+
+.tv-carta{grid-area:carta;display:grid;gap:.7rem;align-content:start;min-width:0}
+.tv-carta__placa{
+  position:relative;container-type:inline-size;
+  width:min(100%,calc((100svh - var(--tv-topo) - var(--tv-faixa) - 7rem) * var(--tv-placa-proporcao)));
+  min-width:min(100%,17rem);
+  aspect-ratio:var(--tv-placa-proporcao);
+  background:var(--tv-plano);
+  border:1px solid color-mix(in srgb,var(--color-carvao) 22%,var(--color-branco));
+  box-shadow:0 1.25rem 2.5rem -1.75rem color-mix(in srgb,var(--color-carvao) 55%,transparent);
+  overflow:hidden;
+}
+.tv-carta__placa > svg[role="img"]{display:block;width:100%;height:100%}
+.tv-carta__papel{fill:var(--tv-terra)}
+.tv-carta__base .m{fill:var(--tv-terra);stroke:var(--tv-stroke-interno);stroke-width:.6}
+.tv-carta__base .m.v{fill:var(--tv-local-municipio);stroke:var(--tv-limite);stroke-width:2}
+.tv-carta__base .m.c{fill:var(--tv-terra);stroke:var(--color-anil);stroke-width:2;stroke-dasharray:8 4}
+.tv-carta__pin .forma{fill:var(--tv-pin-selecionado);stroke:var(--tv-contorno-foco);stroke-width:2.5px;vector-effect:non-scaling-stroke}
+.tv-carta__pin .miolo{fill:var(--tv-contorno-foco)}
+.tv-carta__pin text{font-family:var(--font-display);font-weight:700;font-size:13px;fill:var(--tv-rotulo);paint-order:stroke;stroke:var(--color-pedra);stroke-width:.32em;stroke-linejoin:round}
+.tv-carta__fixo text{font-family:var(--font-display);fill:var(--tv-rotulo);paint-order:stroke;stroke:var(--tv-terra);stroke-width:.3em;stroke-linejoin:round}
+.tv-carta__fixo path{stroke:var(--tv-rotulo);fill:none}
+.tv-carta__fixo .casco{stroke:var(--tv-terra);stroke-linecap:round;stroke-linejoin:round}
+.tv-carta :is(.tv-carta__base,.tv-carta__pin){transition:opacity var(--tv-duracao-camada) var(--easing-padrao)}
+.tv-carta[data-camada="local"] :is(.tv-carta__base,.tv-carta__pin){opacity:0}
+
+.tv-localizador{
+  position:absolute;left:.6rem;top:.6rem;width:clamp(4.5rem,24cqi,7.5rem);height:auto;
+  background:color-mix(in srgb,var(--color-pedra) 94%,transparent);
+  border:1px solid color-mix(in srgb,var(--color-carvao) 30%,var(--color-pedra));
+  padding:.25rem;
+}
+.tv-localizador .m.v{fill:var(--tv-vale);stroke:var(--tv-limite);stroke-width:.6}
+.tv-localizador .m.c{fill:none;stroke:var(--color-anil);stroke-width:1;stroke-dasharray:2 1.5}
+.tv-localizador .janela{fill:color-mix(in srgb,var(--color-carvao) 12%,transparent);stroke:var(--color-carvao);stroke-width:1.4px;vector-effect:non-scaling-stroke}
+.tv-localizador .ponto{fill:var(--tv-pin);stroke:var(--color-branco);stroke-width:1px;vector-effect:non-scaling-stroke}
+
+.tv-carta figcaption{display:grid;gap:.35rem;max-width:none}
+.tv-carta__escala{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);color:var(--color-texto)}
+.tv-carta__escala .nivel{text-transform:uppercase;letter-spacing:.12em;color:var(--color-texto-suave)}
+.tv-carta .tv-fonte a{color:inherit;text-decoration:underline}
+.tv-carta__legenda summary{
+  display:inline-flex;align-items:center;gap:.4rem;min-height:2.75rem;cursor:pointer;
+  font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.12em;text-transform:uppercase;color:var(--color-texto)
+}
+.tv-carta__legenda summary{list-style:none}
+.tv-carta__legenda summary::-webkit-details-marker{display:none}
+.tv-carta__legenda summary::before{content:"+";font-size:var(--text-base);width:1rem;text-align:center}
+.tv-carta__legenda[open] summary::before{content:"−"}
+.tv-carta__legenda ul{
+  display:flex;flex-wrap:wrap;gap:.4rem 1rem;padding:.35rem 0 .25rem;
+  font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);color:var(--color-texto-suave);
+}
+.tv-carta__legenda li{display:flex;align-items:center;gap:.45rem}
+.tv-carta__legenda .tv-amostra,.tv-carta__legenda .tv-amostra--pin,.tv-carta__legenda .tv-traco{box-shadow:0 0 0 2px var(--tv-terra)}
+.tv-carta__legenda .tv-amostra--pin{background:var(--tv-pin-selecionado);border-color:var(--tv-contorno-foco)}
+.tv-amostra--referencia{width:.6rem;height:.6rem;background:var(--tv-sinal);border:1.5px solid var(--tv-localidade);outline:1.5px dashed var(--tv-contorno-foco);outline-offset:2px}
+.tv-amostra--sede{width:.6rem;height:.6rem;background:var(--tv-localidade);border-color:var(--tv-localidade)}
+.tv-amostra--localidade{width:.6rem;height:.6rem;background:var(--tv-sinal);border:1.5px solid var(--tv-localidade)}
+.tv-traco{display:inline-block;width:1.5rem;height:0;border-top:3px solid var(--tv-via-rodovia)}
+.tv-traco--agua{border-top-width:2px;border-top-color:var(--tv-agua)}
+.tv-carta--sem-posicao{align-content:center;min-height:12rem}
+
+/* --- Camada local, servida sob demanda ----------------------------------- */
+
+.tv-local{opacity:0;transition:opacity var(--tv-duracao-camada) var(--easing-padrao)}
+.tv-carta[data-camada="local"] .tv-local{opacity:1}
 .tv-local .fundo{fill:var(--tv-terra)}
 .tv-local .mun{fill:var(--tv-terra);stroke:none}
 .tv-local .mun.v{fill:var(--tv-local-municipio)}
@@ -220,190 +424,153 @@ export const CSS_DO_TERRITORIO_VIVO = `
 .tv-local text.pin-rotulo{font-family:var(--font-display);font-weight:600;fill:var(--tv-rotulo);paint-order:stroke;stroke:var(--color-pedra);stroke-width:.3em;stroke-linejoin:round}
 .tv-local .pin-rotulo.selecionado rect{fill:var(--tv-pin-selecionado);stroke:var(--tv-contorno-foco);stroke-width:1.5;vector-effect:non-scaling-stroke}
 .tv-local .pin-rotulo.selecionado text{font-family:var(--font-display);font-weight:700;fill:var(--tv-pin-selecionado-texto)}
-
-.tv__legenda{display:flex;flex-wrap:wrap;gap:.4rem 1.1rem;font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);color:var(--color-texto-suave)}
-.tv__legenda li{display:flex;align-items:center;gap:.45rem}
-/* Cada amostra é um pedaço da folha, e leva o chão de papel junto — é o que a
-   legenda da Home já faz ao assentar toda amostra sobre pedra. Sem esse chão,
-   sinal em carvão, mata ou anil sumiria no tema escuro, porque a geometria do
-   mapa é invariante de tema e o fundo da página não. No claro o chão coincide
-   com o fundo e não se vê. */
-.tv__amostra,.tv__amostra--pin,.tv__traco{box-shadow:0 0 0 2px var(--tv-terra)}
-.tv__amostra{display:inline-block;width:1.1rem;height:.8rem;border:1px solid var(--tv-limite);background:var(--tv-vale)}
-.tv__amostra--estado{border-color:var(--color-carvao-suave);background:var(--color-pedra)}
-.tv__amostra--campo{background:repeating-linear-gradient(45deg,var(--tv-vale),var(--tv-vale) .15rem,var(--tv-hachura) .15rem,var(--tv-hachura) .25rem)}
-.tv__amostra--comparacao{border:2px dashed var(--color-anil);background:var(--color-pedra)}
-.tv__amostra--janela{width:.9rem;height:.9rem;border:1.5px dashed var(--tv-contorno-foco);background:var(--color-pedra)}
-.tv__amostra--pin{display:inline-block;width:.7rem;height:.7rem;margin-inline:.2rem;background:var(--tv-pin);border-radius:50% 50% 50% 0;transform:rotate(-45deg)}
-.tv__amostra--referencia{width:.6rem;height:.6rem;background:var(--tv-sinal);border:1.5px solid var(--tv-localidade);outline:1.5px dashed var(--tv-contorno-foco);outline-offset:2px}
-.tv__amostra--sede{width:.6rem;height:.6rem;background:var(--tv-localidade);border-color:var(--tv-localidade)}
-.tv__amostra--localidade{width:.6rem;height:.6rem;background:var(--tv-sinal);border:1.5px solid var(--tv-localidade)}
-.tv__traco{display:inline-block;width:1.5rem;height:0;border-top:3px solid var(--tv-via-rodovia)}
-.tv__traco--terra{border-top-style:dashed}
-.tv__traco--estrada{border-top:1px solid var(--tv-via-estrada)}
-.tv__traco--agua{border-top:2px solid var(--tv-agua)}
-.tv__traco--limite{border-top:2px dashed var(--tv-limite)}
-.tv__nota{max-width:60ch;font-size:var(--text-xs);line-height:1.55;color:var(--color-texto-suave)}
-.tv__legenda--local,.tv__nota--local{display:none}
-.tv[data-escala="local"] .tv__legenda--local{display:flex}
-.tv[data-escala="local"] .tv__nota--local{display:block}
-.tv[data-escala="local"] .tv__legenda--geral,.tv[data-escala="local"] .tv__nota--geral{display:none}
-
-/* --- Índice territorial --------------------------------------------------- */
-
-.tv__trilha{display:grid;gap:.75rem;align-content:start;min-width:0}
-.tv__trilha-cab{display:grid;gap:.2rem}
-.tv__trilha h2{margin:0;font-size:var(--text-xl)}
-.tv__trilha-cab>p:last-child{max-width:44ch;font-size:var(--text-sm);color:var(--color-texto-suave)}
-.tv__trilha ul{display:grid;gap:.3rem;margin-top:.35rem}
 /*
-  Filete de agrupamento: lugares do mesmo município se encostam. O fato em
-  palavras já está no parágrafo acima da lista, então o filete é reforço, e
-  nunca a única forma de saber que eles se relacionam.
+  Na placa estreita cada unidade do SVG vale pouco: os nomes de "outras
+  localidades" cairiam para ~7 px. Eles saem; povoados, referência e códigos
+  de rodovia sobem, porque são o que orienta.
 */
-.tv__trilha li[data-municipio]{position:relative;padding-left:.85rem}
-.tv__trilha li[data-municipio]::before{content:"";position:absolute;left:.25rem;top:0;bottom:0;width:2px;background:var(--tv-fio)}
-.tv__trilha li[data-municipio]:first-of-type::before{top:.5rem;border-radius:2px 2px 0 0}
-.tv__trilha li[data-municipio]:last-of-type::before{bottom:.5rem;border-radius:0 0 2px 2px}
-.tv [data-tv-aba]{display:grid;gap:.1rem;padding:.7rem .85rem;border:1px solid var(--color-borda);border-left:4px solid transparent;border-radius:var(--radius-ficha);background:var(--color-fundo-elevado);color:var(--color-texto);text-decoration:none;transition:background-color var(--duracao-hover) var(--easing-padrao),border-color var(--duracao-hover) var(--easing-padrao)}
-.tv [data-tv-aba]:hover{background:var(--tv-hover)}
-.tv [data-tv-aba] .nome{font-family:var(--font-display);font-weight:600}
-.tv [data-tv-aba] .meta,.tv [data-tv-aba] .coord{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);color:var(--color-texto-suave)}
-.tv [data-tv-aba] .coord{margin-top:.15rem;overflow-wrap:anywhere}
-.tv [data-tv-aba][aria-selected="true"]{border-color:var(--tv-contorno-foco);border-left-color:var(--color-destaque);background:var(--tv-hover)}
-.tv [data-tv-aba][aria-selected="true"] .nome::after{content:" · selecionado";font-family:var(--font-mono);font-weight:400;font-size:var(--text-xs);letter-spacing:var(--tracking-mono)}
-
-/* --- Dossiê do lugar ------------------------------------------------------ */
-
-.tv__paineis{display:grid;gap:var(--tv-respiro);margin-top:var(--tv-respiro);min-width:0}
-.tv [data-tv-painel]{display:grid;gap:1.25rem;padding-top:clamp(1rem,3vw,1.5rem);border-top:3px solid var(--tv-contorno-foco)}
-.tv [data-tv-painel] h2{margin:0;font-size:clamp(var(--text-2xl),4vw,var(--text-4xl));line-height:1.05}
-.tv [data-tv-painel] h3{margin:0;font-family:var(--font-mono);font-size:var(--text-xs);font-weight:500;letter-spacing:var(--tracking-mono);text-transform:uppercase;color:var(--color-texto-suave)}
-.tv [data-tv-painel] section{display:grid;gap:.45rem}
-.tv__ficha-cab{display:grid;gap:.35rem;min-width:0}
-.tv__resumo{max-width:var(--largura-leitura);font-size:clamp(var(--text-base),2.2vw,var(--text-lg));line-height:1.45}
-.tv__subtitulo{color:var(--color-texto-suave)}
-/*
-  Linha de identificação do dossiê: a coordenada primeiro, porque é o dado
-  mais territorial da ficha, e ela não se repete mais em "Como chegar".
-*/
-.tv__identificacao{display:grid;gap:.15rem;margin-top:.5rem;padding:.8rem 0 .8rem 1rem;border-left:3px solid var(--color-destaque)}
-.tv .coordenada{font-family:var(--font-mono);font-size:clamp(var(--text-base),2.4vw,var(--text-lg));letter-spacing:var(--tracking-mono);overflow-wrap:anywhere}
-.tv__localizacao{font-size:var(--text-sm)}
-.tv__procedencia{font-size:var(--text-xs);line-height:1.45;color:var(--color-texto-suave)}
-.tv__ficha-corpo{display:grid;gap:clamp(1.25rem,3vw,2.5rem);align-items:start;min-width:0}
-.tv__ficha-texto{display:grid;gap:1.25rem;max-width:var(--largura-leitura);min-width:0}
-.tv__narrativa p:first-child{font-size:clamp(var(--text-base),2vw,var(--text-lg));line-height:1.55;text-wrap:pretty}
-/* Procedência documental: legenda da fonte, não recado de sistema. */
-.tv__credito-fonte{padding-top:.4rem;border-top:1px solid var(--tv-fio);font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);color:var(--color-texto-suave)}
-.tv__ficha-margem{display:grid;gap:1.25rem;align-content:start;min-width:0;padding-top:.35rem;border-top:2px solid var(--color-marca)}
-.tv .fonte{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);color:var(--color-texto-suave)}
-.tv .materiais li,.tv__municipios li{display:flex;justify-content:space-between;gap:1rem;padding:.4rem 0;border-bottom:1px solid var(--tv-fio);font-size:var(--text-sm)}
-.tv .estado{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);text-transform:uppercase;white-space:nowrap;color:var(--color-texto-suave)}
-.tv .dados{display:grid;gap:.75rem}
-.tv .dados dd{margin:0;font-family:var(--font-display);font-size:var(--text-xl);font-weight:var(--peso-numeral)}
-.tv .dados dt{font-size:var(--text-xs);color:var(--color-texto-suave)}
-.tv .fotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(8rem,1fr));gap:.6rem}
-.tv .fotos figure{margin:0}
-.tv .fotos img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;border-radius:var(--radius-ficha)}
-.tv .fotos figcaption{margin-top:.3rem;font-size:var(--text-xs);line-height:1.4}
-/* Crédito de autoria: discreto, em linha própria sob a fotografia, nunca
-   sobreposto à imagem. */
-.tv .credito{display:block;margin-top:.2rem;color:var(--color-texto-suave);font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono)}
-.tv .pendencia{display:inline-block;margin-top:.2rem;padding:.1rem .35rem;border:1px dashed var(--color-acento);color:var(--color-acento);font-family:var(--font-mono);font-size:var(--text-xs)}
-.tv .lacuna{padding:.75rem;border:1px dashed var(--color-borda-forte);border-radius:var(--radius-ficha);font-size:var(--text-sm)}
-.tv .chegar{display:grid;gap:0}
-.tv .chegar div{display:grid;gap:.1rem;padding:.35rem 0;border-bottom:1px solid var(--tv-fio);font-size:var(--text-sm)}
-.tv .chegar dd{margin:0}
-.tv__acesso{gap:.6rem}
-.tv .rota{display:grid;gap:.45rem}
-.tv .rota ul{display:flex;flex-wrap:wrap;gap:.5rem}
-.tv .rota__link{display:inline-block;padding:.35rem 0;border-bottom:1px solid currentColor;font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;text-decoration:none}
-.tv .rota__link:hover{background:var(--tv-hover)}
-.tv__voltar{justify-self:start;font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;text-decoration:none}
-.tv__fecho{display:grid;gap:.5rem;max-width:var(--largura-leitura);margin-top:var(--tv-respiro);padding-top:clamp(1.5rem,4vw,2.5rem);border-top:1px solid var(--color-borda)}
-.tv__fecho h2{margin:0;font-size:clamp(var(--text-xl),3vw,var(--text-2xl))}
-
-/*
-  Entrada da ficha: aparece de baixo, uma vez, quando a seleção a revela. É
-  troca sem salto, e não recompensa de clique — a ficha não se move depois.
-*/
-@keyframes tv-entrada{from{opacity:0;transform:translateY(.75rem)}to{opacity:1;transform:none}}
-.tv[data-interativo="true"] [data-tv-painel]:not([hidden]){animation:tv-entrada var(--duracao-revelacao) var(--easing-entrada) both}
-
-/*
-  Movimento reduzido: troca instantânea de verdade. A regra global de
-  tokens.css encurta a duração para 0,01 ms, mas uma transição de 10 µs ainda
-  existe — no quadro da troca o mapa segue no estado anterior. Aqui a
-  propriedade de transição é anulada; as regras de estado só mexem em duração
-  e atraso, então não a reativam. A animação de entrada é desligada pelo nome,
-  e não pela duração, para não deixar nome de animação vivo com tempo zero.
-*/
-@media (prefers-reduced-motion:reduce){
-  .tv.tv[data-foco] :is(.tv-mundo,.tv-local,.m,.h,.anel,.tv-janela,.tv-rot,.tv-contra,.tv-semlocal,.escala,.tv-pin .nome){transition-property:none}
-  .tv.tv .tv__regua::after{transition-property:none}
-  .tv.tv[data-interativo="true"] [data-tv-painel]:not([hidden]){animation-name:none}
-}
-
-/* --- Tablet: o mapa ocupa a largura e o índice vira duas colunas ---------- */
-
-@media (min-width:640px){
-  .tv__abertura{grid-template-columns:minmax(0,1.15fr) minmax(17rem,.85fr)}
-  .tv__ficha-corpo{grid-template-columns:minmax(0,1.55fr) minmax(15rem,1fr)}
-}
-@media (min-width:640px) and (max-width:1023px){
-  .tv__trilha ul{grid-template-columns:repeat(2,minmax(0,1fr))}
-  /* Em duas colunas o filete vertical não agrupa nada: ele sai, e o
-     agrupamento fica por conta do parágrafo acima da lista. */
-  .tv__trilha li[data-municipio]{padding-left:0}
-  .tv__trilha li[data-municipio]::before{display:none}
-  .tv [data-tv-aba]{height:100%}
-}
-
-/* --- Desktop: placa e índice lado a lado ---------------------------------- */
-
-@media (min-width:1024px){
-  .tv__grade{grid-template-columns:minmax(0,1.3fr) minmax(19rem,1fr);align-items:start;column-gap:clamp(1.5rem,3vw,2.5rem)}
-  .tv__trilha{position:sticky;top:calc(var(--altura-cabecalho) + 1rem)}
-  .tv__ficha-corpo{grid-template-columns:minmax(0,1.7fr) minmax(17rem,1fr)}
-}
-
-/* --- Celular: mapa grande → faixa de lugares → dossiê --------------------- */
-
-@media (max-width:639px){
-  .tv{--tv-respiro:2rem}
-  .tv__abertura{gap:1.25rem}
-  .tv__situacao{gap:.75rem}
-  .tv__escala-territorial{align-items:center}
-  .tv__regua{grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem}
-  .tv__regua-nome{font-size:var(--text-sm);line-height:1.2}
-  /* O número da escala fica; o qualificador sai, porque em 375 px ele
-     quebraria o degrau em quatro linhas sem acrescentar escala nenhuma. */
-  .tv__regua-medida .q{display:none}
-  .tv__trilha-cab>p:last-child{font-size:var(--text-xs)}
-  .tv__trilha h2{font-size:var(--text-lg)}
-  .tv__trilha ul{display:flex;gap:.4rem;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;padding-bottom:.4rem}
-  .tv__trilha li{flex:0 0 auto;max-width:16rem;scroll-snap-align:start}
-  /* Na faixa horizontal o filete vertical não agrupa nada: ele vira um traço
-     solto entre cartões. O parágrafo acima continua dizendo o agrupamento. */
-  .tv__trilha li[data-municipio]{padding-left:0}
-  .tv__trilha li[data-municipio]::before{display:none}
-  .tv [data-tv-aba]{height:100%;padding:.5rem .7rem}
-  .tv [data-tv-aba] .nome{font-size:var(--text-sm);white-space:nowrap}
-  .tv [data-tv-aba] .meta{white-space:nowrap}
-  .tv [data-tv-aba] .coord{white-space:nowrap}
-  .tv__nota{font-size:var(--text-xs)}
-  .tv__legenda{gap:.35rem .8rem}
-  .tv__ficha-margem{padding-top:.75rem}
-  /*
-    Na placa estreita cada unidade do SVG vale ~0,6 do que vale no desktop:
-    os nomes de "outras localidades" cairiam para ~7 px. Eles saem, e os
-    povoados e códigos de rodovia sobem, porque são o que orienta a chegada.
-  */
+@container (max-width:26rem){
   .tv-local .loc.outra{display:none}
   .tv-local .loc.referencia-cartografica{display:initial}
-  .tv-local .loc.referencia-cartografica text{font-size:11px}
-  .tv-local .loc.povoado text{font-size:11px}
+  .tv-local .loc.referencia-cartografica text,.tv-local .loc.povoado text{font-size:11px}
   .tv-local .escudo text{font-size:8px}
 }
-`.trim();
+
+/* --- Fecho --------------------------------------------------------------- */
+
+.tv-fecho{padding:var(--tv-respiro) var(--tv-gutter)}
+.tv-fecho > div{max-width:var(--largura-cabecalho);margin-inline:auto;display:grid;gap:1rem}
+.tv-fecho h2{font-size:clamp(var(--text-2xl),4vw,var(--text-4xl));line-height:1.05;letter-spacing:-.03em;max-width:18ch}
+.tv-fecho p{max-width:52ch;font-size:var(--text-lg);line-height:1.55}
+.tv-fecho__links{display:flex;flex-wrap:wrap;gap:.5rem 1.5rem}
+.tv-fecho__links a{display:inline-flex;align-items:center;min-height:2.75rem;font-family:var(--font-display);font-weight:600;font-size:var(--text-base);color:var(--color-link)}
+
+/* =========================================================================
+   CELULAR — até 699 px
+   ========================================================================= */
+
+@media (max-width:699px){
+  .tv{--tv-faixa:3.5rem}
+  .tv-abertura__grade{padding-top:1.75rem;gap:1.25rem}
+  /* O quadro fecha no Vale: a carta inteira encolheria o recorte a um terço. */
+  .tv-geral__janela{aspect-ratio:var(--tv-vale-proporcao);overflow:hidden;margin-inline:calc(var(--tv-gutter) * -.5)}
+  .tv-geral__svg{position:absolute;width:calc(100% * var(--tv-quadro-escala));left:var(--tv-quadro-x);top:var(--tv-quadro-y)}
+  .tv-geral{--u-pin:16px;--u-mun:10.5px;--u-fixo:10px}
+  .tv-geral__fixo{display:none}
+  .tv-geral__fora{display:block}
+  .tv-faixa{position:relative;top:auto}
+  .tv-faixa ul{grid-auto-columns:max-content;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;padding-inline:0}
+  .tv-faixa li:first-child{padding-left:calc(var(--tv-gutter) - 1rem)}
+  .tv-faixa a{padding-inline:1rem}
+  .tv [id]{scroll-margin-top:calc(var(--tv-topo) + .5rem)}
+  .tv-prancha__grade{grid-template-areas:"cab" "retrato" "leitura" "carta" "contato" "ficha"}
+  .tv-retrato img{max-height:none;width:100%}
+  .tv{--tv-h-contato:9.5rem}
+  .tv-situacao{grid-template-columns:6rem minmax(0,1fr)}
+}
+
+/* =========================================================================
+   TABLET — 700 a 1099 px: a página dupla vira díptico
+   ========================================================================= */
+
+@media (min-width:700px) and (max-width:1099px){
+  .tv-abertura h1{max-width:none;font-size:clamp(4.5rem,11vw,6.5rem)}
+
+  .tv-abertura__texto{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);align-items:end;column-gap:2rem}
+  .tv-abertura__texto .tv-sobrescrito,.tv-abertura h1{grid-column:1 / -1}
+  .tv-abertura__sintese{align-self:end}
+  .tv-geral{--u-pin:14px;--u-mun:9.5px;--u-fixo:9px}
+  .tv-vale__grade{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"cab cab" "leitura leitura" "recorte situacao"}
+  .tv-situacao{grid-template-columns:minmax(0,1fr);align-items:start}
+  .tv-situacao svg{max-width:11rem}
+  /* Fotografia e mapa lado a lado: o par é o que dá identidade à prancha. */
+  .tv-prancha__grade{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    grid-template-areas:"cab cab" "retrato carta" "leitura leitura" "contato contato" "ficha ficha";
+    align-items:start;
+  }
+  .tv-prancha[data-lado="esquerda"] .tv-prancha__grade{grid-template-areas:"cab cab" "carta retrato" "leitura leitura" "contato contato" "ficha ficha"}
+  .tv-prancha[data-retrato="nao"] .tv-prancha__grade{grid-template-areas:"cab cab" "leitura carta" "contato contato" "ficha ficha"}
+  .tv-carta__placa{width:100%}
+  .tv-retrato img{max-height:none;width:100%}
+  .tv-prancha__leitura{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);column-gap:2.5rem;align-items:start}
+  .tv-prancha__relato{grid-row:span 3}
+  .tv-prancha[data-retrato="nao"] .tv-prancha__leitura{grid-template-columns:minmax(0,1fr)}
+  .tv{--tv-h-contato:11rem}
+}
+
+/* =========================================================================
+   DESKTOP — 1100 px em diante: a mesa e a página dupla
+   ========================================================================= */
+
+@media (min-width:1100px){
+  /* A mesa não tem margem de conteúdo: a carta vai até a borda da janela. */
+  .tv-abertura__grade{
+    max-width:none;
+    grid-template-columns:minmax(21rem,31rem) minmax(0,1fr);
+    grid-template-rows:auto;align-items:stretch;
+    min-height:calc(100svh - var(--tv-topo) - var(--tv-faixa));
+    padding-block:clamp(2rem,4svh,3.5rem) 1.25rem;
+  }
+  /* O título ocupa o chão a oeste da malha, onde não há desenho. */
+  .tv-abertura__texto{grid-column:1;grid-row:1;align-self:end;z-index:1;padding-bottom:3.25rem}
+  .tv-geral{grid-column:1 / -1;grid-row:1;justify-self:end;align-self:center;position:relative;
+    width:min(100%,calc((100svh - var(--tv-topo) - var(--tv-faixa) - 4.5rem) * var(--tv-quadro-proporcao)))}
+  /* A legenda pousa no canto sudeste da carta, sobre o resto do estado. */
+  .tv-geral__svg{overflow:visible}
+  .tv-geral figcaption{
+    position:absolute;right:0;bottom:0;justify-items:end;text-align:right;
+    padding:.75rem .9rem;background:color-mix(in srgb,var(--tv-mesa) 86%,transparent);
+    border:1px solid var(--tv-mesa-fio);max-width:21rem;
+  }
+
+  .tv-vale__grade{
+    grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);
+    grid-template-areas:"cab cab" "leitura recorte" "leitura situacao";
+    column-gap:clamp(3rem,6vw,6rem);
+  }
+  .tv-vale__notas{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:2.5rem}
+
+  .tv{--tv-largura-carta:min(36rem,calc((100svh - var(--tv-topo) - var(--tv-faixa) - 6.5rem) * var(--tv-placa-proporcao)))}
+  /*
+    A página dupla em três colunas: retrato, relato e mapa. O retrato ocupa a
+    largura que a própria proporção pede; o relato fica com o resto.
+  */
+  .tv-prancha__grade{
+    grid-template-columns:auto minmax(17rem,1fr) var(--tv-largura-carta);
+    grid-template-areas:"cab cab carta" "retrato leitura carta" "contato contato carta" "ficha ficha carta";
+    grid-template-rows:auto auto auto 1fr;
+    column-gap:clamp(2rem,3.5vw,4rem);
+  }
+  .tv-prancha[data-lado="esquerda"] .tv-prancha__grade{
+    grid-template-columns:var(--tv-largura-carta) auto minmax(17rem,1fr);
+    grid-template-areas:"carta cab cab" "carta retrato leitura" "carta contato contato" "carta ficha ficha";
+  }
+  /* Sem retrato, o mapa ganha o espaço da fotografia e deixa de acompanhar a rolagem. */
+  .tv-prancha[data-retrato="nao"] .tv-prancha__grade{
+    grid-template-columns:minmax(0,1fr) minmax(0,min(40rem,46vw));
+    grid-template-areas:"cab carta" "leitura carta" "contato carta" "ficha carta";
+  }
+  .tv-carta{position:sticky;top:calc(var(--tv-topo) + var(--tv-faixa) + 1.5rem);align-self:start}
+  .tv-carta__placa{width:100%}
+  .tv-prancha[data-retrato="nao"] .tv-carta{position:static}
+  .tv-retrato img{max-height:min(70svh,44rem);max-width:min(30vw,32rem)}
+  .tv-prancha__leitura{align-self:end}
+  .tv{--tv-h-contato:11.5rem}
+  .tv-prancha__relato p{font-size:clamp(1.2rem,1.55vw,1.45rem)}
+  .tv-abertura h1{font-size:clamp(4.75rem,6.4vw,6.4rem)}
+  .tv-prancha__leitura{grid-template-columns:minmax(0,1fr)}
+}
+
+/* =========================================================================
+   Movimento reduzido: anula a propriedade, e não só a duração.
+   ========================================================================= */
+
+@media (prefers-reduced-motion:reduce){
+  .tv *,.tv *::before,.tv *::after{transition-property:none !important;animation:none !important}
+}
+`
+  // Os comentários servem a quem lê este arquivo; o HTML servido não os leva.
+  .replace(/\/\*[\s\S]*?\*\//g, "")
+  .replace(/\n\s*\n/g, "\n")
+  .trim();

@@ -70,7 +70,21 @@ export type FotoDoLugar = {
   readonly largura: number;
   readonly altura: number;
   readonly alt: string;
+  /**
+   * Legenda visível: a frase descritiva que o manifesto do corpus já guarda
+   * para a imagem. Antes a ficha mostrava só um rótulo repetido — o nome do
+   * lugar seguido de "fotografia de campo" — em todas as fotografias do mesmo
+   * lugar, o que não dizia nada sobre nenhuma delas. A frase não é escrita
+   * aqui: ela vem da própria fonte.
+   */
   readonly legenda: string;
+  /**
+   * Metadado curto sob a legenda, quando a fonte tem algo a dizer além da
+   * descrição. `null` onde o único acréscimo possível seria repetir o título
+   * da seção — seis vezes "Fotografia de campo" numa tira de fotografias de
+   * campo é ruído, não procedência.
+   */
+  readonly qualificador: string | null;
   /**
    * Crédito de autoria de terceiro, já pronto para exibição. Vem do mesmo
    * manifesto que alimenta o Acervo: a ficha não pode perder a atribuição que
@@ -79,6 +93,12 @@ export type FotoDoLugar = {
   readonly credito: string | null;
   /** Marca visível de atribuição ainda não encerrada. */
   readonly pendencia: string | null;
+  /**
+   * Fotografia de abertura da ficha, como o manifesto do corpus declara. É
+   * dado, e não escolha do componente: a prancha usa a que está marcada e,
+   * onde a fonte não marca nenhuma, a primeira da lista.
+   */
+  readonly principal: boolean;
 };
 
 /** Segundo nível de mapa: o entorno geográfico do lugar. */
@@ -177,9 +197,11 @@ function fotografiasDoLugar(id: IdDoLugar): readonly FotoDoLugar[] {
     largura: foto.largura,
     altura: foto.altura,
     alt: foto.alt,
-    legenda: `${foto.local} · fotografia de campo`,
+    legenda: foto.alt,
+    qualificador: null,
     credito: foto.credito,
     pendencia: null,
+    principal: foto.principal,
   }));
   const daPesquisa = DERIVADOS_DA_PESQUISA.filter(
     (foto) => foto.lugar === id,
@@ -188,10 +210,12 @@ function fotografiasDoLugar(id: IdDoLugar): readonly FotoDoLugar[] {
     largura: foto.largura,
     altura: foto.altura,
     alt: foto.alt,
-    // `data: null` é declarado na fonte: a ausência é dito, não esquecimento.
-    legenda: `${foto.titulo} · data não informada`,
+    legenda: foto.alt,
+    // `data: null` é declarado na fonte: a ausência é dita, não esquecida.
+    qualificador: `${foto.titulo} · data não informada`,
     credito: null,
     pendencia: null,
+    principal: false,
   }));
   return [...dasFichas, ...daPesquisa];
 }

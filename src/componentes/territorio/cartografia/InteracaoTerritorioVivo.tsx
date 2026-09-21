@@ -3,85 +3,46 @@
 import { useEffect } from "react";
 
 /**
- * Ilha de interação da página territorial.
+ * Ilha da Cartografia Viva.
  *
- * `"use client"` justificado: trocar de lugar muda estado (mapa, ficha,
- * anúncio e URL) sem recarregar, e a camada local de cada lugar é **buscada
- * sob demanda**. O servidor já desenhou malha, pins, lista e fichas; a ilha
- * não renderiza componente nenhum.
+ * Justificativa do `"use client"`: duas coisas que o servidor não sabe —
+ * onde a leitura está e quando uma prancha se aproxima da tela.
  *
- * ## Camada local sob demanda
+ * 1. **Mapas detalhados sob demanda.** Cada prancha declara, em
+ *    `data-tv-camada`, a rota da sua camada local. Ela só é buscada quando a
+ *    prancha chega perto da tela; a primeira carga da página não pede
+ *    nenhuma. Até lá — e para sempre, sem JavaScript — a prancha mostra a
+ *    malha do entorno e o pin, que já vêm no HTML.
+ * 2. **Altura do cabeçalho.** A faixa presa encosta nele, e ele muda de
+ *    altura com a largura da tela.
+ * 3. **Capítulo em leitura.** A faixa dos lugares é uma lista de âncoras; a
+ *    ilha marca com `aria-current="location"` a que corresponde ao capítulo
+ *    na tela. Nada muda de lugar, nada se esconde.
  *
- * - Nada é buscado na visão geral.
- * - Ao selecionar um lugar com entorno, a ilha pede o SVG à rota local do
- *   próprio site **uma vez**; pedidos simultâneos compartilham a mesma
- *   promessa, e o resultado fica em memória. Voltar ao lugar não repete o
- *   pedido.
- * - O SVG é lido com `DOMParser` e importado para o grupo vazio da página.
- *   Por defesa, `script`, `foreignObject` e atributos `on*` são removidos antes.
- * - Só quando a camada está no DOM a raiz ganha `data-escala="local"`; até lá,
- *   o mapa fica na aproximação regional. Falha de rede mantém a aproximação e
- *   é anunciada.
- *
- * ## Teclado
- *
- * Setas andam entre as abas, Enter e Espaço selecionam, Home e End vão aos
- * extremos e **Escape** devolve a leitura ao território — o mesmo destino do
- * link de retorno da ficha.
- *
- * Sem JavaScript, a lista é de âncoras e todas as fichas ficam visíveis.
+ * O resto — navegação, conteúdo, realce entre faixa e carta — é HTML e CSS.
  */
 export function InteracaoTerritorioVivo({ idRaiz }: { idRaiz: string }) {
   useEffect(() => {
     const raiz = document.getElementById(idRaiz);
     if (raiz === null) return;
-    const lista = raiz.querySelector<HTMLElement>("[data-tv-lista]");
-    const mapa = raiz.querySelector<SVGSVGElement>("[data-tv-mapa]");
-    const tituloDoMapa = mapa?.querySelector("title") ?? null;
-    const anuncio = raiz.querySelector<HTMLElement>("[data-tv-regiao-anuncio]");
-    const abas = Array.from(
-      raiz.querySelectorAll<HTMLAnchorElement>("[data-tv-aba]"),
-    );
-    const voltas = Array.from(
-      raiz.querySelectorAll<HTMLAnchorElement>("[data-tv-voltar]"),
-    );
-    if (lista === null || abas.length === 0) return;
+    raiz.setAttribute("data-interativo", "true");
 
-    const paineis = new Map<string, HTMLElement>();
-    for (const aba of abas) {
-      const id = aba.dataset.tvAba ?? "";
-      const painel = document.getElementById(`tv-painel-${id}`);
-      if (painel !== null) paineis.set(id, painel);
-    }
+    /*
+      O cabeçalho do site tem uma linha no desktop e duas no tablet e no
+      celular. A faixa presa e as âncoras precisam da altura real; sem
+      JavaScript vale o token `--altura-cabecalho`.
+    */
+    const topo = document.querySelector<HTMLElement>("body > .hl-topo");
+    const medirTopo = () => {
+      if (topo !== null) {
+        raiz.style.setProperty("--tv-topo", `${topo.offsetHeight}px`);
+      }
+    };
+    medirTopo();
+    const observadorDoTopo = new ResizeObserver(medirTopo);
+    if (topo !== null) observadorDoTopo.observe(topo);
 
-    lista.setAttribute("role", "tablist");
-    // No celular o seletor é uma faixa horizontal; a orientação anunciada acompanha.
-    const estreita = window.matchMedia("(max-width: 639px)");
-    const orientar = () =>
-      lista.setAttribute(
-        "aria-orientation",
-        estreita.matches ? "horizontal" : "vertical",
-      );
-    orientar();
-    estreita.addEventListener("change", orientar);
-    for (const item of Array.from(lista.children)) {
-      item.setAttribute("role", "presentation");
-    }
-    for (const aba of abas) {
-      const id = aba.dataset.tvAba ?? "";
-      aba.setAttribute("role", "tab");
-      aba.setAttribute("id", `tv-aba-${id}`);
-      aba.setAttribute("aria-controls", `tv-painel-${id}`);
-      const painel = paineis.get(id);
-      painel?.setAttribute("role", "tabpanel");
-      painel?.setAttribute("aria-labelledby", `tv-aba-${id}`);
-      painel?.setAttribute("tabindex", "0");
-    }
-
-    const carregadas = new Set<string>();
-    const pendentes = new Map<string, Promise<boolean>>();
-    let geracao = 0;
-    let ativo = 0;
+    /* --- 1. Camadas locais --------------------------------------------- */
 
     function importarSvg(alvo: SVGGElement, texto: string) {
       const documento = new DOMParser().parseFromString(texto, "image/svg+xml");
@@ -95,7 +56,12 @@ export function InteracaoTerritorioVivo({ idRaiz }: { idRaiz: string }) {
       }
       for (const elemento of Array.from(documento.querySelectorAll("*"))) {
         for (const atributo of Array.from(elemento.attributes)) {
-          if (atributo.name.toLowerCase().startsWith("on")) {
+          const nome = atributo.name.toLowerCase();
+          if (
+            nome.startsWith("on") ||
+            nome === "href" ||
+            nome.endsWith(":href")
+          ) {
             elemento.removeAttribute(atributo.name);
           }
         }
@@ -107,167 +73,95 @@ export function InteracaoTerritorioVivo({ idRaiz }: { idRaiz: string }) {
       alvo.replaceChildren(fragmento);
     }
 
-    function carregarCamada(id: string, url: string): Promise<boolean> {
-      if (carregadas.has(id)) return Promise.resolve(true);
-      const pendente = pendentes.get(id);
-      if (pendente !== undefined) return pendente;
-      const alvo =
-        raiz?.querySelector<SVGGElement>(
-          `[data-tv-camada-local="${CSS.escape(id)}"]`,
-        ) ?? null;
-      if (alvo === null) return Promise.resolve(false);
-
-      const pedido = fetch(url, { credentials: "same-origin" })
+    const pedidos = new Set<string>();
+    function carregar(carta: HTMLElement) {
+      const url = carta.dataset.tvCamada;
+      const id = carta.dataset.tvCarta ?? "";
+      if (url === undefined || pedidos.has(id)) return;
+      const alvo = carta.querySelector<SVGGElement>("[data-tv-camada-local]");
+      if (alvo === null) return;
+      pedidos.add(id);
+      carta.setAttribute("data-camada", "carregando");
+      fetch(url, { credentials: "same-origin" })
         .then((resposta) => {
           if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
           return resposta.text();
         })
         .then((texto) => {
           importarSvg(alvo, texto);
-          alvo.removeAttribute("data-erro");
-          carregadas.add(id);
-          return true;
+          carta.setAttribute("data-camada", "local");
         })
         .catch(() => {
-          alvo.setAttribute("data-erro", "true");
-          return false;
-        })
-        .finally(() => {
-          pendentes.delete(id);
+          // A prancha continua com a malha e o pin do HTML: nada some.
+          carta.setAttribute("data-camada", "indisponivel");
         });
-      pendentes.set(id, pedido);
-      return pedido;
     }
 
-    function selecionar(indice: number, anunciar: boolean) {
-      const escolhida = abas[indice];
-      if (escolhida === undefined || raiz === null) return;
-      const id = escolhida.dataset.tvAba ?? "";
-      geracao += 1;
-      const estaSelecao = geracao;
-
-      raiz.removeAttribute("data-escala");
-      raiz.setAttribute("data-lugar", id);
-      raiz.setAttribute("data-foco", escolhida.dataset.tvFoco ?? "vale");
-      for (const [i, aba] of abas.entries()) {
-        const sim = i === indice;
-        aba.setAttribute("aria-selected", sim ? "true" : "false");
-        aba.setAttribute("tabindex", sim ? "0" : "-1");
-        const painel = paineis.get(aba.dataset.tvAba ?? "");
-        if (painel !== undefined) painel.hidden = !sim;
-      }
-      ativo = indice;
-      if (estreita.matches && lista !== null) {
-        const esquerda =
-          escolhida.offsetLeft -
-          (lista.clientWidth - escolhida.offsetWidth) / 2;
-        lista.scrollTo({ left: Math.max(0, esquerda), behavior: "auto" });
-      }
-      const textoDoAnuncio = escolhida.dataset.tvAnuncio ?? "";
-      if (tituloDoMapa !== null) {
-        tituloDoMapa.textContent = escolhida.dataset.tvRotuloMapa ?? "";
-      }
-      if (anunciar && anuncio !== null) anuncio.textContent = textoDoAnuncio;
-      history.replaceState(null, "", `#lugar-${id}`);
-
-      const url = escolhida.dataset.tvCamada;
-      if (url === undefined) return;
-      void carregarCamada(id, url).then((ok) => {
-        // Outra seleção aconteceu enquanto a camada chegava: não mexe no mapa.
-        if (estaSelecao !== geracao || raiz === null) return;
-        if (ok) {
-          raiz.setAttribute("data-escala", "local");
-          const rotuloLocal = escolhida.dataset.tvRotuloLocal;
-          if (tituloDoMapa !== null && rotuloLocal !== undefined) {
-            tituloDoMapa.textContent = rotuloLocal;
-          }
-          if (anunciar && anuncio !== null) {
-            anuncio.textContent = `${textoDoAnuncio} Mapa detalhado do entorno exibido.`;
-          }
-        } else if (anunciar && anuncio !== null) {
-          anuncio.textContent = `${textoDoAnuncio} Mapa detalhado indisponível; o mapa segue na aproximação.`;
-        }
-      });
-    }
-
-    function aoTeclar(evento: KeyboardEvent) {
-      const alvo = evento.target;
-      if (!(alvo instanceof HTMLAnchorElement)) return;
-      const indice = abas.indexOf(alvo);
-      if (indice < 0) return;
-      let destino: number | null = null;
-      if (evento.key === "ArrowDown" || evento.key === "ArrowRight") {
-        destino = Math.min(indice + 1, abas.length - 1);
-      } else if (evento.key === "ArrowUp" || evento.key === "ArrowLeft") {
-        destino = Math.max(indice - 1, 0);
-      } else if (evento.key === "Home") {
-        destino = 0;
-      } else if (evento.key === "End") {
-        destino = abas.length - 1;
-      } else if (evento.key === "Enter" || evento.key === " ") {
-        evento.preventDefault();
-        selecionar(indice, true);
-        return;
-      } else if (evento.key === "Escape") {
-        /*
-          Escape volta ao território, como o link de retorno da ficha. Sem
-          isso, quem chegou ao índice pelo teclado só desfazia a aproximação
-          andando até a primeira aba e confirmando.
-        */
-        evento.preventDefault();
-        selecionar(0, true);
-        abas[0]?.focus();
-        return;
-      }
-      if (destino !== null) {
-        evento.preventDefault();
-        abas[destino]?.focus();
-      }
-    }
-
-    function aoClicar(evento: MouseEvent) {
-      const alvo = evento.target;
-      if (!(alvo instanceof Element)) return;
-      const aba = alvo.closest<HTMLAnchorElement>("[data-tv-aba]");
-      if (aba === null) return;
-      evento.preventDefault();
-      selecionar(abas.indexOf(aba), true);
-    }
-
-    function voltarAoTerritorio(evento: MouseEvent) {
-      evento.preventDefault();
-      selecionar(0, true);
-      abas[0]?.focus({ preventScroll: true });
-    }
-
-    lista.addEventListener("keydown", aoTeclar);
-    lista.addEventListener("click", aoClicar);
-    for (const voltar of voltas) {
-      voltar.addEventListener("click", voltarAoTerritorio);
-    }
-
-    const inicial = abas.findIndex(
-      (aba) => `#lugar-${aba.dataset.tvAba}` === window.location.hash,
+    const cartas = Array.from(
+      raiz.querySelectorAll<HTMLElement>("[data-tv-camada]"),
     );
-    selecionar(inicial >= 0 ? inicial : ativo, false);
+    const observadorDeCartas = new IntersectionObserver(
+      (entradas) => {
+        for (const entrada of entradas) {
+          if (!entrada.isIntersecting) continue;
+          const carta = entrada.target;
+          if (carta instanceof HTMLElement) carregar(carta);
+          observadorDeCartas.unobserve(carta);
+        }
+      },
+      { rootMargin: "240px 0px" },
+    );
+    for (const carta of cartas) observadorDeCartas.observe(carta);
+
+    /* --- 2. Capítulo em leitura ---------------------------------------- */
+
+    const links = new Map<string, HTMLAnchorElement>();
+    for (const link of Array.from(
+      raiz.querySelectorAll<HTMLAnchorElement>("[data-tv-faixa] [data-tv-ir]"),
+    )) {
+      links.set(link.dataset.tvIr ?? "", link);
+    }
+    const capitulos = Array.from(
+      raiz.querySelectorAll<HTMLElement>("[data-tv-capitulo]"),
+    );
+    const visiveis = new Set<string>();
+    function marcar() {
+      // O primeiro capítulo, na ordem da página, que cruza a linha de leitura.
+      const atual =
+        capitulos.find((c) => visiveis.has(c.dataset.tvCapitulo ?? ""))?.dataset
+          .tvCapitulo ?? null;
+      for (const [id, link] of links) {
+        if (id === atual) link.setAttribute("aria-current", "location");
+        else link.removeAttribute("aria-current");
+      }
+    }
     /*
-      `data-interativo` só entra depois da primeira seleção, e num quadro
-      seguinte. A ficha inicial não é uma troca: animá-la faria a página
-      piscar na hidratação. Daí em diante toda troca anima.
+      A linha de leitura é uma faixa fina a 35% da altura: um capítulo conta
+      como "em leitura" enquanto a cruza. Assim só um fica marcado de cada vez,
+      e a abertura — que não é capítulo — não marca nenhum.
     */
-    const quadro = requestAnimationFrame(() => {
-      raiz.setAttribute("data-interativo", "true");
-    });
+    const observadorDeLeitura = new IntersectionObserver(
+      (entradas) => {
+        for (const entrada of entradas) {
+          const id =
+            entrada.target instanceof HTMLElement
+              ? (entrada.target.dataset.tvCapitulo ?? "")
+              : "";
+          if (entrada.isIntersecting) visiveis.add(id);
+          else visiveis.delete(id);
+        }
+        marcar();
+      },
+      { rootMargin: "-35% 0px -64% 0px" },
+    );
+    for (const capitulo of capitulos) observadorDeLeitura.observe(capitulo);
 
     return () => {
-      geracao += 1;
-      cancelAnimationFrame(quadro);
-      lista.removeEventListener("keydown", aoTeclar);
-      lista.removeEventListener("click", aoClicar);
-      for (const voltar of voltas) {
-        voltar.removeEventListener("click", voltarAoTerritorio);
-      }
-      estreita.removeEventListener("change", orientar);
+      observadorDoTopo.disconnect();
+      raiz.style.removeProperty("--tv-topo");
+      observadorDeCartas.disconnect();
+      observadorDeLeitura.disconnect();
+      raiz.removeAttribute("data-interativo");
     };
   }, [idRaiz]);
 

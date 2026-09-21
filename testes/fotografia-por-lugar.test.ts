@@ -164,8 +164,10 @@ describe("recorte das fichas por lugar", () => {
  * existência de acervo fora do universo público.
  */
 describe("frase do estado vazio", () => {
+  // A prancha de cada lugar mora em `PranchaDoLugar.tsx` desde a direção de
+  // arte do atlas; a regra da frase continua a mesma.
   const componente = readFileSync(
-    "src/componentes/territorio/cartografia/TerritorioVivo.tsx",
+    "src/componentes/territorio/cartografia/PranchaDoLugar.tsx",
     "utf8",
   );
   const frase = /<p className="lacuna">([^<]*ficha[^<]*)<\/p>/.exec(
@@ -223,10 +225,12 @@ describe("coordenadas na ficha", () => {
       expect(fonte, id).toContain("posição informada pelo Observatório");
       expect(fonte.toLowerCase(), id).not.toContain("visitad");
     }
-    const componente = readFileSync(
+    const componente = [
       "src/componentes/territorio/cartografia/TerritorioVivo.tsx",
-      "utf8",
-    );
+      "src/componentes/territorio/cartografia/PranchaDoLugar.tsx",
+    ]
+      .map((arquivo) => readFileSync(arquivo, "utf8"))
+      .join(" ");
     expect(componente).not.toMatch(/autorizadoEm/);
     expect(componente).not.toMatch(/[Vv]isitado em \{/);
   });
