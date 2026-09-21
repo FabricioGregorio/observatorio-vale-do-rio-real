@@ -25,7 +25,7 @@ const FORA = ["src/app/dev/", "src/componentes/prototipo/"];
 /**
  * O texto que sobra depois de remover comentário de código.
  *
- * O comentário é para quem lê o repositório, e o `AGENTS.md` pede que ele
+ * O comentário é para quem lê o repositório, e o projeto pede que ele
  * exista. O que esta varredura procura é o que chega ao navegador — por isso
  * comentário de bloco e linha iniciada por barra dupla saem antes da busca.
  */

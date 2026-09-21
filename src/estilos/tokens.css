@@ -67,7 +67,7 @@
        icon.png ................ 87,59% dos pixels
        logo-e-texto.png ........ 68,07% dos pixels
        primeiro-post (D01-08) .. presente nos operadores de cor do vetor
-     Ver docs/frontend/H0_FUNDACAO_VISUAL_TEMA.md §4. */
+     */
   --color-observatorio: #026a69;
 
   /* Variações operacionais — derivadas, não inventadas */
@@ -570,8 +570,7 @@
 
    ATENÇÃO — `--color-observatorio` sobre mata atinge apenas 2.2:1, e a cor
    institucional do Coletivo "Tobias, sou Eu!" atinge 2.3:1. Nenhuma das duas
-   marcas pode aparecer em cor institucional sobre superfície escura. Ver
-   docs/frontend/H0_FUNDACAO_VISUAL_TEMA.md §7.
+   marcas pode aparecer em cor institucional sobre superfície escura.
 
    ATENÇÃO — `--color-borda` é fronteira **decorativa** (1.4:1 no claro,
    1.5:1 no escuro). Onde a borda for a única identificação de um controle,
@@ -599,8 +598,7 @@
 /* H3.5 / H3.5.1 — papéis do sistema gráfico. Eles não alteram os consumidores
    H1–H3 nem a H4.0. A decisão humana de 2026-09-11 revisou a Direção Visual
    §12.1 de 3–4/10 para 4–5/10 e adotou o preset B refinado como direção; o
-   preset A permanece como controle contido, não como candidato equivalente.
-   Ver docs/frontend/H3_5_1_CONSOLIDACAO_SISTEMA_GRAFICO.md. */
+   preset A permanece como controle contido, não como candidato equivalente. */
 .linguagem-visual,
 .dados-vivos {
   --lv-superficie-territorio: color-mix(

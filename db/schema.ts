@@ -1,12 +1,12 @@
 /**
  * Schema do banco de dados — Observatório do Vale do Rio Real
  *
- * Espelho fiel do documento de banco (docs/02-arquitetura-banco.md).
+ * Esta declaração é a fonte de verdade do schema.
  * O que Drizzle não expressa — extensões, funções, triggers e views — vive em
- * SQL bruto dentro do arquivo de migração (doc 03 §6.2).
+ * SQL bruto dentro do arquivo de migração.
  *
- * Migração 0001 (§§3-4): tipos enumerados, extensões e funções utilitárias.
- * Migração 0002 (§5, §§6.1-6.3, §13): núcleo da prestação de contas.
+ * Migração 0001: tipos enumerados, extensões e funções utilitárias.
+ * Migração 0002: núcleo da prestação de contas.
  *
  * Referências: doc 02 §1 (convenções), §3 (enums), §5 (camada de arquivos),
  * §§6.1-6.3 (município, pessoa, equipamento, consentimento), §13 (views),
@@ -618,7 +618,7 @@ export const temporada = pgTable("temporada", {
  *   próprio não é representável.
  * - `transcricao NOT NULL` — acessibilidade. O podcast é a audiodescrição da
  *   pesquisa para quem não lê o documento; a transcrição é o inverso, para
- *   quem não ouve o áudio. `AGENTS.md` proíbe áudio sem transcrição vinculada.
+ *   quem não ouve o áudio. o projeto proíbe áudio sem transcrição vinculada.
  * - `status` com default `rascunho` — nada nasce público.
  *
  * `ON DELETE RESTRICT` no áudio e na temporada segue `documento_arquivo`:
@@ -739,8 +739,7 @@ export const vwAnexoPublico = pgView("vw_anexo_publico", {
  * Nesta fatia a view tem só o ramo do anexo. O ramo do áudio público sem
  * consentimento depende da tabela `entrevista`, que ainda não existe, e entra
  * por CREATE OR REPLACE VIEW numa migração futura — sem alterar esta
- * declaração, porque UNION ALL acrescenta linhas e não colunas. Ver
- * docs/tarefas/09-gate-de-pendencias.md.
+ * declaração, porque UNION ALL acrescenta linhas e não colunas.
  */
 export const vwPendenciaPublicacao = pgView("vw_pendencia_publicacao", {
   slug: citext("slug"),

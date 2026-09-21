@@ -89,7 +89,7 @@ export default function RootLayout({
           navegação, porque o HTML sai do servidor sem saber da escolha.
 
           Não faz rede, não grava cookie e não rastreia nada — o que o
-          `AGENTS.md` proíbe é script de terceiro que rastreie. O conteúdo vem
+          o projeto proíbe é script de terceiro que rastreie. O conteúdo vem
           de `src/lib/tema.ts`, para que a chave de armazenamento exista em um
           lugar só.
 
@@ -121,8 +121,8 @@ export default function RootLayout({
         {/*
           Vercel Web Analytics — medição agregada de audiência.
 
-          Por que isto não viola o "sem rastreador de terceiro" do `AGENTS.md`
-          e da `/privacidade`:
+          Por que isto não viola o "sem rastreador de terceiro" declarado em
+          `/privacidade`:
 
           - **Sem cookie e sem armazenamento.** O script não escreve cookie,
             `localStorage` nem `sessionStorage`. A única chave gravada por este

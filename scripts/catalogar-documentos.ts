@@ -8,7 +8,7 @@
  * `documento JOIN documento_arquivo JOIN arquivo`, e a Tarefa 06 popula só
  * `arquivo`.
  *
- * Decisões que este script aplica (docs/tarefas/07-catalogo-documental.md):
+ * Decisões que este script aplica:
  * - `ordem_anexo` é 1…30, pela ordem dos `ID` do inventário;
  * - o vínculo com `arquivo` é encontrado pela `chave_storage`, nunca por
  *   `origem_url` — três URLs do inventário são compartilhadas por vários itens;

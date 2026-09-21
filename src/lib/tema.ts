@@ -87,7 +87,7 @@ export function atributoDoTema(tema: Tema): "claro" | "escuro" | null {
  *   quem bloqueia armazenamento;
  * - **só escreve o atributo quando há escolha manual**. Em `sistema` não toca
  *   no DOM, e o CSS decide sozinho;
- * - **nenhuma rede, nenhum cookie, nenhum rastreio** — o que o `AGENTS.md`
+ * - **nenhuma rede, nenhum cookie, nenhum rastreio** — o que o projeto
  *   proíbe é script de terceiro que rastreie; este é próprio e local.
  *
  * A string é montada a partir das constantes acima de propósito: a chave e os

@@ -17,7 +17,7 @@
  *
  * O que fica de fora, e por quê:
  *
- * - `db/migrations/` — migração aplicada é histórico imutável (AGENTS.md).
+ * - `db/migrations/` — migração aplicada é histórico imutável.
  * - `docs/` — snapshots, ADRs e tarefas registram uma época em que o termo
  *   era verdadeiro. Reescrevê-los falsificaria o registro.
  * - `node_modules/`, `.next/`, `test-results/` — não são fonte.

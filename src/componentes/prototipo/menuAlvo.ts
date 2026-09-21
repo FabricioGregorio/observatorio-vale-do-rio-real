@@ -3,14 +3,13 @@ import type { Route } from "next";
 /**
  * Menu alvo do frontend — casca visual do protótipo. Fase H1.
  *
- * A composição aprovada está na Direção Visual §8.3 e registrada na
- * [ADR-017](../../../docs/decisoes/ADR-017-navegacao-alvo-do-frontend.md):
+ * A composição aprovada, por decisão humana de 2026-09-15:
  *
  *     Observatório · Território · Pesquisa · Dados · PodObservar · Acervo
  *
  * ## Por que os destinos são separados do rótulo
  *
- * `/territorio` e `/acervo` **não existem**. A ADR-017 é explícita: nenhuma
+ * `/territorio` e `/acervo` **não existem**. A regra é explícita: nenhuma
  * rota falsa, nenhuma página "em breve", nenhum link quebrado. E
  * `typedRoutes: true` reprovaria em `pnpm tipos` qualquer `<Link>` para rota
  * inexistente — a checagem do projeto é o que impede o atalho.

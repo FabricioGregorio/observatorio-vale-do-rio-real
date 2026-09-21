@@ -224,7 +224,7 @@ export const MARCA_COLETIVO = {
  * **Não afirma o local.** A fotografia veio da pasta de identidade visual sem
  * ficha documental, e nenhum documento do projeto a associa a um município ou
  * equipamento. Escrever "Recanto da Serra" aqui seria inventar procedência —
- * exatamente o que o `AGENTS.md` proíbe.
+ * exatamente o que este projeto proíbe.
  *
  * `alt=""` foi considerado e descartado: a fotografia não é decorativa. As
  * placas carregam a linguagem do território ("num se avexe não", "simbora"),

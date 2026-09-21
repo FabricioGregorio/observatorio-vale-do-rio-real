@@ -5,9 +5,8 @@
  *
  * Três fontes, e só três:
  *
- * 1. **`docs/01-arquitetura-informacao.md`**, cabeçalho — executor, fomento e
- *    quem recebe a prestação de contas. Os mesmos valores já publicados na
- *    Home vêm reexportados de `componentes/home/conteudo.ts`, que continua
+ * 1. **`componentes/home/conteudo.ts`** — executor, fomento e quem recebe a
+ *    prestação de contas. Os valores vêm reexportados de lá, que continua
  *    sendo a fonte única deles: repetir a string aqui criaria dois nomes
  *    oficiais possíveis.
  * 2. **Transcrição revisada do EP01 do PodObservar**, pública em

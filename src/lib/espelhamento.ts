@@ -4,10 +4,9 @@
  * Ficam separadas do script para poderem ser testadas sem rede, sem banco e
  * sem storage. Nenhuma delas faz I/O.
  *
- * Referências:
- * - docs/tarefas/06-espelhamento-de-arquivos.md (políticas operacionais)
- * - docs/tarefas/07-catalogo-documental.md (regra de slug)
- * - doc 01 §6 (padrão de URL), doc 02 §3 e §5 (enums e tabela `arquivo`)
+ * O padrão de URL pública e a regra de slug que estas funções aplicam estão
+ * implementados aqui mesmo; os enums e a tabela `arquivo` que elas alimentam
+ * estão em `db/schema.ts`.
  */
 
 /** Colunas da aba Inventário, exportada em CSV (artefato intermediário). */

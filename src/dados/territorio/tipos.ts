@@ -9,7 +9,7 @@
  *
  * Todo campo que depende de conteúdo humano ou de fonte oficial é
  * `| null` de propósito. Ausência é `null` com estado vazio explícito, nunca
- * um valor plausível (AGENTS.md).
+ * um valor plausível.
  *
  * **Validação pendente.** O contrato exige validar entrada externa com Zod, e
  * um `.geojson` lido do disco é entrada externa. `zod` não está instalado e

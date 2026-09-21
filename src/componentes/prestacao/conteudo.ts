@@ -33,7 +33,7 @@ import { RECORTE_TERRITORIAL } from "../../dados/territorio/recorte";
  * Não afirma situação financeira, valor executado, saldo, parecer, aprovação
  * nem encerramento de prestação de contas. Nada disso está documentalmente
  * confirmado no corpus do projeto, e afirmar qualquer um deles seria
- * exatamente o dado fictício que o `AGENTS.md` proíbe. A página afirma o que
+ * exatamente o dado fictício que este projeto proíbe. A página afirma o que
  * o site pode provar: o que foi entregue, onde está e como conferir.
  */
 

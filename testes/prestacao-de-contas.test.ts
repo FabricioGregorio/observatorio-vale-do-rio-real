@@ -164,7 +164,7 @@ describe("a página não afirma o que não pode provar", () => {
 
   /**
    * Situação financeira e administrativa não está documentada em lugar nenhum
-   * do corpus. Afirmá-la seria o dado fictício que o `AGENTS.md` proíbe, na
+   * do corpus. Afirmá-la seria o dado fictício que este projeto proíbe, na
    * página onde ele custa mais caro.
    *
    * Os padrões são **afirmativos** de propósito. A página diz, em voz alta,

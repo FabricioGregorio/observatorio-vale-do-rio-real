@@ -10,7 +10,6 @@
  * depende da tabela `entrevista`, que ainda não existe, e entra na view por
  * CREATE OR REPLACE VIEW numa migração futura — sem exigir mudança aqui, porque
  * o script não interpreta o texto da pendência: ele imprime o que a view disser.
- * Ver docs/tarefas/09-gate-de-pendencias.md.
  *
  * Sem `DATABASE_URL`: erro, com código 1, em qualquer ambiente.
  *

@@ -44,8 +44,7 @@
  * Indicadores com pendência metodológica aberta na própria fonte — contagem de
  * visitantes com uma visita em conciliação, contagem de pessoas remuneradas
  * distintas com definição em aberto, gênero inferido pelo prenome — **não
- * entram aqui**. A matriz completa, com APTOS, PENDENTES e NÃO PUBLICAR, está
- * em `docs/frontend/H4_DADOS_INDICADORES_PROTOTIPO.md`.
+ * entram aqui**.
  */
 
 export type UnidadeDoIndicador = "percentual" | "reais" | "contagem" | "fator";

@@ -6,7 +6,7 @@ import { z } from "zod";
  * Validação da malha municipal — Tarefa 10B.3.1.
  *
  * Um `.geojson` lido do disco é **entrada externa**, e o contrato do projeto
- * manda validar toda entrada externa com Zod (AGENTS.md). O motivo aqui é
+ * manda validar toda entrada externa com Zod. O motivo aqui é
  * concreto: sem validação, um arquivo truncado, um download interrompido ou uma
  * mudança de formato do IBGE não estouram — o mapa simplesmente desenha errado,
  * ou desenha menos municípios, e ninguém percebe. Num site de prestação de

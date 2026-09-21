@@ -34,7 +34,7 @@ import type { ArquivosPublicados } from "../src/dados/materiais-de-campo";
  * O que estes testes protegem não é layout: é a diferença entre uma página
  * institucional e um placeholder plausível. Num site de prestação de contas,
  * texto de ocasião é problema de integridade da pesquisa, não de UI
- * (`AGENTS.md`).
+ * do produto.
  */
 
 const FONTES = {
