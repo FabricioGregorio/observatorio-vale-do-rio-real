@@ -384,8 +384,8 @@ export function TerritorioVivo({
             <div>
               <dt>Lugares no mapa</dt>
               <dd>
-                {posicionados.length} com posição confirmada ·{" "}
-                {dentroDoRecorte.length} no recorte, {foraDoRecorte.length} fora
+                {posicionados.length} lugares · {dentroDoRecorte.length} no
+                recorte, {foraDoRecorte.length} fora
               </dd>
             </div>
             <div>
@@ -899,7 +899,7 @@ export function TerritorioVivo({
                     <span className="nome">{lugar.nome}</span>
                     <span className="meta">{meta}</span>
                     {p === null ? (
-                      <span className="coord">sem coordenada confirmada</span>
+                      <span className="coord">sem ponto no mapa</span>
                     ) : (
                       <span className="coord">{coordenada(p.posicao)}</span>
                     )}
@@ -976,8 +976,8 @@ export function TerritorioVivo({
                   })}
                 </ul>
                 <p className="fonte">
-                  Lugares posicionados nesta cartografia e relações declaradas
-                  no recorte.
+                  Lugares posicionados nesta cartografia e a relação de cada
+                  município com o recorte.
                 </p>
               </section>
             </aside>
