@@ -171,8 +171,10 @@ test.describe("Território — a carta e os lugares", () => {
     await expect(atual).toHaveCount(1);
     await expect(atual).toContainText("Museu Borda da Mata");
 
+    // Na abertura, a leitura é a do conjunto: o Vale é o capítulo atual.
     await page.evaluate(() => window.scrollTo(0, 0));
-    await expect(atual).toHaveCount(0);
+    await expect(atual).toHaveCount(1);
+    await expect(atual).toHaveAttribute("data-tv-ir", "vale");
   });
 
   test("a abertura mostra a carta inteira e a faixa na primeira tela do desktop", async ({
@@ -437,7 +439,8 @@ test.describe("Território — a carta responde à exploração", () => {
       );
       if (sequencia.at(-1) !== atual) sequencia.push(atual);
     }
-    expect(sequencia).toEqual(["-", "vale", ...LUGARES.map((l) => l.id), "-"]);
+    // A abertura já é o Vale; o fecho, que não é lugar, não marca nenhum.
+    expect(sequencia).toEqual(["vale", ...LUGARES.map((l) => l.id), "-"]);
   });
 });
 

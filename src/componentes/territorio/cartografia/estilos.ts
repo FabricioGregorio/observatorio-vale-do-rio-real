@@ -247,7 +247,7 @@ export const CSS_DO_TERRITORIO_VIVO = `
   background:color-mix(in srgb,var(--color-pedra) calc(var(--tv-faixa-realce) * 8%),transparent);
   transition:box-shadow var(--duracao-painel) var(--easing-padrao),background-color var(--duracao-hover) var(--easing-padrao);
 }
-.tv-faixa a:hover{--tv-faixa-realce:1}
+@media (hover:hover){.tv-faixa a:hover{--tv-faixa-realce:1}}
 .tv-faixa .nome{
   font-family:var(--font-display);font-weight:600;font-size:var(--text-base);line-height:1.15;letter-spacing:-.01em;
   text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.22em;
@@ -258,6 +258,9 @@ export const CSS_DO_TERRITORIO_VIVO = `
 /* Capítulo em leitura: filete de milho no topo e o nome sublinhado — forma, e não só cor. */
 .tv-faixa a[aria-current]{box-shadow:inset 0 3px 0 0 var(--color-destaque);background:color-mix(in srgb,var(--color-pedra) 7%,transparent)}
 .tv-faixa a[aria-current] .nome{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:.22em;text-decoration-color:var(--color-destaque)}
+/* Ilha Grande em leitura: o filete sai do milho e vai para o anil de São Cristóvão — o mesmo traço do "fora do recorte" na carta. */
+.tv-faixa [data-fora] a[aria-current]{box-shadow:inset 0 3px 0 0 var(--color-anil-claro)}
+.tv-faixa [data-fora] a[aria-current] .nome{text-decoration-color:var(--color-anil-claro)}
 
 /* =========================================================================
    O VALE — o primeiro capítulo
@@ -418,10 +421,23 @@ export const CSS_DO_TERRITORIO_VIVO = `
   dois dizem a mesma coisa em escalas diferentes.
 */
 .tv-localizador{transform-origin:0 0;transition:transform var(--tv-realce) var(--easing-padrao)}
-.tv-localizador:hover{transform:scale(1.6)}
-.tv-localizador :is(.janela,.ponto){transition:fill var(--tv-realce) var(--easing-padrao),stroke var(--tv-realce) var(--easing-padrao),transform var(--tv-realce) var(--easing-padrao)}
+@media (hover:hover){.tv-localizador:hover{transform:scale(1.6)}}
+.tv-localizador :is(.janela,.ponto){transition:fill var(--tv-realce) var(--easing-padrao),stroke var(--tv-realce) var(--easing-padrao),stroke-width var(--tv-realce) var(--easing-padrao),transform var(--tv-realce) var(--easing-padrao)}
+.tv-localizador .m{transition:opacity var(--tv-realce) var(--easing-padrao)}
 .tv-prancha[data-em-leitura] .tv-localizador .janela{fill:color-mix(in srgb,var(--tv-pin) 28%,transparent);stroke:var(--tv-pin);stroke-width:2px}
 .tv-prancha[data-em-leitura] .tv-localizador .ponto{transform:scale(1.35)}
+/*
+  Este mapa é aquele pedaço. Quando o ponteiro está no mapa, quando o foco
+  está na legenda ou na fonte dele, ou no instante em que a camada detalhada
+  chega, a janela do localizador engrossa e o resto da miniatura recua um
+  pouco. O localizador não ganha comportamento: só responde.
+*/
+.tv-carta:is(:focus-within,[data-tv-recem]) .tv-localizador .janela{fill:color-mix(in srgb,var(--tv-pin) 40%,transparent);stroke:var(--tv-pin);stroke-width:3px}
+.tv-carta:is(:focus-within,[data-tv-recem]) .tv-localizador .m{opacity:.62}
+@media (hover:hover){
+  .tv-carta:has(.tv-carta__placa:hover) .tv-localizador .janela{fill:color-mix(in srgb,var(--tv-pin) 40%,transparent);stroke:var(--tv-pin);stroke-width:3px}
+  .tv-carta:has(.tv-carta__placa:hover) .tv-localizador .m{opacity:.62}
+}
 .tv-carta__halo .anel{fill:none;stroke:var(--color-carvao);stroke-width:5px;vector-effect:non-scaling-stroke}
 .tv-carta__halo .tv-carta__halo--luz{stroke:var(--tv-pin-selecionado);stroke-width:2.5px}
 .tv-carta__halo{
@@ -439,8 +455,13 @@ export const CSS_DO_TERRITORIO_VIVO = `
 /* --- Chegada a um capítulo ---------------------------------------------- */
 
 /* O link continua sendo link: a rolagem só fica suave, e só para quem não pediu menos movimento. */
+/*
+  Só depois da hidratação: com a regra valendo desde o HTML, abrir a página
+  já com uma âncora (#lugar-…) fazia o navegador rolar animado do topo até a
+  prancha. A âncora de chegada é instantânea; as de dentro da página, suaves.
+*/
 @media (prefers-reduced-motion:no-preference){
-  html:has(#territorio-vivo){scroll-behavior:smooth}
+  html:has(#territorio-vivo[data-interativo]){scroll-behavior:smooth}
 }
 /*
   Destino marcado por um instante: um filete de milho sob o título, que se

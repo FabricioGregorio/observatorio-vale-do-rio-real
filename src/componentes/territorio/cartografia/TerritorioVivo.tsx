@@ -207,13 +207,36 @@ export function TerritorioVivo({
       l.id,
     ]);
   }
+  /*
+    Quatro caminhos acendem um lugar, e todos dão no mesmo estado:
+
+    - foco de teclado no item da faixa, ou o pin pressionado;
+    - ponteiro sobre o item ou o pin — só onde existe ponteiro que paira
+      (`hover: hover`); no toque, o `:hover` gruda no último elemento tocado
+      e deixaria o lugar aceso depois da volta;
+    - `data-tv-destino`: o lugar escolhido, enquanto a página rola até ele;
+    - `data-tv-origem`: o lugar de onde a pessoa veio, por um instante, ao
+      voltar à carta.
+
+    Os dois últimos são postos pela ilha cliente; sem JavaScript não existem.
+  */
+  const pairar = (seletores: readonly string[], declaracao: string) =>
+    `@media (hover:hover){${seletores.join(",")}{${declaracao}}}`;
   const css = [
     `.tv{--tv-placa-proporcao:${(vw / (vista.y1 - vista.y0)).toFixed(4)};--tv-quadro-proporcao:${(qw / qh).toFixed(4)};--tv-vale-proporcao:${(cw / ch).toFixed(4)};--tv-quadro-escala:${(qw / cw).toFixed(4)};--tv-quadro-x:${(((quadro.x0 - caixaDoVale.x0) / cw) * 100).toFixed(3)}%;--tv-quadro-y:${(((quadro.y0 - caixaDoVale.y0) / ch) * 100).toFixed(3)}%}`,
-    `.tv:has(.tv-faixa [data-tv-ir="vale"]:is(:hover,:focus-visible)){--ap-vale:1}`,
+    `.tv:has(.tv-faixa [data-tv-ir="vale"]:focus-visible),.tv[data-tv-destino="vale"]{--ap-vale:1}`,
+    pairar([`.tv:has(.tv-faixa [data-tv-ir="vale"]:hover)`], "--ap-vale:1"),
     `.tv-faixa [data-tv-ir="vale"]{--eu:var(--ap-vale,0)}`,
     ...posicionados.map(
       (l) =>
-        `.tv:has(.tv-faixa [data-tv-ir="${l.id}"]:is(:hover,:focus-visible)),.tv:has(.tv-geral [data-pin="${l.id}"]:is(:hover,:active)){--ap:1;--ap-${l.id}:1}` +
+        `.tv:has(.tv-faixa [data-tv-ir="${l.id}"]:focus-visible),.tv:has(.tv-geral [data-pin="${l.id}"]:active),.tv[data-tv-destino="${l.id}"],.tv[data-tv-origem="${l.id}"]{--ap:1;--ap-${l.id}:1}` +
+        pairar(
+          [
+            `.tv:has(.tv-faixa [data-tv-ir="${l.id}"]:hover)`,
+            `.tv:has(.tv-geral [data-pin="${l.id}"]:hover)`,
+          ],
+          `--ap:1;--ap-${l.id}:1`,
+        ) +
         `.tv-geral [data-pin="${l.id}"],.tv-faixa [data-tv-ir="${l.id}"]{--eu:var(--ap-${l.id},0)}`,
     ),
     ...[...lugaresPorMunicipio].map(
