@@ -4,7 +4,6 @@ import { describe, expect, test } from "vitest";
 import { montarBaseDoTerritorio } from "../src/componentes/territorio/cartografia/local/composicao";
 import { lugaresDeCampo } from "../src/componentes/territorio/cartografia/lugares";
 import {
-  DERIVADOS_DA_PESQUISA,
   DERIVADOS_DOS_LUGARES,
   LUGAR_DA_PASTA_DO_CORPUS,
   pastaDoOriginal,
@@ -31,7 +30,7 @@ import {
  */
 describe("identidade entre fotografia e lugar", () => {
   test("todo derivado declara um lugar que existe", () => {
-    for (const foto of [...DERIVADOS_DOS_LUGARES, ...DERIVADOS_DA_PESQUISA]) {
+    for (const foto of DERIVADOS_DOS_LUGARES) {
       expect(IDS_DOS_LUGARES, foto.arquivo).toContain(foto.lugar);
     }
   });
@@ -43,7 +42,7 @@ describe("identidade entre fotografia e lugar", () => {
     fotografia pertence.
   */
   test("o lugar declarado é o que a pasta do original produz", () => {
-    for (const foto of [...DERIVADOS_DOS_LUGARES, ...DERIVADOS_DA_PESQUISA]) {
+    for (const foto of DERIVADOS_DOS_LUGARES) {
       const pasta = pastaDoOriginal(foto.original.arquivo);
       expect(pasta, `${foto.arquivo}: pasta fora da tabela`).not.toBeNull();
       if (pasta === null) continue;
@@ -152,9 +151,11 @@ describe("recorte das fichas por lugar", () => {
     responsável retirou ou trocou, e as mesmas cenas estão no recorte.
   */
   test("nenhuma ficha serve os derivados antigos da H3", () => {
-    const antigos = new Set<string>(
-      DERIVADOS_DA_PESQUISA.map((d) => d.arquivo),
-    );
+    const antigos = new Set<string>([
+      "ilha-grande-chegada-barco-410.webp",
+      "ilha-grande-forno-lenha-412.webp",
+      "ilha-grande-igrejinha-1280.webp",
+    ]);
     for (const lugar of porId.values()) {
       for (const foto of lugar.fotos) {
         expect(antigos.has(foto.src.split("/").pop() ?? ""), foto.src).toBe(

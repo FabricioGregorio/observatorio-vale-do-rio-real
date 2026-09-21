@@ -1,10 +1,10 @@
 import Image from "next/image";
 
 import {
-  DERIVADOS_DA_PESQUISA,
-  type DerivadoDaPesquisa,
   exibirDataDaFotografia,
   PASTA_PUBLICA_DA_PESQUISA,
+  REGISTROS_DOS_PROTOTIPOS,
+  type RegistroDoPrototipo,
 } from "../../../dados/pesquisa/derivados";
 import {
   CSS_DA_PESQUISA,
@@ -34,7 +34,7 @@ function FichaDoRegistro({
   registro,
   completa = false,
 }: {
-  registro: DerivadoDaPesquisa;
+  registro: RegistroDoPrototipo;
   completa?: boolean;
 }) {
   return (
@@ -82,7 +82,7 @@ function Fotografia({
   registro,
   principal = false,
 }: {
-  registro: DerivadoDaPesquisa;
+  registro: RegistroDoPrototipo;
   principal?: boolean;
 }) {
   return (
@@ -131,9 +131,9 @@ export function PesquisaEmCampoPrototipo({
   composicao: ComposicaoDaPesquisa;
   contexto?: ContextoDaPesquisa;
 }) {
-  const igreja = DERIVADOS_DA_PESQUISA[2];
-  const chegada = DERIVADOS_DA_PESQUISA[0];
-  const forno = DERIVADOS_DA_PESQUISA[1];
+  const igreja = REGISTROS_DOS_PROTOTIPOS[2];
+  const chegada = REGISTROS_DOS_PROTOTIPOS[0];
+  const forno = REGISTROS_DOS_PROTOTIPOS[1];
   const prefixo =
     contexto === "home" ? "pesquisa-home" : `pesquisa-${composicao}`;
 

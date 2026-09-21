@@ -181,7 +181,7 @@ function territorio(id: IdDoLugar, entorno: IdDoEntorno) {
  * O **recorte editorial das fichas** — a seleção declarada em `FICHAS`, no
  * gerador. Desde 2026-09-21 ele reúne as oito fotografias publicadas de Serra
  * dos Macacos e as oito de Ilha Grande, com os mesmos bytes do Acervo. Os três
- * derivados da H3 (`DERIVADOS_DA_PESQUISA`) saíram da ficha: eram de originais
+ * derivados da H3 saíram da ficha, e depois do repositório: eram de originais
  * que o responsável retirou ou trocou, e as mesmas cenas estão no recorte.
  *
  * A data, quando a fonte a tem, vai sob a legenda; sem data, nada é escrito.

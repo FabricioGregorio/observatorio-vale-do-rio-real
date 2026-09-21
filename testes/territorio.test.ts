@@ -29,10 +29,7 @@ import {
   SIMBOLO_OBSERVATORIO,
 } from "../src/dados/hero/derivados";
 import { MARCAS_DERIVADAS } from "../src/dados/institucional/marcas";
-import {
-  DERIVADOS_DA_PESQUISA,
-  DERIVADOS_DOS_LUGARES,
-} from "../src/dados/pesquisa/derivados";
+import { DERIVADOS_DOS_LUGARES } from "../src/dados/pesquisa/derivados";
 import { ARTES_PODOBSERVAR } from "../src/dados/podobservar-artes";
 import { FONTES_TERRITORIAIS } from "../src/dados/territorio/fontes";
 import { montarDadosDoMapa } from "../src/dados/territorio/mapa";
@@ -134,7 +131,6 @@ describe("ausência de dado territorial inventado", () => {
 
     const declarados = new Set<string>([
       ...DERIVADOS_DO_HERO.map((d) => d.arquivo),
-      ...DERIVADOS_DA_PESQUISA.map((d) => d.arquivo),
       ...DERIVADOS_DOS_LUGARES.map((d) => d.arquivo),
       MARCA_OBSERVATORIO.arquivo,
       SIMBOLO_OBSERVATORIO.arquivo,

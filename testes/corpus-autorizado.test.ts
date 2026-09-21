@@ -5,7 +5,6 @@ import { describe, expect, test } from "vitest";
 
 import corpusAutorizado from "../src/dados/pesquisa/corpus-b01-autorizado.json";
 import {
-  DERIVADOS_DA_PESQUISA,
   DERIVADOS_DOS_LUGARES,
   LUGAR_DA_PASTA_DO_CORPUS,
   PASTA_DOS_DERIVADOS_DA_PESQUISA,
@@ -110,9 +109,7 @@ describe("o que a interface consome está declarado", () => {
   });
 
   test("as pastas declaradas cobrem os lugares com fotografia na ficha", () => {
-    const comFoto = new Set(
-      [...DERIVADOS_DOS_LUGARES, ...DERIVADOS_DA_PESQUISA].map((f) => f.lugar),
-    );
+    const comFoto = new Set(DERIVADOS_DOS_LUGARES.map((f) => f.lugar));
     const cobertas = new Set(Object.values(LUGAR_DA_PASTA_DO_CORPUS));
     for (const lugar of comFoto) expect(cobertas, lugar).toContain(lugar);
   });
@@ -132,13 +129,12 @@ describe("nada entra na interface sem estar declarado", () => {
   test("a pasta pública tem exatamente os arquivos declarados", () => {
     const declarados = new Set([
       ...DERIVADOS_DOS_LUGARES.map((d) => d.arquivo),
-      ...DERIVADOS_DA_PESQUISA.map((d) => d.arquivo),
     ]);
     expect(new Set(readdirSync(pasta))).toEqual(declarados);
   });
 
   test("cada arquivo publicado conserva o hash declarado", () => {
-    for (const d of [...DERIVADOS_DOS_LUGARES, ...DERIVADOS_DA_PESQUISA]) {
+    for (const d of DERIVADOS_DOS_LUGARES) {
       const bytes = readFileSync(join(pasta, d.arquivo));
       expect(createHash("sha256").update(bytes).digest("hex"), d.arquivo).toBe(
         d.sha256,

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import {
-  DERIVADOS_DA_PESQUISA,
   PASTA_PUBLICA_DA_PESQUISA,
+  REGISTROS_DOS_PROTOTIPOS,
 } from "../../../dados/pesquisa/derivados";
 import type { DadosDoMapa } from "../../../dados/territorio/mapa";
 import { RESUMO_PUBLICO_DO_VALE } from "../../../dados/territorio/recorte";
@@ -34,7 +34,7 @@ export function PresetVisual({
   dados: DadosDoMapa;
   preset: "A" | "B";
 }) {
-  const foto = DERIVADOS_DA_PESQUISA[2];
+  const foto = REGISTROS_DOS_PROTOTIPOS[2];
   const vale = dados.municipios.filter((municipio) =>
     municipio.relacoesTerritoriais.includes("vale-rio-real"),
   );

@@ -33,7 +33,7 @@ describe("classificação de destino", () => {
   test.each([
     "/anexos.json",
     "/arquivos/relatorio.pdf",
-    "/media/pesquisa/ilha-grande-igrejinha-1280.webp",
+    "/media/pesquisa/ilha-grande-pequena-igreja.webp",
     "https://observatoriotobiassoueu.com.br/anexos.json",
     "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a02-relatorio-tecnico-recanto-da-serra-publico-v1.pdf",
     "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a11-planilha-indicadores-v1.xlsx",

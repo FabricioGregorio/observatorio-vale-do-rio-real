@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from "vitest";
 
 import { exigirAmbienteDeDesenvolvimentoDaPesquisa } from "../src/app/dev/pesquisa/page";
-import { DERIVADOS_DA_PESQUISA } from "../src/dados/pesquisa/derivados";
+import { REGISTROS_DOS_PROTOTIPOS } from "../src/dados/pesquisa/derivados";
 
 describe("proteção e conteúdo do protótipo Pesquisa em Campo", () => {
   test("interrompe a renderização com 404 em produção", () => {
@@ -27,8 +27,8 @@ describe("proteção e conteúdo do protótipo Pesquisa em Campo", () => {
   );
 
   test("os três registros são fotográficos, de 11/04/2026 e sem pessoa descrita", () => {
-    expect(DERIVADOS_DA_PESQUISA).toHaveLength(3);
-    for (const registro of DERIVADOS_DA_PESQUISA) {
+    expect(REGISTROS_DOS_PROTOTIPOS).toHaveLength(3);
+    for (const registro of REGISTROS_DOS_PROTOTIPOS) {
       expect(registro.tipo).toBe("registro fotográfico");
       expect(registro.local).toBe("Ilha Grande");
       expect(registro.data).toBe("2026-04-11");

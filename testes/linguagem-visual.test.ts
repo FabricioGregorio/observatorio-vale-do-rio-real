@@ -10,7 +10,7 @@ import {
   PRESET_RECOMENDADO,
 } from "../src/componentes/prototipo/linguagem/gramatica";
 import { PresetVisual } from "../src/componentes/prototipo/linguagem/PresetVisual";
-import { DERIVADOS_DA_PESQUISA } from "../src/dados/pesquisa/derivados";
+import { REGISTROS_DOS_PROTOTIPOS } from "../src/dados/pesquisa/derivados";
 import { montarDadosDoMapa } from "../src/dados/territorio/mapa";
 
 describe("H3.5: isolamento, procedência e conteúdo", () => {
@@ -35,7 +35,7 @@ describe("H3.5: isolamento, procedência e conteúdo", () => {
       expect((html.match(/<path /g) ?? []).length).toBe(75);
       for (const municipio of dados.municipios)
         expect(html).toContain(municipio.caminho);
-      expect(html).toContain(DERIVADOS_DA_PESQUISA[2].titulo);
+      expect(html).toContain(REGISTROS_DOS_PROTOTIPOS[2].titulo);
       expect(html).toContain("Não informada");
       expect(html).toContain("Nenhum indicador é apresentado");
       expect(html).not.toMatch(

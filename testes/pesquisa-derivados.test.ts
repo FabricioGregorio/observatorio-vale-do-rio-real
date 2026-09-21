@@ -4,8 +4,6 @@ import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 import {
-  BYTES_TOTAIS_DA_PESQUISA,
-  DERIVADOS_DA_PESQUISA,
   DERIVADOS_DOS_LUGARES,
   exibirDataDaFotografia,
   FOTOGRAFIAS_DA_HOME,
@@ -32,41 +30,19 @@ function chunksDoWebp(bytes: Buffer): string[] {
 
 describe("derivados seguros da Pesquisa em Campo", () => {
   test("a pasta pública contém somente derivados declarados", () => {
-    const declarados = [
-      ...DERIVADOS_DA_PESQUISA.map((d) => d.arquivo),
-      ...DERIVADOS_DOS_LUGARES.map((d) => d.arquivo),
-    ].sort();
+    const declarados = DERIVADOS_DOS_LUGARES.map((d) => d.arquivo).sort();
     expect(readdirSync(PASTA).sort()).toEqual(declarados);
   });
 
-  test.each(DERIVADOS_DA_PESQUISA)(
-    "$arquivo conserva hash, peso e orçamento",
-    ({ arquivo, bytes: peso, sha256 }) => {
-      const caminho = join(PASTA, arquivo);
-      expect(statSync(caminho).isFile()).toBe(true);
-      const bytes = readFileSync(caminho);
-      expect(bytes.length).toBe(peso);
-      expect(createHash("sha256").update(bytes).digest("hex")).toBe(sha256);
-      expect(bytes.length).toBeLessThan(200_000);
-    },
-  );
-
-  test.each(DERIVADOS_DA_PESQUISA)(
-    "$arquivo não carrega EXIF, XMP, GPS ou vestígio de dispositivo",
-    ({ arquivo }) => {
-      const bytes = readFileSync(join(PASTA, arquivo));
-      const chunks = chunksDoWebp(bytes);
-      expect(chunks).not.toContain("EXIF");
-      expect(chunks).not.toContain("XMP ");
-      expect(bytes.toString("latin1")).not.toMatch(
-        /GPS|Exif|xmpmeta|Samsung|Galaxy|2026:04:/i,
-      );
-    },
-  );
-
-  test("o conjunto mantém orçamento abaixo de 250 kB", () => {
-    expect(BYTES_TOTAIS_DA_PESQUISA).toBe(242_766);
-    expect(BYTES_TOTAIS_DA_PESQUISA).toBeLessThan(250_000);
+  /* Os três derivados da H3 foram removidos em 2026-09-21. */
+  test("os derivados antigos da H3 não voltam", () => {
+    const pasta = readdirSync(PASTA);
+    for (const antigo of [
+      "ilha-grande-chegada-barco-410.webp",
+      "ilha-grande-forno-lenha-412.webp",
+      "ilha-grande-igrejinha-1280.webp",
+    ])
+      expect(pasta).not.toContain(antigo);
   });
 
   test.each(DERIVADOS_DOS_LUGARES)(
@@ -132,10 +108,7 @@ describe("data das fotografias", () => {
     DERIVADOS_DOS_LUGARES.filter((f) => f.lugar === lugar);
 
   test("todas as de Ilha Grande são de 11/04/2026", () => {
-    const ilha = [
-      ...doLugar("ilha-grande"),
-      ...DERIVADOS_DA_PESQUISA.filter((f) => f.lugar === "ilha-grande"),
-    ];
+    const ilha = doLugar("ilha-grande");
     expect(ilha.length).toBeGreaterThanOrEqual(8);
     for (const foto of ilha) {
       expect(foto.data, foto.arquivo).toBe("2026-04-11");
