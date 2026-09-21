@@ -2,15 +2,26 @@ import { describe, expect, test } from "vitest";
 
 import { ENTREVISTAS } from "../src/componentes/home/conteudo";
 import {
+  ATOR_CHAVE,
   agruparEntrevistas,
   CHAVE_DE_EVIDENCIAS,
+  ESCUTA,
+  ESCUTA_PUBLICA,
+  ESCUTA_RESTRITA,
+  FECHO,
   INDICADORES,
   INSTRUMENTOS,
+  LEITURA,
+  LIMITES,
+  NOTA_DOS_MESES,
   OBJETIVO,
   OBJETIVO_DEPOIS_DA_PERGUNTA,
+  PAPEIS,
   PERCURSO,
   PERGUNTA,
+  PERIODO_DA_COLETA,
   REGISTROS_DA_ESCUTA,
+  SINTESE,
 } from "../src/componentes/pesquisa/conteudoDaPesquisa";
 import { REGISTROS_RESERVADOS } from "../src/dados/indicadores/selecaoEditorial";
 
@@ -173,5 +184,159 @@ describe("a escuta se reparte sem perder entrevista", () => {
       expect(reais.has(documento), documento).toBe(true);
     }
     expect(declarados).toHaveLength(ENTREVISTAS.length);
+  });
+});
+
+/**
+ * Linguagem pública do corpus de `/pesquisa`.
+ *
+ * A rodada visual de 2026-09-21 reintroduziu, em três lugares, frases que
+ * explicavam como a equipe publica e classifica material em vez de explicar a
+ * pesquisa: a pendência de um indicador, o trâmite que dá endereço público a
+ * um documento e a razão da forma da interface. As três saíram.
+ *
+ * O critério que este bloco aplica é o mesmo que as removeu: a frase explica
+ * a pesquisa a quem lê, ou explica como o site foi construído, conferido e
+ * publicado? Na segunda hipótese, ela não chega ao público.
+ *
+ * O que **não** entra aqui é transparência metodológica real. Baixa
+ * temporada, registro declarado pelo ator-chave, ausência de auditoria de
+ * caixa, hipótese revista no percurso e limites de leitura continuam ditos
+ * com todas as letras — higienizar a ponto de apagá-los seria o erro oposto.
+ */
+describe("o corpus público não explica o funcionamento interno do site", () => {
+  const PROIBIDOS: readonly {
+    readonly padrao: RegExp;
+    readonly porque: string;
+  }[] = [
+    {
+      padrao: /pend[eê]ncia metodol[oó]gica/i,
+      porque: "estado interno de um indicador não publicado",
+    },
+    {
+      padrao: /conjunto auditado/i,
+      porque: "recorte interno de publicação de indicadores",
+    },
+    {
+      padrao: /revis[aã]o de privacidade/i,
+      porque: "etapa interna do fluxo de publicação",
+    },
+    {
+      padrao: /semelhan[cç]a de nome/i,
+      porque: "critério interno de vinculação de arquivo",
+    },
+    {
+      padrao: /endere[cç]o p[uú]blico depois/i,
+      porque: "trâmite de publicação exposto a quem lê",
+    },
+    {
+      padrao:
+        /esta p[aá]gina (identifica|mostra|apresenta|exibe)|nesta p[aá]gina/i,
+      porque: "justificativa da forma da interface",
+    },
+    {
+      padrao: /decis[aã]o editorial|optamos|escolhemos/i,
+      porque: "voz de quem produziu o site, e não da pesquisa",
+    },
+    {
+      padrao: /publica[cç][aã]o autorizada|processo de publica[cç][aã]o/i,
+      porque: "governança de publicação",
+    },
+    {
+      padrao: /fonte da verdade|fonte de verdade/i,
+      porque: "vocabulário de processo interno",
+    },
+    { padrao: /\bgate\b/i, porque: "nome interno do critério de publicação" },
+    {
+      padrao: /tempo de compila[cç][aã]o|\bno build\b/i,
+      porque: "mecanismo de compilação exposto",
+    },
+    {
+      padrao: /respons[aá]vel (confirmou|aprovou|autorizou|validou)/i,
+      porque: "bastidor de aprovação",
+    },
+  ];
+
+  /** Todo texto que o módulo entrega para a página servir. */
+  const CORPUS: readonly string[] = [
+    SINTESE,
+    PERGUNTA,
+    NOTA_DOS_MESES,
+    PERIODO_DA_COLETA,
+    ...OBJETIVO,
+    ...ATOR_CHAVE,
+    ...PAPEIS.map((papel) => `${papel.papel} ${papel.texto}`),
+    ...INSTRUMENTOS.flatMap((instrumento) => [
+      instrumento.nome,
+      instrumento.quemPreenche,
+      instrumento.quando,
+      instrumento.serventia ?? "",
+      ...instrumento.registra,
+    ]),
+    ...CHAVE_DE_EVIDENCIAS.flatMap((e) => [e.nome, e.texto]),
+    ...PERCURSO.flatMap((etapa) => [
+      etapa.titulo,
+      ...etapa.paragrafos,
+      ...etapa.onde,
+      etapa.semRegistro ?? "",
+    ]),
+    ...REGISTROS_DA_ESCUTA.flatMap((r) => [r.titulo, r.texto]),
+    ...ESCUTA,
+    ESCUTA_PUBLICA,
+    ESCUTA_RESTRITA,
+    ...LEITURA,
+    ...LIMITES.map((limite) => `${limite.titulo} ${limite.texto}`),
+    ...FECHO,
+  ];
+
+  test("nenhuma frase do corpus descreve o funcionamento interno", () => {
+    const achados: string[] = [];
+    for (const texto of CORPUS) {
+      for (const { padrao, porque } of PROIBIDOS) {
+        const encontrado = padrao.exec(texto);
+        if (encontrado !== null) {
+          achados.push(
+            `"${encontrado[0]}" — ${porque} — em: ${texto.slice(0, 70)}`,
+          );
+        }
+      }
+    }
+    expect(achados).toEqual([]);
+  });
+
+  /*
+    O oposto do bastidor também é erro. Estas quatro afirmações são limites
+    reais da pesquisa e precisam continuar ditas.
+  */
+  test("os limites reais da pesquisa continuam escritos", () => {
+    const limites = LIMITES.map((l) => `${l.titulo} ${l.texto}`).join(" ");
+    expect(limites).toContain("baixa visitação");
+    expect(limites).toContain("preenchido pelo ator-chave");
+    expect(limites).toContain("não audita caixa");
+    expect(limites).toContain("hipótese");
+  });
+
+  test("o formulário do visitante diz para que serve, em vez de por que não publica indicador", () => {
+    const consumidor = INSTRUMENTOS.find(
+      (instrumento) => instrumento.id === "consumidor",
+    );
+    expect(consumidor?.serventia).not.toBeNull();
+    expect(consumidor?.serventia ?? "").toContain("perfil das visitas");
+    // O instrumento que sustenta indicador não precisa de frase de serventia:
+    // a régua do que ele produziu já está na ficha.
+    const rotina = INSTRUMENTOS.find(
+      (instrumento) => instrumento.id === "rotina",
+    );
+    expect(rotina?.serventia).toBeNull();
+  });
+
+  /*
+    A primeira oração de `ESCUTA_RESTRITA` é o que liga esta página à Home:
+    `institucional.spec.ts` compara as duas por ela, e as duas não podem
+    divergir sobre as mesmas oito entrevistas.
+  */
+  test("a frase de restrição continua comparável com a da Home", () => {
+    expect(ESCUTA_RESTRITA).toContain("seguem restritos");
+    expect(ESCUTA.join(" ")).not.toContain("seguem restritos");
   });
 });

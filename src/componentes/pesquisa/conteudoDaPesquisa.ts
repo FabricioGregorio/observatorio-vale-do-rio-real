@@ -157,6 +157,15 @@ export type Instrumento = {
    * aberta e por isso não estão publicadas em lugar nenhum do site.
    */
   readonly indicadores: readonly string[];
+  /**
+   * Para que serve o formulário, em uma frase, quando ele não sustenta
+   * indicador publicado.
+   *
+   * O texto é sobre a pesquisa, e não sobre o site: diz o que o instrumento
+   * ajuda a compreender, e não por qual caminho interno um número deixou de
+   * ser publicado.
+   */
+  readonly serventia: string | null;
 };
 
 export const INSTRUMENTOS: readonly Instrumento[] = [
@@ -172,6 +181,7 @@ export const INSTRUMENTOS: readonly Instrumento[] = [
       "receita de taxa de funcionamento e de consumo no local",
     ],
     indicadores: ["H4-006", "H4-007"],
+    serventia: null,
   },
   {
     id: "consumidor",
@@ -185,6 +195,8 @@ export const INSTRUMENTOS: readonly Instrumento[] = [
       "opinião sobre o espaço",
     ],
     indicadores: [],
+    serventia:
+      "Este formulário ajuda a compreender o perfil das visitas: a faixa etária de quem chegou, de onde veio, o que foi buscar no espaço e como avaliou a experiência.",
   },
 ];
 
@@ -327,7 +339,7 @@ export const PERCURSO: readonly Etapa[] = [
  */
 export const ESCUTA: readonly string[] = [
   "As entrevistas foram gravadas com quem mantém os lugares visitados e com quem responde pela política cultural nos municípios. Elas não ilustram o que os formulários já diziam: em praticamente todas apareceu um tema que nenhum formulário media — visibilidade. Um equipamento cultural só é visitado se, antes disso, se souber que ele existe.",
-  "Esta página identifica cada entrevista pela instituição ou pelo lugar, e não por pessoa. A ficha de cada documento, com áudio, transcrição, data de publicação e hash, está no acervo.",
+  "As entrevistas podem ser consultadas pelo lugar ou pela instituição relacionada. No acervo, cada documento reúne áudio, transcrição, data de publicação e hash de conferência.",
 ];
 
 /**
@@ -374,9 +386,16 @@ export const REGISTROS_DA_ESCUTA: readonly RegistroDaEscuta[] = [
   },
 ];
 
-/** Frase de estado quando todas as entrevistas têm arquivo público. */
+/**
+ * Frase de estado quando todas as entrevistas têm arquivo público.
+ *
+ * Diz a quem lê o que pode fazer com elas — ouvir e ler por inteiro, sem
+ * barreira de acesso. A redação anterior descrevia o caminho interno pelo
+ * qual um documento ganha endereço público, que é assunto de quem opera o
+ * site, e não de quem veio conhecer a pesquisa.
+ */
 export const ESCUTA_PUBLICA =
-  "Nenhuma delas foi publicada por semelhança de nome: como todo arquivo deste site, cada documento só passa a ter endereço público depois de concluída a revisão de privacidade.";
+  "Elas podem ser ouvidas e lidas por inteiro, sem cadastro e sem pedido de acesso.";
 
 /**
  * As entrevistas repartidas nos dois registros, sem perder nenhuma.
@@ -410,9 +429,16 @@ export function agruparEntrevistas(): readonly {
   }));
 }
 
-/** Frase de estado enquanto nenhuma tem arquivo público. */
+/**
+ * Frase de estado enquanto nenhuma tem arquivo público.
+ *
+ * A primeira oração é a mesma da Home, e é o que liga as duas superfícies:
+ * uma não pode dizer "restrito" enquanto a outra diz "público". O que saiu foi
+ * a segunda, que explicava o trâmite de publicação em vez de dizer a quem lê
+ * o que esperar.
+ */
 export const ESCUTA_RESTRITA =
-  "Os áudios e as transcrições seguem restritos. Eles entram no site quando cada entrevista passar pela revisão de privacidade — e não antes.";
+  "Os áudios e as transcrições seguem restritos. Cada entrevista entra no acervo, com áudio e transcrição, assim que puder ser aberta ao público.";
 
 export const LEITURA: readonly string[] = [
   "A leitura quantitativa não aparece isolada do campo. Os registros, formulários e indicadores foram analisados junto às entrevistas, às visitas e à observação dos lugares pesquisados. Essa combinação permite compreender não apenas números, mas também trajetórias, práticas culturais e relações construídas no território.",

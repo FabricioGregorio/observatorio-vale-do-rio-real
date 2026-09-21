@@ -388,3 +388,107 @@ test("sem JavaScript, o percurso e a escuta continuam completos", async ({
     await contexto.close();
   }
 });
+
+/**
+ * A saída pública de `/pesquisa`, em todas as suas superfícies.
+ *
+ * A varredura de `voz-publica.spec.ts` cobre o site inteiro com o vocabulário
+ * que nunca pôde existir em lugar nenhum. Esta é mais estreita e mais funda:
+ * vale só para esta rota e trava as formulações que a rodada visual de
+ * 2026-09-21 reintroduziu aqui — a pendência de um indicador, o trâmite que
+ * dá endereço público a um documento e a explicação da forma da interface.
+ *
+ * O alvo não é palavra, é função da frase: o que ela explica a quem lê. Por
+ * isso "indicadores auditados", "a decisão foi publicar o que o período
+ * mostrasse" e "a pessoa responsável pelo espaço" continuam passando — as
+ * três falam da pesquisa, e não de como o site foi feito.
+ */
+const BASTIDORES_DA_PESQUISA: readonly RegExp[] = [
+  /pend[eê]ncia metodol[oó]gica/i,
+  /conjunto auditado/i,
+  /revis[aã]o de privacidade/i,
+  /semelhan[cç]a de nome/i,
+  /endere[cç]o p[uú]blico depois/i,
+  /esta p[aá]gina (identifica|mostra|apresenta|exibe)|nesta p[aá]gina/i,
+  /decis[aã]o editorial|optamos|escolhemos/i,
+  /publica[cç][aã]o autorizada|processo de publica[cç][aã]o/i,
+  /fonte da verdade|fonte de verdade/i,
+  /\bgate\b/i,
+  /tempo de compila[cç][aã]o|\bno build\b/i,
+  /respons[aá]vel (confirmou|aprovou|autorizou|validou)/i,
+];
+
+test("nenhuma superfície de /pesquisa explica como o site é publicado", async ({
+  page,
+}) => {
+  await page.goto("/pesquisa");
+
+  const superficies = await page.evaluate(() => {
+    const principal = document.querySelector("main");
+    const atributo = (elemento: Element) =>
+      [...elemento.attributes]
+        .filter((a) =>
+          /^(alt|title|aria-label|aria-description|aria-live|data-)/.test(
+            a.name,
+          ),
+        )
+        .map((a) => `${a.name}=${a.value}`);
+    return {
+      texto: principal?.innerText ?? "",
+      html: principal?.innerHTML ?? "",
+      atributos: [...(principal?.querySelectorAll("*") ?? [])]
+        .flatMap(atributo)
+        .join("\n"),
+      tituloDeSvg: [...document.querySelectorAll("svg title")]
+        .map((t) => t.textContent ?? "")
+        .join("\n"),
+      metadados: [
+        ...document.querySelectorAll(
+          "meta, script[type='application/ld+json'], title",
+        ),
+      ]
+        .map((e) => e.outerHTML)
+        .join("\n"),
+    };
+  });
+
+  const achados: string[] = [];
+  for (const [nome, conteudo] of Object.entries(superficies)) {
+    for (const padrao of BASTIDORES_DA_PESQUISA) {
+      const encontrado = padrao.exec(conteudo);
+      if (encontrado !== null) achados.push(`${nome}: "${encontrado[0]}"`);
+    }
+  }
+  expect(achados).toEqual([]);
+
+  /*
+    Nenhum comentário do código viaja até o navegador. Os únicos comentários
+    do HTML servido são os marcadores do próprio framework.
+  */
+  const comentarios = superficies.html.match(/<!--([\s\S]*?)-->/g) ?? [];
+  for (const comentario of comentarios) {
+    expect(comentario.replace(/<!--|-->/g, "").trim().length).toBeLessThan(3);
+  }
+});
+
+/**
+ * O contrário do bastidor também é erro.
+ *
+ * Sanitizar a ponto de apagar o que a pesquisa não consegue afirmar seria
+ * trocar um problema por outro pior. Os quatro limites continuam na página,
+ * com o texto inteiro.
+ */
+test("os limites declarados continuam inteiros na página", async ({ page }) => {
+  await page.goto("/pesquisa");
+  const limites = (
+    await page.locator("#pq-limites-titulo").locator("xpath=..").innerText()
+  ).toLowerCase();
+  for (const afirmacao of [
+    "baixa visitação",
+    "preenchido pelo ator-chave",
+    "não audita caixa",
+    "hipótese",
+  ]) {
+    expect(limites, afirmacao).toContain(afirmacao);
+  }
+});

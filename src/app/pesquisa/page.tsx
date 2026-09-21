@@ -333,14 +333,13 @@ export default async function PaginaPesquisa() {
                   ))}
                 </ul>
 
-                {produzidos.length === 0 ? (
+                {instrumento.serventia === null ? null : (
                   <p className="pq-instrumento__nota">
-                    Nenhum indicador publicado sai deste formulário: a contagem
-                    de visitantes tem pendência metodológica aberta e ficou fora
-                    do conjunto auditado. Ele sustenta a leitura de perfil de
-                    quem visitou.
+                    {instrumento.serventia}
                   </p>
-                ) : (
+                )}
+
+                {produzidos.length === 0 ? null : (
                   <>
                     <p className="meta-ficha pq-instrumento__secao">
                       O que este registro produziu
