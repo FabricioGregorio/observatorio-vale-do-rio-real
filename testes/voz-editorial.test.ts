@@ -74,6 +74,18 @@ describe("nenhum texto de desenvolvimento chega à interface", () => {
       porque: "estado de aprovação humana exposto no HTML público",
     },
     {
+      padrao: /confirmad[oa] pelo responsável|decisão humana documentada/i,
+      porque: "bastidor de aprovação no texto público",
+    },
+    {
+      padrao: /fonte da verdade|fonte de verdade|pendente de decisão/i,
+      porque: "vocabulário de processo interno",
+    },
+    {
+      padrao: /AGENTS\.md|no build|tempo de compilação/i,
+      porque: "instrução ou mecanismo de compilação exposto",
+    },
+    {
       padrao: /nesta compilação/i,
       porque: "vocabulário de build na tela de quem lê",
     },

@@ -34,8 +34,7 @@ export const IDS_DOS_LUGARES = [
 
 export type IdDoLugar = (typeof IDS_DOS_LUGARES)[number];
 
-export const FONTE_DA_COORDENADA =
-  "confirmação humana direta do responsável — 2026-09-14";
+export const FONTE_DA_COORDENADA = "posição informada pelo Observatório";
 
 export const FONTE_DA_REFERENCIA_CARTOGRAFICA =
   "IBGE — Localidades do Brasil, Censo 2022";
@@ -65,7 +64,7 @@ export type ReferenciaTerritorial = {
   readonly municipio: string;
   /** Código IBGE do município. */
   readonly municipioIbge: string;
-  /** Identificação editorial da localização confirmada pelo responsável. */
+  /** Identificação territorial do lugar visitado. */
   readonly localidade: string;
   /**
    * Localidade do IBGE que corresponde à localidade confirmada — mesmo nome e
@@ -76,7 +75,7 @@ export type ReferenciaTerritorial = {
   readonly localidadeIbge: string | null;
   /** Entidade cartográfica próxima que não representa o lugar visitado. */
   readonly referenciaCartografica: ReferenciaCartografica | null;
-  /** Texto territorial autorizado pelo responsável, quando existe. */
+  /** Texto territorial documentado, quando existe. */
   readonly referenciaTerritorial: string | null;
   readonly coordenadaConfirmada: true;
   readonly fonteDaCoordenada: typeof FONTE_DA_COORDENADA;

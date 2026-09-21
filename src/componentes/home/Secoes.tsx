@@ -297,9 +297,9 @@ export function Territorio() {
             >
               <h3 id={ID_DO_TITULO_DOS_PONTOS}>Pontos de pesquisa</h3>
               <p>
-                Os quatro lugares visitados em campo, na posição confirmada pelo
-                responsável e desenhada no mapa. Três ficam em Tobias Barreto; o
-                quarto, do outro lado do estado, só se alcança de barco.
+                Os quatro lugares visitados em campo, desenhados no mapa. Três
+                ficam em Tobias Barreto; o quarto, do outro lado do estado, só
+                se alcança de barco.
               </p>
               <ul>
                 {REFERENCIAS_TERRITORIAIS.map((lugar) => (

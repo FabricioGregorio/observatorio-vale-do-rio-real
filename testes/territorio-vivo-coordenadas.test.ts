@@ -93,9 +93,7 @@ describe("dados territoriais públicos", () => {
   });
 
   test("fonte humana, coordenada confirmada e publicação autorizada", () => {
-    expect(FONTE_DA_COORDENADA).toBe(
-      "confirmação humana direta do responsável — 2026-09-14",
-    );
+    expect(FONTE_DA_COORDENADA).toBe("posição informada pelo Observatório");
     for (const r of REFERENCIAS_TERRITORIAIS) {
       expect(r.coordenadaConfirmada, r.id).toBe(true);
       expect(r.publicacaoPublicaAutorizada, r.id).toBe(true);

@@ -220,7 +220,7 @@ describe("coordenadas na ficha", () => {
   test("a procedência fala de confirmação, não de visita", () => {
     for (const id of IDS_DOS_LUGARES) {
       const fonte = porId.get(id)?.posicao?.fonteDaCoordenada ?? "";
-      expect(fonte, id).toContain("confirmação humana direta do responsável");
+      expect(fonte, id).toContain("posição informada pelo Observatório");
       expect(fonte.toLowerCase(), id).not.toContain("visitad");
     }
     const componente = readFileSync(

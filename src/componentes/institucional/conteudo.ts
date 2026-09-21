@@ -42,28 +42,27 @@ export const ACESSIBILIDADE_SINTESE =
 
 export const ACESSIBILIDADE_ABERTURA =
   "Esta não é uma declaração de conformidade. O site não passou por auditoria " +
-  "externa e não tem selo de certificação. O que existe é um conjunto de " +
-  "recursos implementados e verificados por testes automatizados que rodam a " +
-  "cada alteração, e é isso que está descrito abaixo.";
+  "externa e não tem selo de certificação. Os recursos disponíveis e as " +
+  "limitações conhecidas estão descritos abaixo.";
 
 export const ACESSIBILIDADE_RECURSOS: readonly ItemDeclarado[] = [
   {
     titulo: "Navegação inteira por teclado",
     texto:
       "Todo link, botão e controle é alcançável por Tab, na ordem em que aparece na página. O primeiro elemento de cada página é um link para pular direto ao conteúdo, sem percorrer o menu.",
-    prova: "Verificado em testes de teclado a cada alteração",
+    prova: "Experimente percorrer esta página com a tecla Tab",
   },
   {
     titulo: "Foco sempre visível",
     texto:
       "O elemento em foco recebe um contorno de 3 px que muda de cor conforme o tema, para não desaparecer sobre fundo escuro. Nenhum estilo do site remove o indicador de foco.",
-    prova: "Contorno medido em tema claro e escuro por teste automatizado",
+    prova: "Use Tab para ver o contorno nos links e controles",
   },
   {
     titulo: "Contraste conferido, não estimado",
     texto:
       "As combinações de cor de texto e fundo são medidas e precisam alcançar a razão mínima de 4,5:1 do nível AA. Cor nunca é o único canal de informação: nos gráficos, série e categoria se distinguem também por forma e por texto escrito ao lado.",
-    prova: "Razão de contraste calculada em teste, nos dois temas",
+    prova: null,
   },
   {
     titulo: "Tema claro, escuro ou o do seu sistema",
@@ -76,38 +75,37 @@ export const ACESSIBILIDADE_RECURSOS: readonly ItemDeclarado[] = [
     titulo: "Menos animação quando você pede menos",
     texto:
       "Se o seu sistema estiver configurado para reduzir movimento, o site zera as transições — não há um ajuste a ligar aqui, porque a preferência do sistema já basta. A Central relata o que ela leu do seu sistema.",
-    prova: "Durações zeradas sob prefers-reduced-motion, verificado por teste",
+    prova: "Ative a redução de movimento nas preferências do seu aparelho",
   },
   {
     titulo: "Estrutura semântica de verdade",
     texto:
       "Cada página tem um único h1 e uma hierarquia de títulos sem saltos. As tabelas são tabelas, com cabeçalho declarado; as listas são listas; cada região da página tem nome acessível. Em telas estreitas a tabela de anexos vira ficha por CSS, sem trocar a marcação — a semântica não se perde no caminho.",
-    prova: "Varredura axe nas rotas principais, em tema claro e escuro",
+    prova: null,
   },
   {
     titulo: "Toda imagem com texto alternativo",
     texto:
-      "Nenhuma imagem é publicada sem alternativa textual: é regra de contrato do projeto, não recomendação. As fotografias de campo trazem, além do alt, legenda visível e crédito de autoria quando ele é conhecido.",
-    prova: "Regra do AGENTS.md, conferida na revisão de cada publicação",
+      "Nenhuma imagem é publicada sem alternativa textual. As fotografias de campo trazem, além do texto alternativo, legenda visível e crédito de autoria quando ele é conhecido.",
+    prova: "Fotografias de campo com legenda e texto alternativo no Acervo",
   },
   {
     titulo: "Todo áudio com transcrição",
     texto:
       "Nenhum áudio é publicado sem transcrição vinculada. Os episódios do PodObservar trazem transcrição revisada e integral, legível na própria página — quem não pode ouvir, lê o mesmo conteúdo.",
-    prova:
-      "Regra do AGENTS.md; a consulta pública recusa episódio sem transcrição",
+    prova: "Transcrição integral na página de cada episódio",
   },
   {
     titulo: "O mapa funciona pelo teclado, e o conteúdo existe sem ele",
     texto:
       "O percurso pelos lugares do Território é uma lista de abas com uma única parada de Tab: as setas andam entre os lugares e o estado selecionado é anunciado. Sem JavaScript, a página do Território continua trazendo o conteúdo essencial em texto, e a leitura dos municípios do recorte está sempre disponível em lista.",
-    prova: "Testado com teclado e com JavaScript desligado",
+    prova: "Lista de lugares e municípios na página Território",
   },
   {
     titulo: "Leitura em zoom, e em tela pequena",
     texto:
       "As páginas são conferidas em 320, 375, 768, 1024, 1440 px sem rolagem horizontal, e a tipografia dos números cresce com a largura do próprio bloco, para não estourar a caixa em zoom de 200%.",
-    prova: "Larguras verificadas por teste, nos dois temas",
+    prova: null,
   },
   {
     titulo: "Página pensada para imprimir",
@@ -127,13 +125,13 @@ export const ACESSIBILIDADE_LIMITES: readonly ItemDeclarado[] = [
   {
     titulo: "Não há auditoria externa nem selo",
     texto:
-      "Os recursos acima foram implementados e são verificados automaticamente, mas nenhuma entidade independente avaliou o site. Nenhuma afirmação aqui equivale a certificação.",
+      "Nenhuma entidade independente avaliou o site. Os recursos descritos aqui não equivalem a uma certificação de acessibilidade.",
     prova: null,
   },
   {
     titulo: "Ajuste de tamanho de texto e alto contraste não existem",
     texto:
-      "A Central de Acessibilidade mostra apenas os controles que funcionam. Escala de texto e alto contraste dedicado ainda não foram implementados, e um botão desligado seria pior do que a ausência — prometeria a quem mais depende do recurso. O zoom do próprio navegador continua funcionando em toda página.",
+      "A Central de Acessibilidade não oferece controle de tamanho de texto nem modo dedicado de alto contraste. O zoom do próprio navegador continua disponível em todas as páginas.",
     prova: null,
   },
   {
@@ -158,29 +156,27 @@ export const PRIVACIDADE_SINTESE =
   "uma preferência de tema, e ela não sai dali.";
 
 export const PRIVACIDADE_ABERTURA =
-  "O texto abaixo descreve o funcionamento real do site, conferido no código " +
-  "que o gera. Ele não é modelo genérico de política de privacidade, e não faz " +
-  "promessa que o código não sustente.";
+  "Veja quais dados este site usa durante a navegação, o que fica no seu " +
+  "aparelho e o que acontece ao abrir links para outros serviços.";
 
 export const PRIVACIDADE_NAVEGACAO: readonly ItemDeclarado[] = [
   {
     titulo: "Nenhum cookie",
     texto:
       "O site não grava cookie nenhum — nem de sessão, nem de preferência, nem de terceiro. Por isso também não existe aviso de cookies: não há nada a consentir.",
-    prova: "Nenhuma escrita de cookie no código que gera as páginas",
+    prova: null,
   },
   {
     titulo: "Nenhum analytics e nenhum rastreador",
     texto:
       "Não há Google Analytics, pixel, tag manager, mapa de calor, gravação de sessão ou qualquer medição de audiência. O projeto não sabe quantas pessoas visitaram uma página, e essa é uma escolha, não um esquecimento.",
-    prova:
-      "Regra de contrato do projeto: nenhum script de terceiro que rastreie",
+    prova: null,
   },
   {
     titulo: "Nenhum script de terceiro",
     texto:
-      "Todo código executado no seu navegador vem deste domínio. As fontes tipográficas são baixadas no momento em que o site é compilado e servidas daqui: nenhuma requisição sai para o Google enquanto você lê.",
-    prova: "Fontes auto-hospedadas no build; sem CDN de terceiro",
+      "Todo código executado no seu navegador vem deste domínio. As fontes tipográficas também são servidas daqui: nenhuma requisição sai para o Google enquanto você lê.",
+    prova: null,
   },
   {
     titulo: "Nenhum formulário e nenhum login",
@@ -192,7 +188,7 @@ export const PRIVACIDADE_NAVEGACAO: readonly ItemDeclarado[] = [
     titulo: "Nenhum player incorporado",
     texto:
       "O site não incorpora player do Spotify, do YouTube ou de qualquer outra plataforma. Esses players carregam scripts e gravam cookies de terceiro, e isso conflitaria com tudo que está escrito acima. Os episódios são apresentados aqui com texto e transcrição, e a escuta acontece na plataforma, por link.",
-    prova: "Decisão registrada: apresentação aqui, escuta na plataforma",
+    prova: "Links de escuta na página de cada episódio",
   },
   {
     titulo: "O que fica gravado no seu navegador",
@@ -224,8 +220,8 @@ export const PRIVACIDADE_FRONTEIRAS: readonly ItemDeclarado[] = [
   {
     titulo: "O site é gerado antes de você chegar",
     texto:
-      "As páginas são compiladas uma vez, com os dados já resolvidos, e entregues prontas. Nenhuma consulta ao banco de dados acontece enquanto você navega, e nenhuma informação sua chega perto dele.",
-    prova: "Busca de dados em tempo de compilação, por decisão de arquitetura",
+      "As páginas chegam prontas ao seu navegador. Nenhuma consulta ao banco de dados acontece enquanto você navega, e nenhuma informação sua chega a ele.",
+    prova: null,
   },
 ];
 
@@ -233,7 +229,7 @@ export const PRIVACIDADE_PESQUISA: readonly ItemDeclarado[] = [
   {
     titulo: "Dados de quem participou da pesquisa",
     texto:
-      "O acervo publica material produzido em campo entre 2025 e 2026: relatórios, fotografias, entrevistas gravadas com transcrição e planilhas de resposta. Esse material é objeto de decisão humana documentada sobre o que pode ser publicado, e passou por varredura automatizada de CPF, telefone e marca de assinatura antes de ir ao ar.",
+      "O acervo publica material produzido em campo entre 2025 e 2026: relatórios, fotografias, entrevistas gravadas com transcrição e planilhas de resposta. Os arquivos públicos passaram por revisão de privacidade e por uma verificação automatizada de CPF, telefone e marca de assinatura.",
     prova:
       "Registro de publicação do acervo, com o inventário arquivo por arquivo",
   },
@@ -260,15 +256,13 @@ export const PRIVACIDADE_PESQUISA: readonly ItemDeclarado[] = [
 /* ─────────────────────────────────── contato ──────────────────────────── */
 
 export const CONTATO_SINTESE =
-  "O Observatório ainda não tem um canal de atendimento designado para o " +
-  "site. Esta página diz o que existe de fato, e o que não existe.";
+  "O Observatório ainda não disponibiliza um canal de atendimento pelo site. " +
+  "Veja os caminhos públicos para consultar seus materiais.";
 
 export const CONTATO_ABERTURA =
-  "Um endereço de e-mail ou um formulário publicados aqui teriam de ser reais, " +
-  "com alguém do outro lado. Nenhum foi designado até agora, e inventar um " +
-  "seria pior do que a ausência: a mensagem se perderia sem que ninguém " +
-  "soubesse. Enquanto isso não se resolve, esta página lista o que já " +
-  "funciona sem intermediário.";
+  "Não há endereço de e-mail ou formulário de atendimento disponível neste " +
+  "site. Os documentos públicos podem ser consultados diretamente no Acervo " +
+  "e na Prestação de Contas.";
 
 export const CONTATO_CANAIS: readonly ItemDeclarado[] = [
   {
@@ -292,9 +286,7 @@ export const CONTATO_CANAIS: readonly ItemDeclarado[] = [
 ];
 
 export const CONTATO_PENDENCIA =
-  "Canal de atendimento designado — endereço, responsável, finalidade e " +
-  "expectativa de resposta — é decisão do Coletivo, e ainda não foi tomada. " +
-  "Quando for, entra aqui. Esta página não inventa um enquanto isso.";
+  "Ainda não há canal de atendimento institucional disponível neste site.";
 
 /* ─────────────────────────────────── imprensa ─────────────────────────── */
 
@@ -362,8 +354,7 @@ export const EDUCACAO_SINTESE =
 
 export const EDUCACAO_ABERTURA =
   "O projeto não oferece oficina, curso, plano de aula pronto nem visita " +
-  "agendada — nada disso foi produzido, e esta página não inventa um programa " +
-  "que não existe. O que existe é um acervo aberto, e o que segue é uma " +
+  "agendada. O que existe é um acervo aberto, e o que segue é uma " +
   "orientação de como chegar a ele conforme o que se quer ensinar.";
 
 export type CaminhoEducativo = {
@@ -408,7 +399,7 @@ export const EDUCACAO_CAMINHOS: readonly CaminhoEducativo[] = [
     disciplina: "Linguagens",
     titulo: "A mesma pesquisa contada em áudio, e por escrito",
     texto:
-      "O PodObservar conta a pesquisa em linguagem de comunicação popular, e cada episódio tem transcrição revisada. Comparar o que o áudio diz com o que o relatório técnico registra é um exercício de gênero textual com fonte de verdade.",
+      "O PodObservar conta a pesquisa em linguagem de comunicação popular, e cada episódio tem transcrição revisada. Comparar o que o áudio diz com o que o relatório técnico registra é um exercício de gênero textual com duas fontes sobre a mesma pesquisa.",
     href: "/podobservar",
     acao: "Ouvir e ler os episódios",
   },

@@ -200,8 +200,8 @@ export default async function SalaDoAvaliador() {
         <div className="pc-secao__corpo">
           <h2 id="pc-pendencias-titulo">O que ainda não existe</h2>
           <p className="pc-guia">
-            Declarar a lacuna é parte da comprovação. Nenhum item abaixo recebe
-            link provisório, conteúdo de ocasião ou data estimada.
+            Os itens abaixo ainda não têm arquivo disponível. Quando houver
+            material publicado, o acesso aparecerá nesta página.
           </p>
           <dl className="pc-pendencias">
             {PENDENCIAS_DECLARADAS.map((pendencia) => (

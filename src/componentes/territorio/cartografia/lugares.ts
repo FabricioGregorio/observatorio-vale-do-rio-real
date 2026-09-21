@@ -222,7 +222,7 @@ export function lugaresDeCampo(
       ...RECANTO,
       nomeCompleto: "Ecoparque e Museu Recanto da Serra",
       tipo: { texto: "Equipamento cultural", fonte: A02_TITULO },
-      // A localidade já constava do A02; o responsável a confirmou.
+      // A localidade já constava do A02; mantém-se a referência documental.
       localidade: {
         texto: RECANTO.localidade.texto,
         fonte: `${A02_TITULO}; ${FONTE_DA_COORDENADA}`,

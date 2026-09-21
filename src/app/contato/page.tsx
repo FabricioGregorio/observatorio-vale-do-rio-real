@@ -109,7 +109,7 @@ export default function PaginaContato() {
       <SecaoDocumental
         id="ct-pendencia"
         rotulo="O que falta"
-        titulo="Canal de atendimento: pendente de decisão"
+        titulo="Canal de atendimento ainda não disponível"
       >
         <div className="doc-leitura">
           <p>{CONTATO_PENDENCIA}</p>

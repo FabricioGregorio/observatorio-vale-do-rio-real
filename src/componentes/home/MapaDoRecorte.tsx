@@ -194,8 +194,8 @@ export function MapaDoRecorte({
           ))}
 
           {/*
-            Os quatro lugares visitados, na posição confirmada pelo responsável
-            em 2026-09-14. O ponto aparece sempre — é a pesquisa no desenho; o
+            Os quatro lugares visitados, nas posições documentadas pela pesquisa.
+            O ponto aparece sempre — é a pesquisa no desenho; o
             nome só aparece quando o lugar, ou o recorte em que ele cai, está
             selecionado, para que a visão geral continue sendo a malha e não uma
             lista de etiquetas. O nome de cada lugar está em texto no bloco
