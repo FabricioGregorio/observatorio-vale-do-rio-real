@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
-
+import { montarEntregas } from "../src/componentes/prestacao/conteudo";
 import {
   ATIVIDADES,
   CONTEXTO_DOS_DADOS,
@@ -193,23 +193,39 @@ describe("integridade documental do dataset", () => {
   /**
    * Cinco, e não seis.
    *
-   * Doc 01 §8 e doc 02 §7 declaram "5 meses de coleta" no painel de números do
-   * projeto — são as fontes canônicas, e estão acima do código na hierarquia
-   * do AGENTS.md. Seis é outra contagem: a de **linhas da série mensal**, que
-   * tem julho e dezembro parciais nas pontas. As duas leituras convivem e
-   * medem coisas diferentes; confundi-las publicaria um mês que não houve.
+   * Seis é outra contagem: a de **linhas da série mensal**, que tem julho e
+   * dezembro parciais nas pontas. As duas leituras convivem e medem coisas
+   * diferentes; confundi-las publicaria um mês que não houve.
+   *
+   * A fonte da regra é a janela de coleta declarada neste mesmo módulo, e o
+   * teste confere os dois lados dela: que a janela é a que o projeto declara,
+   * e que o número exibido é **derivado** dela e não digitado. Antes isto
+   * conferia a string "5 meses de coleta" dentro de dois arquivos Markdown de
+   * arquitetura — o que prendia um invariante de produto à existência de um
+   * documento, e quebrava a suíte quando o documento saísse.
    */
   test("a coleta durou cinco meses completos, e a série tem seis linhas", () => {
+    expect(INICIO_DA_COLETA).toBe("2025-07-21");
+    expect(FIM_DA_COLETA).toBe("2025-12-21");
     expect(MESES_DE_COLETA).toBe(5);
     expect(SERIE_MENSAL).toHaveLength(6);
+  });
 
-    const docDaInformacao = readFileSync(
-      "docs/01-arquitetura-informacao.md",
-      "utf8",
-    );
-    const docDoBanco = readFileSync("docs/02-arquitetura-banco.md", "utf8");
-    expect(docDaInformacao).toContain(`${MESES_DE_COLETA} meses de coleta`);
-    expect(docDoBanco).toContain(`${MESES_DE_COLETA} meses de coleta`);
+  /**
+   * O número publicado é o derivado, não um literal paralelo.
+   *
+   * A Prestação de Contas exibe a medida da pesquisa de campo em
+   * `montarEntregas`. Se alguém escrevesse "5 meses" à mão ali, esta asserção
+   * continuaria passando por coincidência — por isso ela compara com o valor
+   * derivado, e não com a string.
+   */
+  test("a medida publicada usa o número derivado da janela", () => {
+    const campo = montarEntregas({
+      documentos: 0,
+      arquivos: 0,
+      episodios: 0,
+    }).find((entrega) => entrega.id === "campo");
+    expect(campo?.medida).toContain(`${MESES_DE_COLETA} meses de coleta`);
   });
 
   /** A primeira e a última linha da série são as pontas declaradas do período. */
