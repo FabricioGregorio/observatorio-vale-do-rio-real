@@ -7,6 +7,8 @@ import {
   BYTES_TOTAIS_DA_PESQUISA,
   DERIVADOS_DA_PESQUISA,
   DERIVADOS_DOS_LUGARES,
+  exibirDataDaFotografia,
+  FOTOGRAFIA_DA_SERRA_NA_HOME,
   PASTA_DOS_DERIVADOS_DA_PESQUISA,
 } from "../src/dados/pesquisa/derivados";
 
@@ -32,6 +34,7 @@ describe("derivados seguros da Pesquisa em Campo", () => {
     const declarados = [
       ...DERIVADOS_DA_PESQUISA.map((d) => d.arquivo),
       ...DERIVADOS_DOS_LUGARES.map((d) => d.arquivo),
+      FOTOGRAFIA_DA_SERRA_NA_HOME.arquivo,
     ].sort();
     expect(readdirSync(PASTA).sort()).toEqual(declarados);
   });
@@ -116,5 +119,36 @@ describe("derivados seguros da Pesquisa em Campo", () => {
       expect(arquivo).toMatch(/\.webp$/);
       expect(arquivo).not.toMatch(/\.heic|\.jpe?g|\.png$/i);
     }
+  });
+});
+
+describe("data das fotografias", () => {
+  test("as três de Ilha Grande são de 11/04/2026", () => {
+    expect(DERIVADOS_DA_PESQUISA.map((f) => f.data)).toEqual([
+      "2026-04-11",
+      "2026-04-11",
+      "2026-04-11",
+    ]);
+    for (const foto of DERIVADOS_DA_PESQUISA) {
+      expect(exibirDataDaFotografia(foto.data)).toBe("11/04/2026");
+    }
+  });
+
+  test("sem data na fonte, a legenda diz que não há data", () => {
+    expect(FOTOGRAFIA_DA_SERRA_NA_HOME.data).toBeNull();
+    expect(exibirDataDaFotografia(null)).toBe("data não informada");
+  });
+
+  test("a fotografia da Serra conserva hash e não carrega metadado", () => {
+    const bytes = readFileSync(
+      join(PASTA, FOTOGRAFIA_DA_SERRA_NA_HOME.arquivo),
+    );
+    expect(bytes.length).toBe(FOTOGRAFIA_DA_SERRA_NA_HOME.bytes);
+    expect(createHash("sha256").update(bytes).digest("hex")).toBe(
+      FOTOGRAFIA_DA_SERRA_NA_HOME.sha256,
+    );
+    const chunks = chunksDoWebp(bytes);
+    expect(chunks).not.toContain("EXIF");
+    expect(chunks).not.toContain("XMP ");
   });
 });

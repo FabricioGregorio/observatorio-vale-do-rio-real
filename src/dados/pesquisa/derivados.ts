@@ -65,7 +65,13 @@ export type DerivadoDaPesquisa = {
   readonly local: "Ilha Grande";
   /** Identidade do lugar; conferida contra `original.arquivo` por teste. */
   readonly lugar: IdDoLugar;
-  readonly data: null;
+  /**
+   * Data da fotografia, em ISO 8601. As três de Ilha Grande foram feitas em
+   * 11/04/2026, por declaração do responsável humano em 2026-09-21; até ali o
+   * campo era `null` e as superfícies exibiam "data não informada". A data não
+   * vem do EXIF, que a derivação remove.
+   */
+  readonly data: string | null;
   readonly tipo: "registro fotográfico";
   readonly fonte: "B01 — fotografias de comprovação";
   readonly original: {
@@ -93,7 +99,7 @@ export const DERIVADOS_DA_PESQUISA = [
     alt: "Vista de construções e vegetação na margem, fotografada a partir de uma embarcação em movimento.",
     local: "Ilha Grande",
     lugar: "ilha-grande",
-    data: null,
+    data: "2026-04-11",
     tipo: "registro fotográfico",
     fonte: "B01 — fotografias de comprovação",
     original: {
@@ -121,7 +127,7 @@ export const DERIVADOS_DA_PESQUISA = [
     alt: "Forno circular aquecido, com utensílios e porções de massa em uma área coberta.",
     local: "Ilha Grande",
     lugar: "ilha-grande",
-    data: null,
+    data: "2026-04-11",
     tipo: "registro fotográfico",
     fonte: "B01 — fotografias de comprovação",
     original: {
@@ -149,7 +155,7 @@ export const DERIVADOS_DA_PESQUISA = [
     alt: "Fachada branca e azul de uma igreja, com a inscrição 1933 na parte superior.",
     local: "Ilha Grande",
     lugar: "ilha-grande",
-    data: null,
+    data: "2026-04-11",
     tipo: "registro fotográfico",
     fonte: "B01 — fotografias de comprovação",
     original: {
@@ -175,6 +181,19 @@ export const DERIVADOS_DA_PESQUISA = [
   },
 ] as const satisfies readonly DerivadoDaPesquisa[];
 
+/**
+ * Data de um registro fotográfico como a interface a exibe: `11/04/2026`.
+ *
+ * A ausência é dita, não esquecida — `null` vira "data não informada". É a
+ * única formatação de data de fotografia: a Home e as fichas de `/territorio`
+ * leem daqui, e nenhuma escreve a data à mão.
+ */
+export function exibirDataDaFotografia(data: string | null): string {
+  if (data === null) return "data não informada";
+  const [ano, mes, dia] = data.split("-");
+  return `${dia}/${mes}/${ano}`;
+}
+
 export const BYTES_TOTAIS_DA_PESQUISA = DERIVADOS_DA_PESQUISA.reduce(
   (total, derivado) => total + derivado.bytes,
   0,
@@ -185,3 +204,44 @@ export type DerivadoDeLugar = (typeof fotosDosLugares)[number];
 /** Fotografias autorizadas para as fichas de Recanto e Borda da Mata. */
 export const DERIVADOS_DOS_LUGARES =
   fotosDosLugares as readonly DerivadoDeLugar[];
+
+/**
+ * Fotografia do bloco "Também em campo: Serra dos Macacos", na Home.
+ *
+ * Não é derivado novo: são os mesmos bytes do arquivo que o Acervo publicou no
+ * lote de 2026-09-18 (`lote-publicacao-2026-09-18.json`, mesma `sha256`), com
+ * a placa do veículo tarjada conforme o ADR-020. Vive fora de
+ * `DERIVADOS_DOS_LUGARES` de propósito — entrar ali a levaria à ficha de
+ * `/territorio`, e a seleção da ficha é decisão editorial própria.
+ *
+ * `data` é `null`: nenhuma fonte pública data esta fotografia.
+ */
+export const FOTOGRAFIA_DA_SERRA_NA_HOME = {
+  arquivo: "serra-dos-macacos-atravessando-a-ponte.webp",
+  largura: 1280,
+  altura: 1707,
+  bytes: 190_650,
+  sha256: "2500663a4f37678b170ebf390f2d3811f6cdca56e98349f61ad08d6b34b10539",
+  titulo: "Ponte de madeira no caminho",
+  alt: "Carro vermelho atravessa uma ponte de madeira ladeada por estacas amarelas, com um morro coberto de mata ao fundo, visto de dentro de outro veículo.",
+  local: "Serra dos Macacos",
+  lugar: "serra-dos-macacos",
+  data: null,
+  credito: null,
+  acervo:
+    "arquivos/comprovacao-de-campo/b01-serra-dos-macacos-atravessando-a-ponte-v1.webp",
+  original: {
+    arquivo: "fotos/serra-dos-macacos/atravessando-a-ponte.jpg",
+    sha256: "d5683e3b98523d36c81e7f2bb9bf8020c361393dc416b6af27fcffd0eccb225c",
+  },
+} as const satisfies Pick<
+  DerivadoDaPesquisa,
+  "arquivo" | "largura" | "altura" | "bytes" | "sha256" | "titulo" | "alt"
+> & {
+  readonly local: string;
+  readonly lugar: IdDoLugar;
+  readonly data: string | null;
+  readonly credito: string | null;
+  readonly acervo: string;
+  readonly original: { readonly arquivo: string; readonly sha256: string };
+};

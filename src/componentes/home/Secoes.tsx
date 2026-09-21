@@ -12,6 +12,8 @@ import {
 import {
   DERIVADOS_DA_PESQUISA,
   DERIVADOS_DOS_LUGARES,
+  exibirDataDaFotografia,
+  FOTOGRAFIA_DA_SERRA_NA_HOME,
   PASTA_PUBLICA_DA_PESQUISA,
 } from "../../dados/pesquisa/derivados";
 import { RECORTE_TERRITORIAL } from "../../dados/territorio/recorte";
@@ -20,6 +22,7 @@ import {
   GrafismoRioReal,
   GrafismoSerra,
 } from "../grafismos/GrafismosTerritoriais";
+import { LinkDeDestino } from "../layout/LinkDeDestino";
 import { MapaInterativo } from "../mapa/MapaInterativo";
 import {
   ACOMPANHAMENTO,
@@ -398,7 +401,7 @@ function MateriaisReunidos({
             {item.href === null ? (
               <span>{item.material}</span>
             ) : (
-              <a href={item.href}>{item.material}</a>
+              <LinkDeDestino href={item.href}>{item.material}</LinkDeDestino>
             )}
             <span className="hl-estado" data-estado={item.estado}>
               {ROTULO_DO_ESTADO[item.estado]}
@@ -514,16 +517,18 @@ export function Lugares({
                 equipamento={recanto}
                 materiais={materiais.recanto}
               />
-              <a
+              <LinkDeDestino
                 className="hl-botao hl-botao--cheio"
                 href={RELATORIO_DO_RECANTO.url}
+                meta={
+                  <span className="hl-botao__meta">
+                    PDF · {tamanhoEmKb(RELATORIO_DO_RECANTO.bytes)} ·{" "}
+                    {RELATORIO_DO_RECANTO.licenca}
+                  </span>
+                }
               >
                 Ler o relatório técnico
-                <span className="hl-botao__meta">
-                  PDF · {tamanhoEmKb(RELATORIO_DO_RECANTO.bytes)} ·{" "}
-                  {RELATORIO_DO_RECANTO.licenca}
-                </span>
-              </a>
+              </LinkDeDestino>
             </div>
           </div>
         </article>
@@ -556,16 +561,18 @@ export function Lugares({
                   estiver, o endereço aparece nesta ficha.
                 </p>
               ) : (
-                <a
+                <LinkDeDestino
                   className="hl-botao hl-botao--cheio"
                   href={relatorioDoBorda.href}
+                  meta={
+                    <span className="hl-botao__meta">
+                      PDF digitalizado · {FOTOGRAFIAS_DO_BORDA_NO_ACERVO}{" "}
+                      fotografias de campo no acervo
+                    </span>
+                  }
                 >
                   Ler o relatório técnico
-                  <span className="hl-botao__meta">
-                    PDF digitalizado · {FOTOGRAFIAS_DO_BORDA_NO_ACERVO}{" "}
-                    fotografias de campo no acervo
-                  </span>
-                </a>
+                </LinkDeDestino>
               )}
             </div>
           </div>
@@ -731,6 +738,46 @@ export function Escuta({
         </ol>
       </div>
 
+      {/*
+        Os dois desdobramentos do campo, na ordem do percurso descrito no
+        EP01. O texto da Serra é o mesmo que sustenta a ficha do lugar em
+        `/territorio`; a fotografia é a do Acervo, pelos mesmos bytes.
+      */}
+      <div className="hl-ilha hl-serra">
+        <div className="hl-ilha__texto">
+          <h3>Também em campo: Serra dos Macacos</h3>
+          <p>
+            Comunidade agrícola entre serras, alcançada por estrada de terra a
+            partir da Vila de Samambaia.
+          </p>
+        </div>
+        <div className="hl-serra__corpo">
+          <figure>
+            <img
+              alt={FOTOGRAFIA_DA_SERRA_NA_HOME.alt}
+              decoding="async"
+              height={FOTOGRAFIA_DA_SERRA_NA_HOME.altura}
+              loading="lazy"
+              src={`${PASTA_PUBLICA_DA_PESQUISA}/${FOTOGRAFIA_DA_SERRA_NA_HOME.arquivo}`}
+              width={FOTOGRAFIA_DA_SERRA_NA_HOME.largura}
+            />
+            <figcaption>
+              <strong>{FOTOGRAFIA_DA_SERRA_NA_HOME.titulo}</strong>
+              <span className="meta-ficha">
+                {FOTOGRAFIA_DA_SERRA_NA_HOME.local} ·{" "}
+                {exibirDataDaFotografia(FOTOGRAFIA_DA_SERRA_NA_HOME.data)}
+              </span>
+            </figcaption>
+          </figure>
+          <p>
+            O caminho cruza uma ponte de madeira sobre o Riacho do Caripau. Foi
+            ali, em área de Mata Atlântica preservada, que a pesquisa se
+            encerrou: numa oficina de criação de equipamento cultural feita com
+            os próprios moradores.
+          </p>
+        </div>
+      </div>
+
       <div className="hl-ilha">
         <div className="hl-ilha__texto">
           <h3>Também em campo: Ilha Grande</h3>
@@ -755,7 +802,7 @@ export function Escuta({
                 <figcaption>
                   <strong>{foto.titulo}</strong>
                   <span className="meta-ficha">
-                    {foto.local} · data não informada
+                    {foto.local} · {exibirDataDaFotografia(foto.data)}
                   </span>
                 </figcaption>
               </figure>
@@ -817,7 +864,9 @@ export function Produtos({
             PDF no acervo permanente, com licença {RELATORIO_DO_RECANTO.licenca}{" "}
             e hash SHA-256.
           </p>
-          <a href={RELATORIO_DO_RECANTO.url}>Abrir o PDF</a>
+          <LinkDeDestino href={RELATORIO_DO_RECANTO.url}>
+            Abrir o PDF
+          </LinkDeDestino>
         </li>
         <li>
           <span className="hl-estado" data-estado="publicado">
@@ -960,9 +1009,9 @@ export function Conferencia() {
             >
               Abrir a Prestação de Contas
             </Link>
-            <a className="hl-botao" href="/anexos.json">
+            <LinkDeDestino className="hl-botao" href="/anexos.json">
               anexos.json
-            </a>
+            </LinkDeDestino>
             <Link
               className="hl-botao"
               href="/prestacao-de-contas/imprimir"

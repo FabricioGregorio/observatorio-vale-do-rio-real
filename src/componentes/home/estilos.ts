@@ -294,6 +294,15 @@ export const CSS_DA_HOME = `
 .hl-ilha__fotos figure{margin:0}
 .hl-ilha__fotos img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;border-radius:var(--radius-ficha)}
 .hl-ilha__fotos figcaption{display:flex;flex-direction:column;margin-top:.4rem;font-size:var(--text-xs);line-height:1.4}
+/* A Serra usa a grade da Ilha: a fotografia cai na mesma coluna da primeira
+   fotografia de Ilha Grande, e o texto ocupa as outras duas. */
+.hl-serra + .hl-ilha{margin-top:3rem}
+.hl-serra__corpo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;align-items:start}
+.hl-serra__corpo figure{margin:0}
+.hl-serra__corpo img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;border-radius:var(--radius-ficha)}
+.hl-serra__corpo figcaption{display:flex;flex-direction:column;margin-top:.4rem;font-size:var(--text-xs);line-height:1.4}
+.hl-serra__corpo p{grid-column:2/4;font-size:var(--text-sm);color:var(--color-texto-suave);max-width:34rem}
+@media (min-width:600px){.hl-serra__corpo p{padding-left:.75rem}}
 
 /* VII Produtos */
 .hl-catalogo{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));margin-top:3rem;border-top:2px solid var(--color-texto)}

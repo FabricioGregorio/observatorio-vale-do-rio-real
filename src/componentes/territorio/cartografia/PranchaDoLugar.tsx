@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import type { PosicaoConfirmada } from "../../../dados/territorio/referencias";
+import { LinkDeDestino } from "../../layout/LinkDeDestino";
 import { caminhoDoPin } from "../../mapa/caminhoDoPin";
 import {
   aplicar,
@@ -202,7 +203,7 @@ export function PranchaDoLugar({
                 {materiaisPublicos.map((m) => (
                   <li key={m.material}>
                     {m.href !== null ? (
-                      <a href={m.href}>{m.material}</a>
+                      <LinkDeDestino href={m.href}>{m.material}</LinkDeDestino>
                     ) : (
                       <span>{m.material}</span>
                     )}
@@ -286,14 +287,9 @@ export function PranchaDoLugar({
                   <ul>
                     {destinosDeRota(posicao).map((destino) => (
                       <li key={destino.servico}>
-                        <a
-                          href={destino.href}
-                          referrerPolicy="no-referrer"
-                          rel="noopener noreferrer external"
-                          target="_blank"
-                        >
+                        <LinkDeDestino href={destino.href}>
                           {destino.servico}
-                        </a>
+                        </LinkDeDestino>
                       </li>
                     ))}
                   </ul>
@@ -567,9 +563,9 @@ function CartaDaPrancha({
           {local !== null ? (
             <>
               Base: IBGE e{" "}
-              <a href="https://www.openstreetmap.org/copyright">
+              <LinkDeDestino href="https://www.openstreetmap.org/copyright">
                 {FONTES_DAS_CAMADAS.vias}
-              </a>
+              </LinkDeDestino>
               . Ponto na posição registrada pelo Observatório.
             </>
           ) : (

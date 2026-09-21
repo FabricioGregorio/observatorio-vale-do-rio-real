@@ -130,7 +130,10 @@ describe("o crédito chega a cada superfície pública", () => {
     );
     expect(html).toContain("Foto: Dani Santos");
     // O link mostra a identidade do arquivo; o crédito fica fora dele.
-    expect(html).toMatch(/>B01 · marcio-ramos\.jpg<\/a>/);
+    // O arquivo abre em nova guia: a seta decorativa fecha o texto do link.
+    expect(html).toMatch(
+      />B01 · marcio-ramos\.jpg <span aria-hidden="true">↗<\/span><\/a>/,
+    );
     expect(html).not.toMatch(/<a[^>]*>[^<]*Foto: Dani Santos/);
   });
 

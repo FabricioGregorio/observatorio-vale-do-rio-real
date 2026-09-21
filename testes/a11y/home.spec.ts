@@ -285,6 +285,44 @@ test.describe("Home", () => {
     await page.goto("/");
     await expect(page.locator('img[src*="/media/grafismos/"]')).toHaveCount(0);
   });
+
+  /*
+    Os dois desdobramentos do campo, Serra antes de Ilha. As fotografias de
+    Ilha Grande são de 11/04/2026 (manifesto da pesquisa); a da Serra não tem
+    data em fonte pública, e a legenda diz isso em vez de inventar uma.
+  */
+  test("mostra Serra dos Macacos e depois Ilha Grande, com datas da fonte", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const titulos = page.locator("#hl-escuta h3", {
+      hasText: /^Também em campo:/,
+    });
+    await expect(titulos).toHaveText([
+      "Também em campo: Serra dos Macacos",
+      "Também em campo: Ilha Grande",
+    ]);
+
+    const serra = page.locator(".hl-serra");
+    await expect(serra.locator("img")).toHaveCount(1);
+    await expect(serra.locator("img")).toHaveAttribute("loading", "lazy");
+    await expect(serra.locator("img")).toHaveAttribute("width", "1280");
+    await expect(serra.locator("img")).toHaveAttribute("height", "1707");
+    await expect(serra.locator("img")).toHaveAttribute(
+      "alt",
+      /ponte de madeira/,
+    );
+
+    const ilha = page.locator(".hl-ilha:not(.hl-serra) .meta-ficha");
+    await expect(ilha).toHaveText([
+      "Ilha Grande · 11/04/2026",
+      "Ilha Grande · 11/04/2026",
+      "Ilha Grande · 11/04/2026",
+    ]);
+    await expect(page.locator("main")).not.toContainText(
+      "Ilha Grande · data não informada",
+    );
+  });
 });
 
 /**

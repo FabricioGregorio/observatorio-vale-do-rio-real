@@ -327,7 +327,10 @@ describe.skipIf(!urlManutencao || !bucketPublico || !urlPublica)(
         const sala = renderToStaticMarkup(
           createElement(TabelaAnexos, { anexos }),
         );
-        expect((sala.match(/>Baixar<\/a>/g) ?? []).length).toBe(8);
+        expect(
+          (sala.match(/>Baixar <span aria-hidden="true">↗<\/span><\/a>/g) ?? [])
+            .length,
+        ).toBe(8);
 
         const corpos = new Map<string, Buffer>();
         const evidenciasZip = evidencias.map((e, indice) => {

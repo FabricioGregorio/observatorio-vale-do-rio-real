@@ -1,5 +1,6 @@
 import type { AnexoPublico } from "../../dados/consultas/anexos";
 import { separarCredito } from "../../dados/pesquisa/credito-fotografico";
+import { LinkDeDestino } from "../layout/LinkDeDestino";
 
 /**
  * Tabela mestre da Sala do Avaliador (doc 01 §4).
@@ -151,26 +152,26 @@ export function TabelaAnexos({ anexos }: { anexos: AnexoPublico[] }) {
                 className="border-b p-2 align-top"
                 style={{ borderColor: "var(--color-borda)" }}
               >
-                <a
+                <LinkDeDestino
                   href={anexo.linkPermanente}
                   className="underline"
                   style={{ color: "var(--color-link)" }}
                 >
                   Baixar
-                </a>
+                </LinkDeDestino>
               </td>
               <td
                 className="border-b p-2 align-top"
                 style={{ borderColor: "var(--color-borda)" }}
               >
                 {anexo.linkOrigem ? (
-                  <a
+                  <LinkDeDestino
                     href={anexo.linkOrigem}
                     className="underline"
                     style={{ color: "var(--color-link)" }}
                   >
                     Origem
-                  </a>
+                  </LinkDeDestino>
                 ) : (
                   <span className="meta-ficha">—</span>
                 )}

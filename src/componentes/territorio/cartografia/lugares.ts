@@ -7,6 +7,7 @@ import {
 import {
   DERIVADOS_DA_PESQUISA,
   DERIVADOS_DOS_LUGARES,
+  exibirDataDaFotografia,
   PASTA_PUBLICA_DA_PESQUISA,
 } from "../../../dados/pesquisa/derivados";
 import { PONTOS_DE_VISITA_PREVISTOS } from "../../../dados/territorio/pontos";
@@ -211,8 +212,8 @@ function fotografiasDoLugar(id: IdDoLugar): readonly FotoDoLugar[] {
     altura: foto.altura,
     alt: foto.alt,
     legenda: foto.alt,
-    // `data: null` é declarado na fonte: a ausência é dita, não esquecida.
-    qualificador: `${foto.titulo} · data não informada`,
+    // A data vem do manifesto; `null` lá vira "data não informada" aqui.
+    qualificador: `${foto.titulo} · ${exibirDataDaFotografia(foto.data)}`,
     credito: null,
     pendencia: null,
     principal: false,

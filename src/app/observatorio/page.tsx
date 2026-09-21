@@ -1,5 +1,6 @@
 import type { Route } from "next";
 import Link from "next/link";
+import { LinkDeDestino } from "../../componentes/layout/LinkDeDestino";
 import {
   ABERTURA_DO_TERRITORIO,
   EDITAL,
@@ -268,9 +269,12 @@ export default function PaginaObservatorio() {
               >
                 Abrir a Prestação de Contas
               </Link>
-              <a className="obs-botao obs-botao--vazado" href="/anexos.json">
+              <LinkDeDestino
+                className="obs-botao obs-botao--vazado"
+                href="/anexos.json"
+              >
                 anexos.json
-              </a>
+              </LinkDeDestino>
             </p>
           </div>
         </section>

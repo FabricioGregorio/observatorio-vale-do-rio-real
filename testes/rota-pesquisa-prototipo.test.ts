@@ -26,12 +26,12 @@ describe("proteção e conteúdo do protótipo Pesquisa em Campo", () => {
     },
   );
 
-  test("os três registros são fotográficos, sem data e sem pessoa descrita", () => {
+  test("os três registros são fotográficos, de 11/04/2026 e sem pessoa descrita", () => {
     expect(DERIVADOS_DA_PESQUISA).toHaveLength(3);
     for (const registro of DERIVADOS_DA_PESQUISA) {
       expect(registro.tipo).toBe("registro fotográfico");
       expect(registro.local).toBe("Ilha Grande");
-      expect(registro.data).toBeNull();
+      expect(registro.data).toBe("2026-04-11");
       expect(registro.alt).not.toMatch(
         /pesquisador|entrevistad|morador|pessoa/i,
       );

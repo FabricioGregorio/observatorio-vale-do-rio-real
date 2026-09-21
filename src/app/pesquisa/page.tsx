@@ -1,6 +1,7 @@
 import type { Route } from "next";
 import Link from "next/link";
 import { entrevistasPublicas } from "../../componentes/home/conteudo";
+import { LinkDeDestino } from "../../componentes/layout/LinkDeDestino";
 import {
   ATOR_CHAVE,
   agruparEntrevistas,
@@ -599,7 +600,9 @@ export default async function PaginaPesquisa() {
                       {item.href === null ? (
                         <span>{item.material}</span>
                       ) : (
-                        <a href={item.href}>{item.material}</a>
+                        <LinkDeDestino href={item.href}>
+                          {item.material}
+                        </LinkDeDestino>
                       )}
                       <span className="pq-estado" data-estado={item.estado}>
                         {ROTULO_DO_ESTADO[item.estado]}

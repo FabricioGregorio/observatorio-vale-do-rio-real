@@ -3,6 +3,7 @@ import Image from "next/image";
 import {
   DERIVADOS_DA_PESQUISA,
   type DerivadoDaPesquisa,
+  exibirDataDaFotografia,
   PASTA_PUBLICA_DA_PESQUISA,
 } from "../../../dados/pesquisa/derivados";
 import {
@@ -99,7 +100,8 @@ function Fotografia({
       <figcaption className="pesquisa-campo__legenda">
         <strong>{registro.titulo}</strong>
         <span className="meta-ficha">
-          {registro.local} · data não informada · registro fotográfico
+          {registro.local} · {exibirDataDaFotografia(registro.data)} · registro
+          fotográfico
         </span>
       </figcaption>
     </figure>

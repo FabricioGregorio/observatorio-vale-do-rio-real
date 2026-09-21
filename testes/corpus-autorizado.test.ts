@@ -7,6 +7,7 @@ import corpusAutorizado from "../src/dados/pesquisa/corpus-b01-autorizado.json";
 import {
   DERIVADOS_DA_PESQUISA,
   DERIVADOS_DOS_LUGARES,
+  FOTOGRAFIA_DA_SERRA_NA_HOME,
   LUGAR_DA_PASTA_DO_CORPUS,
   PASTA_DOS_DERIVADOS_DA_PESQUISA,
 } from "../src/dados/pesquisa/derivados";
@@ -80,6 +81,21 @@ describe("o que a interface consome está declarado", () => {
     }
   });
 
+  /*
+    A fotografia da Serra na Home não é derivado novo: é o arquivo que o
+    Acervo publicou, byte a byte, com a placa tarjada (ADR-020).
+  */
+  test("a fotografia da Serra na Home é a publicada no Acervo", () => {
+    const f = FOTOGRAFIA_DA_SERRA_NA_HOME;
+    expect(declarados.has(f.original.sha256), f.original.arquivo).toBe(true);
+    const lote = JSON.parse(
+      readFileSync("src/dados/lote-publicacao-2026-09-18.json", "utf8"),
+    ) as readonly { chave: string; sha256: string; bytes: number }[];
+    const publicado = lote.find((item) => item.chave === f.acervo);
+    expect(publicado?.sha256).toBe(f.sha256);
+    expect(publicado?.bytes).toBe(f.bytes);
+  });
+
   test("as pastas declaradas cobrem os lugares com fotografia na ficha", () => {
     const comFoto = new Set(
       [...DERIVADOS_DOS_LUGARES, ...DERIVADOS_DA_PESQUISA].map((f) => f.lugar),
@@ -104,12 +120,17 @@ describe("nada entra na interface sem estar declarado", () => {
     const declarados = new Set([
       ...DERIVADOS_DOS_LUGARES.map((d) => d.arquivo),
       ...DERIVADOS_DA_PESQUISA.map((d) => d.arquivo),
+      FOTOGRAFIA_DA_SERRA_NA_HOME.arquivo,
     ]);
     expect(new Set(readdirSync(pasta))).toEqual(declarados);
   });
 
   test("cada arquivo publicado conserva o hash declarado", () => {
-    for (const d of [...DERIVADOS_DOS_LUGARES, ...DERIVADOS_DA_PESQUISA]) {
+    for (const d of [
+      ...DERIVADOS_DOS_LUGARES,
+      ...DERIVADOS_DA_PESQUISA,
+      FOTOGRAFIA_DA_SERRA_NA_HOME,
+    ]) {
       const bytes = readFileSync(join(pasta, d.arquivo));
       expect(createHash("sha256").update(bytes).digest("hex"), d.arquivo).toBe(
         d.sha256,

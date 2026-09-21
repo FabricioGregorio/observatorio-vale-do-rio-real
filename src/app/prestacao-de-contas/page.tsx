@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { TabelaAnexos } from "../../componentes/acervo/TabelaAnexos";
 import { ReguaDeCreditos } from "../../componentes/institucional/ReguaDeCreditos";
+import { LinkDeDestino } from "../../componentes/layout/LinkDeDestino";
 import {
   ACOMPANHAMENTO,
   agruparPorTipo,
@@ -238,13 +239,13 @@ export default async function SalaDoAvaliador() {
               */}
               {zip ? (
                 <li>
-                  <a href={zip}>Baixar tudo (.zip)</a>
+                  <LinkDeDestino href={zip}>Baixar tudo (.zip)</LinkDeDestino>
                 </li>
               ) : null}
               <li>
-                <a href="/anexos.json">
+                <LinkDeDestino href="/anexos.json">
                   <code>/anexos.json</code> — versão legível por máquina
-                </a>
+                </LinkDeDestino>
               </li>
               <li>
                 <Link href="/prestacao-de-contas/imprimir" prefetch={false}>
