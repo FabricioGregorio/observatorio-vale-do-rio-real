@@ -180,7 +180,7 @@ export const CSS_DO_TERRITORIO_VIVO = `
 .tv-semlocal{opacity:0;transition:opacity var(--tv-duracao) var(--easing-padrao)}
 .tv-semlocal rect{fill:var(--tv-sinal);stroke:var(--tv-limite-externo)}
 
-/* Pins na malha: ponta exatamente na coordenada confirmada */
+/* Pins na malha: a ponta marca a localização do lugar */
 .tv-pin{pointer-events:none}
 .tv-pin .forma{fill:var(--tv-pin);stroke:var(--tv-pin-texto);stroke-width:1.5px;vector-effect:non-scaling-stroke}
 .tv-pin .miolo{fill:var(--tv-pin-texto)}

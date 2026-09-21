@@ -217,8 +217,8 @@ export function TerritorioVivo({
 
   const tituloGeral =
     posicionados.length === 0
-      ? `Mapa do Vale do Rio Real: ${doVale.length} municípios do recorte. Nenhum lugar posicionado: sem coordenadas confirmadas disponíveis.`
-      : `Mapa do Vale do Rio Real: ${doVale.length} municípios do recorte e ${noVale.length} lugares de campo nas posições confirmadas.${
+      ? `Mapa do Vale do Rio Real: ${doVale.length} municípios do recorte. Nenhum lugar aparece neste mapa.`
+      : `Mapa do Vale do Rio Real: ${doVale.length} municípios do recorte e ${noVale.length} lugares de campo.${
           foraDoVale.length > 0
             ? ` ${foraDoVale.map((l) => l.nome).join(", ")} fica fora deste enquadramento.`
             : ""
@@ -290,7 +290,7 @@ export function TerritorioVivo({
       className="tv"
       data-foco={FOCO_GERAL}
       data-lugar={FOCO_GERAL}
-      data-tv-coordenadas={posicionados.length > 0 ? "confirmadas" : "ausentes"}
+      data-tv-coordenadas={posicionados.length > 0 ? "disponiveis" : "ausentes"}
       id={ID_RAIZ}
     >
       <style>{CSS_DO_TERRITORIO_VIVO}</style>
@@ -748,7 +748,7 @@ export function TerritorioVivo({
               </li>
               <li>
                 <span aria-hidden="true" className="tv__amostra--pin" />
-                Lugar da pesquisa (posição confirmada)
+                Lugar da pesquisa
               </li>
               <li>
                 <span
@@ -793,16 +793,16 @@ export function TerritorioVivo({
               </li>
             </ul>
             <p className="tv__nota tv__nota--geral">
-              Base cartográfica: IBGE. Os pins usam coordenadas confirmadas em
-              campo. Ilha Grande aparece ao selecionar o lugar, pois está fora
-              do enquadramento do Vale.
+              Base cartográfica: IBGE. Os pontos representam localizações
+              registradas pelo Observatório em campo. Ilha Grande aparece ao
+              selecionar o lugar, pois está fora do enquadramento do Vale.
             </p>
             <p className="tv__nota tv__nota--local">
               Base cartográfica: IBGE + OpenStreetMap. Vias e cursos d'água:{" "}
               <a href="https://www.openstreetmap.org/copyright">
                 {FONTES_DAS_CAMADAS.vias}
               </a>
-              . O pin mantém a coordenada humana confirmada.
+              . O ponto usa a localização registrada pelo Observatório.
             </p>
           </figcaption>
         </figure>
@@ -856,22 +856,22 @@ export function TerritorioVivo({
               const noRecorte = doRecorte(lugar);
               const rotulo =
                 p === null
-                  ? `Mapa do Vale do Rio Real. ${lugar.nome} não está posicionado: sem coordenada confirmada disponível.`
-                  : `Mapa aproximado na posição confirmada de ${lugar.nome}${municipio !== null ? `, em ${municipio}` : ""}${fora ? ", fora do recorte do Vale" : ""}.`;
+                  ? `Mapa do Vale do Rio Real. ${lugar.nome} não aparece neste mapa.`
+                  : `Mapa do entorno de ${lugar.nome}${municipio !== null ? `, em ${municipio}` : ""}${fora ? ", fora do recorte do Vale" : ""}.`;
               const rotuloLocal =
                 p === null || p.local === null
                   ? undefined
                   : lugar.camadaLocal?.localidadeIbge !== null &&
                       lugar.localidade !== null &&
                       municipio !== null
-                    ? `Mapa detalhado do entorno do ${lugar.localidade.texto}, em ${municipio}: pin de ${lugar.nome} na posição confirmada e, com outro símbolo, a localidade segundo o IBGE. Vias e cursos d'água do OpenStreetMap; localidades do IBGE.`
+                    ? `Mapa detalhado do entorno do ${lugar.localidade.texto}, em ${municipio}: pin de ${lugar.nome} na sua localização e, com outro símbolo, a localidade segundo o IBGE. Vias e cursos d'água do OpenStreetMap; localidades do IBGE.`
                     : lugar.camadaLocal?.referenciaCartografica != null
-                      ? `Mapa detalhado do entorno de ${lugar.nome}: pin na posição confirmada da comunidade visitada. ${lugar.camadaLocal.referenciaCartografica.rotulo} aparece apenas como referência cartográfica próxima e não representa o lugar visitado. Vias e cursos d'água do OpenStreetMap; localidades do IBGE.`
-                      : `Mapa detalhado do entorno de ${lugar.nome}, com o pin na posição confirmada. Vias e cursos d'água do OpenStreetMap; localidades do IBGE.`;
+                      ? `Mapa detalhado do entorno de ${lugar.nome}: pin na localização da comunidade visitada. ${lugar.camadaLocal.referenciaCartografica.rotulo} aparece apenas como referência cartográfica próxima e não representa o lugar visitado. Vias e cursos d'água do OpenStreetMap; localidades do IBGE.`
+                      : `Mapa detalhado do entorno de ${lugar.nome}, com o pin na sua localização. Vias e cursos d'água do OpenStreetMap; localidades do IBGE.`;
               const anuncio =
                 p === null
                   ? `${lugar.nome} selecionado. Este lugar não está posicionado no mapa.`
-                  : `${lugar.nome} selecionado. O mapa se desloca até a posição confirmada${fora ? ", fora do recorte do Vale" : ""}.`;
+                  : `${lugar.nome} selecionado. O mapa se aproxima de ${lugar.nome}${fora ? ", fora do recorte do Vale" : ""}.`;
               const meta = [
                 municipio ?? "Município não publicado",
                 noRecorte ? "no recorte do Vale" : "fora do recorte do Vale",
@@ -1242,8 +1242,7 @@ function FichaDoLugar({
                 </div>
               ) : (
                 <p className="fonte">
-                  Rota externa indisponível: não há destino geográfico
-                  confirmado.
+                  Rota externa indisponível para este lugar.
                 </p>
               )}
             </section>
