@@ -122,44 +122,19 @@ function slugsDoInventario(csv: string): Map<string, string> {
   return new Map(pares);
 }
 
-function entradasDaPrimeiraPublicacao(markdown: string): Entrada[] {
-  const linhas = markdown.split(/\r?\n/);
-  const entradas: Entrada[] = [];
-  for (const linha of linhas) {
-    if (!/^\| (A02|D01-0[1-7]) \|/.test(linha)) continue;
-    const colunas = linha
-      .split("|")
-      .slice(1, -1)
-      .map((valor) => valor.trim());
-    const [
-      codigoBruto,
-      origemBruta,
-      shaBruto,
-      bytesBruto,
-      mimeBruto,
-      chaveBruta,
-    ] = colunas;
-    if (
-      !codigoBruto ||
-      !origemBruta ||
-      !shaBruto ||
-      !bytesBruto ||
-      !mimeBruto ||
-      !chaveBruta
-    )
-      throw new Error(`Linha incompleta na primeira publicação: ${linha}`);
-    const codigo = codigoBruto.startsWith("D01") ? "D01" : codigoBruto;
-    const limpar = (valor: string) => valor.replaceAll("`", "");
-    entradas.push({
-      codigo,
-      origem: limpar(origemBruta),
-      chave: limpar(chaveBruta),
-      sha256: limpar(shaBruto),
-      bytes: Number(limpar(bytesBruto).replaceAll(".", "")),
-      mimeType: limpar(mimeBruto),
-    });
-  }
-  return z.array(entradaSchema).length(8).parse(entradas);
+/**
+ * As oito entradas da primeira publicação (2026-09-08).
+ *
+ * Vieram de uma tabela Markdown dentro de um relatório de dry-run, que este
+ * script lia e reinterpretava a cada execução. Dado estrutural em prosa é
+ * frágil de duas maneiras: uma edição de texto no relatório mudava o que a
+ * auditoria considerava esperado, e o relatório ficava preso ao script.
+ *
+ * Agora é JSON, ao lado do lote de 2026-09-16, no mesmo formato. Os valores
+ * são os mesmos, transcritos pelo próprio parser que existia aqui.
+ */
+function entradasDaPrimeiraPublicacao(bruto: string): Entrada[] {
+  return z.array(entradaSchema).length(8).parse(JSON.parse(bruto));
 }
 
 function contarPorCodigo(entradas: readonly Entrada[]): Record<string, number> {
@@ -196,7 +171,7 @@ async function principal(): Promise<void> {
         maxBuffer: 4 * 1024 * 1024,
       }),
       readFile("src/dados/lote-publicacao-2026-09-16.json", "utf8"),
-      readFile("docs/carga/DRY_RUN_PUBLICACAO_2026-09-07.md", "utf8"),
+      readFile("src/dados/lote-publicacao-2026-09-08.json", "utf8"),
     ]);
   const manifestoB01 = z
     .array(
