@@ -275,7 +275,7 @@ test.describe("art direction", () => {
    * Bytes realmente transferidos por breakpoint.
    *
    * O número que importa não é o do arquivo em disco: é o que sai pela rede.
-   * Ele alimenta o documento da H1 e o orçamento do doc 01 §7.
+   * Ele alimenta o orçamento de carga inicial da Home.
    */
   test("relata os bytes transferidos da fotografia", async ({ browser }) => {
     const linhas: string[] = [];
@@ -434,7 +434,7 @@ test.describe("contraste sobre a fotografia", () => {
 
 test.describe("menu do protótipo", () => {
   /**
-   * A trava que importa: item sem rota **não pode virar link**. A ADR-017
+   * A trava que importa: item sem rota **não pode virar link**. O projeto
    * proíbe rota falsa, e `typedRoutes` reprovaria o `<Link>` — mas nada impede
    * alguém de escrever um `<a href>` à mão. Este teste impede.
    */

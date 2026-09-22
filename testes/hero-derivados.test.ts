@@ -96,7 +96,7 @@ describe("derivados do Hero", () => {
   );
 
   /**
-   * O teto não é estético: a Home tem orçamento de 500 kB (doc 01 §7). Estes
+   * O teto não é estético: a Home tem orçamento de 500 kB. Estes
    * derivados são de **protótipo** e já ocupam boa parte dele — o que está
    * registrado como bloqueio na H1. O teto impede que a situação piore sem
    * ninguém perceber.

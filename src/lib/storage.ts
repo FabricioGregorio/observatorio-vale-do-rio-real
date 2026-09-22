@@ -8,7 +8,6 @@
  * Referências:
  * - ADR-003 (todo binário vive em storage de objetos, com URL própria e hash)
  * - ADR-006 (Cloudflare R2, API S3, variáveis STORAGE_PUBLIC_*)
- * - doc 03 §13 (variáveis de ambiente)
  */
 import {
   GetObjectCommand,
@@ -38,7 +37,7 @@ export function cliente(): S3Client {
   return clienteMemo;
 }
 
-/** URL pública do objeto, sob o domínio próprio (doc 01 §6). */
+/** URL pública do objeto, sob o domínio próprio. */
 export function urlPublica(chave: string): string {
   const base = exigir("STORAGE_PUBLIC_URL").replace(/\/+$/, "");
   return `${base}/${chave}`;

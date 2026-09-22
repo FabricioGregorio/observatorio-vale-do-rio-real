@@ -492,7 +492,7 @@
     "credito": null,
     "principal": false,
     "data": "2025-08-02",
-    "fonte_da_data": "EXIF do original, coincidente com visita registrada no doc 02 §6.4",
+    "fonte_da_data": "EXIF do original, coincidente com visita registrada",
     "acervo": "b01-serra-dos-macacos-atravessando-a-ponte-v1.webp",
     "original": {
       "arquivo": "fotos/serra-dos-macacos/atravessando-a-ponte.jpg",
@@ -516,7 +516,7 @@
     "credito": null,
     "principal": false,
     "data": "2025-08-02",
-    "fonte_da_data": "EXIF do original, coincidente com visita registrada no doc 02 §6.4",
+    "fonte_da_data": "EXIF do original, coincidente com visita registrada",
     "acervo": "b01-serra-dos-macacos-cafe-na-casa-de-um-dos-moradores-v1.webp",
     "original": {
       "arquivo": "fotos/serra-dos-macacos/cafe-na-casa-de-um-dos-moradores.jpg",
@@ -540,7 +540,7 @@
     "credito": null,
     "principal": false,
     "data": "2026-04-05",
-    "fonte_da_data": "EXIF do original, coincidente com visita registrada no doc 02 §6.4",
+    "fonte_da_data": "EXIF do original, coincidente com visita registrada",
     "acervo": "b01-serra-dos-macacos-dentro-da-igreja-do-mata-7-v1.webp",
     "original": {
       "arquivo": "fotos/serra-dos-macacos/dentro-da-igreja-do-mata-7.jpg",
@@ -564,7 +564,7 @@
     "credito": null,
     "principal": false,
     "data": "2026-04-05",
-    "fonte_da_data": "EXIF do original, coincidente com visita registrada no doc 02 §6.4",
+    "fonte_da_data": "EXIF do original, coincidente com visita registrada",
     "acervo": "b01-serra-dos-macacos-igreja-do-mata-7-v1.webp",
     "original": {
       "arquivo": "fotos/serra-dos-macacos/igreja-do-mata-7.jpg",
@@ -588,7 +588,7 @@
     "credito": null,
     "principal": false,
     "data": "2026-04-05",
-    "fonte_da_data": "EXIF do original, coincidente com visita registrada no doc 02 §6.4",
+    "fonte_da_data": "EXIF do original, coincidente com visita registrada",
     "acervo": "b01-serra-dos-macacos-igreja-serra-dos-macacos-v1.webp",
     "original": {
       "arquivo": "fotos/serra-dos-macacos/igreja-serra-dos-macacos.jpg",
@@ -612,7 +612,7 @@
     "credito": null,
     "principal": true,
     "data": "2026-04-05",
-    "fonte_da_data": "EXIF do original, coincidente com visita registrada no doc 02 §6.4",
+    "fonte_da_data": "EXIF do original, coincidente com visita registrada",
     "acervo": "b01-serra-dos-macacos-principal-capa-v1.webp",
     "original": {
       "arquivo": "fotos/serra-dos-macacos/principal-capa.jpg",
@@ -636,7 +636,7 @@
     "credito": null,
     "principal": false,
     "data": "2025-08-02",
-    "fonte_da_data": "EXIF do original, coincidente com visita registrada no doc 02 §6.4",
+    "fonte_da_data": "EXIF do original, coincidente com visita registrada",
     "acervo": "b01-serra-dos-macacos-serra-na-serra-dos-macacos-v1.webp",
     "original": {
       "arquivo": "fotos/serra-dos-macacos/serra-na-serra-dos-macacos.jpg",
@@ -660,7 +660,7 @@
     "credito": null,
     "principal": false,
     "data": "2026-04-05",
-    "fonte_da_data": "EXIF do original, coincidente com visita registrada no doc 02 §6.4",
+    "fonte_da_data": "EXIF do original, coincidente com visita registrada",
     "acervo": "b01-serra-dos-macacos-serras-da-serra-dos-macacos-v1.webp",
     "original": {
       "arquivo": "fotos/serra-dos-macacos/serras-da-serra-dos-macacos.jpg",

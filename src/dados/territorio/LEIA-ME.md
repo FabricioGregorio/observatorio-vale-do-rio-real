@@ -93,7 +93,7 @@ Medido na mesma data, para a malha por município:
 
 Intermediária é a escolha do responsável (10B.2.1): equilíbrio entre precisão
 do contorno, tamanho e carregamento em celular. Os ~20 kB que efetivamente
-trafegam cabem com folga no orçamento de 500 kB da Home (doc 01 §7) — o que
+trafegam cabem com folga no orçamento de 500 kB da Home — o que
 importa para o público rural e escolar em rede fraca.
 
 ## Regras desta pasta
@@ -117,7 +117,7 @@ importa para o público rural e escolar em rede fraca.
    página de dados abertos do IBGE respondeu HTTP 403 e um dos domínios de
    acesso à informação não resolveu. O que está em `fontes.ts` é o que se pôde
    verificar, mais a atribuição — não uma licença assumida. A definição de
-   pronto do doc 01 §11 exige licença declarada.
+   pronto exige licença declarada.
 2. **Município de Serra dos Macacos e de Ilha Grande.** Nenhum documento lido os
    associa a um município, e deduzir por nome ou proximidade seria inventar
    localização. Recanto da Serra e Museu Borda da Mata já estão em Tobias
@@ -126,8 +126,7 @@ importa para o público rural e escolar em rede fraca.
    organizada por município, então hoje esses dois não apareceriam nela.
 4. **Coordenadas dos pontos**, que dependem de conferência em campo ou de
    documento do projeto. Nunca de estimativa sobre mapa.
-5. **Vocabulário de `tipo`** dos pontos: o doc 01 §5 usa ecoparque, museu,
-   comunidade e rota; 10B.0 v1.2 §8 exemplifica "natureza".
+5. **Vocabulário de `tipo`** dos pontos: ecoparque, museu, comunidade e rota.
 
 ## Validação de entrada
 

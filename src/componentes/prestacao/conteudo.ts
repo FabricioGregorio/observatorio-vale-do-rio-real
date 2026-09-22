@@ -72,7 +72,7 @@ export const SINTESE =
 /**
  * Por que a página existe, em três parágrafos.
  *
- * O primeiro é o risco que o doc 01 §0.2 identifica como o maior do projeto; o
+ * O primeiro é o maior risco técnico do projeto; o
  * segundo é a resposta arquitetural a ele; o terceiro é o limite do que a
  * página afirma, dito antes que alguém precise perguntar.
  */

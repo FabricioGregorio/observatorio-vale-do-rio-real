@@ -1,7 +1,7 @@
 /**
  * Navegação do site — fonte única para cabeçalho e rodapé.
  *
- * Os destinos, rótulos e a ordem vêm da emenda de 2026-09-15 à ADR-017.
+ * Os destinos, rótulos e a ordem vêm da decisão humana de 2026-09-15.
  */
 
 export type ItemNavegacao = {
@@ -10,7 +10,7 @@ export type ItemNavegacao = {
 };
 
 /**
- * Menu principal (ADR-017, emendas de 2026-09-15 e 2026-09-21). Sete itens,
+ * Menu principal, por decisão humana de 2026-09-15 e 2026-09-21. Sete itens,
  * nesta ordem.
  *
  * Desde 2026-09-21, por decisão humana, o PodObservar é item de primeiro
@@ -29,7 +29,7 @@ export const MENU_PRINCIPAL: readonly ItemNavegacao[] = [
 ] as const;
 
 /**
- * Links institucionais do rodapé (doc 01 §3).
+ * Links institucionais do rodapé.
  *
  * `MENU_RODAPE` chamava-se assim quando o rodapé era só esta lista. Com o
  * rodapé definitivo ele passou a ser a **faixa institucional** dele: as

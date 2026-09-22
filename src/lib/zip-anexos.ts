@@ -5,7 +5,7 @@
  * objeto: o script que o gera em build e a página que o oferece. Se cada uma
  * montasse o caminho por conta própria, o botão apontaria para um lugar e o
  * arquivo estaria em outro — e link quebrado é exatamente o problema que a
- * Prestação de Contas existe para resolver (doc 01 §0.2).
+ * Prestação de Contas existe para resolver.
  *
  * O pacote vive no R2, nunca em `public/` (ADR-006).
  */

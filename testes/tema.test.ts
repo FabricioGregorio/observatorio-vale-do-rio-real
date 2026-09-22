@@ -190,7 +190,7 @@ describe("tokens de tema no CSS", () => {
    * não tem como unir uma media query e um seletor de atributo numa regra só,
    * então a mesma lista de papéis aparece duas vezes. Duas definições da mesma
    * coisa divergem em silêncio, e num projeto operado por agentes a errada é
-   * obedecida sem ninguém perceber (doc 03 §4).
+   * obedecida sem ninguém perceber.
    */
   test("os dois blocos de tema escuro são idênticos", () => {
     expect(escuroPorAtributo.size).toBeGreaterThan(0);

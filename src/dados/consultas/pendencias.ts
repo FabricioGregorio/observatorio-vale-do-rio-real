@@ -1,7 +1,7 @@
 /**
  * Consulta da trava de publicação — Tarefa 09.
  *
- * Lê `vw_pendencia_publicacao`, criada pela migração 0003 (doc 02 §13).
+ * Lê `vw_pendencia_publicacao`, criada pela migração 0003.
  *
  * Diferença deliberada em relação a `consultas/anexos.ts`: lá a ausência de
  * `DATABASE_URL` degrada para lista vazia, porque a página **exibe** dados e
@@ -15,7 +15,7 @@
  * ele conseguir emitir a própria mensagem.
  *
  * Credencial: `DATABASE_URL`, o role da aplicação, sem DDL. A consulta só lê.
- * `DATABASE_URL_MIGRACAO` é exclusiva de DDL (doc 03 §6.8, ADR-007).
+ * `DATABASE_URL_MIGRACAO` é exclusiva de DDL.
  */
 import { vwPendenciaPublicacao } from "../../../db/schema";
 

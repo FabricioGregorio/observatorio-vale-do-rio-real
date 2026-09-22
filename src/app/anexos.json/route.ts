@@ -5,7 +5,7 @@ import { urlDoSite } from "../../lib/site-url";
 
 /**
  * `/anexos.json` — o mesmo conjunto da Prestação de Contas, legível por máquina
- * (doc 01 §4, ADR-003 item 7).
+ * (ADR-003 item 7).
  *
  * A URL é exatamente `/anexos.json`, não `/api/anexos`: o App Router aceita
  * ponto no nome do segmento, e a documentação do Next é explícita — um

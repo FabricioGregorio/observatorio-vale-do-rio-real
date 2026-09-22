@@ -7,7 +7,7 @@
  * revisar o estado de um commit, não para concorrer com o domínio canônico no
  * índice do Google.
  *
- * **Fail-closed**, como os demais gates do projeto (ADR-015, doc 03 §6): a
+ * **Fail-closed**, como os demais gates do projeto: a
  * indexação exige declaração explícita, `VERCEL_ENV=production`. O desenho
  * inverso — marcar `noindex` quando `VERCEL_ENV=preview` — erraria para o lado
  * da exposição: bastaria a variável faltar para a homologação entrar no índice

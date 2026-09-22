@@ -3,7 +3,7 @@ import { separarCredito } from "../../dados/pesquisa/credito-fotografico";
 import { LinkDeDestino } from "../layout/LinkDeDestino";
 
 /**
- * Tabela mestre da Prestação de Contas (doc 01 §4).
+ * Tabela mestre da Prestação de Contas.
  *
  * É `<table>` de verdade, com `<caption>` e `<th scope>`: o avaliador precisa
  * navegar por leitor de tela e imprimir. Em telas estreitas a mesma tabela vira
@@ -25,7 +25,7 @@ export function tamanhoLegivel(bytes: number): string {
   return `${(kb / 1024).toFixed(1)} MB`;
 }
 
-/** Data ISO, como o doc 01 §4 pede. */
+/** Data ISO. */
 export function dataIso(valor: Date | string | null): string {
   if (!valor) return "—";
   const d = typeof valor === "string" ? new Date(valor) : valor;

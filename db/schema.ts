@@ -8,7 +8,7 @@
  * Migração 0001: tipos enumerados, extensões e funções utilitárias.
  * Migração 0002: núcleo da prestação de contas.
  *
- * Referências: doc 02 §1 (convenções), §3 (enums), §5 (camada de arquivos),
+ * Convenções, enums e a camada de arquivos estão declarados abaixo,
  * §§6.1-6.3 (município, pessoa, equipamento, consentimento), §13 (views),
  * §16 (ordem de implementação).
  */
@@ -38,7 +38,7 @@ import {
 
 /**
  * `citext` — texto case-insensitive. É o tipo da chave pública `slug` e do
- * `contato_email` (doc 02 §1). A extensão é criada pela migração 0001.
+ * `contato_email`. A extensão é criada pela migração 0001.
  */
 const citext = customType<{ data: string }>({
   dataType() {
@@ -46,14 +46,14 @@ const citext = customType<{ data: string }>({
   },
 });
 
-/** `tsvector` — usado apenas na coluna gerada `documento.busca` (doc 02 §5). */
+/** `tsvector` — usado apenas na coluna gerada `documento.busca`. */
 const tsvector = customType<{ data: string }>({
   dataType() {
     return "tsvector";
   },
 });
 
-// ─── Tipos enumerados (doc 02 §3) ──────────────────────────────────
+// ─── Tipos enumerados ──────────────────────────────────
 
 /** Status do ciclo de publicação de qualquer entidade publicável. */
 export const statusPublicacao = pgEnum("status_publicacao", [
@@ -245,11 +245,11 @@ export const visibilidadeArquivo = pgEnum("visibilidade_arquivo", [
   "publico",
 ]);
 
-// ─── 1. arquivo — o binário (doc 02 §5) ────────────────────────────
+// ─── 1. arquivo — o binário ────────────────────────────
 
 /**
  * O binário do acervo: um PDF, um MP3, uma imagem. O banco guarda apenas
- * metadados, hash e URL — nunca os bytes (doc 02 §17, ADR-003, ADR-006).
+ * metadados, hash e URL — nunca os bytes (ADR-003, ADR-006).
  * Sem dependência de saída: é a primeira tabela da migração 0002.
  */
 export const arquivo = pgTable(
@@ -330,7 +330,7 @@ export const arquivo = pgTable(
   ],
 );
 
-// ─── 2. municipio (doc 02 §6.1) ────────────────────────────────────
+// ─── 2. municipio ────────────────────────────────────
 
 /** Sem dependência de saída. Referenciada por `equipamento` e `documento`. */
 export const municipio = pgTable("municipio", {
@@ -351,7 +351,7 @@ export const municipio = pgTable("municipio", {
     .defaultNow(),
 });
 
-// ─── 3. pessoa (doc 02 §6.3) ───────────────────────────────────────
+// ─── 3. pessoa ───────────────────────────────────────
 
 /** Depende de `arquivo` (foto). Referenciada por `equipamento` e `consentimento`. */
 export const pessoa = pgTable("pessoa", {
@@ -376,11 +376,11 @@ export const pessoa = pgTable("pessoa", {
     .defaultNow(),
 });
 
-// ─── 4. equipamento (doc 02 §6.2) ──────────────────────────────────
+// ─── 4. equipamento ──────────────────────────────────
 
 /**
  * Depende de `municipio` e `pessoa`. PostGIS não é usado: `numeric(9,6)` basta
- * para o mapa Leaflet (doc 02 §6.2 — "não instale por antecipação").
+ * para o mapa Leaflet ("não instale por antecipação").
  */
 export const equipamento = pgTable(
   "equipamento",
@@ -421,12 +421,12 @@ export const equipamento = pgTable(
   ],
 );
 
-// ─── 5. consentimento (doc 02 §6.3) ────────────────────────────────
+// ─── 5. consentimento ────────────────────────────────
 
 /**
  * Depende de `pessoa` e de `arquivo` (termo assinado). Sem consentimento válido
  * e não revogado, o áudio da entrevista não é publicado — risco jurídico
- * resolvido no schema, não no processo (doc 02 §6.3).
+ * resolvido no schema, não no processo.
  *
  * Não tem `atualizado_em`, portanto não recebe o trigger `trg_atualizado_em`.
  */
@@ -474,12 +474,12 @@ export const consentimento = pgTable(
   (t) => [unique("consentimento_pessoa_id_tipo_key").on(t.pessoaId, t.tipo)],
 );
 
-// ─── 6. documento — a obra intelectual (doc 02 §5) ─────────────────
+// ─── 6. documento — a obra intelectual ─────────────────
 
 /**
  * Depende de `equipamento` e `municipio`. Separar `documento` de `arquivo` é o
  * que permite versionar um relatório, publicar o mesmo conteúdo em PDF e HTML,
- * e trocar um anexo sem perder o histórico da URL (doc 02 §5).
+ * e trocar um anexo sem perder o histórico da URL.
  */
 export const documento = pgTable(
   "documento",
@@ -550,13 +550,13 @@ export const documento = pgTable(
   ],
 );
 
-// ─── 7. documento_arquivo (doc 02 §5) ──────────────────────────────
+// ─── 7. documento_arquivo ──────────────────────────────
 
 /**
  * Liga a obra ao binário. O `ON DELETE RESTRICT` do arquivo é deliberado:
  * evidência de edital não se apaga por efeito colateral.
  *
- * Não tem `criado_em`/`atualizado_em` no doc 02 §5, portanto não recebe trigger.
+ * Não tem `criado_em`/`atualizado_em`, portanto não recebe trigger.
  */
 export const documentoArquivo = pgTable(
   "documento_arquivo",
@@ -581,13 +581,13 @@ export const documentoArquivo = pgTable(
   ],
 );
 
-// ─── 8. temporada — PodObservar (doc 02 §9) ────────────────────────
+// ─── 8. temporada — PodObservar ────────────────────────
 
 /**
  * Temporada do PodObservar. Depende de `arquivo` (capa).
  *
  * Doc 02 §9 não declara `criado_em`/`atualizado_em` para esta tabela — ela
- * portanto **não** recebe `trg_atualizado_em` (doc 02 §4, mesma razão de
+ * portanto **não** recebe `trg_atualizado_em` (mesma razão de
  * `consentimento` e `documento_arquivo`). Não acrescentar timestamps por
  * simetria: o documento é a especificação, e ele não os pede aqui.
  *
@@ -605,12 +605,12 @@ export const temporada = pgTable("temporada", {
   }),
 });
 
-// ─── 9. episodio — PodObservar (doc 02 §9) ─────────────────────────
+// ─── 9. episodio — PodObservar ─────────────────────────
 
 /**
  * Episódio do PodObservar. Depende de `temporada` e de `arquivo`.
  *
- * Três obrigatoriedades do doc 02 §9 são o contrato desta tabela, e nenhuma
+ * Três obrigatoriedades são o contrato desta tabela, e nenhuma
  * delas é conveniência:
  *
  * - `audio_id NOT NULL` — o site é dono do áudio final canônico. Spotify e
@@ -676,13 +676,13 @@ export const episodio = pgTable(
   ],
 );
 
-// ─── View de consumo (doc 02 §13) ──────────────────────────────────
+// ─── View de consumo ──────────────────────────────────
 
 /**
  * `vw_anexo_publico` — alimenta a Prestação de Contas e o `/anexos.json`.
  *
  * `.existing()` declara um objeto **que já existe no banco**: a view é criada
- * pela migração 0002, em SQL bruto, como o doc 03 §6.2 determina. Esta
+ * pela migração 0002, em SQL bruto. Esta
  * declaração serve só para consultá-la com tipagem — **não gera DDL e não
  * entra em migração**.
  *
@@ -724,7 +724,7 @@ export const vwAnexoPublico = pgView("vw_anexo_publico", {
 }).existing();
 
 /**
- * `vw_pendencia_publicacao` — trava de publicação do CI (doc 02 §13).
+ * `vw_pendencia_publicacao` — trava de publicação do CI.
  *
  * Criada pela migração 0003, em SQL bruto. `.existing()` apenas a declara para
  * consulta tipada: não gera DDL e não entra em migração.
@@ -752,7 +752,7 @@ export const vwPendenciaPublicacao = pgView("vw_pendencia_publicacao", {
  *
  * Criada pela migração 0010 e **substituída** pela 0011 (ADR-021), em SQL
  * bruto dentro da migração, como toda view do projeto; aqui só é declarada
- * como existente (`.existing()`), sem gerar DDL (doc 03 §6.7).
+ * como existente (`.existing()`), sem gerar DDL.
  *
  * A 0011 registra a decisão humana de concentrar a escuta no Spotify: o site
  * não reproduz, não oferece download e não expõe URL de áudio. A view perdeu

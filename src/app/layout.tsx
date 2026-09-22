@@ -11,11 +11,11 @@ import { SCRIPT_TEMA_INICIAL } from "../lib/tema";
 import "../estilos/tokens.css";
 
 /**
- * Fontes do projeto (doc 03 §3).
+ * Fontes do projeto.
  *
  * `next/font` baixa e auto-hospeda os arquivos no build: nenhuma requisição sai
  * para o Google em tempo de execução, o que atende ao "sem rastreadores de
- * terceiros" do doc 01 §7.
+ * terceiros".
  *
  * O nome da variável CSS de cada fonte é exatamente o token que o
  * `tokens.css` já declara — `--font-display`, `--font-leitura`, `--font-mono`.
@@ -139,7 +139,7 @@ export default function RootLayout({
             mecanismo documentado pela Vercel para contar visitante sem cookie
             e sem identificador persistente.
 
-          O doc 01 §7 já previa "analytics sem cookies" como requisito de
+          O projeto já previa "analytics sem cookies" como requisito de
           privacidade; esta é a execução dele. Decisão registrada na ADR-022.
 
           O componente vem com `"use client"` de fábrica e devolve `null`: não

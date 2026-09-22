@@ -286,7 +286,7 @@ export const PRODUTOS: readonly Produto[] = [
  * A base factual é a própria arquitetura do projeto: espelho local obrigatório
  * de todo anexo, hash SHA-256 por arquivo, inventário legível por máquina em
  * `/anexos.json` e versão imprimível da Prestação de Contas. Nada aqui promete
- * DOI, Internet Archive ou ZIP, que o doc 01 §6 e §11 listam como recomendação
+ * DOI, Internet Archive ou ZIP, listados como recomendação
  * e como pendência, não como fato consumado.
  */
 export const PERMANENCIA: readonly string[] = [

@@ -118,7 +118,7 @@ describe("data das fotografias", () => {
 
   /*
     A data da Serra vem do EXIF do original e só vale quando coincide com uma
-    visita documentada no doc 02 §6.4. Nenhuma outra data é aceitável.
+    visita registrada. Nenhuma outra data é aceitável.
   */
   test("as da Serra dos Macacos têm a data de uma das duas visitas", () => {
     const serra = doLugar("serra-dos-macacos");

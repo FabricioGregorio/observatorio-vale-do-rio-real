@@ -33,7 +33,7 @@ import {
  *
  * Esta fotografia é o maior elemento da primeira dobra, então é o LCP. Por
  * isso `fetchPriority="high"` e **ausência** de `loading="lazy"` — que é
- * exceção consciente à regra geral do doc 01 §7, e é a exceção correta: adiar
+ * exceção consciente à regra geral de peso da Home, e é a correta: adiar
  * o LCP é adiar a página.
  *
  * `width` e `height` estão declarados para reservar a caixa e impedir

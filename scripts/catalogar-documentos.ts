@@ -36,7 +36,7 @@ import { exigirDerivacaoAtual } from "../src/lib/inventario-derivado";
 /** A primeira catalogação usa v1, como a chave gravada pela Tarefa 06. */
 export const VERSAO = 1;
 
-/** Valores do enum `tipo_documento` (doc 02 §3). */
+/** Valores do enum `tipo_documento`. */
 export const TIPOS_DOCUMENTO = [
   "relatorio_tecnico",
   "diagnostico_interno",

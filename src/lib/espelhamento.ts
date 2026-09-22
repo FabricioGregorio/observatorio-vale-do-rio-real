@@ -46,7 +46,7 @@ export const CATEGORIAS_STORAGE = [
 export type CategoriaStorage = (typeof CATEGORIAS_STORAGE)[number];
 
 /**
- * Vocabulário de `origem_sistema` (doc 02 §5). A coluna é `text`, não enum:
+ * Vocabulário de `origem_sistema`. A coluna é `text`, não enum:
  * o vocabulário é acordo documental, não constraint do banco.
  */
 export const ORIGEM_SISTEMA: Record<string, string> = {
@@ -62,7 +62,7 @@ export const ORIGEM_SISTEMA: Record<string, string> = {
  * Normalização determinística para slug e categoria (Tarefa 07 § Regra de slug).
  * Conjunto ASCII: minúsculas, sem acento, `[^a-z0-9]+` vira hífen, sem hífen
  * nas pontas. O conjunto é ASCII de propósito — em `1ª temporada`, uma regra
- * Unicode preservaria o `ª` e violaria o padrão de URL do doc 01 §6.
+ * Unicode preservaria o `ª` e violaria o padrão de URL pública.
  */
 export function normalizar(texto: string): string {
   return texto
@@ -105,7 +105,7 @@ export function origemSistemaDoItem(item: ItemInventario): string {
   return valor;
 }
 
-/** Valores do enum `tipo_midia` (doc 02 §3). */
+/** Valores do enum `tipo_midia`. */
 export type TipoMidia =
   | "pdf"
   | "audio"
@@ -117,7 +117,7 @@ export type TipoMidia =
   | "outro";
 
 /**
- * MIME → `tipo_midia` (doc 02 §3). Determinístico e sem catch-all: item que
+ * MIME → `tipo_midia`. Determinístico e sem catch-all: item que
  * não cair em nenhuma regra falha explicitamente, em vez de virar `outro`.
  */
 export function tipoMidiaDeMime(mime: string): TipoMidia {
@@ -262,7 +262,7 @@ export function pendenciaDeOrigem(item: ItemInventario): Pendencia | null {
 }
 
 /**
- * Item de origem Figma não é baixado: o doc 01 §6 o define como captura
+ * Item de origem Figma não é baixado: ele é definido como captura
  * estática em PDF/PNG, que é ato humano. Sem integração com a API do Figma.
  */
 export function exigeCapturaManual(item: ItemInventario): boolean {

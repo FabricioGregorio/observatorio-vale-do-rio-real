@@ -3,7 +3,7 @@ import { listarAnexosPublicos } from "../../../dados/consultas/anexos";
 import { metadadosDaRota } from "../../../lib/site-url";
 
 /**
- * Versão imprimível da Prestação de Contas (doc 01 §4).
+ * Versão imprimível da Prestação de Contas.
  *
  * Mesma tabela, mesma consulta — sem navegação e sem elemento que não faça
  * sentido no papel. A folha de estilo de impressão esconde cabeçalho e rodapé

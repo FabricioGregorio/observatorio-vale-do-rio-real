@@ -18,7 +18,7 @@ import { MATERIAIS_POR_LUGAR } from "../src/dados/materiais-de-campo";
 /**
  * `/prestacao-de-contas` — invariantes da página de comprovação.
  *
- * Esta é a página do doc 01 §4, a que a FUNCAP abre. O que os testes abaixo
+ * Esta é a página que a FUNCAP abre. O que os testes abaixo
  * protegem não é composição: é a diferença entre comprovar e afirmar. Uma
  * página de prestação de contas que declare aprovação não documentada, ou que
  * exiba um número divergente do inventário que ela mesma lista, produz

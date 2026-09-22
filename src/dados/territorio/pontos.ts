@@ -8,7 +8,7 @@ import type { PontoDeVisita } from "./tipos";
  * coordenada, fotografia e descrição continuam `null` — e é assim que devem
  * ficar até existir fonte.
  *
- * Os identificadores são os slugs que o doc 01 §3 já fixou em
+ * Os identificadores são os slugs já fixados em
  * `/equipamentos/[slug]`: `recanto-da-serra`, `borda-da-mata`,
  * `serra-dos-macacos` e `ilha-grande`. Não foram inventados aqui, e mantê-los
  * iguais é o que permitirá ligar ponto do mapa e página do equipamento sem

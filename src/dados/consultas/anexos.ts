@@ -18,7 +18,7 @@ import type {
  * Lê `vw_anexo_publico` (migração 0002) e **filtra `espelhado = true`**. A view
  * expõe a coluna mas não filtra por ela: a Prestação de Contas só mostra anexo
  * com espelho próprio, porque o site existe justamente para substituir os
- * links frágeis de Drive e Figma (doc 01 §0.2).
+ * links frágeis de Drive e Figma.
  *
  * Sem `DATABASE_URL` — máquina de desenvolvimento sem credencial — a função
  * avisa e devolve lista vazia, e a página renderiza o estado vazio explícito.

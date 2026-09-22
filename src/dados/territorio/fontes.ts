@@ -4,7 +4,7 @@
  * Registra **de onde** cada arquivo territorial deve vir, antes de qualquer
  * arquivo existir. É a mesma disciplina que a Prestação de Contas aplica aos
  * anexos: origem declarada, data de obtenção e SHA-256 para conferência
- * (doc 01 §4). Dado de mapa sem procedência registrada é tão indefensável
+ *. Dado de mapa sem procedência registrada é tão indefensável
  * numa auditoria quanto anexo sem espelho.
  *
  * Nenhum arquivo foi baixado. `obtidoEm`, `licenca` e os dois hashes são `null`
@@ -60,7 +60,7 @@ export type FonteTerritorial = {
  *
  * **Qualidade intermediária é a escolhida** (decisão do responsável, 10B.2.1):
  * equilíbrio entre precisão do contorno e peso. Os 20 kB que efetivamente
- * trafegam cabem com folga no orçamento de 500 kB da Home (doc 01 §7), o que
+ * trafegam cabem com folga no orçamento de 500 kB da Home, o que
  * importa para o público rural e escolar em rede fraca.
  *
  * A malha **não traz o nome** do município: cada feature vem só com

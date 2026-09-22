@@ -10,7 +10,7 @@ import {
  * ## A ordem é dado, e vem de manual
  *
  * Até 2026-09-20 este módulo carregava só o crédito textual, e a ordem vinha
- * da decisão humana registrada em `docs/tarefas/16-…` §2, item 5. Nesta
+ * da decisão humana de 2026-09-17. Nesta
  * rodada os três manuais oficiais foram localizados em
  * `OBSERVATORIO_FONTES_DIR/marcas/` e lidos, e a régua passa a ser o que eles
  * determinam:

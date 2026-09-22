@@ -4,7 +4,7 @@
  * Consulta `vw_pendencia_publicacao` e quebra o build se ela retornar qualquer
  * linha. É a tradução em pipeline do risco de maior impacto do projeto: publicar
  * um anexo exigido pelo edital sem espelho local, e portanto sem garantia de que
- * o arquivo continuará existindo (doc 02 §13, doc 03 §6 e §7).
+ * o arquivo continuará existindo.
  *
  * Esta fatia cobre só o ramo do anexo. O ramo do áudio público sem consentimento
  * depende da tabela `entrevista`, que ainda não existe, e entra na view por

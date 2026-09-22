@@ -67,8 +67,7 @@ jobs:
       # faz parte deste workflow.
       #
       # O ramo do áudio público sem consentimento válido ainda não está na
-      # view: depende da tabela `entrevista`, que é de Fase 3. Ver
-      # docs/tarefas/09-gate-de-pendencias.md.
+      # view: depende da tabela `entrevista`, que é de Fase 3.
       - name: Pendências de publicação
         run: pnpm pendencias
 
@@ -87,20 +86,14 @@ jobs:
       # o que nunca foi instalado é o pacote `@lhci/cli`, ausente do
       # package.json e do pnpm-lock.yaml.
       #
-      # Isto NÃO é limpeza de passo órfão: o gate continua exigido pelo
-      # doc 03 §7 e §14 e pelo doc 01, e a Tarefa 10 manda rodar
-      # `pnpm exec lhci autorun` para verificar a home. Ele está adiado, não
-      # cancelado.
-      #
-      # A implementação pertence ao item 26 do backlog (doc 03 §10, Fase 4):
-      # "Auditoria WCAG final, Lighthouse CI, depósito no Zenodo, arquivamento
-      # no Internet Archive". Registro formal da divergência, com o que falta
-      # além da dependência: docs/divida-documental.md §4.
+      # Isto NÃO é limpeza de passo órfão: o gate do Lighthouse continua
+      # exigido, e `pnpm exec lhci autorun` verifica a home. Ele está adiado,
+      # não cancelado.
       #
       # Atenção a quem for restaurar: instalar `@lhci/cli` não basta. O
       # `lighthouserc.json` não tem `startServerCommand` e este workflow não
       # sobe servidor — o passo trocaria "command not found" por "connection
-      # refused". Falta também o `throttling` de 3G que o doc 01 §7 exige.
+      # refused". Falta também o `throttling` de 3G que o orçamento exige.
 
       - name: Anexar relatórios
         if: always()

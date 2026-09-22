@@ -13,9 +13,6 @@
  * provedor exigir), e não de configuração fixa aqui.
  *
  * Referências:
- * - doc 03 §2 (estrutura de pastas: src/dados/cliente.ts)
- * - doc 03 §6 (regra de ouro: apenas src/dados/consultas/* importa o cliente)
- * - doc 03 §13 (variáveis de ambiente)
  * - ADR-002 (dois usuários de banco; PostgreSQL portável)
  * - ADR-004 (Neon apenas como provedor de hospedagem)
  */

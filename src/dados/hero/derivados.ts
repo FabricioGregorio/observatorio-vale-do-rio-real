@@ -40,7 +40,7 @@ export type DerivadoDoHero = {
   readonly sha256: string;
   /**
    * Teto de bytes aceito no repositório. Não é estético: a Home tem orçamento
-   * de 500 kB (doc 01 §7), e estes derivados de protótipo já consomem boa
+   * de 500 kB, e estes derivados de protótipo já consomem boa
    * parte dele. O teto impede a situação piorar sem ninguém notar.
    */
   readonly tetoBytes: number;

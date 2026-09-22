@@ -86,8 +86,7 @@ export type IndicadorDerivado = {
  * duas vezes, com duas leituras que podem divergir.
  *
  * As datas são as que o relatório de diagnóstico analisa, e são as que todos
- * os oito indicadores declaram como período (`docs/frontend/
- * H4_DADOS_INDICADORES_PROTOTIPO.md` §5). A auditoria de fontes canônicas de
+ * os oito indicadores declaram como período. A auditoria de fontes canônicas de
  * 2026-09-05 §4 registra que o formulário de visitantes cobre uma janela
  * menor, 26/07 a 10/12/2025; a janela adotada para publicação é a do
  * relatório, e é esta.
@@ -111,7 +110,7 @@ function exibirData(iso: string): string {
  *
  * Mês só conta quando se completa: de 21/07 a 21/12 são cinco meses, porque o
  * dia do fim alcança o dia do início. É a leitura que a documentação canônica
- * adota — doc 01 §8 e doc 02 §7 declaram "5 meses de coleta" no painel de
+ * adota — cinco meses completos, no painel de
  * números. **Não** é o número de meses do calendário tocados pela janela, que
  * é seis: julho e dezembro entram parciais, e é por isso que a série mensal
  * tem seis linhas para cinco meses de coleta.

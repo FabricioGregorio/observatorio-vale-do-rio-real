@@ -53,7 +53,7 @@ describe("menu alvo do protótipo", () => {
   });
 
   /**
-   * A trava da ADR-017: nenhuma rota falsa. Território e Acervo ainda não
+   * A trava é: nenhuma rota falsa. Território e Acervo ainda não
    * existem, e por isso têm `href: null` — que o componente renderiza como
    * texto, nunca como link.
    */

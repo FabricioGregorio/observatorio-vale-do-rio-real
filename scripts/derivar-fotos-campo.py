@@ -237,7 +237,7 @@ FICHAS = {
 # - **declarada**: Ilha Grande, 11/04/2026, por decisão do responsável em
 #   2026-09-21. Os originais dessa pasta não trazem EXIF de data.
 # - **EXIF confirmado por visita documentada**: a data de captura gravada no
-#   original só vale quando coincide com uma visita registrada no doc 02 §6.4
+#   original só vale quando coincide com uma visita registrada
 #   ("02/08 (III, Serra dos Macacos)" e "II Visita à Serra dos Macacos em
 #   05/04/2026"). Uma fonte sozinha não basta; as duas juntas bastam.
 #
@@ -275,7 +275,7 @@ def data_da_fotografia(
             f"fotos/{pasta}: EXIF {bruta} não coincide com visita documentada. "
             "Nada foi gravado."
         )
-    return (iso, "EXIF do original, coincidente com visita registrada no doc 02 §6.4")
+    return (iso, "EXIF do original, coincidente com visita registrada")
 
 # Imagem principal de cada ficha, por decisão humana. Capa é a abertura da
 # ficha territorial: não é o `principal` de um documento no Acervo, que é

@@ -23,12 +23,12 @@ import { urlDoZipDeAnexos } from "../../lib/zip-anexos";
 import "./prestacao.css";
 
 /**
- * Prestação de Contas — a página mais importante do site (doc 01 §4).
+ * Prestação de Contas — a página mais importante do site.
  *
  * Tudo que a FUNCAP precisa em um lugar, sem login e sem link quebrado. É a
  * tradução para a web do PDF "Links de Referência", e resolve o risco técnico
  * nº 1 do projeto: endereços de Drive e Figma que quebram, mudam de permissão
- * e não sobrevivem a uma auditoria (doc 01 §0.2).
+ * e não sobrevivem a uma auditoria.
  *
  * ## O que mudou nesta rodada
  *
@@ -235,7 +235,7 @@ export default async function PrestacaoDeContas() {
                 Enquanto o pacote não estiver publicado e declarado, o item não
                 existe — nem como link, nem como aviso. Oferecer o download de
                 um objeto que responde 404 é o oposto do que a Prestação de
-                Contas existe para fazer (doc 01 §0.2).
+                Contas existe para fazer.
               */}
               {zip ? (
                 <li>

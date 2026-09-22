@@ -1,7 +1,7 @@
 import { type Browser, expect, test } from "@playwright/test";
 
 /**
- * Orçamento de carga inicial da Home — 500.000 B transferidos (doc 01 §7).
+ * Orçamento de carga inicial da Home — 500.000 B transferidos.
  *
  * ## Por que o perfil importa tanto quanto o número
  *

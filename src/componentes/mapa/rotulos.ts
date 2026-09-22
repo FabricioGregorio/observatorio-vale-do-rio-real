@@ -5,8 +5,7 @@ import type { RelacaoTerritorial } from "../../dados/territorio/tipos";
  *
  * Texto de interface, e por isso vive junto dos componentes, não junto dos
  * dados. Fica num módulo próprio porque a lista de municípios e a ficha
- * precisam dizer a mesma coisa: o mesmo nome atravessa o fluxo inteiro
- * (doc 03 §3).
+ * precisam dizer a mesma coisa: o mesmo nome atravessa o fluxo inteiro.
  *
  * A redação vem da definição do responsável, não de interpretação.
  */

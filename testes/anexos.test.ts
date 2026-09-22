@@ -49,7 +49,7 @@ describe("tamanho legível", () => {
 });
 
 describe("data ISO", () => {
-  test("formata como o doc 01 §4 pede", () => {
+  test("formata a data ISO para exibição", () => {
     expect(dataIso(new Date("2026-04-11T13:45:00Z"))).toBe("2026-04-11");
     expect(dataIso("2026-03-27T00:00:00Z")).toBe("2026-03-27");
   });

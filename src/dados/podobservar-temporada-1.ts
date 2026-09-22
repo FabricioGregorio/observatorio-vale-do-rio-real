@@ -43,7 +43,7 @@ export type EpisodioPlanejado = {
    * PROPOSTA da P0.2B1, derivada do bloco `Tema:` que a própria equipe
    * escreveu no PDF da transcrição. **Pendente de aprovação humana.**
    *
-   * `episodio.resumo` é `NOT NULL` (doc 02 §9), então um episódio não existe
+   * `episodio.resumo` é `NOT NULL`, então um episódio não existe
    * nem em rascunho sem resumo. Gravar o candidato em rascunho não o torna
    * verdade final: rascunho é exatamente o estado em que um texto espera
    * revisão, e nada em rascunho é público.

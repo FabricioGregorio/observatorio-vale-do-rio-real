@@ -29,7 +29,7 @@ export type Posicao = readonly [longitude: number, latitude: number];
  * As chaves ficam em inglês porque são de um formato padronizado, não do
  * domínio: `type` e `coordinates` são o que vem escrito dentro de qualquer
  * `.geojson`. Traduzi-las obrigaria a converter todo arquivo antes de ler, o
- * que é exatamente o tipo de camada que o doc 03 §5 manda evitar.
+ * que é exatamente o tipo de camada que o projeto evita.
  */
 export type GeometriaGeoJson =
   | {
@@ -77,7 +77,7 @@ export type RelacaoTerritorial =
  *   validam de verdade em tempo de build.
  *
  * Foram removidos, e não mantidos "para depois", porque duas definições da
- * mesma entidade divergem — é a lição que o doc 03 §4 registra sobre listas
+ * mesma entidade divergem — é a lição conhecida sobre listas
  * duplicadas, e neste projeto ela já custou uma rodada.
  */
 
@@ -85,7 +85,7 @@ export type RelacaoTerritorial =
  * Fotografia de campo.
  *
  * `alt` é obrigatório na tipagem, sem opcional: o tipo impede o esquecimento
- * antes de o teste pegar (doc 03 §5). `creditos` idem — foto de campo tem
+ * antes de o teste pegar. `creditos` idem — foto de campo tem
  * autoria, e publicar sem crédito é problema de direitos, não de layout.
  */
 export type ImagemDeCampo = {
@@ -99,7 +99,7 @@ export type ImagemDeCampo = {
  * Ponto de visita de campo.
  *
  * O vocabulário de `tipo` **não está decidido** e por isso é `string | null`,
- * não uma união fechada: o doc 01 §5 tipifica equipamento como ecoparque,
+ * não uma união fechada: o projeto tipifica equipamento como ecoparque,
  * museu, comunidade ou rota, enquanto 10B.0 v1.2 §8 exemplifica "natureza".
  * Fechar a união agora seria escolher, sozinho, uma classificação de lugares
  * reais — decisão de pesquisa, não de código. Fica para quem tem a fonte.
