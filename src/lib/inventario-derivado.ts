@@ -14,7 +14,6 @@ import { readFile } from "node:fs/promises";
  * silenciosa com dado velho é exatamente o que não pode acontecer numa
  * prestação de contas.
  *
- * Ver `docs/decisoes/ADR-014-derivacao-do-inventario.md`.
  */
 
 export const CAMINHO_XLSX = "inventario-de-anexos.xlsx";

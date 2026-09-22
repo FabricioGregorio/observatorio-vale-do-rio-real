@@ -50,7 +50,7 @@ export function validarLote(entrada: unknown): OperacaoPrivada[] {
     // O lote privado foi aprovado quando A02, A04 e D01 estavam `ESPELHAVEL`
     // com revisão pendente. A decisão de 2026-09-16 os levou a `PUBLICAVEL`
     // com revisão concluída, que é autorização maior, não menor: espelhar no
-    // bucket privado continua permitido (ADR-015). O que a guarda protege é o
+    // bucket privado continua permitido. O que a guarda protege é o
     // caso inverso — um item que perdeu autorização e não pode mais sair da
     // fonte canônica.
     const c = classificacaoDe(op.codigo);

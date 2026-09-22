@@ -42,7 +42,7 @@ export const metadata = metadadosDaRota({
  *
  * Até esta data a página declarava "nenhuma medição de audiência". Deixou de
  * ser verdade quando o Vercel Web Analytics foi instrumentado no layout raiz
- * (ver `src/app/layout.tsx` e a ADR-022), e a declaração foi corrigida no
+ * (ver `src/app/layout.tsx`), e a declaração foi corrigida no
  * mesmo commit que instrumentou — nunca depois.
  *
  * O que a página passou a dizer é o que o serviço documenta e nada além:

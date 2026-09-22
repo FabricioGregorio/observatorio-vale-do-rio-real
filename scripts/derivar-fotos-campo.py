@@ -279,7 +279,7 @@ def data_da_fotografia(
 
 # Imagem principal de cada ficha, por decisão humana. Capa é a abertura da
 # ficha territorial: não é o `principal` de um documento no Acervo, que é
-# preferência de link (ADR-016), nem a primeira posição de um array.
+# preferência de link, nem a primeira posição de um array.
 #
 # As duas últimas vêm do ADR-020, de 2026-09-17. Passaram a valer em
 # 2026-09-21, quando os originais de Serra dos Macacos e Ilha Grande entraram

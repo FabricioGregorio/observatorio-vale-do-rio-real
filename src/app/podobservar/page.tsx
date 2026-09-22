@@ -33,7 +33,7 @@ export const metadata = metadadosDaRota({
  * Lê `listarEpisodiosPublicos()`, que lê `vw_episodio_publico`. Rascunho,
  * em revisão, arquivado e episódio datado no futuro não chegam aqui porque
  * não passam do banco — não há filtro nesta página, e não poderia haver: o
- * gate mora na view (ADR-015, ADR-021).
+ * gate mora na view.
  *
  * A ordem é a da consulta, `publicado_em DESC`. Nada nesta página conhece a
  * quantidade de episódios; com o EP04 a lista cresce sozinha.

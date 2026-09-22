@@ -49,7 +49,7 @@ import "./prestacao.css";
  * A página não mantém a sua própria lista de números, de URLs, de títulos de
  * documento nem de estados públicos.
  *
- * Gerada em build. O banco não é consultado em tempo de requisição (ADR-001).
+ * Gerada em build. O banco não é consultado em tempo de requisição.
  */
 
 export const metadata = metadadosDaRota({

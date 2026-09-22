@@ -14,7 +14,7 @@ import {
 /**
  * Gate público do PodObservar — migração 0010, substituída pela 0011.
  *
- * A 0011 implementa a ADR-021: o site não reproduz áudio, não oferece
+ * A 0011 implementa a política de distribuição: o site não reproduz áudio, não oferece
  * download e não expõe URL do master. O destino de escuta é o Spotify, e
  * passa a ser condição de publicação. Áudio privado deixou de bloquear o
  * episódio.
@@ -267,7 +267,7 @@ describe.skipIf(!URL_MANUTENCAO)(
     }
 
     /**
-     * Master privado — o estado que a ADR-021 tornou normal. Sem URL pública,
+     * Master privado — o estado normal. Sem URL pública,
      * sem espelhamento: o Observatório é dono do binário, e o visitante não
      * chega nele.
      */

@@ -287,7 +287,7 @@ describe.skipIf(
  *
  * A pendência de arquivo passou a perguntar "existe algum arquivo espelhado
  * vinculado a este documento?" em vez de "existe o vínculo marcado
- * `principal`, e o arquivo dele está espelhado?". Desde a ADR-016 e a migração
+ * `principal`, e o arquivo dele está espelhado?". Desde a migração
  * 0007, `principal` é só o arquivo representativo do documento — não é
  * autorização pública nem requisito de elegibilidade.
  *

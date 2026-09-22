@@ -7,7 +7,7 @@
  * arquivo estaria em outro — e link quebrado é exatamente o problema que a
  * Prestação de Contas existe para resolver.
  *
- * O pacote vive no R2, nunca em `public/` (ADR-006).
+ * O pacote vive no R2, nunca em `public/`.
  */
 
 /** Chave do objeto no bucket. */

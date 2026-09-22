@@ -4,8 +4,8 @@ import { separarCredito } from "../../dados/pesquisa/credito-fotografico";
 import { urlDoSite } from "../../lib/site-url";
 
 /**
- * `/anexos.json` — o mesmo conjunto da Prestação de Contas, legível por máquina
- * (ADR-003 item 7).
+ * `/anexos.json` — o mesmo conjunto da Prestação de Contas, legível por
+ * máquina.
  *
  * A URL é exatamente `/anexos.json`, não `/api/anexos`: o App Router aceita
  * ponto no nome do segmento, e a documentação do Next é explícita — um
@@ -13,7 +13,7 @@ import { urlDoSite } from "../../lib/site-url";
  *
  * `force-static` é indispensável: nesta versão do Next, Route Handler não é
  * cacheado por padrão, e sem isso a rota consultaria o banco em tempo de
- * requisição, contra a ADR-001.
+ * requisição.
  */
 export const dynamic = "force-static";
 

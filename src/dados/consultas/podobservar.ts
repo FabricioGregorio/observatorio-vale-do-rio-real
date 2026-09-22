@@ -15,7 +15,7 @@ import { databaseUrlDisponivel } from "./anexos";
  * `temporada` não são consultadas por este módulo.
  *
  * **Este módulo não devolve áudio.** Por decisão humana registrada na
- * ADR-021, o site é descoberta, apresentação editorial, metadata e
+ * Por decisão de arquitetura, o site é descoberta, apresentação editorial, metadata e
  * transcrição; a escuta acontece no Spotify. Não há `audioUrl`,
  * `audioMimeType` nem `audioBytes` — e a ausência é arquitetura, não lacuna
  * temporária a ser preenchida depois. O master continua existindo e
@@ -27,14 +27,14 @@ import { databaseUrlDisponivel } from "./anexos";
  *
  * Este módulo não renderiza nada e não conhece rota: ele oferece as primitivas
  * que a Home, `/podobservar`, `/podobservar/t1/[episodio]` e o sitemap vão
- * consumir depois. RSS não está entre elas: a ADR-021 o suspendeu.
+ * consumir depois. RSS não está entre elas: foi suspenso.
  */
 
 /** Uma linha crua da view, como o Drizzle a tipa (todas as colunas anuláveis). */
 export type LinhaEpisodioPublico = typeof vwEpisodioPublico.$inferSelect;
 
 /**
- * Destino primário de escuta (ADR-021, item 4).
+ * Destino primário de escuta.
  *
  * Escopado por domínio, como `plano-de-despublicacao.ts` faz com
  * `https://acervo.`. Não é decoração: o gate da view só sabe que a coluna não

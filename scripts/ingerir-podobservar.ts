@@ -12,7 +12,7 @@
  * 6. com `--publicar=<slug>`, e só então, muda aquele episódio para
  *    `publicado` — desde que já tenha Spotify, capa e transcrição.
  *
- * O que ele **não** faz, por decisão de arquitetura (ADR-021):
+ * O que ele **não** faz, por decisão de arquitetura:
  *
  * - não publica episódio (`status` fica em `rascunho`);
  * - não cria `documento_arquivo` — master de podcast não pertence ao acervo;

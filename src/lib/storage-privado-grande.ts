@@ -1,5 +1,5 @@
 /**
- * Caminho privado para objetos grandes — masters do PodObservar (ADR-021).
+ * Caminho privado para objetos grandes — masters do PodObservar.
  *
  * `storage-privado.ts` existe e continua válido para o acervo documental: ele
  * recebe `Buffer`, faz um `PutObject` único e confere o objeto baixando-o
@@ -20,7 +20,7 @@
  *    invisíveis no bucket.
  *
  * O que **não** muda: o objeto é privado, sem ACL, sem `url_publica` e sem URL
- * assinada. Nada aqui gera endereço público — a ADR-021 é o contrato.
+ * assinada. Nada aqui gera endereço público, e esse é o contrato.
  */
 
 import { createHash } from "node:crypto";

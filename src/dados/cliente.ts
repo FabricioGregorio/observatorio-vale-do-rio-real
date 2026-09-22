@@ -8,13 +8,10 @@
  * Driver: node-postgres (`pg`), protocolo wire padrão do PostgreSQL. Funciona
  * contra o PostgreSQL local em Docker, contra o serviço do CI e contra o
  * provedor de hospedagem, sem nenhum recurso proprietário — o provedor é uma
- * decisão de infraestrutura (ADR-004), não uma dependência do código.
+ * decisão de infraestrutura, não uma dependência do código.
  * TLS é responsabilidade da URL de conexão (`?sslmode=require` quando o
  * provedor exigir), e não de configuração fixa aqui.
  *
- * Referências:
- * - ADR-002 (dois usuários de banco; PostgreSQL portável)
- * - ADR-004 (Neon apenas como provedor de hospedagem)
  */
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";

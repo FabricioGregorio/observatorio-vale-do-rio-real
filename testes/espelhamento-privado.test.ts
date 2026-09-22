@@ -297,7 +297,7 @@ describe.skipIf(!URL_MANUTENCAO)(
          * podia comparar os totais. Os masters do PodObservar quebram isso de
          * propósito: eles existem sem `documento_arquivo`, porque vincular um
          * master a documento o faria entrar no Acervo público por
-         * `vw_anexo_publico` — outro gate, com outras regras. Ver ADR-021 e o
+         * `vw_anexo_publico` — outro gate, com outras regras. Ver o
          * ramo correspondente de `vw_pendencia_publicacao` na migração 0012.
          */
         expect(r.rows[0].a_acervo).toBe(r.rows[0].da);

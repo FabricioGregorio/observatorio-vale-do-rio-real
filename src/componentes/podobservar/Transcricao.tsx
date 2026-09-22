@@ -39,7 +39,7 @@ export function SobreEstaTranscricao() {
  * classifica linhas.
  *
  * Os timestamps são **referência documental, não controle de reprodução**. O
- * site não tem player (ADR-021), então não há o que um clique ali pudesse
+ * site não tem player, então não há o que um clique ali pudesse
  * fazer: nenhum botão, nenhum seek, nenhum link para a plataforma com
  * posição. São marcas de leitura, e ficam fora da árvore de acessibilidade
  * como rótulo redundante — o `<b>` visível é anunciado como o tempo que é.

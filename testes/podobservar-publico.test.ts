@@ -21,7 +21,7 @@ import type { EpisodioPublico } from "../src/dados/consultas/podobservar";
 /**
  * Experiência pública do PodObservar — P0.3.
  *
- * O que estes testes protegem não é aparência: é a ADR-021 sobrevivendo ao
+ * O que estes testes protegem não é aparência: é a política de distribuição sobrevivendo ao
  * próximo refactor. O site divulga e não reproduz, e a diferença entre as duas
  * coisas é um `<iframe>` que alguém acrescenta de boa-fé. Aqui isso falha.
  *
@@ -273,7 +273,7 @@ describe("seção do PodObservar na Home", () => {
 
 /* ------------------------------------------------------------------ */
 
-describe("segurança: o site divulga, não reproduz (ADR-021)", () => {
+describe("segurança: o site divulga, não reproduz", () => {
   /**
    * Comentário fora, código dentro.
    *

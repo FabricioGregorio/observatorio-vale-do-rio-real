@@ -92,7 +92,7 @@ export function temHachura(relacoes: readonly RelacaoTerritorial[]): boolean {
  *
  * | era | virou | o que aconteceria no escuro |
  * |---|---|---|
- * | `--color-texto-suave` | `--color-carvao-suave` | a fronteira dos 75 municípios clarearia sobre o preenchimento pedra e sumiria — desfazendo em silêncio a correção registrada na ADR-010 |
+ * | `--color-texto-suave` | `--color-carvao-suave` | a fronteira dos 75 municípios clarearia sobre o preenchimento pedra e sumiria — desfazendo em silêncio a correção já registrada |
  * | `--color-fundo-elevado` | `--color-branco` | o contorno do marcador escureceria e deixaria de separar o pino do preenchimento claro |
  * | herdava `--color-texto` | `--color-texto-sobre-destaque` | o texto do item realçado viraria pedra sobre milho: 1,5:1 |
  *

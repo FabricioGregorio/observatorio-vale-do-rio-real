@@ -1,7 +1,7 @@
 /**
  * Destinos externos de escuta — Spotify e YouTube.
  *
- * A ADR-021 decidiu que o site divulga e não reproduz. Isto é a consequência
+ * Por decisão de arquitetura o site divulga e não reproduz. Isto é a consequência
  * concreta dessa decisão na interface: um link que sai do site, nunca um
  * player, um embed ou um iframe. Não existe `<audio>` em lugar nenhum desta
  * árvore, e não existe SDK de plataforma.

@@ -1,13 +1,10 @@
 /**
  * Acesso ao armazenamento de objetos — Cloudflare R2 pela API S3-compatível.
  *
- * O provedor é decisão de infraestrutura (ADR-006); o código fala S3 e nada
+ * O provedor é decisão de infraestrutura; o código fala S3 e nada
  * mais. Trocar de provedor é mudar endpoint e credencial, não código.
  * Credenciais vêm sempre do ambiente, nunca do código.
  *
- * Referências:
- * - ADR-003 (todo binário vive em storage de objetos, com URL própria e hash)
- * - ADR-006 (Cloudflare R2, API S3, variáveis STORAGE_PUBLIC_*)
  */
 import {
   GetObjectCommand,

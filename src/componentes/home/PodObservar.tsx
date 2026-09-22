@@ -18,7 +18,7 @@ import { Capitulo } from "./Estrutura";
  * Entra entre Origem e Território porque é ali que a narrativa da página
  * pede: depois de dizer de onde o Observatório vem, e antes de abrir o mapa,
  * o podcast é a porta de entrada mais acessível da pesquisa. Era o argumento
- * da própria ADR-021 — o site divulga, e a escuta acontece no Spotify.
+ * da própria política de distribuição — o site divulga, e a escuta acontece no Spotify.
  *
  * **A Home não conhece a quantidade de episódios.** Recebe o mais recente por
  * prop, vindo de `obterEpisodioMaisRecente()`, e nada aqui menciona "3". Com

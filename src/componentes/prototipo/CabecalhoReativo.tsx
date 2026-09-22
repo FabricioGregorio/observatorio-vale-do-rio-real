@@ -8,7 +8,7 @@ import { useEffect } from "react";
  * `"use client"` justificado: direção de rolagem é evento do navegador.
  *
  * **Não renderiza nada.** Encontra o cabeçalho pelo `id` e alterna um atributo;
- * quem esconde e mostra é o CSS. É o mesmo padrão que a ADR-010 validou em
+ * quem esconde e mostra é o CSS. É o mesmo padrão já validado em
  * `MapaInterativo`, e mantém o custo em JavaScript proporcional ao
  * comportamento, não ao conteúdo.
  *

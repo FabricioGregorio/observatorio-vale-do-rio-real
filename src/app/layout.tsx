@@ -140,7 +140,7 @@ export default function RootLayout({
             e sem identificador persistente.
 
           O projeto já previa "analytics sem cookies" como requisito de
-          privacidade; esta é a execução dele. Decisão registrada na ADR-022.
+          privacidade; esta é a execução dele.
 
           O componente vem com `"use client"` de fábrica e devolve `null`: não
           renderiza marcação, não desloca layout e não converte nada em volta

@@ -527,7 +527,7 @@ describe("H4.5.2: nenhuma dependência e nenhuma ilha nova", () => {
       "@tailwindcss/postcss",
       /**
        * Acrescentada em 21/09/2026, deliberadamente e com justificativa
-       * registrada na ADR-022.
+       * registrada na decisão de medição de audiência.
        *
        * O proprietário habilitou Web Analytics no painel da Vercel e a
        * aplicação precisava ser instrumentada para que o painel recebesse

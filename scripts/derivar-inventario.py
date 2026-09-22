@@ -3,7 +3,7 @@
 
 O XLSX é a **fonte canônica versionada**. Este CSV é **artefato derivado**:
 pode ser apagado, é regenerável, não deve ser editado à mão e não substitui o
-XLSX. Ver `docs/decisoes/ADR-014-derivacao-do-inventario.md`.
+XLSX.
 
 Elimina a exportação manual, que era o ponto onde o fluxo podia divergir:
 editar o XLSX, esquecer de exportar, e carregar o banco com a versão antiga.

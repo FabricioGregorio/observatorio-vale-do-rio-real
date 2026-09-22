@@ -103,7 +103,7 @@ test("o CTA interno da Home abre /podobservar na mesma guia", async ({
 });
 
 /**
- * A regra da ADR-021 vista de fora: o navegador não recebe player, embed nem
+ * A regra vista de fora: o navegador não recebe player, embed nem
  * endereço de áudio. É a verificação que sobrevive a qualquer refactor de
  * componente, porque olha o documento entregue, não o código-fonte.
  */

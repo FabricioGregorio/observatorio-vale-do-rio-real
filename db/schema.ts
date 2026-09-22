@@ -249,7 +249,7 @@ export const visibilidadeArquivo = pgEnum("visibilidade_arquivo", [
 
 /**
  * O binário do acervo: um PDF, um MP3, uma imagem. O banco guarda apenas
- * metadados, hash e URL — nunca os bytes (ADR-003, ADR-006).
+ * metadados, hash e URL — nunca os bytes.
  * Sem dependência de saída: é a primeira tabela da migração 0002.
  */
 export const arquivo = pgTable(
@@ -750,7 +750,7 @@ export const vwPendenciaPublicacao = pgView("vw_pendencia_publicacao", {
 /**
  * `vw_episodio_publico` — gate público do PodObservar.
  *
- * Criada pela migração 0010 e **substituída** pela 0011 (ADR-021), em SQL
+ * Criada pela migração 0010 e **substituída** pela 0011, em SQL
  * bruto dentro da migração, como toda view do projeto; aqui só é declarada
  * como existente (`.existing()`), sem gerar DDL.
  *

@@ -10,7 +10,7 @@ import {
 /**
  * Vercel Web Analytics — o que o código faz e o que a página declara.
  *
- * A medição de audiência foi aceita pela ADR-022 sob limites explícitos. Um
+ * A medição de audiência foi aceita sob limites explícitos. Um
  * limite que só existe em prosa não é um limite: este arquivo é o que impede
  * que a próxima rodada acrescente um evento customizado, duplique o
  * componente ou publique uma afirmação de privacidade que o código desminta.
@@ -79,7 +79,7 @@ describe("instrumentação do Vercel Web Analytics", () => {
   });
 
   /**
-   * A ADR-022 veda evento customizado nesta rodada. `track` é a única API do
+   * Evento customizado é vedado nesta rodada. `track` é a única API do
    * pacote que emite um, e é por ela que dado pessoal entraria.
    */
   test("nenhum evento customizado é emitido em lugar nenhum do site", () => {
