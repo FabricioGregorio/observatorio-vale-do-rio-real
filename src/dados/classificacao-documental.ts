@@ -8,8 +8,7 @@
  * `A02` também é `Disponível` e é `ESPELHAVEL`. O que distingue os dois é a
  * auditoria, não a planilha.
  *
- * A classificação inicial veio de
- * na carga de 2026-09-06. Em 2026-09-16, decisão
+ * A classificação inicial veio da carga de 2026-09-06. Em 2026-09-16, decisão
  * humana posterior autorizou a publicação dos materiais da pesquisa e
  * concluiu a revisão de privacidade: somente CPF, telefone e assinatura
  * exigem versão pública tratada. Estados anteriores permanecem no histórico;
@@ -95,6 +94,19 @@ export const CLASSIFICACAO: Readonly<Record<string, ClassificacaoItem>> = {
     razao:
       "planilhas de respostas autorizadas; sem CPF, telefone ou assinatura",
   },
+  /*
+    Ressalva aberta, registrada em 2026-09-20 e ainda sem ação técnica.
+
+    Três artefatos deste conjunto passam pelo critério literal da decisão de
+    2026-09-16 — que trata de CPF, telefone e assinatura —, mas carregam risco
+    de **reidentificação por cruzamento**, que é de outra ordem: `A11-06`
+    (ranking nominal de trabalhadores), `A11-07` (localidades) e `A11-08`
+    (fornecedores). Os três estão publicados.
+
+    Nada foi despublicado nem reclassificado: a decisão de remediar, e como,
+    é humana. Esta nota existe para que quem revisar a classificação do A11
+    não conclua, pela razão abaixo, que a questão está encerrada.
+  */
   A11: {
     estado: "PUBLICAVEL",
     revisao: "concluida",
