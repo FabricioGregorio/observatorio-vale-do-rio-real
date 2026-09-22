@@ -9,7 +9,7 @@
  * auditoria, não a planilha.
  *
  * A classificação inicial veio de
- * `docs/carga/PLANO_CARGA_DRY_RUN_v2_2026-09-06.md`. Em 2026-09-16, decisão
+ * na carga de 2026-09-06. Em 2026-09-16, decisão
  * humana posterior autorizou a publicação dos materiais da pesquisa e
  * concluiu a revisão de privacidade: somente CPF, telefone e assinatura
  * exigem versão pública tratada. Estados anteriores permanecem no histórico;

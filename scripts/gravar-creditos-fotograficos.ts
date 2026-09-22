@@ -7,9 +7,9 @@
  *
  * O crédito vive dentro de `documento_arquivo.rotulo`, na forma que
  * `montarRotulo` compõe. Não há coluna de autoria por objeto físico no
- * modelo, e criar uma é mudança de schema — proposta em
- * `docs/decisoes/ADR-018-credito-de-autoria-de-arquivo.md`, pendente de
- * decisão humana. Nenhuma tabela paralela foi criada.
+ * modelo, e criar uma é mudança de schema, pendente de decisão humana. Ver
+ * `src/dados/pesquisa/credito-fotografico.ts`. Nenhuma tabela paralela foi
+ * criada.
  *
  * Idempotente: roda sobre `montarRotulo(base, autor)` e o segundo uso não
  * altera linha nenhuma. Não toca em storage, hash, URL ou classificação.

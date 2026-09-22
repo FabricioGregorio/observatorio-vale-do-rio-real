@@ -1,7 +1,7 @@
 /**
- * Vínculos aprovados: DRY_RUN_ESPELHAMENTO_2026-09-06.md, §10–12.
- * Hashes atuais: VERIFICACAO_PRE_UPLOAD_2026-09-07.md, medidos na fonte
- * canônica; adotados no Prompt 3.4.1. Não há hash histórico integral de D01.
+ * Vínculos aprovados no dry-run de espelhamento de 2026-09-06.
+ * Hashes medidos na fonte canônica em 2026-09-07, no pré-upload, e adotados
+ * na mesma data. Não há hash histórico integral de D01.
  * A ordem e o código são declarados, nunca inferidos do nome do arquivo.
  */
 export const LOTE_PRIVADO_INICIAL = [

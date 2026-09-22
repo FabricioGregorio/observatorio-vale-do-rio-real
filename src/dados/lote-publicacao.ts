@@ -20,7 +20,7 @@
  *   nunca foi espelhada. O CHECK `arquivo_derivacao_completa` proíbe declarar
  *   `derivacao_metodo` sem `derivado_de_id`, e inventar uma linha de origem
  *   seria fabricar prova. A cadeia original → hash → derivado → hash fica em
- *   `docs/carga/PUBLICACAO_ACERVO_2026-09-16.md` e no manifesto gerado por
+ *   na publicação do acervo de 2026-09-16 e no manifesto gerado por
  *   `scripts/derivar-fotos-campo.py`.
  * - ambos falsos — objeto publicado a partir da fonte canônica, sem
  *   intermediário.

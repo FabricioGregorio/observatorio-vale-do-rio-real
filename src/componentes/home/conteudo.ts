@@ -133,7 +133,7 @@ export type Entrevista = {
 
 /**
  * As oito entrevistas, identificadas por instituição ou lugar — nunca por
- * pessoa. Numeração e rótulos: `MAPA_FONTES_CANONICAS_2026-09-05.md` §4.
+ * pessoa. Numeração e rótulos vêm do inventário canônico.
  *
  * A 08 mostrava “município não consolidado”. A transcrição do EP01 do
  * PodObservar diz, sem ambiguidade, que Ilha Grande é povoação de São

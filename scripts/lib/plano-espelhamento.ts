@@ -173,7 +173,7 @@ export async function prepararPlano(
         origemSistema: origemSistemaDoItem(item),
         fonteHash: hashInventario
           ? "inventario-de-anexos.xlsx / SHA-256"
-          : "fonte canônica atual; VERIFICACAO_PRE_UPLOAD_2026-09-07.md",
+          : "fonte canônica atual; medido no pré-upload de 2026-09-07",
         hashHistoricoAnterior: hashInventario ? "conferido" : "nao_disponivel",
       }),
     );

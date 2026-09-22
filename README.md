@@ -95,6 +95,19 @@ inexistente.
 
 ## Deploy
 
-O projeto não tem integração com Git: empurrar para `main` não dispara
+O projeto **não tem integração com Git**: empurrar para `main` não dispara
 deployment. Production é publicada pela CLI da Vercel, em operação separada e
 autorizada.
+
+Configuração do projeto na Vercel: framework Next.js, raiz `.`, Build Command
+`pnpm build`, Install e Output nos defaults, Node 24.x, Production Branch
+`main`. Preview fica desabilitado enquanto não houver banco ou role isolado —
+a credencial de Production não é copiada para Preview.
+
+A allowlist de variáveis de Production contém **somente** `DATABASE_URL`,
+`SITE_URL` e `STORAGE_PUBLIC_URL`. As credenciais de manutenção, de migração e
+de storage privado nunca entram na Vercel: pertencem a operações locais
+autorizadas.
+
+Nenhum comando da Vercel executa migração, seed, espelhamento, upload ou
+`publicar-zip`. Essas operações são sempre separadas e explícitas.

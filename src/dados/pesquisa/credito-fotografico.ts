@@ -14,10 +14,12 @@
  * módulo é o único lugar que compõe e desfaz essa forma. Produtor e consumidor
  * usam as mesmas duas funções; ninguém escreve a string à mão.
  *
- * Isso é um acordo de texto, não um campo tipado. A proposta de uma coluna
- * `arquivo.credito` própria está em `docs/decisoes/ADR-018-credito-de-autoria-
- * de-arquivo.md` e depende de decisão humana — mudar schema não é atribuição
- * do agente.
+ * Isso é um acordo de texto, não um campo tipado: uma gravação feita fora de
+ * `montarRotulo` pode quebrar a separação sem que o banco reclame. A correção
+ * definitiva seria um par de colunas em `arquivo` — `credito_autoria` e
+ * `credito_fonte`, com CHECK `num_nonnulls(...) <> 1`, porque autoria sem
+ * fonte é afirmação sem lastro e fonte sem autoria não diz nada. É mudança de
+ * schema, e portanto decisão humana; até lá, vale o acordo de texto.
  */
 
 /** Separador entre a identidade do arquivo e o crédito. Nunca inline. */

@@ -18,8 +18,10 @@
  * O que fica de fora, e por quê:
  *
  * - `db/migrations/` — migração aplicada é histórico imutável.
- * - `docs/` — snapshots, ADRs e tarefas registram uma época em que o termo
- *   era verdadeiro. Reescrevê-los falsificaria o registro.
+ * - `docs/` — o que restou ali é evidência datada: auditorias de fonte,
+ *   reconciliação de integridade, revisão de privacidade e o registro do
+ *   consentimento fotográfico. Reescrever um documento de evidência para
+ *   ajustar vocabulário falsificaria o registro.
  * - `node_modules/`, `.next/`, `test-results/` — não são fonte.
  */
 import { readdirSync, readFileSync, statSync } from "node:fs";
