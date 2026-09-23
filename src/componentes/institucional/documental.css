@@ -4,7 +4,7 @@
   `/privacidade`, `/contato` e `/campo` têm a mesma forma:
   uma coluna de leitura com margem de ficha à
   esquerda no desktop, rótulo em mono de um lado e texto do outro. É a família
-  de `/observatorio` e de `/prestacao-de-contas`, e existe uma folha só porque
+  de `/observatorio`, e existe uma folha só porque
   quatro folhas iguais seriam quatro lugares para divergir.
 
   Cor, família, raio e espessura saem de `tokens.css`; nenhum hex entra aqui.
@@ -137,7 +137,7 @@
 /* ------------------------------------------------------- listas de afirmação
 
    Cada item é uma afirmação sobre o site com a sua prova ao lado. O filete à
-   esquerda é o mesmo recurso das pendências da Prestação de Contas: separa sem
+   esquerda é o mesmo recurso das antigas pendências declaradas: separa sem
    encaixotar. */
 
 .doc-itens {

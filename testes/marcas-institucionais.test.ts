@@ -18,7 +18,7 @@ import {
  *
  * Estes testes não protegem layout. Eles protegem o que três manuais
  * determinam sobre marca de governo, e crédito de fomento errado é causa
- * recorrente de ressalva em prestação de contas: é a classe de erro que custa
+ * recorrente de ressalva na comprovação de execução: é a classe de erro que custa
  * o edital, não a que custa um ajuste de CSS.
  *
  * Os manuais estão em `OBSERVATORIO_FONTES_DIR/marcas/` e não são versionados.
@@ -334,20 +334,21 @@ describe("a nota operacional de aprovação não é conteúdo público", () => {
   });
 });
 
-describe("uma fonte, dois consumidores", () => {
+describe("uma fonte, um consumidor", () => {
   /**
-   * O rodapé e a Prestação de Contas servem a mesma régua. Se um deles
-   * montasse a própria lista, as duas superfícies começariam a divergir sobre
-   * quem financia o projeto — que é o defeito que este lote veio fechar.
+   * O rodapé serve a régua a partir do componente, e nunca de uma lista
+   * própria — duas listas divergiriam sobre quem financia o projeto, que é o
+   * defeito que este lote veio fechar.
+   *
+   * Eram dois consumidores até 2026-09-23: o rodapé e a Prestação de Contas,
+   * que exibia a mesma régua em escala maior. A área saiu, e com ela o
+   * segundo consumidor.
    */
-  test("rodapé e Prestação de Contas consomem o mesmo componente", () => {
+  test("o rodapé consome o componente, e não uma lista própria", () => {
     expect(ler(FONTES.rodape)).toContain("ReguaDeCreditos");
-    expect(ler("src/app/prestacao-de-contas/page.tsx")).toContain(
-      "ReguaDeCreditos",
-    );
   });
 
-  test.each([FONTES.rodape, "src/app/prestacao-de-contas/page.tsx"])(
+  test.each([FONTES.rodape])(
     "%s não escreve nome de entidade de fomento à mão",
     (caminho) => {
       const servido = ler(caminho)

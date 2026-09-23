@@ -706,8 +706,7 @@
 
 /* A régua de marcas de fomento, na ordem que os manuais oficiais determinam
    (ver `componentes/institucional/creditos.ts`). Vive aqui, e não numa folha
-   de rota, porque o bloco aparece no rodapé de toda página e também dentro da
-   Prestação de Contas.
+   de rota, porque o bloco aparece no rodapé de toda página.
 
    Ela é sempre renderizada sobre um painel claro — "aplicação em box branco",
    manual do Governo Federal, p. 14. Por isso as cores de texto aqui são as da
@@ -1076,6 +1075,5 @@
   }
 }
 
-.regua--destaque {
-  gap: clamp(1.75rem, 3vw, 2.5rem);
-}
+/* `.regua--destaque` saiu em 2026-09-23 com a Prestação de Contas: era o
+   espaçamento maior daquela página, e nenhuma outra superfície o pedia. */

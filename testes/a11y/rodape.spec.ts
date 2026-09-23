@@ -19,10 +19,13 @@ import { ENDERECOS_PUBLICOS } from "./rotas";
 /** Manual do Governo Federal: redução máxima em meios eletrônicos. */
 const LARGURA_MINIMA_FEDERAL = 200;
 
-/** Onde o rodapé não aparece: a folha de impressão o esconde de propósito. */
-const SEM_RODAPE = "/prestacao-de-contas/imprimir";
-
-const COM_RODAPE = ENDERECOS_PUBLICOS.filter((rota) => rota !== SEM_RODAPE);
+/*
+  Havia uma exceção: a versão imprimível da Prestação de Contas, cuja folha de
+  impressão escondia cabeçalho e rodapé de propósito. Aquela rota saiu em
+  2026-09-23 junto com a área, e não há mais rota pública sem rodapé — todas
+  entram na varredura.
+*/
+const COM_RODAPE = ENDERECOS_PUBLICOS;
 
 for (const largura of [375, 768, 1440]) {
   test(`navegação institucional íntegra em ${largura}px`, async ({ page }) => {
@@ -69,17 +72,6 @@ for (const rota of COM_RODAPE) {
     await expect(rodape.locator("#creditos-fomento")).toBeVisible();
   });
 }
-
-/*
-  A versão imprimível é a exceção declarada: a folha de impressão esconde
-  cabeçalho e rodapé. Na tela o elemento existe; o que se afirma aqui é que a
-  regra de impressão continua alcançando-o.
-*/
-test("a versão imprimível esconde o rodapé no papel", async ({ page }) => {
-  await page.goto(SEM_RODAPE);
-  await page.emulateMedia({ media: "print" });
-  await expect(page.locator("body > footer")).toBeHidden();
-});
 
 test.describe("as marcas institucionais na tela", () => {
   /*

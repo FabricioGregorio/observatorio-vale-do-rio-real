@@ -4,6 +4,14 @@ import { listarDocumentosPublicos } from "../dados/consultas/acervo";
 import { listarEpisodiosPublicos } from "../dados/consultas/podobservar";
 import { urlDoSite } from "../lib/site-url";
 
+/**
+ * As rotas indexáveis do site.
+ *
+ * `/prestacao-de-contas` e `/prestacao-de-contas/imprimir` saíram em
+ * 2026-09-23: elas respondem com redirect permanente para `/acervo`, e um
+ * redirect não é página. Anunciá-lo no sitemap pediria ao buscador que
+ * indexasse um endereço cujo conteúdo canônico já está listado aqui.
+ */
 export const ROTAS_PUBLICAS = [
   "/",
   "/observatorio",
@@ -13,7 +21,6 @@ export const ROTAS_PUBLICAS = [
   "/campo",
   "/podobservar",
   "/acervo",
-  "/prestacao-de-contas",
   "/privacidade",
   "/contato",
 ] as const;

@@ -22,7 +22,6 @@ describe("classificação de destino", () => {
     // A ficha do arquivo é página HTML; o arquivo é o link dentro dela.
     "/acervo/entrevista-josenilson-bispo/arquivo/b66b98a6-fdec-481b-9d9f-fd323a751364",
     "/podobservar/t1/01-o-que-e-o-vale-do-rio-real",
-    "/prestacao-de-contas/imprimir",
     "#conteudo",
     "mailto:contato@example.org",
     "https://observatoriotobiassoueu.com.br/pesquisa",
@@ -65,8 +64,6 @@ describe("links gerados por dado usam a abstração", () => {
     ["src/app/pesquisa/page.tsx", "item.href"],
     ["src/componentes/home/Secoes.tsx", "item.href"],
     ["src/componentes/home/Secoes.tsx", "RELATORIO_DO_RECANTO.url"],
-    ["src/componentes/acervo/TabelaAnexos.tsx", "anexo.linkPermanente"],
-    ["src/componentes/acervo/TabelaAnexos.tsx", "anexo.linkOrigem"],
     [
       "src/componentes/acervo/ListaMateriaisPublicos.tsx",
       "anexo.linkPermanente",

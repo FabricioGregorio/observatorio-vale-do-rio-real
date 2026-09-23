@@ -4,7 +4,7 @@ import { separarCredito } from "../../dados/pesquisa/credito-fotografico";
 import { urlDoSite } from "../../lib/site-url";
 
 /**
- * `/anexos.json` — o mesmo conjunto da Prestação de Contas, legível por
+ * `/anexos.json` — o mesmo conjunto do Acervo, legível por
  * máquina.
  *
  * A URL é exatamente `/anexos.json`, não `/api/anexos`: o App Router aceita

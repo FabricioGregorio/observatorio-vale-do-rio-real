@@ -2,7 +2,11 @@ import type { Metadata, Route } from "next";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { createElement } from "react";
-import { tamanhoLegivel } from "../../../../../componentes/acervo/TabelaAnexos";
+import { tamanhoLegivel } from "../../../../../componentes/acervo/formato";
+import {
+  dataCurta,
+  dataMaquina,
+} from "../../../../../componentes/podobservar/formato";
 import { ActionLink } from "../../../../../componentes/ui/ActionLink";
 import {
   listarDocumentosPublicos,
@@ -186,6 +190,31 @@ export default async function PaginaArquivo({ params }: Props) {
       </p>
       {documento.licenca ? (
         <p className="text-sm">Licença: {documento.licenca}</p>
+      ) : null}
+      {/*
+        Data de publicação.
+
+        O rodapé de toda rota, a abertura do Acervo e a seção de conferência da
+        Home dizem que cada arquivo tem endereço próprio **e data de
+        publicação**. Até 2026-09-23 quem quisesse conferir a data ia à tabela
+        da Prestação de Contas, a única superfície que a exibia. Com a página
+        removida, a promessa ficaria sem lugar onde ser verificada — e uma
+        afirmação pública sem superfície é o defeito que este site combate.
+
+        É data, não detalhe de sistema: hash, MIME cru e identificador interno
+        continuam fora da ficha, como a decisão de 2026-09-22 estabeleceu.
+
+        A formatação vem de `podobservar/formato.ts`, que resolve o fuso de
+        Sergipe explicitamente. `<time dateTime>` carrega a forma legível por
+        máquina do mesmo instante.
+      */}
+      {arquivo.publicadoEm ? (
+        <p className="text-sm">
+          Publicado em{" "}
+          <time dateTime={dataMaquina(arquivo.publicadoEm)}>
+            {dataCurta(arquivo.publicadoEm)}
+          </time>
+        </p>
       ) : null}
       <p>
         <ActionLink variant="text" href={`/acervo/${slug}` as Route}>

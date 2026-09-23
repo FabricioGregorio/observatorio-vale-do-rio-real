@@ -1,7 +1,7 @@
 import type { Metadata, Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { tamanhoLegivel } from "../../../componentes/acervo/TabelaAnexos";
+import { tamanhoLegivel } from "../../../componentes/acervo/formato";
 import { ActionLink } from "../../../componentes/ui/ActionLink";
 import {
   listarDocumentosPublicos,

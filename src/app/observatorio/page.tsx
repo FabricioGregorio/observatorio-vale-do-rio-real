@@ -232,18 +232,19 @@ export default function PaginaObservatorio() {
             {/*
               Esta nota dizia que Dados e Diário de Campo ainda não tinham
               conteúdo. Deixou de ser verdade em 2026-09-20, e os dois entraram
-              na lista acima. O que sobra de ausência declarada é o Caderno de
-              Estudos, que é entregável administrativo e tem lugar próprio na
-              Prestação de Contas — não é seção do site.
+              na lista acima.
+
+              Até 2026-09-23 ela apontava para a Prestação de Contas como o
+              lugar onde a ausência era declarada. Aquela página não existe
+              mais, e a frase teria virado promessa sem endereço. O que a
+              regra editorial diz continua valendo e continua dito — sem
+              mandar ninguém a lugar nenhum para conferí-la.
             */}
             <p className="obs-nota">
               As páginas de Privacidade e Contato estão no rodapé. A Central de
               Acessibilidade fica no cabeçalho de cada página. O que o projeto
-              ainda não produziu é declarado como ausência na{" "}
-              <Link href="/prestacao-de-contas" prefetch={false}>
-                Prestação de Contas
-              </Link>
-              , nunca preenchido com conteúdo de ocasião.
+              ainda não produziu não aparece aqui como seção nem é preenchido
+              com conteúdo de ocasião.
             </p>
           </div>
         </section>
@@ -261,11 +262,8 @@ export default function PaginaObservatorio() {
               <p key={paragrafo}>{paragrafo}</p>
             ))}
             <p className="obs-acoes">
-              <ActionLink variant="primary" href="/prestacao-de-contas">
-                Ver Prestação de Contas
-              </ActionLink>
-              <ActionLink variant="document" href="/anexos.json">
-                anexos.json
+              <ActionLink variant="primary" href="/acervo">
+                Ver o Acervo
               </ActionLink>
             </p>
           </div>

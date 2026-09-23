@@ -23,12 +23,16 @@ import { MENU_ALVO } from "./menuAlvo";
  * Na Home pública, a navegação vem da mesma fonte canônica do layout. O modo
  * de protótipo preserva a demonstração histórica da H1.
  *
- * ## As duas utilidades
+ * ## A utilidade
  *
- * `Acessibilidade` e `Prestação de Contas` ficam separadas do menu por uma
- * régua vertical e têm peso visual equivalente entre si — Direção Visual §13.1
- * e §13.2. Prestação de Contas é a única com contorno preenchido: é a ação
- * institucional do projeto, e continua apontando para a rota real.
+ * `Acessibilidade` fica separada do menu por uma régua vertical — Direção
+ * Visual §13.1.
+ *
+ * Ao lado dela havia uma ação institucional com contorno preenchido, para a
+ * Prestação de Contas (§13.2). Ela saiu em 2026-09-23, junto com a do
+ * cabeçalho público: a área deixou de existir, e o laboratório que
+ * prototipou o cabeçalho não guarda uma composição que o cabeçalho real já
+ * não tem.
  */
 
 export const ID_DO_CABECALHO = "cabecalho-prototipo";
@@ -143,18 +147,6 @@ export function CabecalhoPrototipo({
             style={{ backgroundColor: "var(--hero-metadado)" }}
           />
           <CentralAcessibilidade />
-          <Link
-            className="meta-ficha px-3 py-2"
-            href="/prestacao-de-contas"
-            prefetch={false}
-            style={{
-              backgroundColor: "var(--hero-texto)",
-              color: "var(--color-carvao)",
-              borderRadius: "var(--radius-ficha)",
-            }}
-          >
-            Prestação de Contas
-          </Link>
         </div>
       </div>
     </header>

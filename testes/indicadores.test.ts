@@ -1,8 +1,8 @@
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
+import { glob } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
-import { montarEntregas } from "../src/componentes/prestacao/conteudo";
 import {
   ATIVIDADES,
   CONTEXTO_DOS_DADOS,
@@ -214,18 +214,27 @@ describe("integridade documental do dataset", () => {
   /**
    * O número publicado é o derivado, não um literal paralelo.
    *
-   * A Prestação de Contas exibe a medida da pesquisa de campo em
-   * `montarEntregas`. Se alguém escrevesse "5 meses" à mão ali, esta asserção
-   * continuaria passando por coincidência — por isso ela compara com o valor
-   * derivado, e não com a string.
+   * A medida da pesquisa de campo era exibida em `montarEntregas`, no módulo
+   * de conteúdo da Prestação de Contas, e esta asserção comparava a saída
+   * daquela função com o valor derivado. A área saiu em 2026-09-23 e a função
+   * com ela.
+   *
+   * O que a asserção protegia continua valendo e continua aqui: nenhuma
+   * superfície pública escreve a duração da janela à mão. A varredura é sobre
+   * o texto servido, o que é mais amplo do que a única função que a exibia.
    */
-  test("a medida publicada usa o número derivado da janela", () => {
-    const campo = montarEntregas({
-      documentos: 0,
-      arquivos: 0,
-      episodios: 0,
-    }).find((entrega) => entrega.id === "campo");
-    expect(campo?.medida).toContain(`${MESES_DE_COLETA} meses de coleta`);
+  test("nenhuma superfície pública escreve a duração da janela à mão", async () => {
+    const raiz = join(import.meta.dirname, "..");
+    const fontes: string[] = [];
+    for await (const caminho of glob("src/{app,componentes}/**/*.{ts,tsx}", {
+      cwd: raiz,
+    })) {
+      fontes.push(readFileSync(join(raiz, caminho), "utf8"));
+    }
+    expect(fontes.length).toBeGreaterThan(50);
+    expect(fontes.join("\n")).not.toMatch(
+      new RegExp(`${MESES_DE_COLETA}\\s+meses de coleta`),
+    );
   });
 
   /** A primeira e a última linha da série são as pontas declaradas do período. */

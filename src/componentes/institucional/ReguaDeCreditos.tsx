@@ -45,21 +45,19 @@ import {
  * `loading="lazy"`: a régua fica no fim de toda página, muito abaixo da
  * primeira dobra.
  */
-export function ReguaDeCreditos({
-  destaque = false,
-}: {
-  /** Escala maior, para a Prestação de Contas. */
-  readonly destaque?: boolean;
-}) {
+export function ReguaDeCreditos() {
   /*
     Não há variante de tema. A régua vive sempre dentro de um painel branco,
     e por isso a sua tinta é fixa nos dois temas — quem muda é o que está em
     volta dela, não ela.
-  */
-  const classes = destaque ? "regua regua--destaque" : "regua";
 
+    Havia um `destaque`, que abria o espaçamento para a escala maior em que a
+    Prestação de Contas servia a mesma régua. Aquela página saiu em
+    2026-09-23 e o único consumidor do prop foi com ela; um parâmetro que
+    ninguém passa é uma variante que ninguém vê.
+  */
   return (
-    <div className={classes}>
+    <div className="regua">
       <ol className="regua__niveis">
         {REGUA_DE_CREDITOS.map((nivel) => (
           <li className="regua__nivel" key={nivel.id}>

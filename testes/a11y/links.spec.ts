@@ -23,8 +23,6 @@ const PAGINAS = [
   "/observatorio",
   "/pesquisa",
   "/dados",
-  "/prestacao-de-contas",
-  "/prestacao-de-contas/imprimir",
   "/rota-que-nao-existe",
 ];
 

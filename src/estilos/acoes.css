@@ -187,11 +187,20 @@
   color: var(--color-link);
 }
 @media (max-width: 639px) {
+  /*
+    Havia duas utilidades no cabeçalho — Acessibilidade e Prestação de contas
+    — e esta regra as punha lado a lado em duas colunas de mesma largura, para
+    que nenhuma parecesse mais importante pela medida.
+
+    A Prestação saiu em 2026-09-23. A grade de duas colunas passou então a dar
+    metade da faixa a um botão só, e "Acessibilidade", que é uma palavra
+    indivisível, transbordava a borda por cima da marca. Restando uma
+    utilidade, ela ocupa a largura do próprio conteúdo.
+  */
   .hl-topo .hl-topo__util {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    display: flex;
+    align-items: center;
     gap: 0.5rem;
-    align-items: stretch;
   }
   .hl-topo__util > div {
     min-width: 0;
@@ -199,7 +208,6 @@
   }
   .hl-topo__util > .acao[data-acao],
   .hl-topo__util > div > .acao[data-acao] {
-    width: 100%;
     padding: 0.5rem 0.375rem;
     flex-wrap: wrap;
     gap: 0.25rem;
@@ -248,8 +256,8 @@ html[data-movimento="reduzido"] .tv :is(.tv-prancha, .tv-vale):target h2 {
 .hl-topo__util > div > .acao {
   overflow-wrap: normal;
 }
-@media (max-width: 639px) {
-  .hl-topo__prestacao > [aria-hidden] {
-    display: none;
-  }
-}
+/*
+  Havia aqui uma regra que escondia a seta do botão de Prestação de contas em
+  telas estreitas. O botão saiu do cabeçalho em 2026-09-23, e a regra ficou
+  sem elemento a que se aplicar.
+*/

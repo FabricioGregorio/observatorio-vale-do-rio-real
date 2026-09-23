@@ -21,11 +21,7 @@ import { expect, test } from "@playwright/test";
 const LARGURAS = [375, 768, 1440] as const;
 const TEMAS = ["light", "dark"] as const;
 
-const ROTAS = [
-  ["/", "Home"],
-  ["/prestacao-de-contas", "Prestação de Contas"],
-  ["/prestacao-de-contas/imprimir", "versão imprimível"],
-] as const;
+const ROTAS = [["/", "Home"]] as const;
 
 /**
  * Razão de contraste entre a cor de um elemento e o primeiro plano de fundo

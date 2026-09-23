@@ -12,7 +12,7 @@ import {
  *
  * Mesma proteção de `/dev/estilos`, e pelo mesmo motivo: um protótipo
  * alcançável de fora seria conteúdo publicado, e conteúdo publicado num site
- * de prestação de contas é afirmação. Este ainda é rascunho.
+ * de comprovação pública é afirmação. Este ainda é rascunho.
  */
 
 describe("proteção da rota do protótipo", () => {
@@ -80,7 +80,7 @@ describe("menu alvo do protótipo", () => {
       "/dados",
       "/podobservar",
       "/campo",
-      "/prestacao-de-contas",
+      "/acervo",
     ]);
 
     for (const item of MENU_ALVO) {

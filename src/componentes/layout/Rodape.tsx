@@ -13,8 +13,8 @@ import { CSS_DO_RODAPE } from "./estilosRodape";
  * Até 2026-09-20 havia dois: este, com cinco links institucionais e um bloco
  * de créditos vazio, e o da Home, com o nome oficial e os mesmos cinco links.
  * A Home escondia este por CSS. Dois rodapés é a forma mais barata de manter
- * duas verdades sobre quem realiza e quem financia o projeto — e num site de
- * prestação de contas as duas acabam divergindo.
+ * duas verdades sobre quem realiza e quem financia o projeto — e num site que
+ * existe para comprovar execução as duas acabam divergindo.
  *
  * Agora é um só. O conteúdo, os links e a régua institucional têm fonte única;
  * a Home não esconde mais nada.
@@ -28,6 +28,12 @@ import { CSS_DO_RODAPE } from "./estilosRodape";
  * 3. **régua de marcas** — num painel claro, pelas razões que
  *    `ReguaDeCreditos` explica;
  * 4. **assinatura** — licença e endereço do acervo.
+ *
+ * A faixa de navegação é `MENU_PRINCIPAL` inteiro, e nada além dele. Até
+ * 2026-09-23 havia um item escrito à mão ao lado da lista — a Prestação de
+ * Contas, que era seção do site sem ser item do menu. Ela deixou de existir
+ * como área pública, e o Acervo, que já está no menu, não precisa de uma
+ * segunda entrada para o mesmo destino.
  *
  * O traçado de fundo é a mesma família gráfica da Cartografia Viva: linhas de
  * nível e um ponto de coordenada, desenhados em SVG inline de poucas centenas
@@ -89,15 +95,6 @@ export function Rodape() {
                 </Link>
               </li>
             ))}
-            <li>
-              <Link
-                className="focus-visible:outline-destaque"
-                href="/prestacao-de-contas"
-                prefetch={false}
-              >
-                Prestação de Contas
-              </Link>
-            </li>
           </ul>
         </nav>
 

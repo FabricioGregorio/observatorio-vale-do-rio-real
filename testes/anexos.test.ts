@@ -1,13 +1,20 @@
 /**
- * Testes das funções puras da Prestação de Contas (Tarefa 08).
+ * Funções puras do acervo documental (Tarefa 08).
+ *
  * Sem banco e sem R2: nada aqui abre conexão.
+ *
+ * `tamanhoLegivel` morava em `TabelaAnexos.tsx`, a tabela mestre da Prestação
+ * de Contas, e o Acervo a importava de lá. Com a área removida em 2026-09-23
+ * a tabela saiu e a função ficou, em `componentes/acervo/formato.ts`.
+ *
+ * Saiu junto o `dataIso`, que formatava a data de publicação com
+ * `toISOString()` — dia em UTC, e não o dia editorial do território. A data
+ * que o Acervo agora exibe vem de `podobservar/formato.ts`, que resolve o
+ * fuso de Sergipe explicitamente e já tem suíte própria.
  */
 import { afterEach, describe, expect, test } from "vitest";
 
-import {
-  dataIso,
-  tamanhoLegivel,
-} from "../src/componentes/acervo/TabelaAnexos";
+import { tamanhoLegivel } from "../src/componentes/acervo/formato";
 import {
   CHAVE_ZIP_ANEXOS,
   nomeNoPacote,
@@ -25,18 +32,6 @@ describe("tamanho legível", () => {
   test("limite entre unidades", () => {
     expect(tamanhoLegivel(1023)).toBe("1023 B");
     expect(tamanhoLegivel(1024)).toBe("1 kB");
-  });
-});
-
-describe("data ISO", () => {
-  test("formata a data ISO para exibição", () => {
-    expect(dataIso(new Date("2026-04-11T13:45:00Z"))).toBe("2026-04-11");
-    expect(dataIso("2026-03-27T00:00:00Z")).toBe("2026-03-27");
-  });
-
-  test("ausência vira travessão, nunca data inventada", () => {
-    expect(dataIso(null)).toBe("—");
-    expect(dataIso("data quebrada")).toBe("—");
   });
 });
 

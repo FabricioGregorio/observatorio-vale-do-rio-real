@@ -454,7 +454,7 @@ export default async function PaginaPesquisa() {
                 Contagem e frase de estado vêm da resolução contra
                 `vw_anexo_publico`, nunca de texto fixo: publicar "restrito"
                 sobre documento já público, ou o contrário, é afirmação falsa
-                num site de prestação de contas.
+                num site que existe para comprovar execução.
               */}
               {publicas.length === ENTREVISTAS.length
                 ? `As ${ENTREVISTAS.length} entrevistas gravadas estão públicas no acervo, com áudio e transcrição.`
@@ -615,12 +615,14 @@ export default async function PaginaPesquisa() {
           })}
         </ul>
 
+        {/*
+          A ação secundária daqui levava à Prestação de Contas. Com a consulta
+          documental centralizada no Acervo, ela apontaria para o mesmo lugar
+          que a ação primária ao lado — dois botões, um destino.
+        */}
         <p className="pq-acoes">
           <ActionLink variant="primary" href="/acervo">
-            Ver Acervo
-          </ActionLink>
-          <ActionLink variant="secondary" href="/prestacao-de-contas">
-            Ver Prestação de Contas
+            Ver o Acervo
           </ActionLink>
         </p>
       </section>

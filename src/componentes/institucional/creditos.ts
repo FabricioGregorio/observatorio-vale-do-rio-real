@@ -39,7 +39,7 @@ import {
  *
  * ## Uma fonte, dois consumidores
  *
- * O rodapé de todas as rotas e a Prestação de Contas leem daqui. Entidades,
+ * O rodapé de todas as rotas lê daqui. Entidades,
  * rótulos, ordem e ativos são os mesmos nos dois; o que muda é só a escala.
  */
 
@@ -79,7 +79,7 @@ function marcas(...ids: readonly string[]): readonly MarcaDerivada[] {
  * era "Realização" duas vezes lado a lado — uma para o Coletivo e outra para o
  * bloco federal, que é como o manual chama o seu. Quem realiza o projeto já
  * está declarado ao lado da régua, no bloco de identidade do rodapé e na ficha
- * da Prestação de Contas; repeti-lo aqui só desfazia o vocabulário do manual.
+ * do rodapé; repeti-lo aqui só desfazia o vocabulário do manual.
  */
 export const REGUA_DE_CREDITOS: readonly NivelDeCredito[] = [
   {

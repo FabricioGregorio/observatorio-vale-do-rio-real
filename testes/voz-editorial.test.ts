@@ -4,7 +4,6 @@ import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 import { LIMITES } from "../src/componentes/dados/conteudo";
 import { ENTREVISTAS } from "../src/componentes/home/conteudo";
-import { PENDENCIAS_DECLARADAS } from "../src/componentes/prestacao/conteudo";
 
 /**
  * Voz editorial das superfícies públicas.
@@ -115,18 +114,112 @@ describe("nenhum texto de desenvolvimento chega à interface", () => {
   });
 });
 
+/**
+ * O que nenhuma superfície pública pode afirmar.
+ *
+ * Esta guarda vinha de `prestacao-de-contas.test.ts`, onde varria só os
+ * textos daquela página. Com a página removida em 2026-09-23, ela veio para
+ * cá e passou a varrer toda superfície pública — que é onde a regra sempre
+ * valeu: situação financeira, parecer e encerramento de prestação não estão
+ * documentalmente confirmados em lugar nenhum do corpus, e afirmar qualquer
+ * um deles é o dado fictício que este projeto proíbe.
+ *
+ * Os padrões são **afirmativos** de propósito. O que não pode existir é a
+ * afirmação, não o termo: uma regra que procurasse a palavra solta
+ * reprovaria a própria frase que estabelece o limite.
+ */
+describe("nenhuma superfície pública afirma o que o projeto não pode provar", () => {
+  /** Estado administrativo do projeto: proibido em qualquer superfície. */
+  const ESTADO_ADMINISTRATIVO: readonly RegExp[] = [
+    /\b(foi|está|encontra-se)\s+(aprovad|homologad)/i,
+    /prestação de contas\s+(está|foi|encontra-se)\s+(aprovada|encerrada|concluída)/i,
+    /parecer\s+(favorável|técnico aprovado|de aprovação)/i,
+  ];
+
+  /** Cifra e medida financeira **do próprio projeto**. */
+  const EXECUCAO_FINANCEIRA: readonly RegExp[] = [
+    /\bsaldo\b/i,
+    /\bvalor executado\b/i,
+    /\bR\$\s?\d/,
+  ];
+
+  /**
+   * Onde uma cifra não é afirmação sobre o projeto.
+   *
+   * A cartografia publica receita e despesa **dos lugares pesquisados** — no
+   * caso do Recanto da Serra, os valores que o relatório técnico A02 registra,
+   * cada um com a sua `fonte` declarada ao lado. Isso é achado de pesquisa
+   * citado de um documento, e é justamente o que o Observatório foi financiado
+   * para levantar.
+   *
+   * O que a regra proíbe é o projeto declarar a própria execução financeira,
+   * que não está documentalmente confirmada em lugar nenhum do corpus. São
+   * coisas diferentes, e uma varredura que não as distinguisse mandaria apagar
+   * o resultado da pesquisa para proteger uma regra sobre prestação de contas.
+   */
+  const CIFRA_DE_PESQUISA = new Set([
+    "src/componentes/territorio/cartografia/lugares.ts",
+  ]);
+
+  test("nenhum texto público declara aprovação nem parecer", async () => {
+    const achados: string[] = [];
+    for (const { arquivo, texto } of await superficiesPublicas()) {
+      for (const padrao of ESTADO_ADMINISTRATIVO) {
+        const encontrado = padrao.exec(texto);
+        if (encontrado !== null) achados.push(`${arquivo}: "${encontrado[0]}"`);
+      }
+    }
+    expect(achados).toEqual([]);
+  });
+
+  test("nenhum texto público declara execução financeira do projeto", async () => {
+    const achados: string[] = [];
+    for (const { arquivo, texto } of await superficiesPublicas()) {
+      if (CIFRA_DE_PESQUISA.has(arquivo)) continue;
+      for (const padrao of EXECUCAO_FINANCEIRA) {
+        const encontrado = padrao.exec(texto);
+        if (encontrado !== null) achados.push(`${arquivo}: "${encontrado[0]}"`);
+      }
+    }
+    expect(achados).toEqual([]);
+  });
+
+  /*
+    A exceção não é um buraco: a cifra que ela permite continua tendo de vir
+    de documento citado. Sem esta linha, apagar a `fonte` ao lado do valor
+    passaria despercebido.
+  */
+  test("a cifra de pesquisa permitida continua trazendo a fonte ao lado", () => {
+    for (const arquivo of CIFRA_DE_PESQUISA) {
+      const fonte = readFileSync(join(RAIZ, arquivo), "utf8");
+      for (const bloco of fonte.split(/\n\s*\},?\s*\n/)) {
+        if (!/R\$\s?\d/.test(bloco)) continue;
+        expect(bloco, arquivo).toMatch(/fonte:/);
+      }
+    }
+  });
+});
+
 describe("afirmações factualmente superadas não voltam", () => {
   /**
    * Os três manuais oficiais de marca foram localizados e lidos, e a régua de
-   * marcas é aplicada no rodapé de toda rota e na Prestação de Contas. A
-   * pendência que dizia o contrário ficou na mesma página que a desmentia.
+   * marcas é aplicada no rodapé de toda rota. A pendência que dizia o
+   * contrário vivia na Prestação de Contas, que saiu em 2026-09-23 — e com
+   * ela a estrutura que este teste lia. A afirmação superada passou a ser
+   * procurada onde ela poderia reaparecer: no texto servido.
    */
-  test("o manual de marcas não consta mais como pendência", () => {
-    const itens = PENDENCIAS_DECLARADAS.map((p) => p.item);
-    expect(itens).not.toContain("Manual de aplicação de marcas");
-    expect(PENDENCIAS_DECLARADAS.map((p) => p.texto).join(" ")).not.toContain(
-      "nenhuma marca oficial é aplicada",
-    );
+  test("nenhuma superfície diz que falta manual de marcas", async () => {
+    const achados: string[] = [];
+    for (const { arquivo, texto } of await superficiesPublicas()) {
+      if (/nenhuma marca oficial é aplicada/i.test(texto))
+        achados.push(arquivo);
+      if (
+        /manual de aplicação de marcas/i.test(texto) &&
+        /pendência|pendente|ainda não/i.test(texto)
+      )
+        achados.push(arquivo);
+    }
+    expect(achados).toEqual([]);
   });
 
   test("o município de cada entrevista está documentado", () => {

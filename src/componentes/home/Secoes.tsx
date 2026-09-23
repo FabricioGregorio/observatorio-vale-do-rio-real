@@ -135,7 +135,7 @@ export function Origem() {
           </p>
         </li>
         <li className="hl-elo">
-          <p className="meta-ficha">Prestação de contas</p>
+          <p className="meta-ficha">Acompanhamento</p>
           <h3>{ACOMPANHAMENTO}</h3>
           <p>
             Recebe a comprovação da execução — a mesma que este site guarda.
@@ -1014,15 +1014,18 @@ export function Conferencia() {
             publicação, para quem quiser conferir. Sem login, sem pedido de
             permissão.
           </p>
+          {/*
+            Eram três ações: a Prestação de Contas, o `/anexos.json` e a versão
+            imprimível dela. As duas primeiras levavam ao mesmo conjunto de
+            documentos por caminhos diferentes, e a terceira saiu junto com a
+            página que imprimia. Restou a ação que o parágrafo promete: o
+            Acervo, onde os arquivos estão. O inventário legível por máquina
+            continua servido, e continua oferecido — dentro do Acervo, que é
+            onde ele responde a uma pergunta.
+          */}
           <div className="hl-acoes">
-            <ActionLink variant="primary" href="/prestacao-de-contas">
-              Ver Prestação de Contas
-            </ActionLink>
-            <ActionLink variant="document" href="/anexos.json">
-              anexos.json
-            </ActionLink>
-            <ActionLink variant="document" href="/prestacao-de-contas/imprimir">
-              Versão imprimível
+            <ActionLink variant="primary" href="/acervo">
+              Ver o Acervo
             </ActionLink>
           </div>
         </div>

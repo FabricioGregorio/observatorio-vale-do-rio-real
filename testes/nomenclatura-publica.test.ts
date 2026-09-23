@@ -1,12 +1,16 @@
 /**
  * Guarda de nomenclatura — "Sala do Avaliador" não volta.
  *
- * Decisão humana de 2026-09-21: o produto tem um nome só, **Prestação de
+ * Decisão humana de 2026-09-21: o produto tinha um nome só, **Prestação de
  * contas**. "Sala do Avaliador" era o nome de projeto da mesma página — nunca
  * houve rota, componente ou dado separado —, mas ele vazava para quatro
  * superfícies públicas: o `<title>` (e o `og:title` e o `twitter:title`
  * derivados dele), um `aria-label`, o primeiro link da 404 e o texto do error
  * boundary.
+ *
+ * A página deixou de existir em 2026-09-23, quando a consulta documental foi
+ * centralizada no Acervo. A guarda continua: o termo pode voltar num texto
+ * novo, e o que ela protege é a regra de um nome só por produto.
  *
  * Esta varredura é estática e roda em `pnpm teste`, antes do build. A
  * contrapartida sobre o HTML realmente servido está em

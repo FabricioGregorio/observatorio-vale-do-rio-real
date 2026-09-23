@@ -3,7 +3,6 @@ import {
   ICONE_OBSERVATORIO_CABECALHO,
 } from "../../dados/hero/derivados";
 import { ID_CABECALHO_HOME } from "../../lib/navegacao";
-import { ActionLink } from "../ui/ActionLink";
 import { CentralAcessibilidade } from "./CentralAcessibilidade";
 import { MarcaCabecalho } from "./MarcaCabecalho";
 import { MenuMobile } from "./MenuMobile";
@@ -26,15 +25,16 @@ export function Cabecalho() {
         >
           <MenuMobile classeResponsiva="" />
         </nav>
+        {/*
+          A utilidade do cabeçalho é uma só desde 2026-09-23. A ação
+          institucional que ficava aqui levava à Prestação de Contas, que
+          deixou de existir como área pública — e o Acervo, para onde a
+          consulta documental foi centralizada, já é item do menu. Um segundo
+          botão apontando para o mesmo destino do menu seria ocupação de
+          espaço, não navegação.
+        */}
         <div className="hl-topo__util">
           <CentralAcessibilidade />
-          <ActionLink
-            variant="primary"
-            className="hl-topo__prestacao"
-            href="/prestacao-de-contas"
-          >
-            <span>Prestação de contas</span> <span aria-hidden="true">→</span>
-          </ActionLink>
         </div>
       </div>
     </header>

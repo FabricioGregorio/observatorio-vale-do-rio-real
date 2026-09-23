@@ -1,4 +1,50 @@
-/** CSS do cabeçalho público compartilhado. */
+/**
+ * CSS do cabeçalho público compartilhado.
+ *
+ * ## Por que a explicação mora aqui, e não dentro da string
+ *
+ * Esta folha é servida por `<style>` em toda rota, e o conteúdo da string vai
+ * para o HTML byte a byte — inclusive os comentários. Um parágrafo de
+ * justificativa dentro dela é texto público em 204 páginas, pago em cada
+ * carregamento. Então a razão de cada regra fica neste bloco, que o
+ * compilador descarta, e a string guarda só a regra e uma remissão curta.
+ *
+ * ## A utilidade
+ *
+ * Até 2026-09-23 havia duas — Acessibilidade e a ação institucional que
+ * levava à área de comprovação, removida naquela data. A regra de altura
+ * existia para que a segunda, que quebrava o rótulo em duas linhas quando a
+ * linha do cabeçalho apertava, não ficasse mais alta que a primeira. Restando
+ * uma, o que a regra garante é o alvo de toque de 44 px em qualquer largura —
+ * por isso ela não saiu junto com a segunda classe.
+ *
+ * `flex-shrink:0` porque o rótulo é uma palavra só. A base de ação traz
+ * `min-width:0`, então o botão encolhia abaixo do próprio conteúdo quando a
+ * linha apertava — e "Acessibilidade", sendo indivisível, não tinha como
+ * quebrar: transbordava a borda, por cima da marca.
+ *
+ * ## Telas estreitas
+ *
+ * Com duas utilidades, marca, menu e os dois botões não cabiam lado a lado em
+ * 320 px, e havia uma faixa inferior. Restando uma, aquela faixa viraria um
+ * filete horizontal separando um botão de nada.
+ *
+ * Uma linha só, porém, não é de graça. Em 320 px sobram 288 px de conteúdo:
+ * Menu ocupa 80, Acessibilidade 123 e os vãos 16 — restam 69 px para a marca,
+ * e o símbolo sozinho já usa 46. A assinatura por extenso quebraria em três
+ * linhas curtas, que é exatamente a quebra ruim que a composição evita.
+ *
+ * Então, abaixo de 640 px, a marca é o símbolo oficial. O nome continua na
+ * árvore de acessibilidade — o texto é escondido por recorte, e não por
+ * `display:none`, senão o link para a Home ficaria sem nome acessível. A
+ * assinatura por extenso segue visível a partir de 640 px, no título da Home
+ * e na faixa de identidade do rodapé, em toda rota.
+ *
+ * Medido em 320 px: marca 46, Acessibilidade 123, Menu 80, vãos 16 — 265 px
+ * dentro dos 288, sem rolagem horizontal. Com "Texto maior" ligado, 52 + 124
+ * + 90 + 16 = 282, ainda dentro, e os alvos de toque seguem em 44 px. O
+ * painel do menu abre na linha de baixo, ocupando a largura inteira.
+ */
 export const CSS_DO_CABECALHO = `
 /* Topo */
 html:not(:has(.home-observatorio)) main#conteudo{scroll-margin-top:var(--topo-reserva-salto)}
@@ -45,19 +91,11 @@ body > .hl-topo :focus-visible{outline:3px solid var(--color-destaque);outline-o
 .hl-menu-estreito__grupo{margin:1rem .5rem .25rem;padding-top:1rem;border-top:1px solid var(--color-cabecalho-borda)}
 .hl-menu-estreito__lista a{font-family:var(--font-display);font-size:var(--text-nav);font-weight:600;letter-spacing:.015em;text-decoration:none}
 .hl-menu-estreito__lista a[aria-current="page"]{border-left:2px solid var(--color-cabecalho-acento)}
-.hl-topo .hl-topo__prestacao:focus-visible, .hl-topo .hl-topo__acessibilidade:focus-visible{outline-width:3px;outline-offset:3px}
-/*
-  Acessibilidade e Prestação de contas são a mesma utilidade do cabeçalho e
-  precisam da mesma altura. A hierarquia entre as duas fica por cor, borda,
-  fundo e tipografia — nunca por diferença de altura.
-
-  A altura divergia porque só o botão de Prestação quebrava o rótulo em duas
-  linhas quando a linha do cabeçalho apertava: mesmo padding, mesma borda e
-  mesmo corpo de texto, o dobro de linhas. A quebra de linha mantém o texto legível; min-height fixa o mesmo piso
-  nos dois controles, em qualquer largura.
-*/
-.hl-topo .hl-topo__acessibilidade,.hl-topo .hl-topo__prestacao{display:inline-flex;align-items:center;justify-content:center;min-height:var(--topo-altura-utilidade);white-space:normal}
-@media (max-width:639px){.hl-topo__linha{align-items:center;display:grid;grid-template-columns:minmax(0,1fr) auto}.hl-topo__marca span{max-width:10.5rem;font-size:var(--text-sm)}.hl-topo__nav-estreita,.hl-topo__nav-estreita>div{display:contents}.hl-topo__nav-estreita button{grid-column:2;grid-row:1;width:var(--topo-botao-mobile);padding:var(--topo-padding-mobile)}.hl-topo__nav-estreita [tabindex="-1"]{grid-column:1/-1;grid-row:3}.hl-topo__util{grid-column:1/-1;width:100%;justify-content:space-between;padding-top:var(--topo-padding-mobile);border-top:1px solid var(--color-cabecalho-borda)}}
+.hl-topo .hl-topo__acessibilidade:focus-visible{outline-width:3px;outline-offset:3px}
+/* Utilidade do cabeçalho — ver A UTILIDADE, acima. */
+.hl-topo .hl-topo__acessibilidade{display:inline-flex;flex-shrink:0;align-items:center;justify-content:center;min-height:var(--topo-altura-utilidade);white-space:normal}
+/* Telas estreitas — ver TELAS ESTREITAS, acima. */
+@media (max-width:639px){.hl-topo__linha{align-items:center;display:grid;grid-template-columns:auto 1fr auto;gap:.5rem}.hl-topo .hl-topo__marca span{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;white-space:nowrap;clip-path:inset(50%)}.hl-topo__nav-estreita,.hl-topo__nav-estreita>div{display:contents}.hl-topo__nav-estreita button{grid-column:3;grid-row:1;width:var(--topo-botao-mobile);padding:var(--topo-padding-mobile)}.hl-topo__nav-estreita [tabindex="-1"]{grid-column:1/-1;grid-row:2}.hl-topo__util{grid-column:2;grid-row:1;justify-content:flex-end;margin-left:0}}
 
 
 .hl-topo .hl-topo__marca{color:var(--color-cabecalho-texto)}

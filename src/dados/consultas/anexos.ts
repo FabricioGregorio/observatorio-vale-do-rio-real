@@ -13,19 +13,23 @@ import type {
 import { FOTO_DA_PLACA } from "../pesquisa/excecao-placa";
 
 /**
- * Consulta dos anexos públicos — alimenta a Prestação de Contas, a versão
- * imprimível, o `/anexos.json` e o ZIP.
+ * Consulta dos anexos públicos — alimenta o Acervo, o `/anexos.json` e o ZIP.
+ *
+ * Até 2026-09-23 alimentava também a Prestação de Contas e a versão
+ * imprimível dela. As duas saíram, e a consulta não mudou: era sempre a mesma
+ * lista, e o Acervo, que já a consumia, passou a ser a única superfície de
+ * consulta documental.
  *
  * Lê `vw_anexo_publico` (migração 0002) e **filtra `espelhado = true`**. A view
- * expõe a coluna mas não filtra por ela: a Prestação de Contas só mostra anexo
- * com espelho próprio, porque o site existe justamente para substituir os
- * links frágeis de Drive e Figma.
+ * expõe a coluna mas não filtra por ela: o acervo público só mostra anexo com
+ * espelho próprio, porque o site existe justamente para substituir os links
+ * frágeis de Drive e Figma.
  *
  * Sem `DATABASE_URL` — máquina de desenvolvimento sem credencial — a função
  * avisa e devolve lista vazia, e a página renderiza o estado vazio explícito.
  * Em produção, porém, a ausência é erro explícito: um build publicável não
- * pode gerar Prestação de Contas, Manifesto e `/anexos.json` vazios por
- * configuração faltante.
+ * pode gerar Acervo, Manifesto e `/anexos.json` vazios por configuração
+ * faltante.
  */
 
 export type AnexoPublico = {
@@ -297,11 +301,11 @@ export function selecionarAnexosPublicos(
   );
 }
 
-/** Anexos publicados e efetivamente espelhados, na ordem da Prestação de Contas. */
+/** Anexos publicados e efetivamente espelhados, na ordem do acervo. */
 export async function listarAnexosPublicos(): Promise<AnexoPublico[]> {
   if (!databaseUrlDisponivel(process.env.NODE_ENV, process.env.DATABASE_URL)) {
     console.warn(
-      "[anexos] DATABASE_URL ausente: a Prestação de Contas será gerada vazia. " +
+      "[anexos] DATABASE_URL ausente: o acervo público será gerado vazio. " +
         "Isto é permitido somente em development e test.",
     );
     return [];

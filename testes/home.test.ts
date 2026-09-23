@@ -110,25 +110,43 @@ describe("cabeçalho do site", () => {
   });
 
   /**
-   * Acessibilidade e Prestação de contas são a mesma utilidade e precisam da
-   * mesma altura; a hierarquia entre elas fica por cor, borda e fundo. A
-   * regra que garante isso é uma só, e as duas classes vivem nela.
+   * A utilidade do cabeçalho tem piso de altura.
+   *
+   * Eram duas até 2026-09-23 — Acessibilidade e Prestação de contas — e a
+   * regra existia para que a segunda, que quebrava o rótulo em duas linhas
+   * quando a linha apertava, não ficasse mais alta que a primeira. Com a área
+   * removida sobrou uma utilidade só, e o que a regra garante passou a ser o
+   * alvo de toque de 44 px em qualquer largura.
    */
-  test("as duas utilidades compartilham uma altura só", () => {
+  test("a utilidade do cabeçalho tem piso de altura", () => {
     const css = readFileSync(
       "src/componentes/layout/estilosCabecalho.ts",
       "utf8",
     );
     const regra = css
       .split("\n")
-      .find(
-        (linha) =>
-          linha.includes(".hl-topo__acessibilidade,") &&
-          linha.includes(".hl-topo__prestacao{"),
-      );
+      .find((linha) => linha.startsWith(".hl-topo .hl-topo__acessibilidade{"));
     expect(regra).toBeDefined();
     expect(regra).toContain("min-height:var(--topo-altura-utilidade)");
     expect(regra).toContain("white-space:normal");
+  });
+
+  /*
+    O cabeçalho não ganhou um botão substituto só para preencher o espaço que
+    a Prestação de contas deixou: a utilidade é uma, e o Acervo continua
+    alcançável pelo menu.
+
+    A asserção é sobre o que o componente **serve**. O comentário que explica
+    a remoção cita o nome da área, como deve — é para quem lê o repositório, e
+    não chega ao navegador.
+  */
+  test("o cabeçalho não oferece a área removida", () => {
+    const servido = cabecalho
+      .replace(/\{\s*\/\*[\s\S]*?\*\/\s*\}/g, " ")
+      .replace(/\/\*[\s\S]*?\*\//g, " ");
+    expect(servido).not.toContain("prestacao");
+    expect(servido).not.toContain("Prestação");
+    expect(servido).toContain("<CentralAcessibilidade />");
   });
 });
 

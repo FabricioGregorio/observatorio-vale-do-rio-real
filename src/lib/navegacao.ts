@@ -33,9 +33,8 @@ export const MENU_PRINCIPAL: readonly ItemNavegacao[] = [
  *
  * `MENU_RODAPE` chamava-se assim quando o rodapé era só esta lista. Com o
  * rodapé definitivo ele passou a ser a **faixa institucional** dele: as
- * seções do site vêm de `MENU_PRINCIPAL`, e a Prestação de Contas entra ao
- * lado delas, porque é seção e não página institucional.
- *
+ * seções do site vêm de `MENU_PRINCIPAL`, e aqui ficam só as páginas que
+ * não são seção.
  */
 export const MENU_INSTITUCIONAL: readonly ItemNavegacao[] = [
   { href: "/privacidade", rotulo: "Privacidade" },

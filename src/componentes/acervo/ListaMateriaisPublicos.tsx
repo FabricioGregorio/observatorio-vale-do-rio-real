@@ -2,7 +2,7 @@ import type { AnexoPublico } from "../../dados/consultas/anexos";
 import { formatoPublico } from "../../dados/editorial/tipos-publicos";
 import { separarCredito } from "../../dados/pesquisa/credito-fotografico";
 import { ActionLink } from "../ui/ActionLink";
-import { tamanhoLegivel } from "./TabelaAnexos";
+import { tamanhoLegivel } from "./formato";
 
 export type GrupoDeMateriaisPublicos = {
   slug: string;

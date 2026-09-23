@@ -12,6 +12,13 @@
  * Rotas dinâmicas (`/acervo/[documento]`, `/podobservar/t1/[episodio]`) ficam
  * fora: elas são cobertas pelas suítes do Acervo e do PodObservar, que as
  * resolvem contra o acervo real em vez de fixar um identificador.
+ *
+ * `/prestacao-de-contas` e a sua versão imprimível saíram em 2026-09-23: elas
+ * não servem mais página, e sim um redirect permanente para `/acervo`. O que
+ * as suítes daqui conferem — título, contraste, overflow, rodapé — não se
+ * aplica a um redirect, e deixá-las na lista faria cada suíte medir duas
+ * vezes a mesma página de destino. O comportamento do redirect é conferido
+ * em `prestacao-redirecionada.spec.ts`.
  */
 
 export const ROTAS_PUBLICAS = [
@@ -23,11 +30,6 @@ export const ROTAS_PUBLICAS = [
   ["/campo", "Diário de Campo — Observatório do Vale do Rio Real"],
   ["/podobservar", "PodObservar — Observatório do Vale do Rio Real"],
   ["/acervo", "Acervo — Observatório do Vale do Rio Real"],
-  [
-    "/prestacao-de-contas",
-    "Prestação de Contas — Observatório do Vale do Rio Real",
-  ],
-  ["/prestacao-de-contas/imprimir", "Prestação de Contas — versão imprimível"],
   ["/privacidade", "Privacidade — Observatório do Vale do Rio Real"],
   ["/contato", "Contato — Observatório do Vale do Rio Real"],
 ] as const;
@@ -57,11 +59,14 @@ export const FRASES_PROIBIDAS: readonly RegExp[] = [
 /**
  * Nomenclatura aposentada por decisão humana de 2026-09-21.
  *
- * "Sala do Avaliador" era o nome de projeto da página que sempre viveu em
- * `/prestacao-de-contas`. Nunca houve rota, componente ou dado separado — só
- * um segundo nome para a mesma coisa, que vazava para o `<title>`, para um
- * `aria-label`, para a 404 e para o error boundary. O produto passou a ter um
- * nome só: **Prestação de contas**.
+ * "Sala do Avaliador" era o nome de projeto da página que viveu em
+ * `/prestacao-de-contas` até 2026-09-23. Nunca houve rota, componente ou dado
+ * separado — só um segundo nome para a mesma coisa, que vazava para o
+ * `<title>`, para um `aria-label`, para a 404 e para o error boundary.
+ *
+ * A página não existe mais: a consulta documental foi centralizada no Acervo.
+ * A guarda continua porque o termo pode voltar num texto novo, e porque o que
+ * ela protege é a regra de um nome só por produto.
  *
  * Esta lista é conferida sobre **toda** a saída servida — corpo, HTML,
  * atributos e metadados —, e não só sobre o texto de `main`, porque três dos
@@ -72,4 +77,21 @@ export const FRASES_PROIBIDAS: readonly RegExp[] = [
  */
 export const NOMENCLATURA_APOSENTADA: readonly RegExp[] = [
   /sala\s+do\s+avaliador/i,
+  /*
+    "Prestação de contas" deixou de nomear uma área pública em 2026-09-23: a
+    consulta documental foi centralizada no Acervo.
+
+    A guarda é sobre a **saída servida**, e por isso precisou existir. A folha
+    do cabeçalho é entregue por `<style>` em toda rota, e o conteúdo daquela
+    string vai para o HTML byte a byte — comentário de CSS incluído. Um
+    parágrafo de justificativa escrito dentro dela reintroduz o nome da área
+    em cada uma das 204 páginas, sem aparecer em nenhuma tela e sem que
+    nenhuma varredura de componente perceba.
+
+    O caminho `/prestacao-de-contas` continua legítimo em três lugares, todos
+    fora desta varredura: a regra de redirect, os testes que a conferem e o
+    histórico imutável do projeto.
+  */
+  /presta[çc][ãa]o\s+de\s+contas/i,
+  /\/prestacao-de-contas/i,
 ];

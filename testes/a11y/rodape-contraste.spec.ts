@@ -7,7 +7,8 @@ import { ENDERECOS_PUBLICOS } from "./rotas";
  * em toda rota pública. A lista deixa de ser um recorte e passa a ser a
  * declaração única de `rotas.ts`.
  *
- * A versão imprimível da Prestação de Contas fica de fora: a folha de
+ * Até 2026-09-23 a versão imprimível da Prestação de Contas ficava de fora,
+ * porque a folha de
  * impressão esconde o rodapé de propósito, e medir contraste de elemento
  * oculto não mede nada.
  */

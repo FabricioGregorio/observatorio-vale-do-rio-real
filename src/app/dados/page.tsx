@@ -71,7 +71,7 @@ export const metadata = metadadosDaRota({
  *
  * Server Component. Os números vêm do dataset versionado; a lista de fontes
  * públicas é resolvida contra `vw_anexo_publico` em build, pela mesma consulta
- * da Prestação de Contas. Sem `DATABASE_URL` a seção de fontes fica vazia e
+ * do Acervo. Sem `DATABASE_URL` a seção de fontes fica vazia e
  * declara isso — nenhum link é construído por convenção de nome.
  */
 
@@ -255,8 +255,7 @@ export default async function PaginaDados() {
           <>
             <p className="dd-leitura">
               Os arquivos que sustentam esta página estão publicados em endereço
-              permanente, sem login e sem pedido de acesso, listados na
-              Prestação de Contas e em <code>/anexos.json</code>.
+              permanente, sem login e sem pedido de acesso.
             </p>
             <ul className="dd-fontes">
               {fontes.map(({ rotulo, descricao, anexo }) => (
@@ -274,6 +273,11 @@ export default async function PaginaDados() {
             </ul>
           </>
         )}
+        {/*
+          A frase terminava mandando quem quisesse o conjunto inteiro para a
+          Prestação de Contas. O Acervo passou a ser o único lugar de consulta
+          documental, e as duas metades da frase apontariam para ele.
+        */}
         <p className="dd-ponte">
           O conjunto completo do anexo de indicadores, com todas as suas peças,
           tem ficha própria no{" "}
@@ -284,11 +288,7 @@ export default async function PaginaDados() {
           >
             acervo
           </Link>
-          , e todos os anexos do projeto estão listados na{" "}
-          <Link href="/prestacao-de-contas" prefetch={false}>
-            Prestação de Contas
-          </Link>
-          .
+          , junto dos demais documentos do projeto.
         </p>
       </section>
 

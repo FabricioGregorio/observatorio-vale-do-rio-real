@@ -43,6 +43,39 @@ const nextConfig: NextConfig = {
   },
 
   /**
+   * Redirects permanentes da antiga área de Prestação de Contas.
+   *
+   * Por decisão humana de 2026-09-23, a Prestação de Contas deixou de existir
+   * como área pública: o Acervo passou a ser o único ponto de consulta
+   * documental do site. As duas rotas antigas continuam respondendo porque
+   * link externo e favorito não se atualizam sozinhos — e um 404 numa URL que
+   * já foi divulgada é o mesmo endereço frágil que este projeto existe para
+   * não produzir.
+   *
+   * Não há página intermediária e não há aviso de mudança: quem chega pelo
+   * endereço antigo chega ao Acervo. `permanent: true` emite 308, que é o
+   * 301 que preserva o método — é o que faz um buscador transferir o
+   * endereço em vez de manter os dois.
+   *
+   * As rotas não estão mais no `sitemap`: o redirect existe para quem já tem
+   * o link, não para ser anunciado de novo.
+   */
+  async redirects() {
+    return [
+      {
+        source: "/prestacao-de-contas",
+        destination: "/acervo",
+        permanent: true,
+      },
+      {
+        source: "/prestacao-de-contas/imprimir",
+        destination: "/acervo",
+        permanent: true,
+      },
+    ];
+  },
+
+  /**
    * `X-Robots-Tag: noindex` em todo ambiente que não seja o deployment de
    * produção da Vercel.
    *

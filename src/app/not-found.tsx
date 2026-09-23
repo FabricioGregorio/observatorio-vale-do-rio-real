@@ -3,10 +3,13 @@ import { ActionLink } from "../componentes/ui/ActionLink";
 /**
  * Página 404.
  *
- * Oferece dois caminhos, como a Tarefa 03 exige: a Prestação de Contas, que é
- * a página mais importante do site, e a busca. A busca ainda não existe como
- * rota — enquanto isso o caminho oferecido é o índice de dados, sem prometer
- * uma página que não está no ar.
+ * Oferece caminhos de recuperação, como a Tarefa 03 exige. O primeiro era a
+ * Prestação de Contas; desde 2026-09-23 é o Acervo, que passou a ser o único
+ * lugar de consulta documental do site — e é onde quem chegou por um link
+ * antigo de documento tem chance de achar o que procurava.
+ *
+ * A busca continua fora: ela não existe como rota, e oferecer uma página que
+ * não está no ar é o defeito que esta página serve para reparar.
  */
 export default function NaoEncontrado() {
   return (
@@ -21,11 +24,11 @@ export default function NaoEncontrado() {
           <li>
             <ActionLink
               variant="text"
-              href="/prestacao-de-contas"
+              href="/acervo"
               className="underline"
               style={{ color: "var(--color-link)" }}
             >
-              Prestação de Contas — anexos e evidências públicas
+              Acervo — documentos e registros públicos
             </ActionLink>
           </li>
           <li>

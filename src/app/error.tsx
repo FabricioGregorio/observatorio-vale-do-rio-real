@@ -25,18 +25,17 @@ export default function Erro({
       <h1>Esta página não pôde ser carregada</h1>
       <p>
         Houve uma falha ao montar o conteúdo. Você pode tentar de novo ou seguir
-        para a Prestação de Contas, que reúne os anexos e as evidências públicas
-        do projeto.
+        para o Acervo, que reúne os documentos e registros públicos do projeto.
       </p>
       <div className="flex flex-wrap items-center gap-4">
         <Button onClick={reset}>Tentar de novo</Button>
         <ActionLink
           variant="text"
-          href="/prestacao-de-contas"
+          href="/acervo"
           className="underline"
           style={{ color: "var(--color-link)" }}
         >
-          Ir para a Prestação de Contas
+          Ir para o Acervo
         </ActionLink>
       </div>
       {error.digest ? (

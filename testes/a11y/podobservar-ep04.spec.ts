@@ -7,7 +7,7 @@ import { expect, test } from "@playwright/test";
  * Primeiro episódio publicado depois das superfícies do PodObservar existirem,
  * e o primeiro com master em MP3 e capa original em 4:5. O que se verifica
  * aqui é o que o visitante recebe: a página do episódio, a Home e a lista
- * mostrando o EP04 como mais recente, a prestação de contas e o sitemap
+ * mostrando o EP04 como mais recente, e o sitemap
  * contando quatro — tudo derivado da view, sem nada escrito à mão.
  *
  * Depende do banco no build, como o resto da suíte a11y.
@@ -147,15 +147,12 @@ test("/podobservar lista quatro episódios, com o EP04 primeiro", async ({
   ]);
 });
 
-test("a prestação de contas conta quatro episódios publicados", async ({
-  page,
-}) => {
-  await page.goto("/prestacao-de-contas");
-  await expect(page.locator("main")).toContainText("4 episódios publicados");
-  await expect(page.locator("main")).not.toContainText(
-    "3 episódios publicados",
-  );
-});
+/*
+  A contagem de episódios publicados era exibida também na Prestação de
+  Contas, e este arquivo a conferia lá. A página saiu em 2026-09-23; o que ela
+  contava continua contado acima, contra as quatro rotas que o gate publicou —
+  que é a fonte, e não uma segunda escrita dela.
+*/
 
 test("o sitemap inclui a página do EP04", async ({ request }) => {
   const resposta = await request.get("/sitemap.xml");

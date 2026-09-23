@@ -465,16 +465,17 @@ test.describe("menu do protótipo", () => {
     }
   });
 
-  test("Prestação de Contas aponta para a rota real e responde", async ({
-    page,
-  }) => {
+  /*
+    Havia aqui uma ação institucional para a Prestação de Contas, a única do
+    cabeçalho com contorno preenchido. Ela saiu do protótipo em 2026-09-23,
+    junto com a do cabeçalho público: o laboratório não guarda uma composição
+    que o cabeçalho real já não tem.
+  */
+  test("o cabeçalho não oferece a área removida", async ({ page }) => {
     await page.goto(ROTA);
-    const cta = page.getByRole("link", { name: "Prestação de Contas" });
-    await expect(cta).toBeVisible();
-
-    await cta.click();
-    await expect(page).toHaveURL(/\/prestacao-de-contas$/);
-    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: /Prestação de Contas/i }),
+    ).toHaveCount(0);
   });
 });
 

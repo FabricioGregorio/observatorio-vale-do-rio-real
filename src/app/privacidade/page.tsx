@@ -128,11 +128,7 @@ export default function PaginaPrivacidade() {
         </ul>
         <p className="doc-guia">
           O que está publicado e sob que autorização pode ser conferido peça a
-          peça na{" "}
-          <Link href="/prestacao-de-contas" prefetch={false}>
-            Prestação de Contas
-          </Link>{" "}
-          e no{" "}
+          peça no{" "}
           <Link href="/acervo" prefetch={false}>
             Acervo
           </Link>

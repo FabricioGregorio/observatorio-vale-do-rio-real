@@ -6,7 +6,7 @@
  * Três fontes, e só três:
  *
  * 1. **`componentes/home/conteudo.ts`** — executor, fomento e quem recebe a
- *    prestação de contas. Os valores vêm reexportados de lá, que continua
+ *    comprovação da execução. Os valores vêm reexportados de lá, que continua
  *    sendo a fonte única deles: repetir a string aqui criaria dois nomes
  *    oficiais possíveis.
  * 2. **Transcrição revisada do EP01 do PodObservar**, pública em
@@ -60,7 +60,7 @@ export const SINTESE =
  * Cada item corresponde a uma prática documentada na pesquisa: visita
  * continuada e formulário (EP02), entrevista com gestores públicos
  * (`ENTREVISTAS`), leitura quantitativa (`indicadores/derivados.ts`) e
- * publicação em endereço próprio (Acervo e Prestação de Contas).
+ * publicação em endereço próprio (Acervo).
  */
 export const O_QUE_FAZ: readonly {
   readonly verbo: string;
@@ -157,7 +157,7 @@ export const VINCULOS: readonly {
     texto: `Financia a pesquisa e a publicação dos seus resultados, na linha ${LINHA_DO_EDITAL}.`,
   },
   {
-    papel: "Prestação de contas",
+    papel: "Acompanhamento",
     nome: ACOMPANHAMENTO,
     texto:
       "Recebe a comprovação da execução do objeto — a mesma que este site publica em endereço permanente.",
@@ -285,9 +285,8 @@ export const PRODUTOS: readonly Produto[] = [
  *
  * A base factual é a própria arquitetura do projeto: espelho local obrigatório
  * de todo anexo, hash SHA-256 por arquivo, inventário legível por máquina em
- * `/anexos.json` e versão imprimível da Prestação de Contas. Nada aqui promete
- * DOI, Internet Archive ou ZIP, listados como recomendação
- * e como pendência, não como fato consumado.
+ * `/anexos.json`. Nada aqui promete DOI, Internet Archive ou ZIP, listados
+ * como recomendação e como pendência, não como fato consumado.
  */
 export const PERMANENCIA: readonly string[] = [
   "Boa parte do material de um projeto como este costuma viver em pasta compartilhada, link de edição e painel que depende de conta. Endereços assim mudam de permissão, quebram e não sobrevivem a uma consulta feita daqui a alguns anos.",

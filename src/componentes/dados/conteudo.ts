@@ -153,7 +153,7 @@ export const LIMITES: readonly Limite[] = [
  * Declarado, e resolvido contra `vw_anexo_publico` em build: rótulo que não
  * existir no acervo simplesmente não vira linha. Nenhum link é construído a
  * partir de convenção de nome — a URL, a licença, o tamanho e o hash vêm do
- * registro, como na Prestação de Contas.
+ * registro, como no Acervo.
  *
  * A planilha integral de indicadores **não** está nesta seleção. Ela é
  * pública no acervo e continua acessível pela ficha do conjunto, linkada ao

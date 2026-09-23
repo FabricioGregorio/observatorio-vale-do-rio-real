@@ -135,20 +135,22 @@ test.describe("Home", () => {
     await expect(nav.locator('a[href="/educacao"]')).toHaveCount(0);
   });
 
-  test("leva à Prestação de Contas pela ação institucional do cabeçalho", async ({
-    page,
-  }) => {
+  /*
+    O cabeçalho tinha uma ação institucional para a Prestação de Contas, ao
+    lado da Acessibilidade. A área saiu em 2026-09-23 e a consulta documental
+    foi centralizada no Acervo, que já é item do menu — um segundo botão para
+    o mesmo destino seria ocupação de espaço, não navegação.
+  */
+  test("o cabeçalho não oferece a área removida", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");
-    const prestacao = page
-      .locator("#cabecalho-home")
-      .getByRole("link", { name: /Prestação de contas/ });
-    await expect(prestacao).toBeVisible();
-    await Promise.all([
-      page.waitForURL((url) => url.pathname === "/prestacao-de-contas"),
-      prestacao.click(),
-    ]);
-    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    const cabecalho = page.locator("#cabecalho-home");
+    await expect(
+      cabecalho.getByRole("link", { name: /Prestação de contas/i }),
+    ).toHaveCount(0);
+    await expect(cabecalho.locator('a[href="/acervo"]')).toHaveCount(0);
+    await cabecalho.getByRole("button", { name: /Conteúdos/ }).click();
+    await expect(cabecalho.locator('a[href="/acervo"]')).toHaveCount(1);
   });
 
   test("usa o ícone oficial escolhido e não a assinatura anterior", async ({
@@ -172,10 +174,6 @@ test.describe("Home", () => {
     const acessibilidade = cabecalho.getByRole("button", {
       name: "Acessibilidade",
     });
-    const prestacao = cabecalho.getByRole("link", {
-      name: /Prestação de contas/,
-    });
-
     const corInicial = await acessibilidade.evaluate(
       (elemento) => getComputedStyle(elemento).backgroundColor,
     );
@@ -186,9 +184,6 @@ test.describe("Home", () => {
         (elemento) => getComputedStyle(elemento).backgroundColor,
       ),
     ).not.toBe(corInicial);
-
-    await prestacao.hover();
-    await expect(prestacao).toBeVisible();
 
     await link.focus();
     expect(
@@ -278,8 +273,26 @@ test.describe("Home", () => {
     expect(contorno).not.toBe("none");
   });
 
-  test("aponta o acervo legível por máquina", async ({ page }) => {
+  /**
+   * O inventário legível por máquina continua oferecido — no Acervo.
+   *
+   * Na Home ele era um dos três botões da seção de Conferência, ao lado da
+   * Prestação de Contas e da versão imprimível dela. Com a área removida em
+   * 2026-09-23, a seção passou a oferecer uma ação só, a que o parágrafo
+   * promete: o Acervo, onde os arquivos estão. O JSON é endereço técnico e
+   * não precisa ser promovido na primeira página; ele segue anunciado na
+   * seção "Inventário público" do Acervo, que é onde responde a uma pergunta.
+   */
+  test("a Conferência leva ao Acervo, e o JSON é oferecido lá", async ({
+    page,
+  }) => {
     await page.goto("/");
+    const conferencia = page.locator("#hl-conferencia");
+    await expect(conferencia.locator('a[href="/acervo"]')).toHaveCount(1);
+    await expect(conferencia.locator('[data-acao="primary"]')).toHaveCount(1);
+    await expect(page.locator('a[href="/prestacao-de-contas"]')).toHaveCount(0);
+
+    await page.goto("/acervo");
     await expect(page.locator('a[href="/anexos.json"]')).toHaveCount(1);
   });
 

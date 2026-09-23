@@ -15,6 +15,21 @@ async function abrir(page: Page) {
   return dialogo;
 }
 
+/**
+ * Leva até a ficha do primeiro arquivo do Acervo.
+ *
+ * Índice → documento → arquivo. O percurso é em três passos porque é assim
+ * que o Acervo está organizado, e não se fixa nenhum slug nem nenhum UUID:
+ * o corpus muda, o caminho não. É por aqui que se chega ao `/baixar/…`, que
+ * até 2026-09-23 estava a um clique na tabela da Prestação de Contas.
+ */
+async function irAoPrimeiroArquivoDoAcervo(page: Page) {
+  await page.goto("/acervo");
+  await page.locator(".acervo-card a").first().click();
+  await page.locator('main a[href*="/arquivo/"]').first().click();
+  await expect(page.locator('a[href^="/baixar/"]').first()).toBeVisible();
+}
+
 test("central nativa: teclado, preferências, persistência e restauração sem telemetria", async ({
   page,
 }) => {
@@ -160,9 +175,7 @@ for (const largura of [320, 375, 390, 1440]) {
     const dialogo = await abrir(page);
     await dialogo.getByLabel("Texto maior", { exact: true }).check();
     await dialogo.getByLabel("Reduzir animações").check();
-    for (const rota of ENDERECOS_PUBLICOS.filter(
-      (rota) => !rota.endsWith("/imprimir"),
-    )) {
+    for (const rota of ENDERECOS_PUBLICOS) {
       await page.goto(rota);
       await expect(page.locator("html")).toHaveCSS("font-size", "18px");
       const tamanho = await page.evaluate(() => ({
@@ -206,13 +219,13 @@ test("famílias, consulta documental, download real e foco", async ({
   await expect(externo).toHaveAttribute("rel", /noopener.*noreferrer/);
   await expect(externo).toHaveAccessibleDescription("Abre em nova guia.");
   await page.goto("/pesquisa");
-  await expect(
-    page
-      .locator('[data-acao="secondary"]')
-      .filter({ hasText: "Ver Prestação" }),
-  ).toBeVisible();
   await expect(page.locator('[data-acao="text"]').first()).toBeAttached();
-  await page.goto("/prestacao-de-contas");
+  /*
+    O download documental vivia na tabela da Prestação de Contas. Desde
+    2026-09-23 ele mora na ficha do arquivo, no Acervo — mesma variante de
+    ação, mesmo alvo de toque, mesma exigência de foco visível.
+  */
+  await irAoPrimeiroArquivoDoAcervo(page);
   const download = page.locator('a[href^="/baixar/"]').first();
   await expect(download).toHaveAttribute("data-acao", "document");
   await download.focus();
@@ -260,12 +273,7 @@ test("checkpoint visual: desktop, 320px, temas e central", async ({ page }) => {
       });
     }
     await page.keyboard.press("Escape");
-    for (const rota of [
-      "/",
-      "/acervo",
-      "/prestacao-de-contas",
-      "/podobservar",
-    ]) {
+    for (const rota of ["/", "/acervo", "/podobservar"]) {
       await page.goto(rota);
       await page.screenshot({
         animations: "disabled",
@@ -295,7 +303,7 @@ test("checkpoint visual: desktop, 320px, temas e central", async ({ page }) => {
       path: join(pasta, `acervo-foco-${largura}.png`),
       animations: "disabled",
     });
-    await page.goto("/prestacao-de-contas");
+    await irAoPrimeiroArquivoDoAcervo(page);
     await page.locator('a[href^="/baixar/"]').first().focus();
     await page.screenshot({
       path: join(pasta, `documentos-foco-${largura}.png`),
