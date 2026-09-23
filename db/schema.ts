@@ -34,6 +34,8 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
+import { TIPOS_DOCUMENTO } from "../src/dados/tipo-documento";
+
 // ─── Tipos sem equivalente nativo no Drizzle ───────────────────────
 
 /**
@@ -81,21 +83,20 @@ export const situacaoEquipamento = pgEnum("situacao_equipamento", [
   "potencial",
 ]);
 
-/** Classificação do tipo de documento do acervo. */
-export const tipoDocumento = pgEnum("tipo_documento", [
-  "relatorio_tecnico",
-  "diagnostico_interno",
-  "relato_campo",
-  "formulario_modelo",
-  "relatorio_parcial",
-  "documento_final",
-  "modelagem_estatistica",
-  "entrevista_transcricao",
-  "plano_aula",
-  "identidade_visual",
-  "painel_dados",
-  "outro",
-]);
+/**
+ * Classificação do tipo de documento do acervo.
+ *
+ * Os valores vêm de `src/dados/tipo-documento.ts`, e não estão escritos aqui.
+ * A direção do import é deliberada: o vocabulário é um módulo puro, do qual
+ * este schema e a camada do snapshot dependem igualmente. Declarar a lista
+ * aqui obrigaria `dados/publicado/` a importar `db/schema` — e com ele
+ * `drizzle-orm/pg-core` — só para conhecer doze literais.
+ *
+ * A lista é a mesma, na mesma ordem. Isto é reorganização de código: nenhum
+ * valor mudou, nenhuma migração foi criada e o tipo `tipo_documento` no
+ * PostgreSQL continua exatamente como a migração 0001 o criou.
+ */
+export const tipoDocumento = pgEnum("tipo_documento", TIPOS_DOCUMENTO);
 
 /** Tipo de mídia (formato do arquivo). */
 export const tipoMidia = pgEnum("tipo_midia", [

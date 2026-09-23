@@ -1,11 +1,13 @@
 /**
  * Guardas de acoplamento com PostgreSQL.
  *
- * Duas perguntas, um varredor:
+ * Três perguntas, um varredor:
  *
  * 1. o código de renderização pública chega a um cliente de banco?
- * 2. o contrato público do episódio — que a camada de snapshot consome —
- *    chega a `db/schema`, ao Drizzle ou às consultas?
+ * 2. o contrato público do episódio chega a `db/schema`, ao Drizzle ou às
+ *    consultas?
+ * 3. a camada publicada inteira — `src/dados/publicado/**`, que o site vai
+ *    ler — chega a qualquer uma dessas coisas?
  *
  * O varredor segue os **especificadores de módulo** com expressão regular,
  * incluindo `import(...)` dinâmico e `require(...)`, e resolve cada um contra
@@ -29,9 +31,13 @@
  *   produz falso **positivo**, que é barulhento e fácil de diagnosticar, e
  *   nunca falso negativo — que seria silencioso. O modo de falha foi
  *   escolhido nessa direção de propósito;
- * - `import type` é seguido como se fosse import de valor, embora seja
- *   apagado na compilação. É conservador de novo: acusa uma dependência que
- *   não existe em tempo de execução, nunca deixa passar uma que existe.
+ * - `import type` é registrado à parte e **encerra** a travessia, porque é
+ *   apagado na compilação: o módulo não é carregado, e nada além dele passa a
+ *   ser alcançável por causa daquela aresta. Tratá-lo como import de valor
+ *   atribuiria à origem dependências que ela não tem em tempo de execução —
+ *   que era justamente o que fazia a camada publicada parecer acoplada ao
+ *   cliente de banco através de um tipo. As arestas de tipo continuam
+ *   visíveis e travadas por lista exata, não ignoradas.
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
@@ -46,12 +52,16 @@ const CLIENTES_DE_BANCO = [
   "db/cliente.ts",
 ];
 
+/** Captura a cláusula antes do `from`, para distinguir `import type`. */
 const ESTATICO =
-  /(?:^|[\s;})])(?:import|export)\s[^;]*?from\s*["']([^"']+)["']/g;
+  /(?:^|[\s;})])((?:import|export)\s[^;]*?)from\s*["']([^"']+)["']/g;
 const EFEITO = /(?:^|[\s;})])import\s*["']([^"']+)["']/g;
 const DINAMICO = /\bimport\s*\(\s*["']([^"']+)["']\s*\)/g;
 const REQUERIDO = /\brequire\s*\(\s*["']([^"']+)["']\s*\)/g;
 const COMPUTADO = /\bimport\s*\(\s*(?!["'])/g;
+
+/** `import type { X } from` e `export type { X } from`; nada mais. */
+const SOMENTE_TIPO = /^(?:import|export)\s+type\s/;
 
 function arquivosDe(diretorio: string): string[] {
   const encontrados: string[] = [];
@@ -70,17 +80,47 @@ function comoRepositorio(caminho: string): string {
   return relative(RAIZ, caminho).split("\\").join("/");
 }
 
-function especificadoresDe(texto: string): {
-  modulos: string[];
+type Referencia = {
+  readonly especificador: string;
+  readonly somenteTipo: boolean;
+};
+
+/**
+ * Referências a outros módulos, classificadas.
+ *
+ * `import type { X } from "y"` é apagado na compilação: não cria dependência
+ * em tempo de execução, e nada além de `y` passa a ser carregado por causa
+ * dele. Por isso a distinção existe, e por isso um import de tipo **encerra**
+ * a travessia em `varrer` em vez de continuar por dentro do módulo.
+ *
+ * `import { type X, Y }` não conta como import de tipo: `Y` é valor, e o
+ * módulo é carregado. Só a forma com `type` logo após a palavra-chave é
+ * inteiramente apagada.
+ */
+function referenciasDe(texto: string): {
+  referencias: Referencia[];
   computados: number;
 } {
-  const modulos: string[] = [];
-  for (const padrao of [ESTATICO, EFEITO, DINAMICO, REQUERIDO]) {
+  const referencias: Referencia[] = [];
+
+  for (const achado of texto.matchAll(ESTATICO)) {
+    const clausula = achado[1];
+    const especificador = achado[2];
+    if (clausula && especificador)
+      referencias.push({
+        especificador,
+        somenteTipo: SOMENTE_TIPO.test(clausula.trimStart()),
+      });
+  }
+
+  for (const padrao of [EFEITO, DINAMICO, REQUERIDO]) {
     for (const achado of texto.matchAll(padrao)) {
-      if (achado[1]) modulos.push(achado[1]);
+      if (achado[1])
+        referencias.push({ especificador: achado[1], somenteTipo: false });
     }
   }
-  return { modulos, computados: [...texto.matchAll(COMPUTADO)].length };
+
+  return { referencias, computados: [...texto.matchAll(COMPUTADO)].length };
 }
 
 function resolverRelativo(
@@ -110,7 +150,10 @@ type Proibicao = {
 };
 
 type Varredura = {
+  /** Arestas que existem em tempo de execução. */
   readonly arestas: string[];
+  /** Arestas apagadas na compilação: `import type`. Não carregam módulo. */
+  readonly arestasDeTipo: string[];
   readonly exemplos: ReadonlyMap<string, string>;
   readonly computados: number;
   readonly visitados: number;
@@ -119,6 +162,7 @@ type Varredura = {
 function varrer(entradas: readonly string[], proibicao: Proibicao): Varredura {
   const visitados = new Set<string>();
   const arestas = new Set<string>();
+  const arestasDeTipo = new Set<string>();
   const exemplos = new Map<string, string>();
   let computados = 0;
 
@@ -133,21 +177,22 @@ function varrer(entradas: readonly string[], proibicao: Proibicao): Varredura {
     visitados.add(atual.arquivo);
 
     const origem = comoRepositorio(atual.arquivo);
-    const { modulos, computados: quantos } = especificadoresDe(
+    const { referencias, computados: quantos } = referenciasDe(
       readFileSync(atual.arquivo, "utf8"),
     );
     computados += quantos;
 
-    const registrar = (destino: string) => {
+    const registrar = (destino: string, somenteTipo: boolean) => {
       const aresta = `${origem} -> ${destino}`;
-      arestas.add(aresta);
+      (somenteTipo ? arestasDeTipo : arestas).add(aresta);
       if (!exemplos.has(aresta))
         exemplos.set(aresta, [...atual.cadeia, destino].join("\n    → "));
     };
 
-    for (const especificador of modulos) {
+    for (const { especificador, somenteTipo } of referencias) {
       if (!especificador.startsWith(".")) {
-        if (proibicao.pacotes(especificador)) registrar(especificador);
+        if (proibicao.pacotes(especificador))
+          registrar(especificador, somenteTipo);
         continue;
       }
 
@@ -156,9 +201,19 @@ function varrer(entradas: readonly string[], proibicao: Proibicao): Varredura {
 
       const destino = comoRepositorio(alvo);
       if (proibicao.arquivos(destino)) {
-        registrar(destino);
+        registrar(destino, somenteTipo);
         continue;
       }
+
+      /*
+        Import de tipo encerra a travessia. O módulo não é carregado em tempo
+        de execução, então nada que ele importe passa a ser alcançável por
+        causa desta aresta. Continuar por dentro dele atribuiria à origem
+        dependências que ela não tem — e era exatamente esse o erro que faria
+        a camada publicada parecer acoplada ao cliente de banco através de um
+        `import type`.
+      */
+      if (somenteTipo) continue;
 
       fila.push({ arquivo: alvo, cadeia: [...atual.cadeia, destino] });
     }
@@ -166,14 +221,15 @@ function varrer(entradas: readonly string[], proibicao: Proibicao): Varredura {
 
   return {
     arestas: [...arestas].sort(),
+    arestasDeTipo: [...arestasDeTipo].sort(),
     exemplos,
     computados,
     visitados: visitados.size,
   };
 }
 
-function relatar(varredura: Varredura): string {
-  return varredura.arestas
+function relatar(varredura: Varredura, arestas = varredura.arestas): string {
+  return arestas
     .map((aresta) => `  ${aresta}\n    ${varredura.exemplos.get(aresta)}`)
     .join("\n");
 }
@@ -279,5 +335,75 @@ describe("contrato público do episódio sem dependência de banco", () => {
     );
     expect(consulta).toMatch(/from "\.\.\/podobservar-publico"/);
     expect(consulta).not.toMatch(/episodioPublicoSchema\s*=\s*z\.object/);
+  });
+});
+
+/* ──────────── 3. a camada publicada é um grafo puro ──────────────────── */
+
+/**
+ * `src/dados/publicado/**` é o que o site vai ler no Lote B. Ele não pode
+ * alcançar `db/schema`, Drizzle, cliente de banco nem consultas — não por
+ * higiene, mas porque cada uma dessas arestas arrasta código de banco para o
+ * grafo de uma página estática.
+ *
+ * ## A distinção que este bloco depende
+ *
+ * `publicado/tipos.ts` importa `AnexoPublico` de `consultas/anexos.ts` com
+ * `import type`. Essa forma é apagada na compilação: o módulo não é
+ * carregado, e `drizzle-orm/pg-core` não entra em lugar nenhum por causa
+ * dela. Por isso a aresta aparece em `arestasDeTipo`, e não em `arestas`.
+ *
+ * Ela existe de propósito. É `AnexoPublico` que as duas asserções de tipo no
+ * fim de `publicado/tipos.ts` usam para tornar erro de compilação qualquer
+ * divergência entre o snapshot e o contrato de leitura. Removê-la exigiria ou
+ * duplicar a interface — que é o que aquelas asserções existem para impedir —
+ * ou extrair `AnexoPublico` para um módulo próprio, que é trabalho de outro
+ * lote.
+ *
+ * A lista é exata, como a do bloco 1: uma aresta de tipo nova precisa ser
+ * escrita aqui para passar, e não entra em silêncio.
+ */
+const ARESTAS_DE_TIPO_CONHECIDAS: readonly string[] = [
+  "src/dados/publicado/tipos.ts -> src/dados/consultas/anexos.ts",
+];
+
+describe("camada publicada sem dependência de banco", () => {
+  const varredura = varrer(
+    arquivosDe(join(RAIZ, "src", "dados", "publicado")),
+    {
+      arquivos: (caminho) =>
+        CLIENTES_DE_BANCO.includes(caminho) ||
+        caminho === "db/schema.ts" ||
+        caminho.startsWith("src/dados/consultas/"),
+      pacotes: (especificador) =>
+        especificador === "pg" || especificador.startsWith("drizzle-orm"),
+    },
+  );
+
+  test("nenhuma dependência em tempo de execução", () => {
+    expect(
+      varredura.arestas,
+      `Dependências de runtime proibidas:\n${relatar(varredura)}`,
+    ).toEqual([]);
+  });
+
+  test("as arestas apagadas na compilação são exatamente as conhecidas", () => {
+    expect(
+      varredura.arestasDeTipo,
+      `Arestas de tipo:\n${relatar(varredura, varredura.arestasDeTipo)}`,
+    ).toEqual([...ARESTAS_DE_TIPO_CONHECIDAS].sort());
+  });
+
+  test("nenhum import dinâmico com caminho computado escapa da análise", () => {
+    expect(varredura.computados).toBe(0);
+  });
+
+  test("a camada não lê variável de ambiente alguma", () => {
+    for (const arquivo of arquivosDe(join(RAIZ, "src", "dados", "publicado"))) {
+      expect(
+        readFileSync(arquivo, "utf8"),
+        comoRepositorio(arquivo),
+      ).not.toMatch(/process\.env/);
+    }
   });
 });

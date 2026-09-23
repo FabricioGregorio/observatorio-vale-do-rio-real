@@ -84,7 +84,7 @@ function release(ajustes: Record<string, unknown> = {}) {
   return {
     id: "2026-09-23-abcdef01",
     gerado_em: "2026-09-23",
-    lotes: ["2026-09-16"],
+    lotes_declarados: ["2026-09-16"],
     migracao: "0012",
     totais: { documentos: 1, anexos: 1, episodios: 1 },
     sha256: { acervo: HASH_QUALQUER, episodios: "c".repeat(64) },
@@ -306,6 +306,40 @@ describe("schema do manifesto de release", () => {
         release({ zip: { chave: "", sha256: "0".repeat(64), bytes: 0 } }),
       ).success,
     ).toBe(false);
+  });
+
+  /*
+    O campo se chama `lotes_declarados` e não `lotes` porque a diferença é
+    de conteúdo, não de estilo: no corpus de setembro de 2026 a maior parte
+    dos objetos públicos veio da migração para os originais, que não gera
+    lote declarado. `lotes` convidaria à leitura "todo objeto do release veio
+    de um destes", que é falsa. O nome longo fecha essa porta.
+  */
+  test("o campo de lotes tem o nome que declara o próprio limite", () => {
+    const { lotes_declarados, ...semCampo } = release();
+    expect(lotes_declarados).toEqual(["2026-09-16"]);
+    expect(releaseSchema.safeParse(semCampo).success).toBe(false);
+    expect(
+      releaseSchema.safeParse({ ...semCampo, lotes: lotes_declarados }).success,
+    ).toBe(false);
+  });
+
+  test("exige ao menos um lote declarado", () => {
+    expect(
+      releaseSchema.safeParse(release({ lotes_declarados: [] })).success,
+    ).toBe(false);
+  });
+
+  test("recusa campo de cobertura ou de exceções no manifesto", () => {
+    for (const extra of [
+      { cobertura: "45/107" },
+      { objetos_sem_lote: 62 },
+      { excecoes: [] },
+    ]) {
+      expect(releaseSchema.safeParse({ ...release(), ...extra }).success).toBe(
+        false,
+      );
+    }
   });
 
   test("recusa data editorial com hora", () => {

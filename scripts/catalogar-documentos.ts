@@ -25,6 +25,10 @@ import { and, eq, like } from "drizzle-orm";
 
 import { arquivo, documento, documentoArquivo } from "../db/schema";
 import {
+  TIPOS_DOCUMENTO,
+  type TipoDocumento,
+} from "../src/dados/tipo-documento";
+import {
   categoriaDoItem,
   type ItemInventario,
   lerInventario,
@@ -36,23 +40,16 @@ import { exigirDerivacaoAtual } from "../src/lib/inventario-derivado";
 /** A primeira catalogação usa v1, como a chave gravada pela Tarefa 06. */
 export const VERSAO = 1;
 
-/** Valores do enum `tipo_documento`. */
-export const TIPOS_DOCUMENTO = [
-  "relatorio_tecnico",
-  "diagnostico_interno",
-  "relato_campo",
-  "formulario_modelo",
-  "relatorio_parcial",
-  "documento_final",
-  "modelagem_estatistica",
-  "entrevista_transcricao",
-  "plano_aula",
-  "identidade_visual",
-  "painel_dados",
-  "outro",
-] as const;
-
-export type TipoDocumento = (typeof TIPOS_DOCUMENTO)[number];
+/**
+ * Valores do enum `tipo_documento`.
+ *
+ * A lista estava escrita aqui e também no `pgEnum` de `db/schema.ts` — duas
+ * cópias que divergiriam no dia em que alguém acrescentasse um tipo ao banco
+ * e esquecesse esta. Agora as duas leem `src/dados/tipo-documento.ts`. A
+ * reexportação mantém o endereço antigo funcionando para quem já importava
+ * daqui.
+ */
+export { TIPOS_DOCUMENTO, type TipoDocumento };
 
 /** Valida a coluna `Tipo (enum)` contra o enum do banco. Não inventa valor. */
 export function tipoDocumentoDoItem(item: ItemInventario): TipoDocumento {

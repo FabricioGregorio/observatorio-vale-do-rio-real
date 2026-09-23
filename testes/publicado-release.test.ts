@@ -80,7 +80,7 @@ function montar(ajustes: Partial<Parameters<typeof montarSnapshot>[0]> = {}) {
     anexos: [ANEXO],
     episodios: [EPISODIO],
     dataEditorial: DATA,
-    lotes: ["2026-09-16"],
+    lotesDeclarados: ["2026-09-16"],
     migracao: "0012",
     zip: null,
     ...ajustes,

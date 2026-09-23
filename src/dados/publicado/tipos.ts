@@ -38,11 +38,11 @@
  */
 import { z } from "zod";
 
-import { tipoDocumento } from "../../../db/schema";
 import { metodoDerivacaoSchema } from "../../lib/manifesto-evidencias";
 import type { AnexoPublico } from "../consultas/anexos";
 import { FOTO_DA_PLACA } from "../pesquisa/excecao-placa";
 import { episodioPublicoSchema } from "../podobservar-publico";
+import { TIPOS_DOCUMENTO } from "../tipo-documento";
 
 /** Diretório dos três arquivos, relativo à raiz do repositório. */
 export const DIRETORIO_PUBLICADO = "src/dados/publicado";
@@ -102,8 +102,8 @@ export const anexoPublicadoSchema = z
     rotuloArquivo: texto.nullable(),
     principal: z.boolean(),
     titulo: texto,
-    /** Lista canônica do enum `tipo_documento`, lida do próprio schema. */
-    tipo: z.enum(tipoDocumento.enumValues),
+    /** Vocabulário canônico, do módulo puro que o `pgEnum` também consome. */
+    tipo: z.enum(TIPOS_DOCUMENTO),
     resumo: texto.nullable(),
     dataReferencia: dataSimples.nullable(),
     licenca: texto,
@@ -263,8 +263,27 @@ export const releaseSchema = z.strictObject({
   id: z.string().regex(/^\d{4}-\d{2}-\d{2}-[a-f0-9]{8}$/),
   /** Data editorial declarada por quem publica. Nunca o relógio da máquina. */
   gerado_em: dataSimples,
-  /** Ids dos lotes declarados em `lotes-de-publicacao.ts`. */
-  lotes: z.array(texto).min(1),
+  /**
+   * Identificadores dos lotes formalmente registrados em
+   * `lotes-de-publicacao.ts` e relacionados à história desta publicação.
+   *
+   * ## O que este campo **não** afirma
+   *
+   * Não afirma que todo objeto do release veio de um destes lotes. No corpus
+   * de setembro de 2026 isso seria falso: a maior parte dos objetos públicos
+   * foi produzida pela migração para os originais
+   * (`scripts/publicar-originais-acervo.ts`), que publica a partir do banco e
+   * não gera lote declarado. A proveniência objeto a objeto nunca foi
+   * registrada dessa forma, e inventá-la agora — atribuindo objetos a lotes
+   * por inferência, ou fabricando lotes retroativos — transformaria uma
+   * lacuna real do histórico numa afirmação falsa com aparência de registro.
+   *
+   * O nome é `lotes_declarados`, e não `lotes`, exatamente para que a leitura
+   * "todos os objetos vieram daqui" não seja possível. O histórico real
+   * permanece real: os 107 objetos estão em `acervo.json`, cada um com seu
+   * hash, e o Git preserva os scripts e commits que os publicaram.
+   */
+  lotes_declarados: z.array(texto).min(1),
   /** Prefixo numérico da última migração aplicada, p. ex. `0012`. */
   migracao: z.string().regex(/^\d{4}$/),
   totais: z.strictObject({

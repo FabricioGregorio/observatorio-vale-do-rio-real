@@ -144,7 +144,11 @@ export type EntradaDoSnapshot = {
   readonly anexos: readonly AnexoPublico[];
   readonly episodios: readonly EpisodioPublico[];
   readonly dataEditorial: string;
-  readonly lotes: readonly string[];
+  /**
+   * Lotes formalmente registrados e relacionados à história da publicação.
+   * Não é cobertura de proveniência objeto a objeto — ver `releaseSchema`.
+   */
+  readonly lotesDeclarados: readonly string[];
   readonly migracao: string;
   /** `null` enquanto o pacote daquele release não existir (Lote C). */
   readonly zip: Release["zip"];
@@ -234,7 +238,7 @@ export function montarSnapshot(entrada: EntradaDoSnapshot): SnapshotMontado {
       sha256DosEpisodios,
     ),
     gerado_em: exigirDataEditorial(entrada.dataEditorial),
-    lotes: [...entrada.lotes],
+    lotes_declarados: [...entrada.lotesDeclarados],
     migracao: entrada.migracao,
     totais: {
       documentos: new Set(acervo.map((anexo) => anexo.slug)).size,
@@ -326,7 +330,7 @@ async function principal(): Promise<ResultadoDoConjunto> {
     anexos,
     episodios,
     dataEditorial,
-    lotes: IDS_DOS_LOTES,
+    lotesDeclarados: IDS_DOS_LOTES,
     migracao: migracaoDoJournal(
       JSON.parse(await readFile(CAMINHO_JOURNAL, "utf8")),
     ),
