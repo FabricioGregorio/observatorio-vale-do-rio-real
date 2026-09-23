@@ -26,19 +26,31 @@ export function LinkDeDestino({
   className,
   meta,
   style,
+  download,
+  setaInterna,
+  ...atributos
 }: {
   href: string;
   children: React.ReactNode;
   className?: string;
   meta?: React.ReactNode;
   style?: React.CSSProperties;
-}) {
+  setaInterna?: boolean;
+} & Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href">) {
   const aviso = useId();
   const destino = classificarDestino(href);
-  if (destino === "interno") {
+  const baixar = download !== undefined && download !== false;
+  if (destino === "interno" || baixar) {
     return (
-      <a className={className} href={href} style={style}>
+      <a
+        {...atributos}
+        className={className}
+        href={href}
+        style={style}
+        download={download}
+      >
         {children}
+        {setaInterna && !baixar ? <span aria-hidden="true">→</span> : null}
         {meta}
       </a>
     );
@@ -49,7 +61,10 @@ export function LinkDeDestino({
         Abre em nova guia.
       </span>
       <a
-        aria-describedby={aviso}
+        {...atributos}
+        aria-describedby={[atributos["aria-describedby"], aviso]
+          .filter(Boolean)
+          .join(" ")}
         className={className}
         href={href}
         referrerPolicy="no-referrer"

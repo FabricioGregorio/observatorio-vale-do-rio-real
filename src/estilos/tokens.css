@@ -185,7 +185,7 @@
   --topo-desfoque: 8px;
   --topo-reserva-rolagem: 11rem;
   --topo-reserva-salto: 9rem;
-  --topo-altura-utilidade: 2.5rem;
+  --topo-altura-utilidade: 44px;
   --hero-altura-tela: 100svh;
   --hero-rodape-tela: 4rem;
   --faixa-respiro: clamp(2rem, 4vw, 3rem);
@@ -461,6 +461,7 @@
       --duracao-hover: 0ms;
       --duracao-revelacao: 0ms;
       --duracao-painel: 0ms;
+      --duracao-hover-cabecalho: 0ms;
     }
 
     *,
