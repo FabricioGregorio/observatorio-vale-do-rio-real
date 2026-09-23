@@ -89,7 +89,7 @@ test("o CTA interno da Home abre /podobservar na mesma guia", async ({
   await page.goto("/");
   const cta = page
     .locator("#hl-podobservar")
-    .getByRole("link", { name: /Conhecer o PodObservar/ });
+    .getByRole("link", { name: /Ver PodObservar/ });
   await expect(cta).toHaveAttribute("href", "/podobservar");
   await expect(cta).not.toHaveAttribute("target", "_blank");
 

@@ -117,8 +117,9 @@ test.describe("estrutura da página de comprovação", () => {
     await expect(page.locator("main .pc-conjunto caption")).toContainText(
       `${json.total} arquivos públicos`,
     );
-    await expect(
-      page.getByRole("link", { name: "Baixar", exact: true }),
-    ).toHaveCount(json.total);
+    // Copy varia por exceção: "Baixar original" ou "Baixar versão pública".
+    await expect(page.getByRole("link", { name: /^Baixar /i })).toHaveCount(
+      json.total,
+    );
   });
 });

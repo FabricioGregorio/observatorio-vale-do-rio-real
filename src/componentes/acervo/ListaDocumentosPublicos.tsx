@@ -1,7 +1,6 @@
 import type { Route } from "next";
-import Link from "next/link";
-
 import { tipoPublico } from "../../dados/editorial/tipos-publicos";
+import { ActionLink } from "../ui/ActionLink";
 
 export type DocumentoDoIndice = {
   slug: string;
@@ -42,14 +41,14 @@ export function ListaDocumentosPublicos({
               {documento.quantidade}{" "}
               {documento.quantidade === 1 ? "arquivo" : "arquivos"}
             </p>
-            <Link
+            <ActionLink
+              variant="document"
               href={`/acervo/${documento.slug}` as Route}
-              className="acervo-link"
               id={`acervo-link-${documento.slug}`}
               aria-labelledby={`acervo-link-${documento.slug} acervo-documento-${documento.slug}`}
             >
-              Explorar documento
-            </Link>
+              Abrir documento
+            </ActionLink>
           </div>
         </article>
       ))}

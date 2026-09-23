@@ -1,6 +1,6 @@
 import type { AnexoPublico } from "../../dados/consultas/anexos";
 import { separarCredito } from "../../dados/pesquisa/credito-fotografico";
-import { LinkDeDestino } from "../layout/LinkDeDestino";
+import { ActionLink } from "../ui/ActionLink";
 import { tamanhoLegivel } from "./TabelaAnexos";
 
 export type GrupoDeMateriaisPublicos = {
@@ -101,13 +101,14 @@ export function ListaMateriaisPublicos({ anexos }: { anexos: AnexoPublico[] }) {
                   key={anexo.linkPermanente}
                   style={{ borderColor: "var(--color-borda)" }}
                 >
-                  <LinkDeDestino
+                  <ActionLink
+                    variant="document"
                     className="font-semibold underline focus-visible:outline-destaque"
                     href={anexo.linkPermanente}
                     style={{ color: "var(--color-link)" }}
                   >
                     {rotulo}
-                  </LinkDeDestino>
+                  </ActionLink>
                   <span className="meta-ficha">
                     {anexo.mimeType} · {tamanhoLegivel(anexo.bytes)}
                   </span>

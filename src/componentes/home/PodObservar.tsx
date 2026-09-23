@@ -1,6 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
-
 import type { EpisodioPublico } from "../../dados/consultas/podobservar";
 import {
   dataCurta,
@@ -10,6 +8,7 @@ import {
   numeroDoEpisodio,
 } from "../podobservar/formato";
 import { OuvirNoSpotify } from "../podobservar/LinkDeEscuta";
+import { ActionLink } from "../ui/ActionLink";
 import { Capitulo } from "./Estrutura";
 
 /**
@@ -57,10 +56,10 @@ const CADENCIA = "Novo episódio toda segunda-feira.";
  *   escuro; suave é um luxo de superfície sólida, não de fotografia.
  */
 const CSS = `
-.hl-pod-secao{background:var(--color-fundo-inverso);color:var(--color-texto-inverso);border-top:0;position:relative;overflow:clip}
+.hl-pod-secao{--acao-hover:var(--color-fundo-elevado);--acao-fundo:var(--color-texto-inverso);--acao-texto:var(--color-fundo-inverso);background:var(--color-fundo-inverso);color:var(--color-texto-inverso);border-top:0;position:relative;overflow:clip}
 .hl-pod-secao>.hl-quadro{position:relative;isolation:isolate}
 .hl-pod-secao .meta-ficha,.hl-pod-secao .hl-num{color:color-mix(in srgb,var(--color-texto-inverso) 85%,var(--color-fundo-inverso))}
-.home-observatorio .hl-pod-secao a{color:var(--color-texto-inverso)}
+.home-observatorio .hl-pod-secao a:not(.acao),.home-observatorio .hl-pod-secao .acao[data-acao="text"]{color:var(--color-texto-inverso)}
 .hl-pod-secao__tracado{position:absolute;inset:0 0 0 auto;width:min(62%,44rem);opacity:.22;pointer-events:none;background:repeating-radial-gradient(ellipse at 96% 38%,transparent 0 2.4rem,var(--color-texto-inverso) 2.45rem 2.5rem,transparent 2.55rem 4.2rem);mask-image:linear-gradient(to left,#000 10%,transparent 78%)}
 .hl-pod-grade{display:grid;gap:2.5rem;margin-top:2rem}
 .hl-pod-secao__chamada{font-size:var(--text-sm);letter-spacing:.06em;text-transform:uppercase;margin-top:2rem;padding-top:1rem;border-top:1px solid color-mix(in srgb,var(--color-texto-inverso) 35%,var(--color-fundo-inverso))}
@@ -149,7 +148,9 @@ export function PodObservarNaHome({
           </p>
           <p className="hl-pod-secao__chamada">{CADENCIA}</p>
           <p className="hl-pod-recente__acoes">
-            <Link href="/podobservar">Conhecer o PodObservar →</Link>
+            <ActionLink variant="text" href="/podobservar" setaInterna>
+              Ver PodObservar
+            </ActionLink>
           </p>
         </div>
 

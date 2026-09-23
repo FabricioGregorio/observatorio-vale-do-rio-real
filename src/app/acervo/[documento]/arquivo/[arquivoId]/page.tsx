@@ -2,9 +2,9 @@ import type { Metadata, Route } from "next";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { createElement } from "react";
-
 import { InformacoesTecnicas } from "../../../../../componentes/acervo/InformacoesTecnicas";
 import { tamanhoLegivel } from "../../../../../componentes/acervo/TabelaAnexos";
+import { ActionLink } from "../../../../../componentes/ui/ActionLink";
 import {
   listarDocumentosPublicos,
   selecionarArquivoPublico,
@@ -112,9 +112,9 @@ export default async function PaginaArquivo({ params }: Props) {
         <h1 className="relative mt-4 text-3xl md:text-4xl">{titulo}</h1>
         <p className="relative mt-5 text-sm">
           Documento:{" "}
-          <Link className="acervo-link" href={`/acervo/${slug}` as Route}>
+          <ActionLink variant="document" href={`/acervo/${slug}` as Route}>
             {documento.titulo}
-          </Link>
+          </ActionLink>
         </p>
       </header>
       <span id="acervo-arquivo-nova-guia" className="sr-only">
@@ -155,13 +155,13 @@ export default async function PaginaArquivo({ params }: Props) {
               : {}),
           })}
           {transcricao ? (
-            <Link
+            <ActionLink
+              variant="document"
               id="transcricao-publica"
-              className="acervo-link"
               href={`/acervo/${slug}/arquivo/${transcricao.arquivoId}` as Route}
             >
               Abrir transcrição pública deste documento
-            </Link>
+            </ActionLink>
           ) : null}
         </div>
       ) : null}
@@ -174,32 +174,25 @@ export default async function PaginaArquivo({ params }: Props) {
         </div>
       ) : null}
       <p className="flex flex-wrap items-center gap-4">
-        <a
-          className="acervo-link"
-          href={arquivo.linkPermanente}
-          aria-describedby="acervo-arquivo-nova-guia"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <ActionLink variant="document" href={arquivo.linkPermanente}>
           {arquivo.arquivoId === FOTO_DA_PLACA.arquivoPublicoId
             ? "Abrir versão pública"
             : "Abrir original"}{" "}
-          <span aria-hidden="true">↗</span>
-        </a>
-        <a className="acervo-link" href={`/baixar/${arquivo.arquivoId}`}>
+        </ActionLink>
+        <ActionLink variant="document" href={`/baixar/${arquivo.arquivoId}`}>
           {arquivo.arquivoId === FOTO_DA_PLACA.arquivoPublicoId
             ? "Baixar versão pública"
             : "Baixar original"}
-        </a>
+        </ActionLink>
       </p>
       {documento.licenca ? (
         <p className="text-sm">Licença: {documento.licenca}</p>
       ) : null}
       <InformacoesTecnicas arquivo={arquivo} />
       <p>
-        <Link href={`/acervo/${slug}` as Route} className="acervo-link">
+        <ActionLink variant="text" href={`/acervo/${slug}` as Route}>
           ← Voltar ao documento
-        </Link>
+        </ActionLink>
       </p>
     </div>
   );

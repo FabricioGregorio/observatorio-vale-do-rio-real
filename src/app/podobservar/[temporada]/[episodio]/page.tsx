@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
 import {
   dataLonga,
   dataMaquina,
@@ -18,6 +17,7 @@ import {
   SobreEstaTranscricao,
   Transcricao,
 } from "../../../../componentes/podobservar/Transcricao";
+import { ActionLink } from "../../../../componentes/ui/ActionLink";
 import {
   type EpisodioPublico,
   interpretarSegmentoDeTemporada,
@@ -149,7 +149,9 @@ export default async function PaginaEpisodio({ params }: Props) {
       </section>
 
       <p>
-        <Link href="/podobservar">Todos os episódios →</Link>
+        <ActionLink variant="text" href="/podobservar">
+          Voltar a PodObservar
+        </ActionLink>
       </p>
     </article>
   );

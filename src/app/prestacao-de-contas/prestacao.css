@@ -235,6 +235,10 @@
   vertical-align: baseline;
 }
 
+.pc-conjunto th {
+  overflow-wrap: anywhere;
+}
+
 .pc-conjunto thead th {
   font-family: var(--font-mono);
   font-size: var(--text-sm);

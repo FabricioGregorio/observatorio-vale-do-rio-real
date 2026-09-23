@@ -1,7 +1,5 @@
 import type { Route } from "next";
 import Image from "next/image";
-import Link from "next/link";
-
 import {
   dataCurta,
   dataMaquina,
@@ -13,6 +11,7 @@ import {
   AssistirNoYoutube,
   OuvirNoSpotify,
 } from "../../componentes/podobservar/LinkDeEscuta";
+import { ActionLink } from "../../componentes/ui/ActionLink";
 import { listarEpisodiosPublicos } from "../../dados/consultas/podobservar";
 import { LOGO_PODOBSERVAR } from "../../dados/podobservar-artes";
 import { metadadosDaRota } from "../../lib/site-url";
@@ -149,7 +148,8 @@ export default async function PaginaPodObservar() {
                       href={episodio.urlYoutube}
                       id={`pod-youtube-${episodio.slug}`}
                     />
-                    <Link
+                    <ActionLink
+                      variant="document"
                       /* Mesmo padrão do Acervo para rota dinâmica com typedRoutes. */
                       href={
                         `/podobservar/t${episodio.temporadaNumero}/${episodio.slug}` as Route
@@ -157,7 +157,7 @@ export default async function PaginaPodObservar() {
                     >
                       <span className="sr-only">{episodio.titulo}: </span>
                       Ler transcrição e detalhes →
-                    </Link>
+                    </ActionLink>
                   </p>
                 </div>
               </li>

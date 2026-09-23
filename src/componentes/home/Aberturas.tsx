@@ -5,6 +5,7 @@ import {
   LARGURA_DA_COMPOSICAO_HORIZONTAL,
 } from "../../dados/hero/derivados";
 import { MESES_DE_COLETA } from "../../dados/indicadores/derivados";
+import { ActionLink } from "../ui/ActionLink";
 import {
   CTA_DA_PESQUISA,
   NOME_OFICIAL_EM_PARTES,
@@ -33,10 +34,10 @@ const VERTICAL = DERIVADOS_DO_HERO.find((d) =>
 
 function CtaDaPesquisa() {
   return (
-    <a className="hl-botao hl-botao--cheio ab-botao" href="#hl-lugares">
+    <ActionLink variant="primary" className="ab-botao" href="#hl-lugares">
       {CTA_DA_PESQUISA}
       <span aria-hidden="true">↓</span>
-    </a>
+    </ActionLink>
   );
 }
 

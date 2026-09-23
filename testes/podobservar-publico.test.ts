@@ -241,14 +241,16 @@ describe("seção do PodObservar na Home", () => {
       'href="https://open.spotify.com/episode/4I2y3ku1E62PjxtDNWo8Uf"',
     );
     expect(comEpisodio).toContain('target="_blank"');
-    expect(comEpisodio).toContain('rel="noopener noreferrer"');
+    expect(comEpisodio).toMatch(
+      /rel="(?=[^"]*noopener)(?=[^"]*noreferrer)[^"]*"/,
+    );
     expect(comEpisodio).toContain("Abre em nova guia.");
     expect(comEpisodio).toContain("Ouvir no Spotify");
   });
 
   test("o CTA interno fica na mesma guia e não usa seta de saída", () => {
     expect(comEpisodio).toContain('href="/podobservar"');
-    expect(comEpisodio).toContain("Conhecer o PodObservar →");
+    expect(comEpisodio).toContain("Ver PodObservar");
     const interno = comEpisodio.slice(
       comEpisodio.indexOf('href="/podobservar"'),
     );

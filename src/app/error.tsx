@@ -1,5 +1,6 @@
 "use client";
 
+import { ActionLink } from "../componentes/ui/ActionLink";
 /**
  * Fronteira de erro da aplicação.
  *
@@ -10,7 +11,7 @@
  * detalhe técnico ao visitante — o `digest` fica disponível para quem for
  * investigar nos registros do servidor.
  */
-import Link from "next/link";
+import { Button } from "../componentes/ui/Button";
 
 export default function Erro({
   error,
@@ -28,25 +29,15 @@ export default function Erro({
         do projeto.
       </p>
       <div className="flex flex-wrap items-center gap-4">
-        <button
-          type="button"
-          onClick={reset}
-          className="border px-3 py-2"
-          style={{
-            borderColor: "var(--color-borda)",
-            backgroundColor: "var(--color-fundo-elevado)",
-            borderRadius: "var(--radius-ficha)",
-          }}
-        >
-          Tentar de novo
-        </button>
-        <Link
+        <Button onClick={reset}>Tentar de novo</Button>
+        <ActionLink
+          variant="text"
           href="/prestacao-de-contas"
           className="underline"
           style={{ color: "var(--color-link)" }}
         >
           Ir para a Prestação de Contas
-        </Link>
+        </ActionLink>
       </div>
       {error.digest ? (
         <p className="meta-ficha">Código da ocorrência: {error.digest}</p>

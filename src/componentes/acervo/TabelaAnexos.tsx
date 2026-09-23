@@ -1,6 +1,7 @@
 import type { AnexoPublico } from "../../dados/consultas/anexos";
 import { separarCredito } from "../../dados/pesquisa/credito-fotografico";
-import { LinkDeDestino } from "../layout/LinkDeDestino";
+import { FOTO_DA_PLACA } from "../../dados/pesquisa/excecao-placa";
+import { ActionLink } from "../ui/ActionLink";
 
 /**
  * Tabela mestre da Prestação de Contas.
@@ -152,33 +153,40 @@ export function TabelaAnexos({ anexos }: { anexos: AnexoPublico[] }) {
                 className="border-b p-2 align-top"
                 style={{ borderColor: "var(--color-borda)" }}
               >
-                <LinkDeDestino
+                <ActionLink
+                  variant="document"
                   href={anexo.linkPermanente}
                   className="underline"
                   style={{ color: "var(--color-link)" }}
                 >
-                  Abrir
-                </LinkDeDestino>
-                <a
+                  {anexo.arquivoId === FOTO_DA_PLACA.arquivoPublicoId
+                    ? "Abrir versão pública"
+                    : "Abrir original"}
+                </ActionLink>
+                <ActionLink
+                  variant="document"
                   href={`/baixar/${anexo.arquivoId}`}
                   className="ml-3 underline"
                   style={{ color: "var(--color-link)" }}
                 >
-                  Baixar
-                </a>
+                  {anexo.arquivoId === FOTO_DA_PLACA.arquivoPublicoId
+                    ? "Baixar versão pública"
+                    : "Baixar original"}
+                </ActionLink>
               </td>
               <td
                 className="border-b p-2 align-top"
                 style={{ borderColor: "var(--color-borda)" }}
               >
                 {anexo.linkOrigem ? (
-                  <LinkDeDestino
+                  <ActionLink
+                    variant="document"
                     href={anexo.linkOrigem}
                     className="underline"
                     style={{ color: "var(--color-link)" }}
                   >
                     Origem
-                  </LinkDeDestino>
+                  </ActionLink>
                 ) : (
                   <span className="meta-ficha">—</span>
                 )}

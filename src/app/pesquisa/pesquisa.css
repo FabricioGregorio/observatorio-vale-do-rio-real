@@ -912,33 +912,6 @@
   gap: 0.75rem;
   padding-top: var(--pq-espaco-curto);
 }
-.pq a.pq-botao {
-  display: inline-block;
-  padding: 0.7rem 1.1rem;
-  border: 1px solid var(--color-fundo-inverso);
-  border-radius: var(--radius-ficha);
-  background: var(--color-fundo-inverso);
-  color: var(--color-texto-inverso);
-  font-family: var(--font-display);
-  font-weight: var(--peso-titulo);
-  text-decoration: none;
-}
-.pq a.pq-botao:hover {
-  background: var(--color-mata-claro);
-  border-color: var(--color-mata-claro);
-  color: var(--color-texto-inverso);
-}
-.pq a.pq-botao--vazado {
-  background: transparent;
-  border-color: var(--color-borda-forte);
-  color: var(--color-texto);
-}
-.pq a.pq-botao--vazado:hover {
-  background: color-mix(in srgb, var(--color-marca) 12%, transparent);
-  border-color: var(--color-marca);
-  color: var(--color-texto);
-}
-
 .pq-ponte-final {
   display: flex;
   flex-direction: column;

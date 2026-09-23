@@ -128,7 +128,7 @@ describe("cabeçalho do site", () => {
       );
     expect(regra).toBeDefined();
     expect(regra).toContain("min-height:var(--topo-altura-utilidade)");
-    expect(regra).toContain("white-space:nowrap");
+    expect(regra).toContain("white-space:normal");
   });
 });
 

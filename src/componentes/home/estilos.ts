@@ -124,12 +124,6 @@ export const CSS_DA_HOME = `
 
 
 /* Botões */
-.home-observatorio .hl-botao{display:inline-flex;flex-wrap:wrap;align-items:baseline;gap:.25rem .75rem;padding:.8rem 1.15rem;border:1px solid var(--color-texto);border-radius:var(--radius-ficha);color:var(--color-texto);font-family:var(--font-display);font-weight:600;text-decoration:none;transition:background-color var(--duracao-hover) var(--easing-padrao),color var(--duracao-hover) var(--easing-padrao)}
-.home-observatorio .hl-botao:hover{background:var(--color-texto);color:var(--color-fundo)}
-.home-observatorio .hl-botao--cheio{background:var(--color-texto);color:var(--color-fundo)}
-.home-observatorio .hl-botao--cheio:hover{background:var(--color-fundo);color:var(--color-texto)}
-.home-observatorio .hl-botao--curto{padding:.5rem .8rem;font-size:var(--text-sm)}
-.hl-botao__meta{font-family:var(--font-mono);font-weight:400;font-size:var(--text-xs);letter-spacing:var(--tracking-mono)}
 .hl-acoes{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:2rem}
 
 /* Síntese da pesquisa, entre Origem e Território. */
@@ -248,7 +242,6 @@ export const CSS_DA_HOME = `
 .hl-reuniu>.meta-ficha{margin:0 0 .35rem}
 .hl-reuniu ul{border-top:1px solid var(--hl-fio)}
 .hl-reuniu li{display:flex;justify-content:space-between;gap:1rem;padding:.55rem 0;border-bottom:1px solid var(--hl-fio);font-size:var(--text-sm)}
-.home-observatorio .hl-equip .hl-botao{display:flex;flex-direction:column;align-items:flex-start;gap:.3rem;margin-top:1.25rem;text-align:left}
 .hl-estado{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);text-transform:uppercase;white-space:nowrap;color:var(--color-texto-suave)}
 .hl-estado[data-estado="publicado"]{color:var(--color-marca);font-weight:500}
 

@@ -24,8 +24,8 @@ import {
   GrafismoRioReal,
   GrafismoSerra,
 } from "../grafismos/GrafismosTerritoriais";
-import { LinkDeDestino } from "../layout/LinkDeDestino";
 import { MapaInterativo } from "../mapa/MapaInterativo";
+import { ActionLink } from "../ui/ActionLink";
 import {
   ACOMPANHAMENTO,
   COLETIVO,
@@ -402,7 +402,9 @@ function MateriaisReunidos({
             {item.href === null ? (
               <span>{item.material}</span>
             ) : (
-              <LinkDeDestino href={item.href}>{item.material}</LinkDeDestino>
+              <ActionLink variant="document" href={item.href}>
+                {item.material}
+              </ActionLink>
             )}
             <span className="hl-estado" data-estado={item.estado}>
               {ROTULO_DO_ESTADO[item.estado]}
@@ -579,18 +581,15 @@ export function Lugares({
                 equipamento={recanto}
                 materiais={materiais.recanto}
               />
-              <LinkDeDestino
-                className="hl-botao hl-botao--cheio"
-                href={RELATORIO_DO_RECANTO.url}
-                meta={
-                  <span className="hl-botao__meta">
-                    PDF · {tamanhoEmKb(RELATORIO_DO_RECANTO.bytes)} ·{" "}
-                    {RELATORIO_DO_RECANTO.licenca}
-                  </span>
-                }
-              >
-                Ler o relatório técnico
-              </LinkDeDestino>
+              <div>
+                <p className="hl-nota">
+                  PDF · {tamanhoEmKb(RELATORIO_DO_RECANTO.bytes)} ·{" "}
+                  {RELATORIO_DO_RECANTO.licenca}
+                </p>
+                <ActionLink variant="document" href={RELATORIO_DO_RECANTO.url}>
+                  Abrir relatório técnico
+                </ActionLink>
+              </div>
             </div>
           </div>
         </article>
@@ -623,18 +622,15 @@ export function Lugares({
                   estiver, o endereço aparece nesta ficha.
                 </p>
               ) : (
-                <LinkDeDestino
-                  className="hl-botao hl-botao--cheio"
-                  href={relatorioDoBorda.href}
-                  meta={
-                    <span className="hl-botao__meta">
-                      PDF digitalizado · {FOTOGRAFIAS_DO_BORDA_NO_ACERVO}{" "}
-                      fotografias de campo no acervo
-                    </span>
-                  }
-                >
-                  Ler o relatório técnico
-                </LinkDeDestino>
+                <div>
+                  <p className="hl-nota">
+                    PDF digitalizado · {FOTOGRAFIAS_DO_BORDA_NO_ACERVO}{" "}
+                    fotografias de campo no acervo
+                  </p>
+                  <ActionLink variant="document" href={relatorioDoBorda.href}>
+                    Abrir relatório técnico
+                  </ActionLink>
+                </div>
               )}
             </div>
           </div>
@@ -889,9 +885,9 @@ export function Produtos({
             PDF no acervo permanente, com licença {RELATORIO_DO_RECANTO.licenca}{" "}
             e hash SHA-256.
           </p>
-          <LinkDeDestino href={RELATORIO_DO_RECANTO.url}>
+          <ActionLink variant="document" href={RELATORIO_DO_RECANTO.url}>
             Abrir o PDF
-          </LinkDeDestino>
+          </ActionLink>
         </li>
         <li>
           <span className="hl-estado" data-estado="publicado">
@@ -902,9 +898,9 @@ export function Produtos({
             {INDICADORES.length} indicadores, cada um com regra de cálculo,
             base, período e recorte declarados.
           </p>
-          <Link href="/dados" prefetch={false}>
-            Consultar os dados
-          </Link>
+          <ActionLink variant="text" href="/dados">
+            Ver Dados
+          </ActionLink>
         </li>
         <li>
           <span className="hl-estado" data-estado="publicado">
@@ -916,9 +912,9 @@ export function Produtos({
             malha oficial de Sergipe, com os {REFERENCIAS_TERRITORIAIS.length}{" "}
             lugares visitados em campo.
           </p>
-          <Link href="/territorio" prefetch={false}>
-            Abrir a cartografia
-          </Link>
+          <ActionLink variant="text" href="/territorio">
+            Ver Território
+          </ActionLink>
         </li>
         <li>
           <span className="hl-estado" data-estado="publicado">
@@ -931,9 +927,9 @@ export function Produtos({
             rota passou a existir na integração de 2026-09-16 e o destino
             passou a ser o que o rótulo sempre disse. A copy não mudou.
           */}
-          <Link href="/acervo" prefetch={false}>
+          <ActionLink variant="document" href="/acervo">
             Ver no acervo
-          </Link>
+          </ActionLink>
         </li>
         <li>
           <span
@@ -949,9 +945,9 @@ export function Produtos({
               : "No acervo, ainda não públicos."}
           </p>
           {relatoriosPublicos ? (
-            <Link href="/acervo" prefetch={false}>
+            <ActionLink variant="document" href="/acervo">
               Ver no acervo
-            </Link>
+            </ActionLink>
           ) : null}
         </li>
         <li>
@@ -970,9 +966,9 @@ export function Produtos({
               : `${ENTREVISTAS.length} entrevistas e as planilhas de respostas aguardam publicação.`}
           </p>
           {entrevistasEFormulariosPublicos ? (
-            <Link href="/acervo" prefetch={false}>
+            <ActionLink variant="document" href="/acervo">
               Ver no acervo
-            </Link>
+            </ActionLink>
           ) : null}
         </li>
       </ul>
@@ -1022,23 +1018,15 @@ export function Conferencia() {
             login, sem pedido de permissão.
           </p>
           <div className="hl-acoes">
-            <Link
-              className="hl-botao hl-botao--cheio"
-              href="/prestacao-de-contas"
-              prefetch={false}
-            >
-              Abrir a Prestação de Contas
-            </Link>
-            <LinkDeDestino className="hl-botao" href="/anexos.json">
+            <ActionLink variant="primary" href="/prestacao-de-contas">
+              Ver Prestação de Contas
+            </ActionLink>
+            <ActionLink variant="document" href="/anexos.json">
               anexos.json
-            </LinkDeDestino>
-            <Link
-              className="hl-botao"
-              href="/prestacao-de-contas/imprimir"
-              prefetch={false}
-            >
+            </ActionLink>
+            <ActionLink variant="document" href="/prestacao-de-contas/imprimir">
               Versão imprimível
-            </Link>
+            </ActionLink>
           </div>
         </div>
 

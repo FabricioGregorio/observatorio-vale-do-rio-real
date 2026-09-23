@@ -2,8 +2,8 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { type FormEvent, useEffect, useState } from "react";
-
 import { tipoPublico } from "../../dados/editorial/tipos-publicos";
+import { Button } from "../ui/Button";
 import {
   type DocumentoDoIndice,
   ListaDocumentosPublicos,
@@ -78,9 +78,9 @@ export function BuscaAcervo({
               maxLength={120}
               className="min-w-0 flex-1 border px-3 py-2"
             />
-            <button type="submit" className="acervo-botao px-4 py-2">
+            <Button type="submit" variant="primary">
               Buscar
-            </button>
+            </Button>
           </div>
         </div>
         <div className="flex flex-col gap-2">
@@ -117,16 +117,16 @@ export function BuscaAcervo({
             : "documentos encontrados"}
         </p>
         {q || tipo ? (
-          <button
+          <Button
             type="button"
             onClick={() => {
               definirEntrada("");
               navegar("", "");
             }}
-            className="acervo-link"
+            variant="text"
           >
             Limpar busca e filtros
-          </button>
+          </Button>
         ) : null}
       </div>
       {encontrados.length ? (

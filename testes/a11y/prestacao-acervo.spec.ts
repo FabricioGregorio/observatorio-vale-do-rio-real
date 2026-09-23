@@ -25,7 +25,8 @@ test.describe("Prestação de Contas e /anexos.json descrevem o mesmo acervo", (
     };
     await page.goto("/prestacao-de-contas");
 
-    const baixar = page.getByRole("link", { name: "Baixar", exact: true });
+    // Copy varia por exceção: "Baixar original" ou "Baixar versão pública".
+    const baixar = page.getByRole("link", { name: /^Baixar /i });
     await expect(baixar).toHaveCount(json.total);
 
     const urls = await baixar.evaluateAll((links) =>

@@ -1,8 +1,8 @@
 import type { Metadata, Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
 import { tamanhoLegivel } from "../../../componentes/acervo/TabelaAnexos";
+import { ActionLink } from "../../../componentes/ui/ActionLink";
 import {
   listarDocumentosPublicos,
   selecionarDocumentoPublico,
@@ -144,14 +144,14 @@ export default async function PaginaDocumento({ params }: Props) {
                           key={arquivo.arquivoId}
                           className="acervo-linha-arquivo border-t py-3"
                         >
-                          <Link
-                            className="acervo-link"
+                          <ActionLink
+                            variant="document"
                             href={
                               `/acervo/${slug}/arquivo/${arquivo.arquivoId}` as Route
                             }
                           >
                             {entrada.tituloPublico}
-                          </Link>
+                          </ActionLink>
                         </li>
                       );
                     })}
@@ -189,23 +189,24 @@ export default async function PaginaDocumento({ params }: Props) {
                   {formatoPublico(arquivo.mimeType)} ·{" "}
                   {tamanhoLegivel(arquivo.bytes)}
                 </p>
-                <Link
-                  className="acervo-link mt-4 inline-block"
+                <ActionLink
+                  variant="document"
+                  className="mt-4"
                   href={`/acervo/${slug}/arquivo/${arquivo.arquivoId}` as Route}
                   id={`acervo-link-${arquivo.arquivoId}`}
                   aria-labelledby={`acervo-link-${arquivo.arquivoId} acervo-arquivo-${arquivo.arquivoId}`}
                 >
-                  Ver arquivo e informações
-                </Link>
+                  Abrir arquivo e informações
+                </ActionLink>
               </li>
             ))}
           </ul>
         </section>
       )}
       <p>
-        <Link href="/acervo" className="acervo-link">
+        <ActionLink variant="text" href="/acervo">
           ← Voltar ao índice do Acervo
-        </Link>
+        </ActionLink>
       </p>
     </div>
   );

@@ -1,6 +1,5 @@
 import type { Route } from "next";
 import Link from "next/link";
-import { LinkDeDestino } from "../../componentes/layout/LinkDeDestino";
 import {
   ABERTURA_DO_TERRITORIO,
   EDITAL,
@@ -16,6 +15,7 @@ import {
   TERRITORIO,
   VINCULOS,
 } from "../../componentes/observatorio/conteudo";
+import { ActionLink } from "../../componentes/ui/ActionLink";
 import {
   CAMINHO_DAS_MARCAS,
   MARCA_COLETIVO,
@@ -222,9 +222,9 @@ export default function PaginaObservatorio() {
                   <h3>{produto.nome}</h3>
                   <p>{produto.texto}</p>
                   <p className="obs-produto__acao">
-                    <Link href={produto.href} prefetch={false}>
+                    <ActionLink variant="text" href={produto.href}>
                       {produto.acao}
-                    </Link>
+                    </ActionLink>
                   </p>
                 </li>
               ))}
@@ -237,9 +237,9 @@ export default function PaginaObservatorio() {
               Prestação de Contas — não é seção do site.
             */}
             <p className="obs-nota">
-              As páginas institucionais curtas — acessibilidade, privacidade,
-              contato — estão no rodapé de cada página. O que o projeto ainda
-              não produziu é declarado como ausência na{" "}
+              As páginas de Privacidade e Contato estão no rodapé. A Central de
+              Acessibilidade fica no cabeçalho de cada página. O que o projeto
+              ainda não produziu é declarado como ausência na{" "}
               <Link href="/prestacao-de-contas" prefetch={false}>
                 Prestação de Contas
               </Link>
@@ -261,19 +261,12 @@ export default function PaginaObservatorio() {
               <p key={paragrafo}>{paragrafo}</p>
             ))}
             <p className="obs-acoes">
-              <Link
-                className="obs-botao"
-                href="/prestacao-de-contas"
-                prefetch={false}
-              >
-                Abrir a Prestação de Contas
-              </Link>
-              <LinkDeDestino
-                className="obs-botao obs-botao--vazado"
-                href="/anexos.json"
-              >
+              <ActionLink variant="primary" href="/prestacao-de-contas">
+                Ver Prestação de Contas
+              </ActionLink>
+              <ActionLink variant="document" href="/anexos.json">
                 anexos.json
-              </LinkDeDestino>
+              </ActionLink>
             </p>
           </div>
         </section>

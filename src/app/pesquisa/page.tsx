@@ -1,7 +1,6 @@
 import type { Route } from "next";
 import Link from "next/link";
 import { entrevistasPublicas } from "../../componentes/home/conteudo";
-import { LinkDeDestino } from "../../componentes/layout/LinkDeDestino";
 import {
   ATOR_CHAVE,
   agruparEntrevistas,
@@ -26,6 +25,7 @@ import {
   type TipoDeEvidencia,
 } from "../../componentes/pesquisa/conteudoDaPesquisa";
 import { MarcaDeEvidencia } from "../../componentes/pesquisa/MarcaDeEvidencia";
+import { ActionLink } from "../../componentes/ui/ActionLink";
 import { listarArquivosPorDocumento } from "../../dados/consultas/anexos";
 import { exibirIndicador } from "../../dados/indicadores/formato";
 import { REGISTROS_RESERVADOS } from "../../dados/indicadores/selecaoEditorial";
@@ -600,9 +600,9 @@ export default async function PaginaPesquisa() {
                       {item.href === null ? (
                         <span>{item.material}</span>
                       ) : (
-                        <LinkDeDestino href={item.href}>
+                        <ActionLink variant="document" href={item.href}>
                           {item.material}
-                        </LinkDeDestino>
+                        </ActionLink>
                       )}
                       <span className="pq-estado" data-estado={item.estado}>
                         {ROTULO_DO_ESTADO[item.estado]}
@@ -616,16 +616,12 @@ export default async function PaginaPesquisa() {
         </ul>
 
         <p className="pq-acoes">
-          <Link className="pq-botao" href="/acervo" prefetch={false}>
-            Percorrer o acervo
-          </Link>
-          <Link
-            className="pq-botao pq-botao--vazado"
-            href="/prestacao-de-contas"
-            prefetch={false}
-          >
-            Ver a Prestação de Contas
-          </Link>
+          <ActionLink variant="primary" href="/acervo">
+            Ver Acervo
+          </ActionLink>
+          <ActionLink variant="secondary" href="/prestacao-de-contas">
+            Ver Prestação de Contas
+          </ActionLink>
         </p>
       </section>
 

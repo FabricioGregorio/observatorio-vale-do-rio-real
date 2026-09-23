@@ -102,8 +102,9 @@ test.describe("CTA do pacote .zip", () => {
     await page.goto("/prestacao-de-contas");
 
     expect(total).toBeGreaterThan(0);
-    await expect(
-      page.getByRole("link", { name: "Baixar", exact: true }),
-    ).toHaveCount(total);
+    // Copy varia por exceção: "Baixar original" ou "Baixar versão pública".
+    await expect(page.getByRole("link", { name: /^Baixar /i })).toHaveCount(
+      total,
+    );
   });
 });

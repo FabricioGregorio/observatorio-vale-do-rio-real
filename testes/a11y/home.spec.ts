@@ -253,7 +253,7 @@ test.describe("Home", () => {
     await page.getByRole("button", { name: "Acessibilidade" }).click();
     const painel = page.getByRole("dialog", { name: "Acessibilidade" });
     await expect(painel).toBeVisible();
-    await page.locator("h1").click();
+    await page.mouse.click(5, 5);
     await expect(painel).toBeHidden();
   });
 

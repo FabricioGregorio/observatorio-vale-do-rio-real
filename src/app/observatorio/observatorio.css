@@ -362,35 +362,6 @@
   gap: 0.75rem;
   margin-top: 0.75rem;
 }
-.obs-botao {
-  display: inline-block;
-  padding: 0.7rem 1.1rem;
-  border: 1px solid var(--color-fundo-inverso);
-  border-radius: var(--radius-ficha);
-  background: var(--color-fundo-inverso);
-  font-family: var(--font-display);
-  font-weight: var(--peso-titulo);
-}
-.obs a.obs-botao {
-  color: var(--color-texto-inverso);
-  text-decoration: none;
-}
-.obs a.obs-botao:hover {
-  background: var(--color-mata-claro);
-  border-color: var(--color-mata-claro);
-  color: var(--color-texto-inverso);
-}
-.obs a.obs-botao--vazado {
-  background: transparent;
-  border-color: var(--color-borda-forte);
-  color: var(--color-texto);
-}
-.obs a.obs-botao--vazado:hover {
-  background: color-mix(in srgb, var(--color-marca) 12%, transparent);
-  border-color: var(--color-marca);
-  color: var(--color-texto);
-}
-
 .obs-assinatura {
   margin-inline: auto;
   width: min(100% - 2rem, var(--largura-conteudo));

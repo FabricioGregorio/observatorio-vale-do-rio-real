@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { ActionLink } from "../componentes/ui/ActionLink";
 
 /**
  * Página 404.
@@ -19,31 +19,34 @@ export default function NaoEncontrado() {
       <nav aria-label="Caminhos a partir do erro">
         <ul className="flex list-none flex-col gap-2 p-0">
           <li>
-            <Link
+            <ActionLink
+              variant="text"
               href="/prestacao-de-contas"
               className="underline"
               style={{ color: "var(--color-link)" }}
             >
               Prestação de Contas — anexos e evidências públicas
-            </Link>
+            </ActionLink>
           </li>
           <li>
-            <Link
+            <ActionLink
+              variant="text"
               href="/dados"
               className="underline"
               style={{ color: "var(--color-link)" }}
             >
               Portal de dados abertos
-            </Link>
+            </ActionLink>
           </li>
           <li>
-            <Link
+            <ActionLink
+              variant="text"
               href="/"
               className="underline"
               style={{ color: "var(--color-link)" }}
             >
               Página inicial
-            </Link>
+            </ActionLink>
           </li>
         </ul>
       </nav>

@@ -1,8 +1,5 @@
-import Link from "next/link";
-
 import { TabelaAnexos } from "../../componentes/acervo/TabelaAnexos";
 import { ReguaDeCreditos } from "../../componentes/institucional/ReguaDeCreditos";
-import { LinkDeDestino } from "../../componentes/layout/LinkDeDestino";
 import {
   ACOMPANHAMENTO,
   agruparPorTipo,
@@ -16,6 +13,7 @@ import {
   POR_QUE,
   SINTESE,
 } from "../../componentes/prestacao/conteudo";
+import { ActionLink } from "../../componentes/ui/ActionLink";
 import { listarAnexosPublicos } from "../../dados/consultas/anexos";
 import { listarEpisodiosPublicos } from "../../dados/consultas/podobservar";
 import { metadadosDaRota } from "../../lib/site-url";
@@ -143,9 +141,9 @@ export default async function PrestacaoDeContas() {
                 )}
                 <p>{entrega.texto}</p>
                 <p className="pc-entrega__acao">
-                  <Link href={entrega.href} prefetch={false}>
+                  <ActionLink variant="text" href={entrega.href}>
                     {entrega.acao}
-                  </Link>
+                  </ActionLink>
                 </p>
               </li>
             ))}
@@ -239,18 +237,23 @@ export default async function PrestacaoDeContas() {
               */}
               {zip ? (
                 <li>
-                  <LinkDeDestino href={zip}>Baixar tudo (.zip)</LinkDeDestino>
+                  <ActionLink variant="document" href={zip}>
+                    Abrir pacote ZIP
+                  </ActionLink>
                 </li>
               ) : null}
               <li>
-                <LinkDeDestino href="/anexos.json">
+                <ActionLink variant="document" href="/anexos.json">
                   <code>/anexos.json</code> — versão legível por máquina
-                </LinkDeDestino>
+                </ActionLink>
               </li>
               <li>
-                <Link href="/prestacao-de-contas/imprimir" prefetch={false}>
+                <ActionLink
+                  variant="document"
+                  href="/prestacao-de-contas/imprimir"
+                >
                   Versão imprimível
-                </Link>
+                </ActionLink>
               </li>
             </ul>
           </nav>

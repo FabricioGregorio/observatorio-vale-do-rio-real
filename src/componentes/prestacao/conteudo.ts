@@ -130,7 +130,7 @@ export function montarEntregas({
       texto:
         "Cada indicador é publicado com a regra de cálculo, a base sobre a qual foi apurado, o período e o recorte. Nenhum valor aparece sem o seu denominador.",
       href: "/dados",
-      acao: "Consultar os dados",
+      acao: "Ver Dados",
     },
     {
       id: "territorio",
@@ -139,7 +139,7 @@ export function montarEntregas({
       texto:
         "O recorte territorial sobre a malha oficial de Sergipe, com os lugares visitados em campo na posição confirmada e a ficha do material reunido em cada um.",
       href: "/territorio",
-      acao: "Abrir a cartografia",
+      acao: "Ver Território",
     },
     {
       id: "acervo",
@@ -151,7 +151,7 @@ export function montarEntregas({
       texto:
         "Relatórios técnicos, planilhas de resposta, anexo de indicadores, fotografias de campo, entrevistas e peças de identidade, cada arquivo com endereço permanente.",
       href: "/acervo",
-      acao: "Percorrer o acervo",
+      acao: "Ver Acervo",
     },
     {
       id: "podobservar",
@@ -169,7 +169,7 @@ export function montarEntregas({
       texto:
         "O repositório permanente e a peça de divulgação da pesquisa: o que o Observatório é, o que investigou e o que encontrou, em domínio próprio.",
       href: "/observatorio",
-      acao: "Conhecer o Observatório",
+      acao: "Ver O Observatório",
     },
   ];
 }

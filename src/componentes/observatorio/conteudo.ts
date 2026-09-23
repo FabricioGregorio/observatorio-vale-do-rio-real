@@ -244,7 +244,7 @@ export const PRODUTOS: readonly Produto[] = [
     href: "/territorio",
     texto:
       "A cartografia viva do recorte, sobre a malha oficial de Sergipe, com os quatro lugares visitados em campo na posição confirmada e a ficha de cada um.",
-    acao: "Abrir a cartografia",
+    acao: "Ver Território",
   },
   {
     id: "dados",
@@ -252,7 +252,7 @@ export const PRODUTOS: readonly Produto[] = [
     href: "/dados",
     texto:
       "Os indicadores auditados do levantamento, cada um com a sua regra de cálculo, a base sobre a qual foi apurado, o período, o recorte — e o que eles deliberadamente não dizem.",
-    acao: "Consultar os dados",
+    acao: "Ver Dados",
   },
   {
     id: "campo",
@@ -276,7 +276,7 @@ export const PRODUTOS: readonly Produto[] = [
     href: "/acervo",
     texto:
       "Os documentos e registros já liberados para publicação: relatórios técnicos, fotografias de campo e peças de identidade, cada arquivo com endereço próprio.",
-    acao: "Percorrer o acervo",
+    acao: "Ver Acervo",
   },
 ];
 

@@ -22,7 +22,7 @@ import {
 } from "../../componentes/dados/conteudo";
 import { FichaDoIndicador } from "../../componentes/dados/Indicadores";
 import { SerieMensal } from "../../componentes/dados/SerieMensal";
-import { LinkDeDestino } from "../../componentes/layout/LinkDeDestino";
+import { ActionLink } from "../../componentes/ui/ActionLink";
 import {
   type AnexoPublico,
   listarAnexosPublicos,
@@ -262,9 +262,9 @@ export default async function PaginaDados() {
             <ul className="dd-fontes">
               {fontes.map(({ rotulo, descricao, anexo }) => (
                 <li key={rotulo}>
-                  <LinkDeDestino href={anexo.linkPermanente}>
+                  <ActionLink variant="document" href={anexo.linkPermanente}>
                     {anexo.rotuloArquivo ?? anexo.titulo}
-                  </LinkDeDestino>
+                  </ActionLink>
                   <p>{descricao}</p>
                   <p className="meta-ficha">
                     {formatoDe(anexo)} · {tamanho(anexo.bytes)} ·{" "}

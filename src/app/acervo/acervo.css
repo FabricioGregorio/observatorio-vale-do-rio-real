@@ -45,16 +45,6 @@
   border-color: var(--color-borda-forte);
   border-radius: var(--radius-ficha);
 }
-.acervo-botao {
-  background: var(--color-fundo-inverso);
-  color: var(--color-texto-inverso);
-  border-radius: var(--radius-ficha);
-  font-family: var(--font-display);
-  cursor: pointer;
-}
-.acervo-botao:hover {
-  background: var(--color-mata-claro);
-}
 .acervo-link {
   color: var(--color-link);
   font-family: var(--font-display);

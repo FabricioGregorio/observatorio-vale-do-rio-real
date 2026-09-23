@@ -122,7 +122,7 @@ test("a Home destaca o EP04 como episódio mais recente", async ({ page }) => {
   ).toHaveAttribute("href", SPOTIFY);
   await expect(
     page.locator("#hl-podobservar").getByRole("link", {
-      name: /Conhecer o PodObservar/,
+      name: /Ver PodObservar/,
     }),
   ).toHaveAttribute("href", "/podobservar");
 });
