@@ -80,7 +80,7 @@ describe("artes oficiais do PodObservar", () => {
   test("as superfícies recebem capa pela linha pública, sem mapa de slug", () => {
     for (const [caminho, acesso] of [
       ["src/componentes/home/PodObservar.tsx", "recente.capaUrl"],
-      ["src/app/podobservar/page.tsx", "episodio.capaUrl"],
+      ["src/componentes/podobservar/CadernoDeEscuta.tsx", "episodio.capaUrl"],
       [
         "src/app/podobservar/[temporada]/[episodio]/page.tsx",
         "episodio.capaUrl",

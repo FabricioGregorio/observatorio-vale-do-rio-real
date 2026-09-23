@@ -1,13 +1,4 @@
-/*
-  PodObservar — superfícies públicas.
-
-  Identidade cromática própria, derivada dos papéis semânticos: nenhum valor
-  literal de cor entra aqui (tokens.css é a fonte única). A abertura usa o
-  verde profundo institucional, e o traçado é a mesma família gráfica da
-  cartografia do Território — curva de nível que também lê como onda. Puro
-  CSS: sem imagem, sem JS, sem player.
-*/
-
+/* PodObservar: caderno de escuta. Papéis de cor e fontes do Observatório. */
 .pod {
   --pod-linha: color-mix(
     in srgb,
@@ -21,123 +12,311 @@
   );
 }
 
-/* --- Abertura ----------------------------------------------------------- */
-
-.pod-abertura {
-  position: relative;
-  overflow: clip;
-  background: var(--color-fundo-inverso);
-  color: var(--color-texto-inverso);
-  padding: clamp(2rem, 6vw, 4.5rem) clamp(1rem, 4vw, 3rem);
+.pod-caderno {
+  max-width: 80rem;
+  margin-inline: auto;
+  padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 3rem)
+    clamp(3rem, 7vw, 6rem);
 }
-.pod-abertura > * {
-  position: relative;
+.pod-rubrica {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
 }
-.pod-abertura__composicao {
-  display: grid;
-  gap: 2rem;
-  align-items: center;
-}
-.pod-abertura__logo {
-  width: min(100%, 18rem);
-  height: auto;
-  border: 1px solid
-    color-mix(in srgb, var(--color-texto-inverso) 25%, transparent);
-}
-@media (min-width: 48rem) {
-  .pod-abertura__composicao {
-    grid-template-columns: minmax(12rem, 18rem) minmax(0, 1fr);
-  }
-}
-.pod-abertura .meta-ficha {
-  color: color-mix(
-    in srgb,
-    var(--color-texto-inverso) 85%,
-    var(--color-fundo-inverso)
-  );
-}
-.pod-abertura__tracado {
-  position: absolute;
-  inset: 0 0 0 auto;
-  width: min(64%, 46rem);
-  opacity: 0.22;
-  pointer-events: none;
-  background: repeating-radial-gradient(
-    ellipse at 96% 40%,
-    transparent 0 2.4rem,
-    var(--color-texto-inverso) 2.45rem 2.5rem,
-    transparent 2.55rem 4.2rem
-  );
-  mask-image: linear-gradient(to left, #000 10%, transparent 78%);
-}
-.pod-abertura__selos {
+.pod-masthead__regua {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem 1.5rem;
-  margin-top: 2rem;
-  padding-top: 1rem;
-  border-top: 1px solid
-    color-mix(
-      in srgb,
-      var(--color-texto-inverso) 35%,
-      var(--color-fundo-inverso)
-    );
-  font-size: var(--text-sm);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--pod-linha);
 }
-
-/* --- Lista de episódios -------------------------------------------------- */
-
-.pod-lista {
+.pod-masthead__nome {
+  padding-block: 1.5rem 2rem;
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 10.4vw, 8.75rem);
+  font-weight: var(--peso-numeral);
+  letter-spacing: -0.065em;
+  line-height: 0.95;
+  color: var(--color-marca);
+}
+.pod-masthead__nome > span > span {
+  color: var(--color-texto);
+}
+.pod-masthead__abertura {
   display: grid;
-  gap: 1.5rem;
+  gap: 1.25rem 3rem;
+  padding-block: 0.5rem 1.5rem;
+}
+.pod-masthead h1 {
+  max-width: 17ch;
+  font-size: clamp(var(--text-2xl), 3vw, var(--text-4xl));
+}
+.pod-masthead__abertura > p {
+  max-width: 60ch;
+}
+.pod-masthead__rodape {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 3px solid var(--color-marca);
+}
+.pod-masthead__rodape .pod-rubrica {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.75rem;
+}
+.pod-masthead__rodape .acao {
+  font-size: var(--text-nav);
+}
+.pod-entrada {
+  display: grid;
+  gap: 1.25rem;
+  padding-block: 2rem 2.5rem;
+  border-bottom: 1px solid var(--pod-linha);
+}
+.pod-entrada__edicao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.pod-entrada__numero {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: var(--peso-numeral);
+  line-height: 1;
+  letter-spacing: -0.06em;
+  color: var(--color-marca);
+}
+.pod-entrada__capa {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.pod-entrada__texto {
+  display: grid;
+  align-content: center;
+  gap: 1rem;
+  min-width: 0;
+}
+.pod-entrada h2,
+.pod-entrada h3 {
+  font-size: clamp(var(--text-xl), 2.5vw, var(--text-3xl));
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+.pod-entrada--principal h2 {
+  font-size: clamp(var(--text-2xl), 3.4vw, var(--text-4xl));
+}
+.pod-entrada__resumo {
+  max-width: 60ch;
+}
+.pod-entrada__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.5rem;
+  padding-top: 0.5rem;
+}
+.pod-entrada__transcricao {
+  flex-basis: 100%;
+}
+.pod-entrada__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--color-texto-suave);
+}
+.pod-indice {
+  margin-top: clamp(3rem, 6vw, 5rem);
+}
+.pod-indice__abertura {
+  display: grid;
+  gap: 1.5rem 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--color-marca);
+}
+.pod-indice h2 {
+  margin-top: 0.75rem;
+  font-size: clamp(var(--text-2xl), 3vw, var(--text-4xl));
+  scroll-margin-top: var(--topo-reserva-salto);
+}
+.pod-indice__abertura > p {
+  max-width: 65ch;
+}
+.pod-indice__lista {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-.pod-episodio {
+.pod-colofao {
   display: grid;
-  gap: 0.75rem;
-  border: 1px solid var(--pod-linha);
-  background: var(--pod-papel);
-  padding: clamp(1.25rem, 3vw, 2rem);
+  gap: 1.5rem 2.5rem;
+  margin-top: clamp(3rem, 6vw, 5rem);
+  border-top: 3px solid var(--color-marca);
+  padding-top: 2rem;
 }
-.pod-episodio__conteudo {
-  display: grid;
-  gap: 0.75rem;
-  align-content: start;
+.pod-colofao__logo {
+  width: 7rem;
+  height: auto;
 }
-.pod-episodio__capa,
+.pod-colofao h2 {
+  font-size: var(--text-2xl);
+  margin-block: 0.75rem 1rem;
+}
+.pod-colofao__leitura {
+  border-top: 1px solid var(--pod-linha);
+  padding-top: 1.25rem;
+  color: var(--color-texto-suave);
+}
+.pod-vazio {
+  padding-block: 3rem;
+  border-bottom: 1px solid var(--pod-linha);
+  color: var(--color-texto-suave);
+}
+
+@media (min-width: 40rem) {
+  .pod-masthead__abertura,
+  .pod-indice__abertura {
+    grid-template-columns: 1fr 1fr;
+  }
+  .pod-entrada {
+    grid-template-columns: 4rem minmax(0, 1fr);
+    gap: 1.5rem 2rem;
+  }
+  .pod-entrada__edicao {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+  .pod-entrada__edicao .pod-rubrica {
+    writing-mode: vertical-rl;
+    order: 1;
+  }
+  .pod-entrada__capa {
+    max-width: 32rem;
+  }
+  .pod-entrada__texto,
+  .pod-entrada__capa {
+    grid-column: 2;
+  }
+  .pod-colofao {
+    grid-template-columns: 7rem minmax(0, 1fr);
+  }
+  .pod-colofao__leitura {
+    grid-column: 2;
+  }
+}
+@media (min-width: 60rem) {
+  .pod-masthead__abertura {
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+  .pod-entrada {
+    grid-template-columns: 4rem minmax(0, 0.85fr) minmax(0, 1.5fr);
+    gap: 2rem;
+    padding-block: 2.5rem;
+  }
+  .pod-entrada__edicao {
+    grid-row: 1;
+  }
+  .pod-entrada__capa {
+    max-width: none;
+  }
+  .pod-entrada__texto {
+    grid-column: 3;
+  }
+  .pod-entrada--principal {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 1.5rem 3rem;
+  }
+  .pod-entrada--principal .pod-entrada__edicao {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .pod-entrada--principal .pod-entrada__edicao .pod-rubrica {
+    writing-mode: horizontal-tb;
+    order: 0;
+  }
+  .pod-entrada--principal .pod-entrada__capa {
+    grid-column: 1;
+  }
+  .pod-entrada--principal .pod-entrada__texto {
+    grid-column: 2;
+  }
+  .pod-entrada:not(:has(.pod-entrada__capa)) .pod-entrada__texto {
+    grid-column: 2 / -1;
+  }
+  .pod-entrada--principal:not(:has(.pod-entrada__capa)) .pod-entrada__texto {
+    grid-column: 1 / -1;
+    max-width: 65ch;
+  }
+  .pod-colofao {
+    grid-template-columns: 12rem minmax(0, 1.4fr) minmax(0, 0.8fr);
+    align-items: start;
+  }
+  .pod-colofao__logo {
+    width: 12rem;
+  }
+  .pod-colofao__leitura {
+    grid-column: 3;
+    border-top: 0;
+    border-left: 1px solid var(--pod-linha);
+    padding: 0 0 0 2rem;
+  }
+}
+@media (max-width: 39.999rem) {
+  .pod-masthead__regua > span:first-child {
+    display: none;
+  }
+  .pod-masthead__nome {
+    font-size: clamp(3rem, 15vw, 5.5rem);
+    padding-block: 1.25rem;
+  }
+  .pod-masthead__nome > span {
+    display: block;
+  }
+  .pod-masthead__nome > span > span {
+    display: block;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:not([data-movimento="reduzido"]) .pod-caderno .acao {
+    transition:
+      background-color var(--duracao-hover) var(--easing-padrao),
+      color var(--duracao-hover) var(--easing-padrao),
+      text-underline-offset var(--duracao-hover) var(--easing-padrao);
+  }
+  html:not([data-movimento="reduzido"])
+    .pod-caderno
+    .acao[data-acao="text"]:hover {
+    text-underline-offset: 0.35em;
+  }
+}
+
+/* Estilos compartilhados com a ficha individual, preservados. */
 .pod-episodio-pagina__capa {
   display: block;
   width: 100%;
   height: auto;
   border: 1px solid var(--pod-linha);
 }
-@media (min-width: 48rem) {
-  .pod-episodio:has(.pod-episodio__capa) {
-    grid-template-columns: minmax(12rem, 18rem) minmax(0, 1fr);
-    align-items: start;
-  }
-}
-.pod-episodio__numero {
-  font-family: var(--font-display);
-  font-weight: var(--peso-numeral);
-  font-size: var(--text-3xl);
-  line-height: 1;
-  color: var(--color-marca);
-}
-.pod-episodio h3 {
-  font-size: clamp(var(--text-xl), 3vw, var(--text-2xl));
-  text-wrap: balance;
-}
 .pod-episodio__meta {
   font-size: var(--text-sm);
   color: var(--color-texto-suave);
-}
-.pod-episodio__resumo {
-  max-width: 68ch;
 }
 .pod-acoes {
   display: flex;
@@ -145,15 +324,6 @@
   gap: 0.75rem 1.75rem;
   margin-top: 0.5rem;
 }
-
-/* --- Vazio --------------------------------------------------------------- */
-
-.pod-vazio {
-  border: 1px dashed var(--color-borda-forte);
-  padding: clamp(1.25rem, 3vw, 2rem);
-  color: var(--color-texto-suave);
-}
-
 /* --- Página do episódio -------------------------------------------------- */
 
 .pod-episodio-pagina {
@@ -230,13 +400,4 @@
 /* URL longa em link externo não pode estourar o layout em 375px. */
 .pod a {
   overflow-wrap: anywhere;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .pod-episodio {
-    transition: border-color var(--motion-rapido, 150ms) ease;
-  }
-}
-.pod-episodio:hover {
-  border-color: var(--color-borda-forte);
 }

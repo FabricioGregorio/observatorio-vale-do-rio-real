@@ -5,6 +5,7 @@ import { describe, expect, test } from "vitest";
 
 import { PodObservarNaHome } from "../src/componentes/home/PodObservar";
 import { analisarTranscricao } from "../src/componentes/podobservar/analiseDaTranscricao";
+import { CadernoDeEscuta } from "../src/componentes/podobservar/CadernoDeEscuta";
 import {
   dataCurta,
   dataMaquina,
@@ -55,6 +56,51 @@ function episodio(over: Partial<EpisodioPublico> = {}): EpisodioPublico {
 
 const html = (no: Parameters<typeof renderToStaticMarkup>[0]) =>
   renderToStaticMarkup(no);
+
+describe("caderno de escuta", () => {
+  test("destaca a primeira entrada e preserva destinos e texto de cada episódio", () => {
+    const recente = episodio({ numero: 4, slug: "04-entre-dados-e-fatos" });
+    const anterior = episodio();
+    const marcacao = html(
+      createElement(CadernoDeEscuta, { episodios: [recente, anterior] }),
+    );
+    expect(marcacao.match(/<article /g)).toHaveLength(2);
+    expect(marcacao.indexOf("titulo-04-entre-dados-e-fatos")).toBeLessThan(
+      marcacao.indexOf("titulo-01-o-que-e-o-vale-do-rio-real"),
+    );
+    expect(marcacao.match(/data-acao="primary"/g)).toHaveLength(1);
+    for (const ep of [recente, anterior]) {
+      expect(marcacao).toContain(ep.resumo);
+      expect(marcacao).toContain(ep.urlSpotify);
+      expect(marcacao).toContain(`/podobservar/t1/${ep.slug}`);
+    }
+    expect(marcacao).toContain(anterior.urlYoutube);
+    expect(marcacao).not.toMatch(/<(audio|iframe|video)\b/);
+  });
+
+  test("um único episódio sem capa ou YouTube mantém a leitura e a escuta", () => {
+    const marcacao = html(
+      createElement(CadernoDeEscuta, {
+        episodios: [episodio({ urlYoutube: null })],
+      }),
+    );
+    expect(marcacao.match(/<article /g)).toHaveLength(1);
+    expect(marcacao).toContain("Ouvir no Spotify");
+    expect(marcacao).toContain("Ler transcrição e detalhes");
+    expect(marcacao).not.toContain("Assistir no YouTube");
+    expect(marcacao).not.toContain("Percorrer episódios");
+    expect(marcacao).not.toContain("Continue a escuta.");
+  });
+
+  test("lista vazia não anuncia episódio recente nem oferece índice vazio", () => {
+    const marcacao = html(createElement(CadernoDeEscuta, { episodios: [] }));
+    expect(marcacao).toContain("Nenhum episódio publicado no site até agora.");
+    expect(marcacao).not.toContain("Episódio mais recente");
+    expect(marcacao).not.toContain("<article");
+    expect(marcacao).not.toContain("Percorrer episódios");
+    expect(marcacao.match(/<h1[ >]/g)).toHaveLength(1);
+  });
+});
 
 /* ------------------------------------------------------------------ */
 
@@ -294,6 +340,7 @@ describe("segurança: o site divulga, não reproduz", () => {
   }
 
   const superficies = [
+    "src/componentes/podobservar/CadernoDeEscuta.tsx",
     "src/app/podobservar/page.tsx",
     "src/app/podobservar/[temporada]/[episodio]/page.tsx",
     "src/componentes/home/PodObservar.tsx",
