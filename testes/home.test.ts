@@ -11,7 +11,10 @@
  */
 import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, test } from "vitest";
-import { ENTREVISTAS } from "../src/componentes/home/conteudo";
+import {
+  ENTREVISTAS,
+  RELATORIO_DO_RECANTO,
+} from "../src/componentes/home/conteudo";
 import { MENU_PRINCIPAL } from "../src/lib/navegacao";
 
 describe("navegação do site", () => {
@@ -204,4 +207,38 @@ describe("limites de conteúdo da Home", () => {
       }
     }
   });
+});
+
+/**
+ * A Home fixa os dados do A02 em vez de derivá-los de `listarAnexosPublicos()`.
+ *
+ * Enquanto for assim, alguém precisa conferir. Em 2026-09-23 esses valores
+ * ainda eram os da versão tarjada, aposentada quando o original virou o
+ * documento canônico: a Home linkava um arquivo fora da coleção e publicava,
+ * na faixa de conferência, um SHA-256 que não correspondia a documento nenhum.
+ *
+ * O teste lê a coleção pelo mesmo caminho que a Prestação de Contas usa. Sem
+ * `DATABASE_URL` ele é pulado — é exatamente o que acontece na máquina sem
+ * credencial, e falhar ali seria falso negativo.
+ */
+describe("o A02 da Home é o documento canônico", () => {
+  test.skipIf(!process.env.DATABASE_URL)(
+    "url, bytes e sha256 batem com a coleção pública",
+    async () => {
+      const { listarAnexosPublicos } = await import(
+        "../src/dados/consultas/anexos"
+      );
+      const anexos = await listarAnexosPublicos();
+      const a02 = anexos.filter(
+        (anexo) => anexo.slug === "relatorio-tecnico-recanto-da-serra",
+      );
+
+      // Um documento lógico, um arquivo canônico: a tarjada não volta ao lado.
+      expect(a02).toHaveLength(1);
+      expect(a02[0]?.linkPermanente).toBe(RELATORIO_DO_RECANTO.url);
+      expect(a02[0]?.bytes).toBe(RELATORIO_DO_RECANTO.bytes);
+      expect(a02[0]?.sha256).toBe(RELATORIO_DO_RECANTO.sha256);
+      expect(a02[0]?.licenca).toBe(RELATORIO_DO_RECANTO.licenca);
+    },
+  );
 });

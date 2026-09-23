@@ -50,17 +50,22 @@ export {
 /**
  * Relatório Técnico — Recanto da Serra (A02).
  *
- * Lido de `https://observatoriotobiassoueu.com.br/anexos.json` em 2026-09-13.
- * O endereço está fixo aqui; numa integração completa ele viria de
- * `listarAnexosPublicos()`, em build, como na Prestação de Contas.
+ * Aponta para o **integral**, que é o documento canônico. Até 2026-09-23 estes
+ * valores eram os da versão tarjada, que deixou de existir como documento: a
+ * Home linkava um arquivo aposentado e exibia, na faixa de conferência, um
+ * SHA-256 que não correspondia a nenhum documento público.
+ *
+ * O endereço continua fixo aqui em vez de vir de `listarAnexosPublicos()`.
+ * `testes/home.test.ts` confere os quatro campos contra a coleção canônica,
+ * então a divergência não volta em silêncio — ela quebra a suíte.
  */
 export const RELATORIO_DO_RECANTO = {
   codigo: "A02",
   titulo: "Relatório Técnico — Recanto da Serra",
-  url: "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a02-relatorio-tecnico-recanto-da-serra-publico-v1.pdf",
-  bytes: 756_239,
+  url: "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a02-relatorio-tecnico-recanto-da-serra-integral-v1.pdf",
+  bytes: 602_121,
   licenca: "CC BY-SA 4.0",
-  sha256: "b314cd7a5330276ecccc0c7cfe7dfe6461da721055318c15957db5cd7848961a",
+  sha256: "18b7bbb11b6157af525c7e1c88b7e385763dadc094bb60fdf6f3a27d9c2aff91",
 } as const;
 
 export type Equipamento = {
