@@ -8,6 +8,11 @@ O site é prova documental de execução do objeto: cada anexo tem endereço
 permanente no domínio próprio, data de publicação e hash SHA-256, sem login e
 sem pedido de acesso.
 
+Os documentos disponibilizados no Acervo e na Prestação de contas utilizam
+os arquivos originais como versões canônicas. Fotografias podem utilizar WebP
+para apresentação visual; a imagem com placa de veículo tem versão pública
+tarjada.
+
 ## Stack
 
 Next.js (App Router, Server Components), React, TypeScript estrito, Tailwind,
@@ -66,8 +71,9 @@ Playwright o levanta sozinho via `pnpm start:e2e`.
 pnpm build
 ```
 
-As páginas são geradas em build time e consultam o banco nesse momento. Nenhuma
-rota consulta o banco em tempo de requisição.
+As páginas e o inventário são gerados em build time. A rota de download
+consulta a coleção pública em tempo de requisição e confere o SHA-256 antes
+de entregar o arquivo como anexo.
 
 ## Banco
 
