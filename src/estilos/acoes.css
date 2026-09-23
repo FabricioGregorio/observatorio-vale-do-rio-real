@@ -104,10 +104,21 @@
 .hl-topo__nav-estreita button {
   min-height: 44px;
 }
-.hl-topo .central :focus-visible {
+.central :focus-visible {
   outline-color: var(--color-foco);
   outline-offset: 2px;
 }
+/*
+  A Central abre como modal e é levada para dentro de <body> pelo componente,
+  fora do cabeçalho. O motivo é de layout, não de organização: o cabeçalho tem
+  `backdrop-filter`, e um ancestral com filtro passa a ser o bloco recipiente
+  de qualquer descendente `position: fixed`. Os motores que não retiram o
+  diálogo dessa cadeia ao promovê-lo à camada superior — o comportamento que
+  se viu em celular real — centram o painel na faixa do cabeçalho, de 81 px,
+  em vez da viewport: o painel sobe, o topo sai da tela e o rodapé fica
+  cortado. Em <body> não há ancestral com filtro, e as três linhas abaixo
+  passam a valer em qualquer motor.
+*/
 .central {
   --acao-texto: var(--color-texto);
   --acao-borda: var(--color-borda-forte);
@@ -115,7 +126,11 @@
   inset: 0;
   width: min(30rem, calc(100% - 2rem));
   max-width: none;
-  max-height: calc(100dvh - 2rem);
+  /* svh, e não dvh: a viewport pequena é a única que cabe na tela em
+     qualquer estado das barras do navegador. Com dvh, o painel podia ficar
+     mais alto do que a área visível no instante em que as barras reaparecem,
+     e aí `margin: auto` não tem folga para centrar e cola o painel no topo. */
+  max-height: calc(100svh - 2rem);
   margin: auto;
   padding: 1.25rem;
   border: 1px solid var(--color-borda-forte);
@@ -182,6 +197,14 @@
 .central a {
   color: var(--color-link);
   text-decoration: underline;
+}
+/*
+  Enquanto a Central morava dentro do cabeçalho, `.hl-topo .acao[data-acao]`
+  alcançava estes botões e os deixava em --text-sm. Fora dele, a medida passa
+  a ser declarada aqui, para que a mudança de lugar não mude a tipografia.
+*/
+.central .acao[data-acao] {
+  font-size: var(--text-sm);
 }
 .central .acao[data-acao="text"] {
   color: var(--color-link);

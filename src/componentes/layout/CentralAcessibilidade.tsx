@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   CHAVE_MOVIMENTO,
   CHAVE_TEXTO,
@@ -35,6 +36,7 @@ function atributo(nome: string, valor: string | null) {
 
 export function CentralAcessibilidade() {
   const [aberto, setAberto] = useState(false);
+  const [montado, setMontado] = useState(false);
   const [tema, setTema] = useState<Tema>("sistema");
   const [reduzir, setReduzir] = useState(false);
   const [maior, setMaior] = useState(false);
@@ -46,6 +48,8 @@ export function CentralAcessibilidade() {
   const idTitulo = useId();
 
   useEffect(() => {
+    /* Só depois da hidratação existe <body> para receber o painel. */
+    setMontado(true);
     try {
       setTema(temaArmazenado(localStorage.getItem(CHAVE_TEMA)));
       setReduzir(localStorage.getItem(CHAVE_MOVIMENTO) === "reduzido");
@@ -77,6 +81,111 @@ export function CentralAcessibilidade() {
     setAviso("Preferências restauradas.");
   }
 
+  /*
+    O painel vive em <body>, e não ao lado do gatilho, no cabeçalho. O
+    cabeçalho tem `backdrop-filter`, e um ancestral com filtro vira o bloco
+    recipiente dos descendentes `position: fixed` — inclusive de um <dialog>
+    modal, nos motores que não o retiram dessa cadeia ao promovê-lo à camada
+    superior. Medido nesta árvore, o painel deixava de ser centrado na
+    viewport e passava a ser centrado na faixa de 81 px do cabeçalho: topo
+    fora da tela e rodapé cortado, que é o relato vindo de celular real.
+
+    O portal não muda marcação, foco nem semântica: o <dialog> continua o
+    mesmo elemento, `aria-controls` continua a apontar para ele pelo id, e o
+    foco segue preso pelo modal nativo.
+  */
+  const painelDaCentral = (
+    <dialog
+      closedby="any"
+      ref={painel}
+      id={idPainel}
+      className="central"
+      aria-labelledby={idTitulo}
+      onClose={() => {
+        setAberto(false);
+        gatilho.current?.focus();
+      }}
+    >
+      <div className="central__topo">
+        <h2 id={idTitulo}>Acessibilidade</h2>
+        <Button variant="text" onClick={() => painel.current?.close()}>
+          Fechar
+        </Button>
+      </div>
+      <fieldset>
+        <legend>Tema</legend>
+        <div className="central__temas">
+          {TEMAS.map((opcao) => (
+            <Button
+              key={opcao}
+              variant="secondary"
+              aria-pressed={tema === opcao}
+              onClick={() => aplicarTema(opcao)}
+            >
+              {ROTULOS[opcao]}
+            </Button>
+          ))}
+        </div>
+        <p className="central__nota">Em uso: {ROTULOS[tema]}</p>
+      </fieldset>
+      <fieldset>
+        <legend>Movimento</legend>
+        <label className="central__opcao">
+          <input
+            type="checkbox"
+            checked={reduzir}
+            onChange={(evento) => {
+              const ativo = evento.target.checked;
+              setAviso("");
+              setReduzir(ativo);
+              atributo("data-movimento", ativo ? "reduzido" : null);
+              gravar(CHAVE_MOVIMENTO, ativo ? "reduzido" : null);
+            }}
+          />
+          Reduzir animações
+        </label>
+        <p className="central__nota">
+          {sistemaReduzido
+            ? "Seu sistema pede menos animação, e o site já respeita isso."
+            : reduzir
+              ? "Animações reduzidas nesta visita e nas próximas."
+              : "Seguindo a preferência de animação do seu sistema."}
+        </p>
+      </fieldset>
+      <fieldset>
+        <legend>Leitura</legend>
+        <label className="central__opcao">
+          <input
+            type="checkbox"
+            checked={maior}
+            onChange={(evento) => {
+              const ativo = evento.target.checked;
+              setAviso("");
+              setMaior(ativo);
+              atributo("data-texto", ativo ? "maior" : null);
+              gravar(CHAVE_TEXTO, ativo ? "maior" : null);
+            }}
+          />
+          Texto maior
+        </label>
+        <p className="central__nota">
+          {maior ? "Texto ampliado." : "Texto no tamanho padrão."} Você também
+          pode usar o zoom do navegador.
+        </p>
+      </fieldset>
+      <Button variant="secondary" onClick={restaurar}>
+        Restaurar preferências
+      </Button>
+      <p role="status" className="central__nota">
+        {aviso}
+      </p>
+      <p className="central__ajuda">
+        As preferências ficam neste navegador. Encontrou uma barreira?{" "}
+        <a href="mailto:obstobiassoueu@gmail.com">Relatar ao Observatório</a>.
+      </p>
+    </dialog>
+  );
+
   return (
     <div>
       <Button
@@ -105,95 +214,7 @@ export function CentralAcessibilidade() {
         </svg>
         <span>Acessibilidade</span>
       </Button>
-      <dialog
-        closedby="any"
-        ref={painel}
-        id={idPainel}
-        className="central"
-        aria-labelledby={idTitulo}
-        onClose={() => {
-          setAberto(false);
-          gatilho.current?.focus();
-        }}
-      >
-        <div className="central__topo">
-          <h2 id={idTitulo}>Acessibilidade</h2>
-          <Button variant="text" onClick={() => painel.current?.close()}>
-            Fechar
-          </Button>
-        </div>
-        <fieldset>
-          <legend>Tema</legend>
-          <div className="central__temas">
-            {TEMAS.map((opcao) => (
-              <Button
-                key={opcao}
-                variant="secondary"
-                aria-pressed={tema === opcao}
-                onClick={() => aplicarTema(opcao)}
-              >
-                {ROTULOS[opcao]}
-              </Button>
-            ))}
-          </div>
-          <p className="central__nota">Em uso: {ROTULOS[tema]}</p>
-        </fieldset>
-        <fieldset>
-          <legend>Movimento</legend>
-          <label className="central__opcao">
-            <input
-              type="checkbox"
-              checked={reduzir}
-              onChange={(evento) => {
-                const ativo = evento.target.checked;
-                setAviso("");
-                setReduzir(ativo);
-                atributo("data-movimento", ativo ? "reduzido" : null);
-                gravar(CHAVE_MOVIMENTO, ativo ? "reduzido" : null);
-              }}
-            />
-            Reduzir animações
-          </label>
-          <p className="central__nota">
-            {sistemaReduzido
-              ? "Seu sistema pede menos animação, e o site já respeita isso."
-              : reduzir
-                ? "Animações reduzidas nesta visita e nas próximas."
-                : "Seguindo a preferência de animação do seu sistema."}
-          </p>
-        </fieldset>
-        <fieldset>
-          <legend>Leitura</legend>
-          <label className="central__opcao">
-            <input
-              type="checkbox"
-              checked={maior}
-              onChange={(evento) => {
-                const ativo = evento.target.checked;
-                setAviso("");
-                setMaior(ativo);
-                atributo("data-texto", ativo ? "maior" : null);
-                gravar(CHAVE_TEXTO, ativo ? "maior" : null);
-              }}
-            />
-            Texto maior
-          </label>
-          <p className="central__nota">
-            {maior ? "Texto ampliado." : "Texto no tamanho padrão."} Você também
-            pode usar o zoom do navegador.
-          </p>
-        </fieldset>
-        <Button variant="secondary" onClick={restaurar}>
-          Restaurar preferências
-        </Button>
-        <p role="status" className="central__nota">
-          {aviso}
-        </p>
-        <p className="central__ajuda">
-          As preferências ficam neste navegador. Encontrou uma barreira?{" "}
-          <a href="mailto:obstobiassoueu@gmail.com">Relatar ao Observatório</a>.
-        </p>
-      </dialog>
+      {montado && createPortal(painelDaCentral, document.body)}
     </div>
   );
 }

@@ -327,3 +327,121 @@ test("checkpoint visual: desktop, 320px, temas e central", async ({ page }) => {
     }
   }
 });
+
+/*
+  Geometria do painel, e não só a sua presença.
+
+  A Central abria centrada nos emuladores e desalinhada em celular real. A
+  causa não estava nas medidas: o <dialog> era filho do cabeçalho, que tem
+  `backdrop-filter`, e um ancestral com filtro vira o bloco recipiente dos
+  descendentes `position: fixed`. Nos motores que não retiram o diálogo modal
+  dessa cadeia, o painel era centrado na faixa do cabeçalho — topo fora da
+  tela, rodapé cortado. O painel passou a ser montado em <body>.
+
+  Por isso este teste mede duas coisas que `toBeVisible()` não mede: a caixa
+  do painel contra a viewport, e a ausência de ancestral com filtro ou
+  transformação. A segunda é a que falha primeiro se o painel voltar para
+  dentro do cabeçalho — e é a que descreve o defeito real.
+
+  `/observatorio` é a rota usada porque não depende do banco.
+*/
+const TELAS = [
+  { largura: 320, altura: 568 },
+  { largura: 360, altura: 800 },
+  { largura: 375, altura: 667 },
+  { largura: 390, altura: 844 },
+  { largura: 430, altura: 932 },
+  { largura: 667, altura: 375 },
+] as const;
+
+for (const { largura, altura } of TELAS) {
+  test(`central centrada na viewport: ${largura}x${altura}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: largura, height: altura });
+    await page.goto("/observatorio");
+    const dialogo = page.getByRole("dialog", { name: "Acessibilidade" });
+
+    /* A cadeia de ancestrais é a causa; medi-la é medir o defeito. */
+    await abrir(page);
+    expect(
+      await dialogo.evaluate((el) => {
+        const presos: string[] = [];
+        for (let n = el.parentElement; n; n = n.parentElement) {
+          const s = getComputedStyle(n);
+          if (
+            s.transform !== "none" ||
+            s.filter !== "none" ||
+            s.backdropFilter !== "none" ||
+            s.perspective !== "none"
+          )
+            presos.push(`${n.tagName}.${n.className}`);
+        }
+        return presos;
+      }),
+    ).toEqual([]);
+    await page.keyboard.press("Escape");
+
+    /*
+      Rolar antes de abrir: se o painel se prendesse ao documento, ou a um
+      ancestral, é aqui que ele sairia de lugar.
+    */
+    await page.evaluate(() => scrollTo(0, 3000));
+    for (const maior of [false, true]) {
+      const dialogoAberto = await abrir(page);
+      if (maior)
+        await dialogoAberto.getByLabel("Texto maior", { exact: true }).check();
+      else
+        await dialogoAberto
+          .getByLabel("Texto maior", { exact: true })
+          .uncheck();
+      /* Fechar e reabrir: a posição não pode depender da primeira abertura. */
+      await page.keyboard.press("Escape");
+      await abrir(page);
+
+      const caixa = await dialogo.boundingBox();
+      if (!caixa) throw new Error("painel sem caixa");
+      const contexto = `${largura}x${altura} texto ${maior ? "maior" : "padrão"}`;
+      const folgaEsquerda = caixa.x;
+      const folgaDireita = largura - (caixa.x + caixa.width);
+      const folgaTopo = caixa.y;
+      const folgaBase = altura - (caixa.y + caixa.height);
+
+      /* Inteiro dentro da viewport, sem encostar nas bordas. */
+      expect(folgaEsquerda, contexto).toBeGreaterThanOrEqual(8);
+      expect(folgaDireita, contexto).toBeGreaterThanOrEqual(8);
+      expect(folgaTopo, contexto).toBeGreaterThanOrEqual(8);
+      expect(folgaBase, contexto).toBeGreaterThanOrEqual(8);
+
+      /* Centrado: as folgas opostas são a mesma, a menos de arredondamento. */
+      expect(
+        Math.abs(folgaEsquerda - folgaDireita),
+        contexto,
+      ).toBeLessThanOrEqual(2);
+      expect(Math.abs(folgaTopo - folgaBase), contexto).toBeLessThanOrEqual(2);
+
+      /* O fim do painel é alcançável sem rolar a página por trás. */
+      const rolagem = await page.evaluate(() => ({
+        pagina: scrollY,
+        painel: (() => {
+          const d = document.querySelector("dialog.central") as HTMLElement;
+          d.scrollTop = d.scrollHeight;
+          const fim = d.querySelector(".central__ajuda") as HTMLElement;
+          return fim.getBoundingClientRect().bottom <= innerHeight + 1;
+        })(),
+      }));
+      expect(rolagem.painel, contexto).toBe(true);
+      expect(rolagem.pagina, contexto).toBeGreaterThan(0);
+
+      await page.keyboard.press("Escape");
+      await expect(
+        page.getByRole("button", { name: "Acessibilidade", exact: true }),
+      ).toBeFocused();
+    }
+    await abrir(page);
+    await dialogo
+      .getByRole("button", { name: "Restaurar preferências" })
+      .click();
+    await page.keyboard.press("Escape");
+  });
+}
