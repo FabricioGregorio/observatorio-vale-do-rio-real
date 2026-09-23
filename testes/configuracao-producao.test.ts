@@ -54,8 +54,8 @@ describe("configuração de produção", () => {
   test("sitemap contém páginas institucionais, documentos e evidências públicas", async () => {
     const urls = (await sitemap()).map((item) => item.url);
 
-    // 141 desde o EP04 (2026-09-21): uma página de episódio a mais.
-    expect(urls).toHaveLength(141);
+    // O inventário canônico não gera páginas extras para derivados A02/A03.
+    expect(urls).toHaveLength(139);
     expect(urls).toContain("https://observatoriotobiassoueu.com.br/");
     expect(urls).toContain("https://observatoriotobiassoueu.com.br/territorio");
     expect(urls).toContain("https://observatoriotobiassoueu.com.br/acervo");

@@ -2,7 +2,6 @@ import { expect, type Page, test } from "@playwright/test";
 
 const b01 = "/acervo/fotografias-visitas-i-vii";
 const relatorio = "/acervo/relatorio-tecnico-recanto-da-serra";
-const foto = `${b01}/arquivo/d0af646c-e6b0-423d-9edc-d5ffc74b246a`;
 const audio =
   "/acervo/entrevista-josenilson-bispo/arquivo/b66b98a6-fdec-481b-9d9f-fd323a751364";
 
@@ -71,6 +70,10 @@ test("fluxo B01 usa a mesma guia até o binário e preserva o histórico", async
   expect(page.context().pages()).toHaveLength(1);
   await conferirMesmaGuia(page, 'main a[href*="/arquivo/"]', 59);
   await expect(page.locator("main img")).toHaveCount(0);
+  const foto = await page
+    .getByRole("link", { name: "Retrato em ambiente interno" })
+    .getAttribute("href");
+  if (!foto) throw new Error("Ficha canônica da fotografia ausente");
   await page.locator(`main a[href="${foto}"]`).click();
   await expect(page).toHaveURL(new RegExp(`${foto}$`));
   expect(page.context().pages()).toHaveLength(1);
@@ -81,7 +84,7 @@ test("fluxo B01 usa a mesma guia até o binário e preserva o histórico", async
   );
   const [binario] = await Promise.all([
     page.context().waitForEvent("page"),
-    page.getByRole("link", { name: "Abrir arquivo público" }).click(),
+    page.getByRole("link", { name: /Abrir (original|versão pública)/ }).click(),
   ]);
   await expect(binario).toHaveURL(
     /^https:\/\/acervo\.observatoriotobiassoueu\.com\.br\/arquivos\//,
@@ -100,7 +103,7 @@ test("documento comum e seus arquivos contextuais permanecem na mesma guia", asy
   await page.goto("/acervo");
   await page.locator(`main a[href="${relatorio}"]`).click();
   await expect(page).toHaveURL(new RegExp(`${relatorio}$`));
-  await conferirMesmaGuia(page, 'main a[href*="/arquivo/"]', 2);
+  await conferirMesmaGuia(page, 'main a[href*="/arquivo/"]', 1);
   await page.locator('main a[href*="/arquivo/"]').first().click();
   await expect(page).toHaveURL(/\/arquivo\//);
   expect(page.context().pages()).toHaveLength(1);

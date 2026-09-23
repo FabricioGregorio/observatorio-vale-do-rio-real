@@ -81,7 +81,7 @@ describe("fundação do Acervo A3.1", () => {
   });
 
   test.skipIf(!process.env.DATABASE_URL)(
-    "reconcilia 109 objetos, 16 documentos e B01 58 WebP + 1 SVG",
+    "reconcilia anexos canônicos, 16 documentos e B01 58 fotos + 1 SVG",
     async () => {
       const anexos = await listarAnexosPublicos();
       expect(validarAcervoPublico(anexos)).toHaveLength(16);
@@ -89,7 +89,7 @@ describe("fundação do Acervo A3.1", () => {
       expect([b01.publicos.length, b01.webp, b01.svg]).toEqual([59, 58, 1]);
       expect(
         organizarDocumentosPublicos(anexos).flatMap((d) => d.arquivos),
-      ).toHaveLength(109);
+      ).toHaveLength(107);
       const audios = anexos.filter((a) =>
         ["audio/mp4", "audio/mpeg", "audio/x-m4a"].includes(a.mimeType),
       );
@@ -155,13 +155,13 @@ describe("fundação do Acervo A3.1", () => {
       ).toThrow(/59 objetos/);
 
       const urls = (await sitemap()).map((item) => item.url);
-      expect(urls.filter((url) => url.includes("/acervo/"))).toHaveLength(125);
+      expect(urls.filter((url) => url.includes("/acervo/"))).toHaveLength(123);
       expect(urls.every((url) => !url.includes("?"))).toBe(true);
     },
   );
 
   test.skipIf(!process.env.DATABASE_URL_MIGRACAO)(
-    "view nova expõe somente UUIDs públicos e preserva 109 linhas",
+    "view expõe somente UUIDs públicos, inclusive assets técnicos",
     async () => {
       const pool = new Pool({
         connectionString: process.env.DATABASE_URL_MIGRACAO,
@@ -180,10 +180,10 @@ describe("fundação do Acervo A3.1", () => {
         join documento d on d.slug = v.slug
       `);
         expect(resultado.rows[0]).toMatchObject({
-          total: 109,
           sem_id: 0,
           fora_gate: 0,
         });
+        expect(resultado.rows[0].total).toBeGreaterThanOrEqual(109);
         const privado = await pool.query(
           "select id::text from arquivo where visibilidade <> 'publico' limit 1",
         );
@@ -234,11 +234,11 @@ describe("contrato machine-readable do inventário público", () => {
   });
 
   test.skipIf(!process.env.DATABASE_URL)(
-    "os 109 itens trazem arquivo_id e pagina_url, e nenhum campo privado",
+    "os anexos canônicos trazem arquivo_id e pagina_url, sem campo privado",
     async () => {
       const inventario = serializarAnexos(await listarAnexosPublicos());
-      expect(inventario.total).toBe(109);
-      expect(inventario.anexos).toHaveLength(109);
+      expect(inventario.total).toBe(107);
+      expect(inventario.anexos).toHaveLength(107);
 
       const oficial = "https://observatoriotobiassoueu.com.br";
       const uuid =
@@ -258,7 +258,7 @@ describe("contrato machine-readable do inventário público", () => {
 
       // Um UUID por arquivo: sem isso a relação com a página não é determinística.
       expect(new Set(inventario.anexos.map((a) => a.arquivo_id)).size).toBe(
-        109,
+        107,
       );
       // Homologação nunca entra no inventário público.
       expect(

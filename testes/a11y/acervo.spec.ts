@@ -20,7 +20,7 @@ test("Acervo responde 200, lista todo o acervo público e não baixa nada sozinh
     total: number;
     anexos: Array<{ slug: string }>;
   };
-  expect(total).toBe(109);
+  expect(total).toBe(107);
   const resposta = await page.goto("/acervo");
   expect(resposta?.status()).toBe(200);
   await expect(

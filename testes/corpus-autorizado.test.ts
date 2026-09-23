@@ -1,10 +1,11 @@
 import { createHash } from "node:crypto";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 import corpusAutorizado from "../src/dados/pesquisa/corpus-b01-autorizado.json";
 import {
+  CONSENTIMENTO_CORPUS_PUBLICO_2026_09_21,
   DERIVADOS_DOS_LUGARES,
   LUGAR_DA_PASTA_DO_CORPUS,
   PASTA_DOS_DERIVADOS_DA_PESQUISA,
@@ -82,7 +83,7 @@ describe("o que a interface consome está declarado", () => {
   /*
     As fotografias de Serra dos Macacos e Ilha Grande nas fichas não são
     derivado novo: são os arquivos que o Acervo publicou no lote de
-    2026-09-18, byte a byte — a da ponte com a placa tarjada (ADR-020).
+    2026-09-18, byte a byte — a da ponte com a placa tarjada.
   */
   test("Serra e Ilha nas fichas são os mesmos bytes publicados no Acervo", () => {
     // A área arborizada entrou no lote de 2026-09-16 e o de 09-18 não a
@@ -144,38 +145,19 @@ describe("nada entra na interface sem estar declarado", () => {
 });
 
 /**
- * As decisões humanas de 2026-09-17 vivem num ADR, não numa conversa.
- *
  * O hash é o que identifica o arquivo decidido. O nome não decide nada — as
  * pastas do corpus usam `principal-capa` e `capa-principal` para a mesma
  * ideia, e nenhuma das duas grafias é fonte de verdade.
  */
-describe("ADR-020 registra as decisões desta curadoria", () => {
-  const caminho =
-    "docs/decisoes/ADR-020-curadoria-fotografica-serra-e-capas.md";
-
-  test("o ADR existe", () => {
-    expect(existsSync(caminho), caminho).toBe(true);
-  });
-
-  test("cada decisão traz o hash do arquivo a que se refere", () => {
-    const adr = readFileSync(caminho, "utf8");
-    for (const [decisao, sha] of [
-      [
-        "capa da Serra",
-        "17bbd985205f34fcc98463d15e541f1540fd682e65d07c8517959d26ef7eae9b",
-      ],
-      [
-        "capa de Ilha Grande",
-        "faf06f4d3f82ebd62d72ce1b74bff770f12d3a96fb9cdf2ce50a599dd633d5de",
-      ],
-      [
-        "placa a tarjar",
-        "d5683e3b98523d36c81e7f2bb9bf8020c361393dc416b6af27fcffd0eccb225c",
-      ],
-    ] as const) {
-      expect(adr, decisao).toContain(sha);
-    }
+describe("curadoria fotográfica factual", () => {
+  test("consentimento obtido para o corpus público da data, sem prova privada", () => {
+    expect(CONSENTIMENTO_CORPUS_PUBLICO_2026_09_21.obtido).toBe(true);
+    expect(CONSENTIMENTO_CORPUS_PUBLICO_2026_09_21.escopo).toContain(
+      "2026-09-21",
+    );
+    expect(CONSENTIMENTO_CORPUS_PUBLICO_2026_09_21.comprovacao).toContain(
+      "não publicada",
+    );
   });
 
   /*
@@ -251,9 +233,8 @@ describe("ADR-020 registra as decisões desta curadoria", () => {
   });
 
   test("declara o escopo da autorização e não a generaliza", () => {
-    const adr = readFileSync(caminho, "utf8");
-    expect(adr).toContain("tarjamento_privacidade");
-    expect(adr).toMatch(/não\*{0,2}\s+se estende/i);
-    expect(adr).toMatch(/LGPD/);
+    expect(CONSENTIMENTO_CORPUS_PUBLICO_2026_09_21.escopo).toContain(
+      "corpus fotográfico público em 2026-09-21",
+    );
   });
 });

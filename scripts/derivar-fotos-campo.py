@@ -159,7 +159,7 @@ FICHAS = {
         "Entrevista de campo dentro do Centro Cultural e Museu Borda da Mata.",
     ),
     # Serra dos Macacos: as oito do conjunto, todas publicadas no Acervo em
-    # 2026-09-18 sob o ADR-020. O nome da ponte é o que a Home já servia —
+    # 2026-09-18. O nome da ponte é o que a Home já servia —
     # mesmos bytes, mesmo endereço.
     "serra-dos-macacos/atravessando-a-ponte.jpg": (
         "serra-dos-macacos-atravessando-a-ponte.webp",
@@ -281,13 +281,13 @@ def data_da_fotografia(
 # ficha territorial: não é o `principal` de um documento no Acervo, que é
 # preferência de link, nem a primeira posição de um array.
 #
-# As duas últimas vêm do ADR-020, de 2026-09-17. Passaram a valer em
+# As duas últimas foram selecionadas em 2026-09-17. Passaram a valer em
 # 2026-09-21, quando os originais de Serra dos Macacos e Ilha Grande entraram
 # em FICHAS — os mesmos bytes publicados no Acervo no lote de 2026-09-18.
 #
 # O nome do arquivo não decide nada: o corpus usa `principal-capa` em duas
 # pastas e `capa-principal` numa terceira. Quem identifica é o sha256, e ele
-# está no ADR.
+# está no corpus autorizado.
 PRINCIPAIS = {
     "recanto-da-serra/recanto-da-serra.png",
     "centro-cultural-museu-borda-da-mata/frente-casa-de-taipa.heic",
@@ -306,7 +306,7 @@ TRANSFORMACAO = (
 # acidente quebra a derivação em vez de publicar o que devia estar coberto.
 # Um `dict.get` que devolve `None` seria silencioso; esta lista não é.
 #
-# Decisão humana de 2026-09-17 (ADR-020): a placa do veículo em
+# Decisão humana de 2026-09-17: a placa do veículo em
 # `atravessando-a-ponte.jpg` fica ilegível **no derivado**, e o original nunca
 # é modificado.
 EXIGEM_TARJA = frozenset(

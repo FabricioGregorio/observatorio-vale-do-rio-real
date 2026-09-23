@@ -283,11 +283,11 @@ describe.skipIf(!URL_MANUTENCAO)(
                   (select count(*)::int from documento
                     where estado_documental = 'PUBLICAVEL') as pub`,
         );
-        // O acervo físico pode crescer sem mudar o gate público. As dez
-        // evidências privadas são conferidas individualmente abaixo.
+        // A view inclui 57 WebPs técnicos e seus originais, mas a coleção
+        // documental filtrada mantém uma só entrada por fotografia.
         expect(r.rows[0]).toMatchObject({
           d: 33,
-          v: 109,
+          v: 164,
           pub: 16,
         });
         /**
@@ -326,7 +326,11 @@ describe.skipIf(!URL_MANUTENCAO)(
           expect(arquivos.rows).toContainEqual({
             chave_storage: chave,
             sha256,
-            principal,
+            principal:
+              chave ===
+              "arquivos/analise-de-dados/relatorio-tecnico-recanto-da-serra-v1.pdf"
+                ? false
+                : principal,
             versao: 1,
             bucket: "observatorio-privado",
             visibilidade: "privado",

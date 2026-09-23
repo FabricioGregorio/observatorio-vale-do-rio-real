@@ -17,7 +17,11 @@ test.describe("Prestação de Contas e /anexos.json descrevem o mesmo acervo", (
   }) => {
     const json = (await (await request.get("/anexos.json")).json()) as {
       total: number;
-      anexos: Array<{ slug: string; link_permanente: string }>;
+      anexos: Array<{
+        slug: string;
+        arquivo_id: string;
+        link_permanente: string;
+      }>;
     };
     await page.goto("/prestacao-de-contas");
 
@@ -28,12 +32,10 @@ test.describe("Prestação de Contas e /anexos.json descrevem o mesmo acervo", (
       links.map((link) => link.getAttribute("href")),
     );
     expect(new Set(urls)).toEqual(
-      new Set(json.anexos.map((a) => a.link_permanente)),
+      new Set(json.anexos.map((a) => `/baixar/${a.arquivo_id}`)),
     );
     for (const url of urls) {
-      expect(url).toMatch(
-        /^https:\/\/acervo\.observatoriotobiassoueu\.com\.br\/arquivos\//,
-      );
+      expect(url).toMatch(/^\/baixar\/[0-9a-f-]{36}$/);
       expect(url).not.toMatch(/privad|r2\.dev|r2\.cloudflarestorage/);
     }
   });
@@ -60,9 +62,7 @@ test.describe("Prestação de Contas e /anexos.json descrevem o mesmo acervo", (
       );
     }
 
-    // Distribuição autorizada em 2026-09-16, por documento. O A03 tem dois
-    // objetos: o PDF integral digitalizado e a transcrição textual acessível
-    // derivada dele, publicada por autorização específica.
+    // Uma entrada documental por original; WebPs não duplicam as 59 fotos.
     expect(Object.fromEntries([...porSlug].sort())).toEqual({
       "anexo-indicadores-etapa-1": 18,
       "entrevista-josenilson-bispo": 2,
@@ -77,8 +77,8 @@ test.describe("Prestação de Contas e /anexos.json descrevem o mesmo acervo", (
       "formulario-rotina-de-funcionamento": 1,
       "fotografias-visitas-i-vii": 59,
       "identidade-visual": 8,
-      "relatorio-tecnico-borda-da-mata": 2,
-      "relatorio-tecnico-recanto-da-serra": 2,
+      "relatorio-tecnico-borda-da-mata": 1,
+      "relatorio-tecnico-recanto-da-serra": 1,
       "relatorio-tecnico-serra-dos-macacos": 1,
     });
 

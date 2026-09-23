@@ -165,7 +165,7 @@ describe("recorte das fichas por lugar", () => {
     }
   });
 
-  test("Serra dos Macacos e Ilha Grande abrem com a capa do ADR-020", () => {
+  test("Serra dos Macacos e Ilha Grande abrem com as capas selecionadas", () => {
     for (const id of ["serra-dos-macacos", "ilha-grande"] as const) {
       const principais = porId.get(id)?.fotos.filter((f) => f.principal);
       expect(principais, id).toHaveLength(1);
