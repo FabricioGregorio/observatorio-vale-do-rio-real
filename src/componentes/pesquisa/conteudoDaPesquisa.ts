@@ -339,7 +339,7 @@ export const PERCURSO: readonly Etapa[] = [
  */
 export const ESCUTA: readonly string[] = [
   "As entrevistas foram gravadas com quem mantém os lugares visitados e com quem responde pela política cultural nos municípios. Elas não ilustram o que os formulários já diziam: em praticamente todas apareceu um tema que nenhum formulário media — visibilidade. Um equipamento cultural só é visitado se, antes disso, se souber que ele existe.",
-  "As entrevistas podem ser consultadas pelo lugar ou pela instituição relacionada. No acervo, cada documento reúne áudio, transcrição, data de publicação e hash de conferência.",
+  "As entrevistas podem ser consultadas pelo lugar ou pela instituição relacionada. No acervo, cada documento reúne áudio, transcrição e data de publicação.",
 ];
 
 /**

@@ -90,7 +90,7 @@ export const O_QUE_FAZ: readonly {
     verbo: "Publica",
     texto:
       "Devolve o material ao território e ao público em endereço próprio, " +
-      "estável, sem login e com hash de integridade.",
+      "estável, sem login e sem pedido de acesso.",
   },
 ];
 
@@ -291,7 +291,7 @@ export const PRODUTOS: readonly Produto[] = [
  */
 export const PERMANENCIA: readonly string[] = [
   "Boa parte do material de um projeto como este costuma viver em pasta compartilhada, link de edição e painel que depende de conta. Endereços assim mudam de permissão, quebram e não sobrevivem a uma consulta feita daqui a alguns anos.",
-  "Cada arquivo publicado aqui tem endereço próprio neste domínio, data de publicação e hash SHA-256 para conferência de integridade — sem login e sem pedido de acesso. O que ainda não pode ser publicado aparece como ausência declarada, nunca como texto de ocasião.",
+  "Cada arquivo publicado aqui tem endereço próprio neste domínio e data de publicação — sem login e sem pedido de acesso. O que ainda não pode ser publicado aparece como ausência declarada, nunca como texto de ocasião.",
 ];
 
 /**

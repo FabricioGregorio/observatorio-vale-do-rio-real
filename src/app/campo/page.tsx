@@ -82,7 +82,7 @@ export default async function PaginaCampo() {
     {
       termo: "Estado",
       valor: conjuntoPublico
-        ? "Conjunto publicado no acervo, com hash por arquivo"
+        ? "Conjunto publicado no acervo"
         : "Conjunto ainda sem ficha pública no acervo",
     },
   ];
@@ -189,8 +189,7 @@ export default async function PaginaCampo() {
         <p className="doc-guia">
           O acervo organiza o conjunto em grupos editoriais: os lugares
           visitados, os encontros de campo e o contexto institucional. Cada
-          fotografia tem ali a sua ficha, com endereço permanente e hash de
-          integridade.
+          fotografia tem ali a sua ficha, com endereço permanente.
         </p>
         <ul className="doc-cartoes">
           {grupos.map((grupo) => (

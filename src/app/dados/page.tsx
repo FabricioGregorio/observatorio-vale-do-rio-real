@@ -255,9 +255,8 @@ export default async function PaginaDados() {
           <>
             <p className="dd-leitura">
               Os arquivos que sustentam esta página estão publicados em endereço
-              permanente, sem login e sem pedido de acesso. O hash SHA-256 de
-              cada um está na Prestação de Contas e em <code>/anexos.json</code>
-              .
+              permanente, sem login e sem pedido de acesso, listados na
+              Prestação de Contas e em <code>/anexos.json</code>.
             </p>
             <ul className="dd-fontes">
               {fontes.map(({ rotulo, descricao, anexo }) => (

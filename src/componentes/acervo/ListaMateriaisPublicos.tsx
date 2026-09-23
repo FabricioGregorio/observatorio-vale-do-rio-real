@@ -1,4 +1,5 @@
 import type { AnexoPublico } from "../../dados/consultas/anexos";
+import { formatoPublico } from "../../dados/editorial/tipos-publicos";
 import { separarCredito } from "../../dados/pesquisa/credito-fotografico";
 import { ActionLink } from "../ui/ActionLink";
 import { tamanhoLegivel } from "./TabelaAnexos";
@@ -110,7 +111,8 @@ export function ListaMateriaisPublicos({ anexos }: { anexos: AnexoPublico[] }) {
                     {rotulo}
                   </ActionLink>
                   <span className="meta-ficha">
-                    {anexo.mimeType} · {tamanhoLegivel(anexo.bytes)}
+                    {formatoPublico(anexo.mimeType)} ·{" "}
+                    {tamanhoLegivel(anexo.bytes)}
                   </span>
                   {credito === null ? null : (
                     <span className="meta-ficha">{credito}</span>

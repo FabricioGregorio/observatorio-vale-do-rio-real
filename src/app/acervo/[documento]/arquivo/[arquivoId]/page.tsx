@@ -2,7 +2,6 @@ import type { Metadata, Route } from "next";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { createElement } from "react";
-import { InformacoesTecnicas } from "../../../../../componentes/acervo/InformacoesTecnicas";
 import { tamanhoLegivel } from "../../../../../componentes/acervo/TabelaAnexos";
 import { ActionLink } from "../../../../../componentes/ui/ActionLink";
 import {
@@ -188,7 +187,6 @@ export default async function PaginaArquivo({ params }: Props) {
       {documento.licenca ? (
         <p className="text-sm">Licença: {documento.licenca}</p>
       ) : null}
-      <InformacoesTecnicas arquivo={arquivo} />
       <p>
         <ActionLink variant="text" href={`/acervo/${slug}` as Route}>
           ← Voltar ao documento

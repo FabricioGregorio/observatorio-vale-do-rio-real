@@ -70,9 +70,8 @@ export function Rodape() {
           <p className="rd__nome">{NOME_OFICIAL}</p>
           <p className="rd__realizacao">Realização: {COLETIVO}</p>
           <p className="rd__permanencia">
-            Cada arquivo publicado aqui tem endereço próprio neste domínio, data
-            de publicação e hash SHA-256 para conferência — sem login e sem
-            pedido de acesso.
+            Cada arquivo publicado aqui tem endereço próprio neste domínio e
+            data de publicação — sem login e sem pedido de acesso.
           </p>
         </section>
 

@@ -302,11 +302,8 @@ export const CSS_DA_HOME = `
 .hl-secoes ul{display:flex;flex-wrap:wrap;gap:.5rem 1.25rem}
 
 /* VIII Conferência */
-.hl-conferencia{display:grid;gap:2.5rem;margin-top:2rem;align-items:end}
-@media (min-width:960px){.hl-conferencia{grid-template-columns:minmax(0,6fr) minmax(0,5fr)}}
+.hl-conferencia{margin-top:2rem}
 .hl-conferencia .hl-texto{font-size:var(--text-lg)}
-.hl-hash{margin:0;padding:1.25rem;border-left:3px solid var(--color-marca);background:var(--color-fundo-elevado)}
-.hl-hash code{display:block;margin-top:.5rem;font-family:var(--font-mono);font-size:var(--text-sm);overflow-wrap:anywhere}
 
 /* Rodapé */
 `.trim();

@@ -78,7 +78,7 @@ export const SINTESE =
  */
 export const POR_QUE: readonly string[] = [
   "Projetos financiados por edital costumam comprovar execução com uma lista de endereços de pastas e documentos compartilhados. Esses endereços podem mudar de permissão ou deixar de funcionar numa consulta feita anos depois.",
-  "Aqui cada arquivo tem endereço próprio neste domínio, data de publicação e hash SHA-256. O mesmo inventário existe em formato legível por máquina e em versão imprimível, e a tabela ao fim desta página é gerada do registro de publicação, não digitada.",
+  "Aqui cada arquivo tem endereço próprio neste domínio e data de publicação. O mesmo inventário existe em formato legível por máquina e em versão imprimível, e a tabela ao fim desta página é gerada do registro de publicação, não digitada.",
   "O que esta página não faz: ela não declara situação financeira, parecer técnico nem prestação de contas encerrada. Nenhuma dessas informações está documentalmente confirmada, e um site de comprovação é o pior lugar possível para uma afirmação aproximada.",
 ];
 

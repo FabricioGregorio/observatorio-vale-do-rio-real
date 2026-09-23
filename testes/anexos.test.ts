@@ -6,7 +6,6 @@ import { afterEach, describe, expect, test } from "vitest";
 
 import {
   dataIso,
-  hashTruncado,
   tamanhoLegivel,
 } from "../src/componentes/acervo/TabelaAnexos";
 import {
@@ -15,25 +14,6 @@ import {
   urlDoZipDeAnexos,
   zipDeAnexosPublicado,
 } from "../src/lib/zip-anexos";
-
-const SHA = "0faa4397902fe6fd382192454f73bcc731758db66153b046c2d78bf7eb90c0de";
-
-describe("apresentação do hash", () => {
-  test("trunca em 12 caracteres com reticências", () => {
-    expect(hashTruncado(SHA)).toBe("0faa4397902f…");
-  });
-
-  test("o truncado é prefixo do integral", () => {
-    const truncado = hashTruncado(SHA).replace("…", "");
-    expect(SHA.startsWith(truncado)).toBe(true);
-    expect(truncado).toHaveLength(12);
-  });
-
-  test("nunca perde o valor integral — ele continua disponível", () => {
-    expect(SHA).toHaveLength(64);
-    expect(hashTruncado(SHA)).not.toBe(SHA);
-  });
-});
 
 describe("tamanho legível", () => {
   test("bytes, kB e MB", () => {

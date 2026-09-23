@@ -107,17 +107,6 @@
   width: 100%;
   max-width: 40rem;
 }
-.acervo-tecnico {
-  border-color: var(--acervo-linha);
-}
-.acervo-tecnico summary {
-  cursor: pointer;
-  font-family: var(--font-display);
-  font-weight: var(--peso-titulo);
-}
-.acervo-tecnico dd {
-  overflow-wrap: anywhere;
-}
 @media (max-width: 767px) {
   .acervo-tracado {
     width: 80%;

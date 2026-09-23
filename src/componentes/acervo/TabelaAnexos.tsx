@@ -1,4 +1,5 @@
 import type { AnexoPublico } from "../../dados/consultas/anexos";
+import { formatoPublico } from "../../dados/editorial/tipos-publicos";
 import { separarCredito } from "../../dados/pesquisa/credito-fotografico";
 import { FOTO_DA_PLACA } from "../../dados/pesquisa/excecao-placa";
 import { ActionLink } from "../ui/ActionLink";
@@ -10,13 +11,10 @@ import { ActionLink } from "../ui/ActionLink";
  * navegar por leitor de tela e imprimir. Em telas estreitas a mesma tabela vira
  * lista de fichas por CSS — sem trocar a marcação, para não perder a semântica.
  *
- * O SHA-256 aparece truncado, com o valor integral disponível para cópia.
+ * O hash de conferência de cada arquivo continua verificado internamente (ver
+ * `/anexos.json` e `/baixar/[arquivoId]`); a tabela pública mostra só o que
+ * uma pessoa precisa para achar e abrir o documento.
  */
-
-/** Primeiros 12 caracteres — o suficiente para conferência visual. */
-export function hashTruncado(sha256: string): string {
-  return `${sha256.slice(0, 12)}…`;
-}
 
 /** Bytes em unidade legível, sem inventar precisão. */
 export function tamanhoLegivel(bytes: number): string {
@@ -41,7 +39,6 @@ const COLUNAS = [
   "Link permanente",
   "Link de origem",
   "Publicado em",
-  "SHA-256",
 ] as const;
 
 export function TabelaAnexos({ anexos }: { anexos: AnexoPublico[] }) {
@@ -69,25 +66,13 @@ export function TabelaAnexos({ anexos }: { anexos: AnexoPublico[] }) {
 
   return (
     /*
-      `relative` não é decoração: é a correção do overflow horizontal em 375 px.
-
-      Cada linha guarda o SHA-256 integral num `<code className="sr-only">`, que
-      é `position: absolute`. Sem ancestral posicionado, o bloco container desses
-      elementos é o `<html>`, e não este contêiner de rolagem — e um contêiner de
-      rolagem só clipa descendentes para os quais ele participa do bloco
-      container. Os oito `sr-only` escapavam do clip na coluna do hash, a ~628 px,
-      e faziam `documentElement.scrollWidth` ir a 629 px numa viewport de 375 px.
-      A tabela em si (621 px) sempre foi clipada corretamente: ela nunca foi a
-      causa. Com `relative`, os `sr-only` passam a ser clipados aqui dentro e a
-      página deixa de rolar na horizontal — a tabela continua rolando.
-
       `<section>` nomeada: dá à região rolável um nome de landmark, para quem
       navega por leitor de tela saber onde entrou. Sem `tabindex` de propósito —
       um contêiner rolável só precisa virar parada de teclado quando não tem
-      conteúdo focável dentro, e aqui toda linha tem o link "Baixar" e o
-      `<summary>` do hash integral, inclusive na última coluna: tabular por eles
-      já rola a tabela até o fim. A `<table>`, o `<caption>` e os `th[scope]`
-      seguem intactos.
+      conteúdo focável dentro, e aqui toda linha tem os links "Abrir"/"Baixar",
+      inclusive quando a rolagem chega ao fim: tabular por eles já rola a
+      tabela inteira. A `<table>`, o `<caption>` e os `th[scope]` seguem
+      intactos.
     */
     <section
       className="relative w-full max-w-full overflow-x-auto"
@@ -96,8 +81,8 @@ export function TabelaAnexos({ anexos }: { anexos: AnexoPublico[] }) {
       <table className="w-full border-collapse text-left">
         <caption className="mb-3 text-left">
           Anexos da prestação de contas: {anexos.length}{" "}
-          {anexos.length === 1 ? "item" : "itens"}, com link permanente e hash
-          de integridade.
+          {anexos.length === 1 ? "item" : "itens"}, com link permanente para
+          consulta e download.
         </caption>
         <thead>
           <tr>
@@ -146,7 +131,7 @@ export function TabelaAnexos({ anexos }: { anexos: AnexoPublico[] }) {
                 className="meta-ficha border-b p-2 align-top"
                 style={{ borderColor: "var(--color-borda)" }}
               >
-                {anexo.mimeType}
+                {formatoPublico(anexo.mimeType)}
                 <span className="block">{tamanhoLegivel(anexo.bytes)}</span>
               </td>
               <td
@@ -196,23 +181,6 @@ export function TabelaAnexos({ anexos }: { anexos: AnexoPublico[] }) {
                 style={{ borderColor: "var(--color-borda)" }}
               >
                 {dataIso(anexo.publicadoEm)}
-              </td>
-              <td
-                className="border-b p-2 align-top"
-                style={{ borderColor: "var(--color-borda)" }}
-              >
-                {/*
-                  O valor integral fica no DOM, dentro de <code>, para copiar e
-                  conferir. O truncado é só apresentação.
-                */}
-                <span className="meta-ficha" aria-hidden="true">
-                  {hashTruncado(anexo.sha256)}
-                </span>
-                <code className="sr-only">{anexo.sha256}</code>
-                <details>
-                  <summary className="meta-ficha">Ver hash integral</summary>
-                  <code className="meta-ficha break-all">{anexo.sha256}</code>
-                </details>
               </td>
             </tr>
           ))}

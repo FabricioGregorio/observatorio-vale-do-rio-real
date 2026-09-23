@@ -56,9 +56,8 @@ export default async function PaginaAcervo() {
           <p className="mt-3 max-w-prose">
             A consulta é por documento. Um documento pode reunir vários arquivos
             — o anexo de indicadores tem dezoito; o conjunto fotográfico,
-            dezenas —, e a ficha de cada um traz formato, tamanho, licença, data
-            de publicação e o hash SHA-256 que permite conferir se o arquivo
-            baixado é exatamente o que foi publicado.
+            dezenas —, e a ficha de cada um traz formato, tamanho, licença e
+            data de publicação.
           </p>
         </div>
         <Suspense
@@ -79,8 +78,8 @@ export default async function PaginaAcervo() {
           O Acervo reúne somente os materiais que integram o corpus público do
           Observatório. Nem tudo o que a pesquisa produziu faz parte desse
           conjunto: entram aqui os materiais autorizados para publicação e
-          preservação pública, e é sobre eles que valem o endereço permanente, a
-          licença declarada e o hash de conferência.
+          preservação pública, e é sobre eles que valem o endereço permanente e
+          a licença declarada.
         </p>
         <p className="mt-3 max-w-prose">
           O percurso que produziu estes documentos está em{" "}
@@ -104,9 +103,9 @@ export default async function PaginaAcervo() {
             Inventário público
           </h2>
           <p className="mt-2 max-w-prose">
-            A mesma lista, em arquivo único e legível por máquina, com endereço,
-            licença e hash de cada peça — útil para quem precisa conferir o
-            acervo inteiro de uma vez.
+            A mesma lista, em arquivo único e legível por máquina, com endereço
+            e licença de cada peça — útil para quem precisa consultar o acervo
+            inteiro de uma vez.
           </p>
         </div>
         <span id="acervo-inventario-nova-guia" className="sr-only">

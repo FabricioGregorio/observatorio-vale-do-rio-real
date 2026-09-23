@@ -881,10 +881,7 @@ export function Produtos({
             Público
           </span>
           <h3>{RELATORIO_DO_RECANTO.titulo}</h3>
-          <p>
-            PDF no acervo permanente, com licença {RELATORIO_DO_RECANTO.licenca}{" "}
-            e hash SHA-256.
-          </p>
+          <p>{`PDF no acervo permanente, com licença ${RELATORIO_DO_RECANTO.licenca}.`}</p>
           <ActionLink variant="document" href={RELATORIO_DO_RECANTO.url}>
             Abrir o PDF
           </ActionLink>
@@ -1013,9 +1010,9 @@ export function Conferencia() {
       <div className="hl-conferencia">
         <div className="hl-texto">
           <p>
-            Os anexos do projeto têm endereço permanente neste domínio, data de
-            publicação e hash SHA-256 para conferência de integridade. Sem
-            login, sem pedido de permissão.
+            Os anexos do projeto têm endereço permanente neste domínio e data de
+            publicação, para quem quiser conferir. Sem login, sem pedido de
+            permissão.
           </p>
           <div className="hl-acoes">
             <ActionLink variant="primary" href="/prestacao-de-contas">
@@ -1029,13 +1026,6 @@ export function Conferencia() {
             </ActionLink>
           </div>
         </div>
-
-        <figure className="hl-hash">
-          <figcaption className="meta-ficha">
-            {RELATORIO_DO_RECANTO.codigo} · SHA-256
-          </figcaption>
-          <code>{RELATORIO_DO_RECANTO.sha256}</code>
-        </figure>
       </div>
 
       <GrafismoSerra />

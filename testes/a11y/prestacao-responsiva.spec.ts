@@ -51,15 +51,12 @@ test.describe("Prestação de Contas em 375 px", () => {
       );
       expect(rola).toBe(true);
 
-      // E o conteúdo rolado continua alcançável por teclado: a última coluna
-      // tem o `<summary>` do hash integral, então tabular rola a tabela até o
-      // fim sem depender de mouse.
-      const ultimaColuna = conteiner
-        .getByRole("group")
-        .last()
-        .getByText("Ver hash integral");
-      await ultimaColuna.focus();
-      await expect(ultimaColuna).toBeFocused();
+      // E o conteúdo rolado continua alcançável por teclado: o último link
+      // da tabela fica na última linha, então tabular por eles rola a tabela
+      // até o fim sem depender de mouse.
+      const ultimoLink = conteiner.getByRole("link").last();
+      await ultimoLink.focus();
+      await expect(ultimoLink).toBeFocused();
     });
   }
 

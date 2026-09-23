@@ -24,7 +24,6 @@ test("documento e arquivo B01 exibem contexto, alt, crédito e canonical HTML", 
   );
   await expect(page.locator("main img")).toHaveAttribute("width", "1280");
   await expect(page.getByText("Foto: Dani Santos")).toBeVisible();
-  await expect(page.getByText("Informações técnicas")).toBeVisible();
   const idCanonico = page.url().split("/").pop();
   expect(idCanonico).not.toBe(arquivoComCredito);
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(

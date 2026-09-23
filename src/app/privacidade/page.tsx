@@ -131,8 +131,8 @@ export default function PaginaPrivacidade() {
           peça na{" "}
           <Link href="/prestacao-de-contas" prefetch={false}>
             Prestação de Contas
-          </Link>
-          , com hash de integridade por arquivo, e no{" "}
+          </Link>{" "}
+          e no{" "}
           <Link href="/acervo" prefetch={false}>
             Acervo
           </Link>

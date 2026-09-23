@@ -173,12 +173,6 @@ export default async function PaginaDocumento({ params }: Props) {
               ? "Consulte a evidência e suas informações."
               : "Todos os arquivos públicos deste documento estão disponíveis para consulta."}
           </p>
-          {slug === "relatorio-tecnico-borda-da-mata" ? (
-            <p className="meta-ficha mt-2">
-              O relatório integral é um PDF digitalizado, sem camada de texto —
-              a versão textual abaixo traz o mesmo conteúdo para leitor de tela.
-            </p>
-          ) : null}
           <ul className="mt-6 grid list-none gap-4 p-0">
             {documento.arquivos.map((arquivo) => (
               <li

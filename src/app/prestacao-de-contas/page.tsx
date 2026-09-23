@@ -55,8 +55,8 @@ export const metadata = metadadosDaRota({
   titulo: "Prestação de Contas — Observatório do Vale do Rio Real",
   descricao:
     "A comprovação pública do Observatório do Vale do Rio Real: entregas, " +
-    "documentos e evidências, com endereço permanente, data de publicação e " +
-    "hash SHA-256 por arquivo.",
+    "documentos e evidências, com endereço permanente e data de publicação " +
+    "por arquivo.",
 });
 
 export default async function PrestacaoDeContas() {
@@ -220,11 +220,11 @@ export default async function PrestacaoDeContas() {
         <p className="meta-ficha pc-secao__rotulo">Evidências</p>
         <div className="pc-secao__corpo">
           <h2 id="pc-evidencias-titulo">
-            Todos os anexos, com hash e endereço permanente
+            Todos os anexos, com endereço permanente
           </h2>
           <p className="pc-guia">
-            Endereço permanente neste domínio, data de publicação e hash SHA-256
-            para conferência de integridade. Sem login, sem pedido de permissão.
+            Endereço permanente neste domínio e data de publicação. Sem login,
+            sem pedido de permissão.
           </p>
 
           <nav aria-label="Formatos da Prestação de Contas">
