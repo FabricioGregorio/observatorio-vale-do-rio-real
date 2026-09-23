@@ -157,8 +157,15 @@ export function TabelaAnexos({ anexos }: { anexos: AnexoPublico[] }) {
                   className="underline"
                   style={{ color: "var(--color-link)" }}
                 >
-                  Baixar
+                  Abrir
                 </LinkDeDestino>
+                <a
+                  href={`/baixar/${anexo.arquivoId}`}
+                  className="ml-3 underline"
+                  style={{ color: "var(--color-link)" }}
+                >
+                  Baixar
+                </a>
               </td>
               <td
                 className="border-b p-2 align-top"

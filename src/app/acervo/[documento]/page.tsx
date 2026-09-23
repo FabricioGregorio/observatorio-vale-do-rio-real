@@ -50,13 +50,17 @@ export default async function PaginaDocumento({ params }: Props) {
   );
   if (!documento) notFound();
   const b01 = slug === "fotografias-visitas-i-vii";
-  const fotografias = b01
-    ? documento.arquivos.filter((item) => item.mimeType === "image/webp").length
-    : 0;
+  /*
+    Fotografia é o que não é o elemento gráfico. Contar por `image/webp` era
+    correto enquanto todo o conjunto era derivado para a web; com os originais
+    publicados, o mesmo filtro passou a devolver 1 — a única WebP que restou é
+    a versão tarjada da foto da placa.
+  */
   const graficos = b01
     ? documento.arquivos.filter((item) => item.mimeType === "image/svg+xml")
         .length
     : 0;
+  const fotografias = b01 ? documento.arquivos.length - graficos : 0;
 
   return (
     <div className="acervo mx-auto flex max-w-6xl flex-col gap-10 px-4 py-10 md:py-16">
@@ -125,21 +129,32 @@ export default async function PaginaDocumento({ params }: Props) {
                     <p className="mt-3 max-w-prose">{grupo.descricao}</p>
                   ) : null}
                   <ul className="mt-6 grid list-none gap-0 p-0">
-                    {entradas.map((entrada) => (
-                      <li
-                        key={entrada.arquivoId}
-                        className="acervo-linha-arquivo border-t py-3"
-                      >
-                        <Link
-                          className="acervo-link"
-                          href={
-                            `/acervo/${slug}/arquivo/${entrada.arquivoId}` as Route
-                          }
+                    {entradas.map((entrada) => {
+                      const arquivo = documento.arquivos.find(
+                        (item) =>
+                          (item.previewArquivoId ?? item.arquivoId) ===
+                          entrada.arquivoId,
+                      );
+                      if (!arquivo)
+                        throw new Error(
+                          `B01: arquivo ausente ${entrada.arquivoId}`,
+                        );
+                      return (
+                        <li
+                          key={arquivo.arquivoId}
+                          className="acervo-linha-arquivo border-t py-3"
                         >
-                          {entrada.tituloPublico}
-                        </Link>
-                      </li>
-                    ))}
+                          <Link
+                            className="acervo-link"
+                            href={
+                              `/acervo/${slug}/arquivo/${arquivo.arquivoId}` as Route
+                            }
+                          >
+                            {entrada.tituloPublico}
+                          </Link>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               </section>

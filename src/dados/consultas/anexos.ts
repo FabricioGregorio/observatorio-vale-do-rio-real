@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
-import { vwAnexoPublico } from "../../../db/schema";
+import { arquivo as tabelaArquivo, vwAnexoPublico } from "../../../db/schema";
 import {
   type EvidenciaManifesto,
   evidenciaManifestoSchema,
@@ -10,6 +10,7 @@ import type {
   ArquivoPublicado,
   ArquivosPublicados,
 } from "../materiais-de-campo";
+import { FOTO_DA_PLACA } from "../pesquisa/excecao-placa";
 
 /**
  * Consulta dos anexos públicos — alimenta a Prestação de Contas, a versão
@@ -60,6 +61,11 @@ export type AnexoPublico = {
   bytes: number;
   sha256: string;
   publicadoEm: Date | null;
+  nomeOriginal?: string | null;
+  /** Asset de apresentação de uma fotografia cujo arquivo documental é o original. */
+  previewUrl?: string;
+  previewArquivoId?: string;
+  previewSha256?: string;
 };
 
 export type EvidenciaDeAnexo = {
@@ -102,8 +108,62 @@ export function databaseUrlDisponivel(
  */
 export function adaptarLinhasDaView(
   linhas: readonly LinhaAnexoPublico[],
+  nomesOriginais: ReadonlyMap<string, string | null> = new Map(),
 ): EvidenciaDeAnexo[] {
+  const publicosPorId = new Map(
+    linhas.map((linha) => [linha.arquivoId, linha]),
+  );
+  const replicasPublicas = new Set(
+    linhas
+      .filter((linha) => linha.arquivoRelacao === "replica")
+      .map((linha) => linha.arquivoOrigemId),
+  );
+  const previewPorOriginal = new Map<string, LinhaAnexoPublico>();
+  const haOriginaisFotograficos = linhas.some(
+    (linha) =>
+      linha.slug === "fotografias-visitas-i-vii" &&
+      ["image/jpeg", "image/heic", "image/png"].includes(linha.mimeType ?? ""),
+  );
+  for (const linha of linhas) {
+    if (
+      linha.slug === "fotografias-visitas-i-vii" &&
+      linha.sha256 === FOTO_DA_PLACA.sha256Original
+    ) {
+      throw new Error("Original com placa não pode integrar o acervo público.");
+    }
+    if (
+      haOriginaisFotograficos &&
+      linha.slug === "fotografias-visitas-i-vii" &&
+      linha.mimeType === "image/webp" &&
+      !linha.arquivoOrigemId &&
+      (linha.arquivoId !== FOTO_DA_PLACA.arquivoPublicoId ||
+        linha.sha256 !== FOTO_DA_PLACA.sha256Publico)
+    ) {
+      throw new Error(`WebP sem original canônico: ${linha.arquivoId}`);
+    }
+    if (
+      linha.slug === "fotografias-visitas-i-vii" &&
+      linha.mimeType === "image/webp" &&
+      linha.arquivoOrigemId &&
+      publicosPorId.has(linha.arquivoOrigemId)
+    ) {
+      if (previewPorOriginal.has(linha.arquivoOrigemId)) {
+        throw new Error(
+          `Fotografia com mais de um WebP: ${linha.arquivoOrigemId}`,
+        );
+      }
+      previewPorOriginal.set(linha.arquivoOrigemId, linha);
+    }
+  }
   return linhas.flatMap((l) => {
+    const originalPublicado =
+      l.arquivoRelacao === "derivado" &&
+      l.arquivoOrigemId !== null &&
+      (publicosPorId.has(l.arquivoOrigemId) ||
+        replicasPublicas.has(l.arquivoOrigemId));
+    // WebP continua na view para a apresentação, mas não é outro anexo.
+    // A única foto tarjada não tem original público e permanece documental.
+    if (originalPublicado) return [];
     if (
       !l.slug ||
       !l.titulo ||
@@ -165,6 +225,18 @@ export function adaptarLinhasDaView(
           bytes: l.bytes,
           sha256: l.sha256,
           publicadoEm: l.publicadoEm,
+          nomeOriginal: nomesOriginais.get(l.arquivoId),
+          ...(previewPorOriginal.has(l.arquivoId)
+            ? {
+                previewUrl:
+                  previewPorOriginal.get(l.arquivoId)?.linkPermanente ??
+                  undefined,
+                previewArquivoId:
+                  previewPorOriginal.get(l.arquivoId)?.arquivoId ?? undefined,
+                previewSha256:
+                  previewPorOriginal.get(l.arquivoId)?.sha256 ?? undefined,
+              }
+            : {}),
           arquivoOrigemId: l.arquivoOrigemId,
           arquivoRelacao:
             l.arquivoRelacao === "derivado" || l.arquivoRelacao === "replica"
@@ -187,7 +259,23 @@ export async function listarEvidenciasDeAnexos(): Promise<EvidenciaDeAnexo[]> {
     .select()
     .from(vwAnexoPublico)
     .where(eq(vwAnexoPublico.espelhado, true));
-  return adaptarLinhasDaView(linhas);
+  const nomes = linhas.length
+    ? await db
+        .select({ id: tabelaArquivo.id, nome: tabelaArquivo.nomeOriginal })
+        .from(tabelaArquivo)
+        .where(
+          inArray(
+            tabelaArquivo.id,
+            linhas
+              .map((linha) => linha.arquivoId)
+              .filter((id): id is string => id !== null),
+          ),
+        )
+    : [];
+  return adaptarLinhasDaView(
+    linhas,
+    new Map(nomes.map((item) => [item.id, item.nome])),
+  );
 }
 
 export function selecionarAnexosPublicos(

@@ -34,10 +34,9 @@ export function organizarDocumentosPublicos(
 }
 
 export function validarAcervoPublico(anexos: readonly AnexoPublico[]) {
-  if (anexos.length !== 109)
-    throw new Error(
-      `Acervo: esperado 109 objetos públicos; recebidos ${anexos.length}.`,
-    );
+  const ids = new Set(anexos.map((item) => item.arquivoId));
+  if (ids.size !== anexos.length)
+    throw new Error("Acervo: arquivo documental duplicado.");
   const documentos = organizarDocumentosPublicos(anexos);
   if (documentos.length !== 16)
     throw new Error(
@@ -77,7 +76,8 @@ export function selecionarArquivoPublico(
 export function tituloDoArquivoPublico(arquivo: AnexoPublico): string {
   if (arquivo.slug === "fotografias-visitas-i-vii") {
     const entrada = mapaB01.arquivos.find(
-      (item) => item.arquivoId === arquivo.arquivoId,
+      (item) =>
+        item.arquivoId === (arquivo.previewArquivoId ?? arquivo.arquivoId),
     );
     if (!entrada)
       throw new Error(`B01: entrada editorial ausente ${arquivo.arquivoId}.`);

@@ -1,6 +1,6 @@
 import type { Metadata, Route } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { createElement } from "react";
 
 import { InformacoesTecnicas } from "../../../../../componentes/acervo/InformacoesTecnicas";
@@ -16,6 +16,7 @@ import {
   formatoPublico,
   tipoPublico,
 } from "../../../../../dados/editorial/tipos-publicos";
+import { FOTO_DA_PLACA } from "../../../../../dados/pesquisa/excecao-placa";
 import { metadadosDaRota } from "../../../../../lib/site-url";
 import "../../../acervo.css";
 
@@ -24,20 +25,36 @@ export const dynamicParams = false;
 
 export async function generateStaticParams() {
   return (await listarDocumentosPublicos()).flatMap((documento) =>
-    documento.arquivos.map((arquivo) => ({
-      documento: documento.slug,
-      arquivoId: arquivo.arquivoId,
-    })),
+    documento.arquivos.flatMap((arquivo) => [
+      { documento: documento.slug, arquivoId: arquivo.arquivoId },
+      ...(arquivo.previewArquivoId
+        ? [{ documento: documento.slug, arquivoId: arquivo.previewArquivoId }]
+        : []),
+    ]),
+  );
+}
+
+function resolverArquivo(
+  documentos: Awaited<ReturnType<typeof listarDocumentosPublicos>>,
+  slug: string,
+  arquivoId: string,
+) {
+  return (
+    selecionarArquivoPublico(documentos, slug, arquivoId) ??
+    selecionarDocumentoPublico(documentos, slug)?.arquivos.find(
+      (item) => item.previewArquivoId === arquivoId,
+    ) ??
+    null
   );
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { documento: slug, arquivoId } = await params;
   const documentos = await listarDocumentosPublicos();
-  const arquivo = selecionarArquivoPublico(documentos, slug, arquivoId);
+  const arquivo = resolverArquivo(documentos, slug, arquivoId);
   if (!arquivo) notFound();
   return metadadosDaRota({
-    pathname: `/acervo/${slug}/arquivo/${arquivoId}`,
+    pathname: `/acervo/${slug}/arquivo/${arquivo.arquivoId}`,
     titulo: `${tituloDoArquivoPublico(arquivo)} — Acervo`,
   });
 }
@@ -46,18 +63,23 @@ export default async function PaginaArquivo({ params }: Props) {
   const { documento: slug, arquivoId } = await params;
   const documentos = await listarDocumentosPublicos();
   const documento = selecionarDocumentoPublico(documentos, slug);
-  const arquivo = selecionarArquivoPublico(documentos, slug, arquivoId);
+  const arquivo = resolverArquivo(documentos, slug, arquivoId);
   if (!documento || !arquivo) notFound();
+  if (arquivo.arquivoId !== arquivoId)
+    permanentRedirect(`/acervo/${slug}/arquivo/${arquivo.arquivoId}`);
 
   const editorial =
     slug === "fotografias-visitas-i-vii"
-      ? mapaB01.arquivos.find((item) => item.arquivoId === arquivoId)
+      ? mapaB01.arquivos.find(
+          (item) => item.arquivoId === (arquivo.previewArquivoId ?? arquivoId),
+        )
       : null;
   if (slug === "fotografias-visitas-i-vii" && !editorial) notFound();
   const titulo = tituloDoArquivoPublico(arquivo);
   const imagemB01 =
     editorial &&
-    ["image/webp", "image/png", "image/svg+xml"].includes(arquivo.mimeType);
+    (Boolean(arquivo.previewUrl) ||
+      ["image/webp", "image/png", "image/svg+xml"].includes(arquivo.mimeType));
   const audio = ["audio/mp4", "audio/mpeg", "audio/x-m4a"].includes(
     arquivo.mimeType,
   );
@@ -101,7 +123,7 @@ export default async function PaginaArquivo({ params }: Props) {
       {imagemB01 && editorial ? (
         <figure className="flex flex-col gap-3">
           <img
-            src={arquivo.linkPermanente}
+            src={arquivo.previewUrl ?? arquivo.linkPermanente}
             width={editorial.largura}
             height={editorial.altura}
             alt={editorial.alt}
@@ -159,7 +181,15 @@ export default async function PaginaArquivo({ params }: Props) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Abrir arquivo público <span aria-hidden="true">↗</span>
+          {arquivo.arquivoId === FOTO_DA_PLACA.arquivoPublicoId
+            ? "Abrir versão pública"
+            : "Abrir original"}{" "}
+          <span aria-hidden="true">↗</span>
+        </a>
+        <a className="acervo-link" href={`/baixar/${arquivo.arquivoId}`}>
+          {arquivo.arquivoId === FOTO_DA_PLACA.arquivoPublicoId
+            ? "Baixar versão pública"
+            : "Baixar original"}
         </a>
       </p>
       {documento.licenca ? (

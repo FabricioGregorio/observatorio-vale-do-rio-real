@@ -14,6 +14,14 @@
 export const PASTA_PUBLICA_DA_PESQUISA = "/media/pesquisa";
 export const PASTA_DOS_DERIVADOS_DA_PESQUISA = "public/media/pesquisa";
 
+/** Fato declarado pelo responsável em 2026-09-21, restrito ao corpus publicado naquela data. */
+export const CONSENTIMENTO_CORPUS_PUBLICO_2026_09_21 = {
+  obtido: true,
+  escopo:
+    "corpus fotográfico público em 2026-09-21, inclusive pessoas identificáveis",
+  comprovacao: "interna; não publicada",
+} as const;
+
 import { mapaB01 } from "../editorial/mapa-b01";
 import type { IdDoLugar } from "../territorio/referencias";
 import fotosDosLugares from "./lugares-derivados.json";

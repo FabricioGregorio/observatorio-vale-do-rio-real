@@ -19,6 +19,8 @@ const FORMATOS_PUBLICOS: Record<string, string> = {
   "text/markdown": "Markdown",
   "image/webp": "Fotografia WebP",
   "image/png": "Imagem PNG",
+  "image/jpeg": "Fotografia JPG",
+  "image/heic": "Fotografia HEIC",
   "image/svg+xml": "Elemento gráfico SVG",
   "audio/mp4": "Áudio M4A",
   "audio/x-m4a": "Áudio M4A",

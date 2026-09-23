@@ -62,7 +62,9 @@ export function reconciliarMapaB01(anexos: readonly AnexoPublico[]) {
   if (IDS_DOS_LUGARES.some((id) => !lugares.has(id)))
     throw new Error("B01: ordem territorial não cobre os lugares canônicos.");
 
-  const idsPublicos = new Map(publicos.map((item) => [item.arquivoId, item]));
+  const idsPublicos = new Map(
+    publicos.map((item) => [item.previewArquivoId ?? item.arquivoId, item]),
+  );
   if (idsPublicos.size !== 59)
     throw new Error("B01: arquivo público duplicado.");
   const idsEditoriais = new Set<string>();
@@ -84,9 +86,9 @@ export function reconciliarMapaB01(anexos: readonly AnexoPublico[]) {
       throw new Error(
         `B01: arquivo editorial sem objeto público ${entrada.arquivoId}.`,
       );
-    if (publico.sha256 !== entrada.sha256)
+    if ((publico.previewSha256 ?? publico.sha256) !== entrada.sha256)
       throw new Error(`B01: SHA divergente ${entrada.arquivoId}.`);
-    if (publico.mimeType === "image/webp") webp++;
+    if (publico.previewArquivoId || publico.mimeType === "image/webp") webp++;
     else if (publico.mimeType === "image/svg+xml") svg++;
     else throw new Error(`B01: MIME inesperado ${publico.mimeType}.`);
     const creditoOperacional = separarCredito(publico.rotuloArquivo).credito;
@@ -97,7 +99,11 @@ export function reconciliarMapaB01(anexos: readonly AnexoPublico[]) {
   }
   if (webp !== 58 || svg !== 1)
     throw new Error("B01: composição de mídia divergente.");
-  if (publicos.some((item) => !idsEditoriais.has(item.arquivoId)))
+  if (
+    publicos.some(
+      (item) => !idsEditoriais.has(item.previewArquivoId ?? item.arquivoId),
+    )
+  )
     throw new Error("B01: objeto público sem entrada editorial.");
 
   for (const grupo of mapaB01.grupos) {

@@ -35,6 +35,7 @@ export function serializarAnexos(anexos: readonly AnexoPublico[]) {
       arquivo_id: a.arquivoId,
       titulo: a.titulo,
       rotulo_arquivo: separarCredito(a.rotuloArquivo).rotulo || null,
+      nome_original: a.nomeOriginal ?? null,
       /** Crédito de autoria de terceiro, já na forma de exibição. */
       credito: separarCredito(a.rotuloArquivo).credito,
       principal: a.principal,
