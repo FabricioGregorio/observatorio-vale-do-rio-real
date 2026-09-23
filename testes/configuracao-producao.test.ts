@@ -1,6 +1,8 @@
 import { describe, expect, test } from "vitest";
-import sitemap from "../src/app/sitemap";
+import sitemap, { ROTAS_PUBLICAS } from "../src/app/sitemap";
+import { listarDocumentosPublicos } from "../src/dados/consultas/acervo";
 import { databaseUrlDisponivel } from "../src/dados/consultas/anexos";
+import { listarEpisodiosPublicos } from "../src/dados/consultas/podobservar";
 import { regrasDeRobots } from "../src/lib/indexacao";
 import { metadadosDaRota, obterSiteUrl, urlDoSite } from "../src/lib/site-url";
 
@@ -55,7 +57,22 @@ describe("configuração de produção", () => {
     const urls = (await sitemap()).map((item) => item.url);
 
     // O inventário canônico não gera páginas extras para derivados A02/A03.
-    expect(urls).toHaveLength(139);
+    const [documentos, episodios] = await Promise.all([
+      listarDocumentosPublicos(),
+      listarEpisodiosPublicos(),
+    ]);
+    expect(urls).toHaveLength(
+      ROTAS_PUBLICAS.length +
+        episodios.length +
+        documentos.length +
+        documentos.reduce(
+          (total, documento) => total + documento.arquivos.length,
+          0,
+        ),
+    );
+    expect(urls).not.toContain(
+      "https://observatoriotobiassoueu.com.br/acessibilidade",
+    );
     expect(urls).toContain("https://observatoriotobiassoueu.com.br/");
     expect(urls).toContain("https://observatoriotobiassoueu.com.br/territorio");
     expect(urls).toContain("https://observatoriotobiassoueu.com.br/acervo");

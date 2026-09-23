@@ -1,10 +1,9 @@
-import Link from "next/link";
-
 import {
   CAMINHO_DAS_MARCAS,
   ICONE_OBSERVATORIO_CABECALHO,
 } from "../../dados/hero/derivados";
 import { ID_CABECALHO_HOME } from "../../lib/navegacao";
+import { ActionLink } from "../ui/ActionLink";
 import { CentralAcessibilidade } from "./CentralAcessibilidade";
 import { MarcaCabecalho } from "./MarcaCabecalho";
 import { MenuMobile } from "./MenuMobile";
@@ -29,13 +28,13 @@ export function Cabecalho() {
         </nav>
         <div className="hl-topo__util">
           <CentralAcessibilidade />
-          <Link
-            className="hl-botao hl-botao--curto hl-topo__prestacao"
+          <ActionLink
+            variant="primary"
+            className="hl-topo__prestacao"
             href="/prestacao-de-contas"
-            prefetch={false}
           >
-            Prestação de contas <span aria-hidden="true">→</span>
-          </Link>
+            <span>Prestação de contas</span> <span aria-hidden="true">→</span>
+          </ActionLink>
         </div>
       </div>
     </header>

@@ -106,12 +106,7 @@ for (const rota of ENDERECOS_PUBLICOS) {
  * `prestacao-axe`, `territorio-publico`, `home`). Aqui entram as seis que
  * eram stub e passaram a ter conteúdo.
  */
-const ROTAS_NOVAS = [
-  "/acessibilidade",
-  "/privacidade",
-  "/contato",
-  "/campo",
-] as const;
+const ROTAS_NOVAS = ["/privacidade", "/contato", "/campo"] as const;
 
 for (const rota of ROTAS_NOVAS) {
   for (const tema of ["light", "dark"] as const) {

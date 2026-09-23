@@ -18,12 +18,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
-
 import {
   DESCRICOES_DE_CONTEUDO,
   type ItemNavegacao,
   MENU_PRINCIPAL,
 } from "../../lib/navegacao";
+import { Button } from "../ui/Button";
 
 type RotaDeConteudo = keyof typeof DESCRICOES_DE_CONTEUDO;
 
@@ -198,7 +198,8 @@ export function MenuMobile({
 
   return (
     <div className={classeResponsiva} ref={raiz}>
-      <button
+      <Button
+        variant="utility"
         ref={gatilho}
         type="button"
         aria-expanded={aberto}
@@ -212,7 +213,7 @@ export function MenuMobile({
         }}
       >
         {aberto ? "Fechar menu" : "Menu"}
-      </button>
+      </Button>
 
       {aberto ? (
         <div

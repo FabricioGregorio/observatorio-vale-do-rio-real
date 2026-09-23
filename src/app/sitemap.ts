@@ -4,7 +4,7 @@ import { listarDocumentosPublicos } from "../dados/consultas/acervo";
 import { listarEpisodiosPublicos } from "../dados/consultas/podobservar";
 import { urlDoSite } from "../lib/site-url";
 
-const ROTAS_PUBLICAS = [
+export const ROTAS_PUBLICAS = [
   "/",
   "/observatorio",
   "/pesquisa",
@@ -14,7 +14,6 @@ const ROTAS_PUBLICAS = [
   "/podobservar",
   "/acervo",
   "/prestacao-de-contas",
-  "/acessibilidade",
   "/privacidade",
   "/contato",
 ] as const;

@@ -38,7 +38,6 @@ export const MENU_PRINCIPAL: readonly ItemNavegacao[] = [
  *
  */
 export const MENU_INSTITUCIONAL: readonly ItemNavegacao[] = [
-  { href: "/acessibilidade", rotulo: "Acessibilidade" },
   { href: "/privacidade", rotulo: "Privacidade" },
   { href: "/contato", rotulo: "Contato" },
 ] as const;

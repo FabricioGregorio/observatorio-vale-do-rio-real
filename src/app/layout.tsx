@@ -6,9 +6,10 @@ import { CSS_DO_CABECALHO } from "../componentes/layout/estilosCabecalho";
 import { PularConteudo } from "../componentes/layout/PularConteudo";
 import { Rodape } from "../componentes/layout/Rodape";
 import { ID_CONTEUDO } from "../lib/navegacao";
+import { SCRIPT_PREFERENCIAS_INICIAIS } from "../lib/preferencias-interface";
 import { metadadosDaRota, obterSiteUrl } from "../lib/site-url";
-import { SCRIPT_TEMA_INICIAL } from "../lib/tema";
 import "../estilos/tokens.css";
+import "../estilos/acoes.css";
 
 /**
  * Fontes do projeto.
@@ -72,7 +73,7 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${archivo.variable} ${literata.variable} ${plexMono.variable}`}
       /*
-        O script abaixo escreve `data-tema` no `<html>` antes da hidratação,
+        O script abaixo escreve as preferências locais no `<html>` antes da hidratação,
         e o servidor não tem como prever o que este navegador salvou. Sem
         `suppressHydrationWarning`, o React reclamaria de um atributo que ele
         não renderizou. A supressão vale **só para este elemento** e não
@@ -82,7 +83,7 @@ export default function RootLayout({
     >
       <head>
         {/*
-          Preferência manual de tema, aplicada antes da primeira pintura.
+          Preferências locais de tema, movimento e texto, aplicadas antes da primeira pintura.
 
           É o único script inline do projeto, e a exceção é justificada: sem
           ele, quem escolheu o tema escuro veria um lampejo claro a cada
@@ -90,7 +91,7 @@ export default function RootLayout({
 
           Não faz rede, não grava cookie e não rastreia nada — o que o
           o projeto proíbe é script de terceiro que rastreie. O conteúdo vem
-          de `src/lib/tema.ts`, para que a chave de armazenamento exista em um
+          de `src/lib/preferencias-interface.ts`, para que a chave de armazenamento exista em um
           lugar só.
 
           Sem escolha manual salva, o script não toca no DOM e o
@@ -103,7 +104,9 @@ export default function RootLayout({
           nenhuma entrada externa interpolada — o risco que o nome do atributo
           adverte não existe neste uso.
         */}
-        <script dangerouslySetInnerHTML={{ __html: SCRIPT_TEMA_INICIAL }} />
+        <script
+          dangerouslySetInnerHTML={{ __html: SCRIPT_PREFERENCIAS_INICIAIS }}
+        />
       </head>
       <body className="flex min-h-screen flex-col">
         <style>{CSS_DO_CABECALHO}</style>
@@ -125,8 +128,8 @@ export default function RootLayout({
           `/privacidade`:
 
           - **Sem cookie e sem armazenamento.** O script não escreve cookie,
-            `localStorage` nem `sessionStorage`. A única chave gravada por este
-            site continua sendo a preferência de tema (`src/lib/tema.ts`).
+            `localStorage` nem `sessionStorage`. As preferências locais gravadas por este
+            site são tema, movimento e tamanho do texto.
           - **Sem identificador de pessoa.** Não há `userId`, e-mail, nome,
             fingerprint próprio nem evento com dado pessoal. Nenhum evento
             customizado é emitido: só a visualização de página automática.

@@ -24,7 +24,7 @@ body > .hl-topo{position:sticky;top:0;z-index:var(--z-cabecalho);border-bottom:1
 .hl-topo .hl-topo__nav>ul>li>a:hover,.hl-conteudos__gatilho:hover{color:var(--color-cabecalho-acento)}
 .hl-topo .hl-topo__nav>ul>li>a:hover::after,.hl-topo .hl-topo__nav>ul>li>a:focus-visible::after,.hl-topo .hl-topo__nav>ul>li>a[aria-current="page"]::after,.hl-conteudos__gatilho:hover::after,.hl-conteudos__gatilho:focus-visible::after,.hl-conteudos__gatilho[aria-expanded="true"]::after,.hl-conteudos[data-ativo] .hl-conteudos__gatilho::after{transform:scaleX(1);transform-origin:left}
 body > .hl-topo :focus-visible{outline:3px solid var(--color-destaque);outline-offset:3px}
-.hl-capitulo a:not(.hl-botao,.territorio-cartografico__ir){text-decoration:underline;text-underline-offset:.18em}
+.hl-capitulo a:not(.acao,.territorio-cartografico__ir){text-decoration:underline;text-underline-offset:.18em}
 .hl-topo__util{display:flex;align-items:center;gap:.75rem;margin-left:auto}
 .hl-conteudos{position:relative}
 .hl-conteudos__gatilho span{display:inline-block;margin-left:.2rem;font-size:var(--text-sm);transition:transform var(--duracao-hover-cabecalho) var(--easing-padrao)}
@@ -45,9 +45,6 @@ body > .hl-topo :focus-visible{outline:3px solid var(--color-destaque);outline-o
 .hl-menu-estreito__grupo{margin:1rem .5rem .25rem;padding-top:1rem;border-top:1px solid var(--color-cabecalho-borda)}
 .hl-menu-estreito__lista a{font-family:var(--font-display);font-size:var(--text-nav);font-weight:600;letter-spacing:.015em;text-decoration:none}
 .hl-menu-estreito__lista a[aria-current="page"]{border-left:2px solid var(--color-cabecalho-acento)}
- .hl-topo .hl-topo__acessibilidade{background:transparent;transition:background-color var(--duracao-hover) var(--easing-padrao),color var(--duracao-hover) var(--easing-padrao)}
- .hl-topo .hl-topo__acessibilidade:hover{--fundo-acessibilidade:var(--color-cabecalho-texto);--texto-acessibilidade:var(--color-cabecalho-fundo)}
- .hl-topo .hl-topo__acessibilidade{text-transform:none;font-family:var(--font-display);font-size:var(--text-sm);letter-spacing:.01em}
 .hl-topo .hl-topo__prestacao:focus-visible, .hl-topo .hl-topo__acessibilidade:focus-visible{outline-width:3px;outline-offset:3px}
 /*
   Acessibilidade e Prestação de contas são a mesma utilidade do cabeçalho e
@@ -56,22 +53,19 @@ body > .hl-topo :focus-visible{outline:3px solid var(--color-destaque);outline-o
 
   A altura divergia porque só o botão de Prestação quebrava o rótulo em duas
   linhas quando a linha do cabeçalho apertava: mesmo padding, mesma borda e
-  mesmo corpo de texto, o dobro de linhas. white-space:nowrap mantém o rótulo
-  inteiro e min-height fixa o mesmo piso nos dois, em qualquer largura.
+  mesmo corpo de texto, o dobro de linhas. A quebra de linha mantém o texto legível; min-height fixa o mesmo piso
+  nos dois controles, em qualquer largura.
 */
-.hl-topo .hl-topo__acessibilidade,.hl-topo .hl-topo__prestacao{display:inline-flex;align-items:center;justify-content:center;min-height:var(--topo-altura-utilidade);white-space:nowrap}
-@media (max-width:639px){.hl-topo__linha{align-items:center;display:grid;grid-template-columns:minmax(0,1fr) auto}.hl-topo__marca span{max-width:10.5rem;font-size:var(--text-sm)}.hl-topo__nav-estreita,.hl-topo__nav-estreita>div{display:contents}.hl-topo__nav-estreita button{grid-column:2;grid-row:1;width:var(--topo-botao-mobile);padding:var(--topo-padding-mobile)}.hl-topo__nav-estreita [tabindex="-1"]{grid-column:1/-1;grid-row:3}.hl-topo__util{grid-column:1/-1;width:100%;justify-content:space-between;padding-top:var(--topo-padding-mobile);border-top:1px solid var(--color-cabecalho-borda)} .hl-topo .hl-topo__acessibilidade,.hl-topo .hl-topo__prestacao{font-size:var(--text-xs)}}
+.hl-topo .hl-topo__acessibilidade,.hl-topo .hl-topo__prestacao{display:inline-flex;align-items:center;justify-content:center;min-height:var(--topo-altura-utilidade);white-space:normal}
+@media (max-width:639px){.hl-topo__linha{align-items:center;display:grid;grid-template-columns:minmax(0,1fr) auto}.hl-topo__marca span{max-width:10.5rem;font-size:var(--text-sm)}.hl-topo__nav-estreita,.hl-topo__nav-estreita>div{display:contents}.hl-topo__nav-estreita button{grid-column:2;grid-row:1;width:var(--topo-botao-mobile);padding:var(--topo-padding-mobile)}.hl-topo__nav-estreita [tabindex="-1"]{grid-column:1/-1;grid-row:3}.hl-topo__util{grid-column:1/-1;width:100%;justify-content:space-between;padding-top:var(--topo-padding-mobile);border-top:1px solid var(--color-cabecalho-borda)}}
 
 
-.hl-topo .hl-botao{display:inline-flex;align-items:center;gap:.75rem;padding:.5rem .8rem;border:1px solid var(--color-cabecalho-acento);border-radius:var(--radius-ficha);font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;text-decoration:none}
 .hl-topo .hl-topo__marca{color:var(--color-cabecalho-texto)}
 .hl-topo .hl-topo__marca[aria-current="page"] span{color:var(--color-cabecalho-acento)}
 .hl-topo .hl-topo__nav>ul{list-style:none;margin:0;padding:0}
 .hl-topo .hl-conteudos__painel ul{list-style:none;margin:0;padding:0}
 .hl-topo .hl-menu-estreito__lista{list-style:none;margin:0;padding:0}
-.hl-topo .hl-topo__linha{width:100%;max-width:var(--largura-conteudo);margin-inline:auto;padding-inline:clamp(1rem,4vw,3.5rem)}
-.hl-topo .hl-botao.hl-topo__prestacao{border-color:var(--color-cabecalho-acento);background:var(--color-cabecalho-acento);color:var(--color-cabecalho-fundo)}
-.hl-topo .hl-botao.hl-topo__prestacao:hover{background:transparent;color:var(--color-cabecalho-acento)}
+.hl-topo .hl-topo__linha{width:100%;max-width:var(--largura-cabecalho);margin-inline:auto;padding-inline:clamp(1rem,4vw,3.5rem)}
 @media (max-width:1279px){.hl-topo .hl-topo__nav{display:none}}
 @media (min-width:1280px){.hl-topo .hl-topo__nav{display:block}.hl-topo .hl-topo__nav-estreita{display:none}}
 `;

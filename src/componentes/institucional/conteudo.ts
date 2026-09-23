@@ -33,128 +33,13 @@ export type ItemDeclarado = {
   readonly prova: string | null;
 };
 
-/* ─────────────────────────────── acessibilidade ───────────────────────── */
-
-export const ACESSIBILIDADE_SINTESE =
-  "O que este site faz por quem navega com teclado, com leitor de tela, com " +
-  "pouca visão, com pouca banda ou sem poder ouvir — descrito recurso a " +
-  "recurso, com a forma de conferir cada um.";
-
-export const ACESSIBILIDADE_ABERTURA =
-  "Esta não é uma declaração de conformidade. O site não passou por auditoria " +
-  "externa e não tem selo de certificação. Os recursos disponíveis e as " +
-  "limitações conhecidas estão descritos abaixo.";
-
-export const ACESSIBILIDADE_RECURSOS: readonly ItemDeclarado[] = [
-  {
-    titulo: "Navegação inteira por teclado",
-    texto:
-      "Todo link, botão e controle é alcançável por Tab, na ordem em que aparece na página. O primeiro elemento de cada página é um link para pular direto ao conteúdo, sem percorrer o menu.",
-    prova: "Experimente percorrer esta página com a tecla Tab",
-  },
-  {
-    titulo: "Foco sempre visível",
-    texto:
-      "O elemento em foco recebe um contorno de 3 px que muda de cor conforme o tema, para não desaparecer sobre fundo escuro. Nenhum estilo do site remove o indicador de foco.",
-    prova: "Use Tab para ver o contorno nos links e controles",
-  },
-  {
-    titulo: "Contraste conferido, não estimado",
-    texto:
-      "As combinações de cor de texto e fundo são medidas e precisam alcançar a razão mínima de 4,5:1 do nível AA. Cor nunca é o único canal de informação: nos gráficos, série e categoria se distinguem também por forma e por texto escrito ao lado.",
-    prova: null,
-  },
-  {
-    titulo: "Tema claro, escuro ou o do seu sistema",
-    texto:
-      "A Central de Acessibilidade, no alto de cada página, permite escolher entre claro, escuro e seguir o sistema operacional. A escolha fica gravada no seu navegador e vale nas próximas visitas. Sem JavaScript, o site continua respeitando a preferência do sistema.",
-    prova:
-      "Central de Acessibilidade · painel com foco preso e fechamento por Esc",
-  },
-  {
-    titulo: "Menos animação quando você pede menos",
-    texto:
-      "Se o seu sistema estiver configurado para reduzir movimento, o site zera as transições — não há um ajuste a ligar aqui, porque a preferência do sistema já basta. A Central relata o que ela leu do seu sistema.",
-    prova: "Ative a redução de movimento nas preferências do seu aparelho",
-  },
-  {
-    titulo: "Estrutura semântica de verdade",
-    texto:
-      "Cada página tem um único h1 e uma hierarquia de títulos sem saltos. As tabelas são tabelas, com cabeçalho declarado; as listas são listas; cada região da página tem nome acessível. Em telas estreitas a tabela de anexos vira ficha por CSS, sem trocar a marcação — a semântica não se perde no caminho.",
-    prova: null,
-  },
-  {
-    titulo: "Toda imagem com texto alternativo",
-    texto:
-      "Nenhuma imagem é publicada sem alternativa textual. As fotografias de campo trazem, além do texto alternativo, legenda visível e crédito de autoria quando ele é conhecido.",
-    prova: "Fotografias de campo com legenda e texto alternativo no Acervo",
-  },
-  {
-    titulo: "Todo áudio com transcrição",
-    texto:
-      "Nenhum áudio é publicado sem transcrição vinculada. Os episódios do PodObservar trazem transcrição revisada e integral, legível na própria página — quem não pode ouvir, lê o mesmo conteúdo.",
-    prova: "Transcrição integral na página de cada episódio",
-  },
-  {
-    titulo: "O mapa funciona pelo teclado, e o conteúdo existe sem ele",
-    texto:
-      "O percurso pelos lugares do Território é uma lista de abas com uma única parada de Tab: as setas andam entre os lugares e o estado selecionado é anunciado. Sem JavaScript, a página do Território continua trazendo o conteúdo essencial em texto, e a leitura dos municípios do recorte está sempre disponível em lista.",
-    prova: "Lista de lugares e municípios na página Território",
-  },
-  {
-    titulo: "Leitura em zoom, e em tela pequena",
-    texto:
-      "As páginas são conferidas em 320, 375, 768, 1024, 1440 px sem rolagem horizontal, e a tipografia dos números cresce com a largura do próprio bloco, para não estourar a caixa em zoom de 200%.",
-    prova: null,
-  },
-  {
-    titulo: "Página pensada para imprimir",
-    texto:
-      "A Prestação de Contas tem versão imprimível: cabeçalho e rodapé saem da folha, o fundo fica branco e cada link aparece com o endereço por extenso, porque no papel um link sem endereço visível é um link perdido.",
-    prova: "/prestacao-de-contas/imprimir",
-  },
-  {
-    titulo: "Nada que dispute a sua atenção",
-    texto:
-      "Não há áudio ou vídeo que comece sozinho, carrossel que gire, janela que apareça por cima nem contagem regressiva. As fontes são servidas pelo próprio site, então o texto não fica invisível esperando um download de terceiro.",
-    prova: null,
-  },
-];
-
-export const ACESSIBILIDADE_LIMITES: readonly ItemDeclarado[] = [
-  {
-    titulo: "Não há auditoria externa nem selo",
-    texto:
-      "Nenhuma entidade independente avaliou o site. Os recursos descritos aqui não equivalem a uma certificação de acessibilidade.",
-    prova: null,
-  },
-  {
-    titulo: "Ajuste de tamanho de texto e alto contraste não existem",
-    texto:
-      "A Central de Acessibilidade não oferece controle de tamanho de texto nem modo dedicado de alto contraste. O zoom do próprio navegador continua disponível em todas as páginas.",
-    prova: null,
-  },
-  {
-    titulo: "Um dos relatórios é digitalizado",
-    texto:
-      "O relatório técnico do Centro Cultural e Museu Borda da Mata é um PDF digitalizado, sem camada de texto: um leitor de tela não o alcança. Por isso o acervo publica, ao lado dele, uma versão textual acessível do mesmo conteúdo.",
-    prova: "A03 — versão textual acessível, no Acervo",
-  },
-  {
-    titulo: "Os arquivos do acervo são do formato em que foram produzidos",
-    texto:
-      "Planilhas e PDFs de terceiros são publicados como foram entregues, para que sirvam como prova documental. A acessibilidade interna desses arquivos é a que eles tinham na origem.",
-    prova: null,
-  },
-];
-
 /* ──────────────────────────────── privacidade ─────────────────────────── */
 
 export const PRIVACIDADE_SINTESE =
   "Este site não usa cookies e não pede nenhum dado seu. Ele mede audiência " +
   "de forma agregada, para saber quantas pessoas leem cada página, e essa " +
-  "medição não identifica ninguém. O que ele guarda no seu navegador é uma " +
-  "preferência de tema, e ela não sai dali.";
+  "medição não identifica ninguém. As preferências de tema, movimento e " +
+  "tamanho do texto ficam no seu navegador e não saem dali.";
 
 export const PRIVACIDADE_ABERTURA =
   "Veja quais dados este site usa durante a navegação, o que fica no seu " +
@@ -206,8 +91,8 @@ export const PRIVACIDADE_NAVEGACAO: readonly ItemDeclarado[] = [
   {
     titulo: "O que fica gravado no seu navegador",
     texto:
-      "Uma única chave de armazenamento local, com a sua escolha de tema — claro, escuro ou seguir o sistema. Ela existe para que a escolha sobreviva à próxima visita, fica no seu aparelho, nunca é enviada a lugar nenhum e desaparece quando você limpa os dados do site. A medição de audiência não grava nada aqui.",
-    prova: "Chave observatorio-tema, em armazenamento local",
+      "Três preferências locais: tema, redução de animações e tamanho do texto. Elas ficam no seu aparelho para as próximas visitas e nunca são enviadas a lugar nenhum. Você pode restaurá-las na Central de Acessibilidade ou limpar os dados do site. A medição de audiência não grava nada aqui.",
+    prova: "Central de Acessibilidade, no cabeçalho",
   },
 ];
 

@@ -32,8 +32,9 @@ for (const largura of [375, 768, 1440]) {
     const institucional = rodape.getByRole("navigation", {
       name: "Páginas institucionais",
     });
+    // Acessibilidade saiu do rodapé: agora é botão no cabeçalho, que abre a
+    // Central de Acessibilidade em vez de navegar para uma rota própria.
     await expect(institucional.getByRole("link")).toHaveText([
-      "Acessibilidade",
       "Privacidade",
       "Contato",
     ]);

@@ -28,7 +28,6 @@ export const ROTAS_PUBLICAS = [
     "Prestação de Contas — Observatório do Vale do Rio Real",
   ],
   ["/prestacao-de-contas/imprimir", "Prestação de Contas — versão imprimível"],
-  ["/acessibilidade", "Acessibilidade — Observatório do Vale do Rio Real"],
   ["/privacidade", "Privacidade — Observatório do Vale do Rio Real"],
   ["/contato", "Contato — Observatório do Vale do Rio Real"],
 ] as const;
