@@ -6,6 +6,7 @@ import {
   evidenciaManifestoSchema,
   podePublicar,
 } from "../../lib/manifesto-evidencias";
+import type { AnexoPublico } from "../anexo-publico";
 import type {
   ArquivoPublicado,
   ArquivosPublicados,
@@ -32,45 +33,18 @@ import { FOTO_DA_PLACA } from "../pesquisa/excecao-placa";
  * faltante.
  */
 
-export type AnexoPublico = {
-  arquivoId: string;
-  codigo: string;
-  estado: "PUBLICAVEL";
-  revisaoPrivacidade: "concluida";
-  derivadoDe: string[];
-  derivadoDeDocumento: string | null;
-  arquivoOrigemId: string | null;
-  arquivoRelacao: "derivado" | "replica" | null;
-  arquivoDerivacaoMetodo:
-    | "transcricao_leitura_visual"
-    | "ocr_estatistico"
-    | "redacao_versao_publica"
-    | "tarjamento_privacidade"
-    | "sanitizacao_metadados"
-    | "extracao_secao"
-    | "conversao_formato"
-    | null;
-  ordemAnexo: number | null;
-  slug: string;
-  rotuloArquivo: string | null;
-  principal: boolean;
-  titulo: string;
-  tipo: string;
-  resumo: string | null;
-  dataReferencia: string | null;
-  licenca: string;
-  linkPermanente: string;
-  linkOrigem: string | null;
-  mimeType: string;
-  bytes: number;
-  sha256: string;
-  publicadoEm: Date | null;
-  nomeOriginal?: string | null;
-  /** Asset de apresentação de uma fotografia cujo arquivo documental é o original. */
-  previewUrl?: string;
-  previewArquivoId?: string;
-  previewSha256?: string;
-};
+/**
+ * O contrato público do anexo mora em `dados/anexo-publico.ts`.
+ *
+ * Ele saiu daqui quando passou a ter dois lados: esta consulta, que o
+ * **produz** a partir de `vw_anexo_publico`, e `dados/publicado/tipos.ts`,
+ * que **valida** o mesmo contrato a partir do arquivo em disco. A camada
+ * publicada não deve depender da camada de consultas nem por um tipo.
+ *
+ * A reexportação mantém o endereço antigo funcionando: quem já importava
+ * `AnexoPublico` daqui continua importando daqui. Não há segunda definição.
+ */
+export type { AnexoPublico };
 
 export type EvidenciaDeAnexo = {
   manifesto: EvidenciaManifesto;

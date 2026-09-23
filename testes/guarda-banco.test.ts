@@ -346,26 +346,23 @@ describe("contrato público do episódio sem dependência de banco", () => {
  * higiene, mas porque cada uma dessas arestas arrasta código de banco para o
  * grafo de uma página estática.
  *
- * ## A distinção que este bloco depende
+ * ## Zero nas duas categorias
  *
- * `publicado/tipos.ts` importa `AnexoPublico` de `consultas/anexos.ts` com
- * `import type`. Essa forma é apagada na compilação: o módulo não é
- * carregado, e `drizzle-orm/pg-core` não entra em lugar nenhum por causa
- * dela. Por isso a aresta aparece em `arestasDeTipo`, e não em `arestas`.
+ * Até 2026-09-23 restava uma aresta: `publicado/tipos.ts` importava
+ * `AnexoPublico` de `consultas/anexos.ts` com `import type`. Era apagada na
+ * compilação e não trazia `drizzle-orm/pg-core` para lugar nenhum — mas era
+ * uma seta de `publicado/` para `consultas/` no diagrama, e uma seta dessas
+ * convida, com o tempo, a uma segunda que não seja de tipo.
  *
- * Ela existe de propósito. É `AnexoPublico` que as duas asserções de tipo no
- * fim de `publicado/tipos.ts` usam para tornar erro de compilação qualquer
- * divergência entre o snapshot e o contrato de leitura. Removê-la exigiria ou
- * duplicar a interface — que é o que aquelas asserções existem para impedir —
- * ou extrair `AnexoPublico` para um módulo próprio, que é trabalho de outro
- * lote.
+ * O tipo foi para `dados/anexo-publico.ts`, puro, do qual os dois lados
+ * dependem. As duas asserções no fim de `publicado/tipos.ts` continuam
+ * comparando o schema do arquivo com o mesmo `AnexoPublico` — a definição
+ * não foi duplicada, foi movida.
  *
- * A lista é exata, como a do bloco 1: uma aresta de tipo nova precisa ser
- * escrita aqui para passar, e não entra em silêncio.
+ * A lista está vazia e a igualdade é exata. Uma aresta de tipo nova precisa
+ * ser escrita aqui para passar, e não entra em silêncio.
  */
-const ARESTAS_DE_TIPO_CONHECIDAS: readonly string[] = [
-  "src/dados/publicado/tipos.ts -> src/dados/consultas/anexos.ts",
-];
+const ARESTAS_DE_TIPO_CONHECIDAS: readonly string[] = [];
 
 describe("camada publicada sem dependência de banco", () => {
   const varredura = varrer(
@@ -387,11 +384,24 @@ describe("camada publicada sem dependência de banco", () => {
     ).toEqual([]);
   });
 
-  test("as arestas apagadas na compilação são exatamente as conhecidas", () => {
+  test("nenhuma dependência apagada na compilação tampouco", () => {
     expect(
       varredura.arestasDeTipo,
       `Arestas de tipo:\n${relatar(varredura, varredura.arestasDeTipo)}`,
     ).toEqual([...ARESTAS_DE_TIPO_CONHECIDAS].sort());
+  });
+
+  /*
+    A varredura precisa mesmo alcançar o contrato do anexo, e não passar
+    ao largo dele. Sem esta conferência, mover `AnexoPublico` para um lugar
+    que a varredura não visita faria os dois testes acima passarem sem
+    provar nada.
+  */
+  test("a varredura alcança o módulo puro do contrato do anexo", () => {
+    expect(
+      readFileSync(join(RAIZ, "src", "dados", "publicado", "tipos.ts"), "utf8"),
+    ).toMatch(/from "\.\.\/anexo-publico"/);
+    expect(varredura.visitados).toBeGreaterThanOrEqual(3);
   });
 
   test("nenhum import dinâmico com caminho computado escapa da análise", () => {
@@ -405,5 +415,21 @@ describe("camada publicada sem dependência de banco", () => {
         comoRepositorio(arquivo),
       ).not.toMatch(/process\.env/);
     }
+  });
+
+  test("a definição do anexo é uma só: a consulta reexporta, não redefine", () => {
+    const consulta = readFileSync(
+      join(RAIZ, "src", "dados", "consultas", "anexos.ts"),
+      "utf8",
+    );
+    expect(consulta).toMatch(/from "\.\.\/anexo-publico"/);
+    expect(consulta).not.toMatch(/type AnexoPublico = \{/);
+  });
+
+  test("o módulo puro do anexo não importa nada", () => {
+    const { referencias } = referenciasDe(
+      readFileSync(join(RAIZ, "src", "dados", "anexo-publico.ts"), "utf8"),
+    );
+    expect(referencias).toEqual([]);
   });
 });

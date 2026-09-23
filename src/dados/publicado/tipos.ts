@@ -39,7 +39,7 @@
 import { z } from "zod";
 
 import { metodoDerivacaoSchema } from "../../lib/manifesto-evidencias";
-import type { AnexoPublico } from "../consultas/anexos";
+import type { AnexoPublico } from "../anexo-publico";
 import { FOTO_DA_PLACA } from "../pesquisa/excecao-placa";
 import { episodioPublicoSchema } from "../podobservar-publico";
 import { TIPOS_DOCUMENTO } from "../tipo-documento";
