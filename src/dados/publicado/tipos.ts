@@ -41,8 +41,8 @@ import { z } from "zod";
 import { tipoDocumento } from "../../../db/schema";
 import { metodoDerivacaoSchema } from "../../lib/manifesto-evidencias";
 import type { AnexoPublico } from "../consultas/anexos";
-import { episodioPublicoSchema } from "../consultas/podobservar";
 import { FOTO_DA_PLACA } from "../pesquisa/excecao-placa";
+import { episodioPublicoSchema } from "../podobservar-publico";
 
 /** Diretório dos três arquivos, relativo à raiz do repositório. */
 export const DIRETORIO_PUBLICADO = "src/dados/publicado";

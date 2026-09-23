@@ -44,31 +44,58 @@ import bruto from "./lote-publicacao-2026-09-16.json";
  * precisa de chave própria: a antiga vai ser apagada do bucket, e reaproveitar
  * a mesma chave faria o novo correr o risco de sair junto. `-v2` é a menor
  * convenção coerente com o `-v1` que o projeto já usava.
+ *
+ * `png` entrou na lista em 2026-09-23, ao registrar a primeira publicação
+ * (2026-09-08) no registro central. A extensão sempre esteve no acervo — os
+ * quatro PNG de D01 estão públicos desde aquela data —, e a lista tinha sido
+ * escrita a partir do lote de 16/09, que não tem nenhum. É correção de uma
+ * omissão contra o corpus observado, não afrouxamento: nenhum lote existente
+ * contém PNG, então nenhum deles muda de resultado.
  */
 export const chavePublicaSchema = z
   .string()
   .regex(
-    /^arquivos\/[a-z0-9-]+\/[a-z0-9-]+-v\d+\.(pdf|webp|svg|xlsx|m4a|mp3|md)$/,
+    /^arquivos\/[a-z0-9-]+\/[a-z0-9-]+-v\d+\.(pdf|png|webp|svg|xlsx|m4a|mp3|md)$/,
   );
 
-export const entradaDoLoteSchema = z
-  .object({
-    /** Código do inventário canônico; define o documento de destino. */
-    codigo: z.string().regex(/^[A-E]\d{2}$/),
-    /** Caminho relativo a `OBSERVATORIO_FONTES_DIR`. */
-    origem: z.string().min(1),
-    chave: chavePublicaSchema,
-    sha256: z.string().regex(/^[a-f0-9]{64}$/),
-    bytes: z.number().int().positive(),
-    mimeType: z.enum([
-      "application/pdf",
-      "image/webp",
-      "image/svg+xml",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "audio/mp4",
-      "audio/mpeg",
-      "text/markdown",
-    ]),
+/**
+ * O que toda entrada de lote registra sobre um objeto publicado.
+ *
+ * São os seis campos que identificam o objeto e provam sua integridade:
+ * de onde veio, para onde foi, com que hash, que tamanho e que tipo. É o
+ * que a primeira publicação (2026-09-08) declarou, e é o núcleo do que os
+ * lotes posteriores declaram.
+ *
+ * `entradaDoLoteSchema` estende isto com os campos que o **executor** precisa
+ * para escrever `documento_arquivo` — rótulo, preferência, proveniência. A
+ * separação existe porque um lote histórico tem o núcleo e não tem os campos
+ * de execução, e preenchê-los depois seria inventar valores para um registro
+ * do passado.
+ */
+export const entradaRegistradaSchema = z.object({
+  /** Código do inventário canônico; define o documento de destino. */
+  codigo: z.string().regex(/^[A-E]\d{2}$/),
+  /** Caminho relativo a `OBSERVATORIO_FONTES_DIR`. */
+  origem: z.string().min(1),
+  chave: chavePublicaSchema,
+  sha256: z.string().regex(/^[a-f0-9]{64}$/),
+  bytes: z.number().int().positive(),
+  mimeType: z.enum([
+    "application/pdf",
+    "image/png",
+    "image/webp",
+    "image/svg+xml",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "audio/mp4",
+    "audio/mpeg",
+    "text/markdown",
+  ]),
+});
+
+export type EntradaRegistrada = z.infer<typeof entradaRegistradaSchema>;
+
+export const entradaDoLoteSchema = entradaRegistradaSchema
+  .extend({
     tipoMidia: z.enum(["pdf", "imagem", "planilha", "audio", "outro"]),
     rotulo: z.string().min(1),
     /**

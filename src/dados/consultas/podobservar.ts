@@ -1,7 +1,10 @@
 import { and, desc, eq } from "drizzle-orm";
-import { z } from "zod";
 
 import { vwEpisodioPublico } from "../../../db/schema";
+import {
+  type EpisodioPublico,
+  episodioPublicoSchema,
+} from "../podobservar-publico";
 import { databaseUrlDisponivel } from "./anexos";
 
 /**
@@ -34,52 +37,23 @@ import { databaseUrlDisponivel } from "./anexos";
 export type LinhaEpisodioPublico = typeof vwEpisodioPublico.$inferSelect;
 
 /**
- * Destino primário de escuta.
+ * O contrato público do episódio mora em `dados/podobservar-publico.ts`.
  *
- * Escopado por domínio, como `plano-de-despublicacao.ts` faz com
- * `https://acervo.`. Não é decoração: o gate da view só sabe que a coluna não
- * está vazia, e é aqui que se verifica que o valor é mesmo um link do
- * Spotify. Publicar um CTA "Ouvir no Spotify ↗" apontando para outro lugar
- * seria afirmação falsa na superfície pública.
+ * Ele saiu daqui quando passou a ter dois consumidores: esta consulta, que
+ * valida o que a view devolveu, e `dados/publicado/tipos.ts`, que valida o
+ * que está em disco. O segundo não pode arrastar `db/schema` junto só para
+ * chegar a um objeto Zod, e é por isso que a definição vive num módulo sem
+ * dependência de banco.
  *
- * Nenhuma requisição externa é feita: valida-se a forma do valor existente,
- * nunca a existência remota do episódio.
+ * A reexportação mantém o endereço antigo funcionando: quem já importava
+ * `EpisodioPublico` ou `episodioPublicoSchema` daqui continua importando
+ * daqui. Não há segunda definição, e a regra do destino de escuta no Spotify
+ * continua declarada num lugar só.
  */
-const urlSpotify = z.url().startsWith("https://open.spotify.com/");
-
-/**
- * Fronteira pública validada. As colunas da view são `NOT NULL` na origem,
- * mas o Drizzle tipa view como tudo anulável: a validação aqui é o que
- * transforma essa promessa em garantia, sem `as` e sem `!`.
- *
- * `urlSpotify` não é anulável: a view já recusa episódio sem ele, então uma
- * linha pública sem Spotify não deveria existir — e, se existir, esta
- * validação a descarta em vez de renderizar um episódio sem como ouvir.
- *
- * `urlYoutube` continua opcional e fora do gate. É `z.url()` genérica, sem
- * escopo de domínio, para que `youtu.be` e endereços de canal também passem:
- * ele é CTA secundário, e estreitar o formato aqui derrubaria o episódio
- * inteiro por causa de um link acessório.
- */
-export const episodioPublicoSchema = z.object({
-  slug: z.string().min(1),
-  temporadaNumero: z.number().int().positive(),
-  temporadaTitulo: z.string().min(1),
-  numero: z.number().int().positive(),
-  titulo: z.string().min(1),
-  resumo: z.string().min(1),
-  publicadoEm: z.date(),
-  duracaoSeg: z.number().int().positive(),
-  transcricao: z.string().min(1),
-  explicito: z.boolean(),
-  urlSpotify,
-  urlYoutube: z.url().nullable(),
-  capaUrl: z.url().nullable(),
-  capaLarguraPx: z.number().int().positive().nullable(),
-  capaAlturaPx: z.number().int().positive().nullable(),
-});
-
-export type EpisodioPublico = z.infer<typeof episodioPublicoSchema>;
+export {
+  type EpisodioPublico,
+  episodioPublicoSchema,
+} from "../podobservar-publico";
 
 /**
  * Linha incompleta é descartada, nunca completada por suposição — mesma

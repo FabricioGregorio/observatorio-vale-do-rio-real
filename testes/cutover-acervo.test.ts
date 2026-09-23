@@ -11,6 +11,7 @@ import loteAntigoBruto from "../src/dados/lote-publicacao-2026-09-16.json";
 import {
   exigirLote,
   IDS_DOS_LOTES,
+  IDS_EXECUTAVEIS,
   idDoLoteEmArgv,
   LOTES_DECLARADOS,
 } from "../src/dados/lotes-de-publicacao";
@@ -59,9 +60,36 @@ describe("seleção de lote é explícita", () => {
     );
   });
 
-  test("os dois lotes estão declarados e nenhum outro", () => {
-    expect(IDS_DOS_LOTES).toEqual(["2026-09-16", "2026-09-18"]);
-    expect(LOTES_DECLARADOS.size).toBe(2);
+  test("os três lotes estão registrados, em ordem cronológica", () => {
+    expect(IDS_DOS_LOTES).toEqual(["2026-09-08", "2026-09-16", "2026-09-18"]);
+    expect(LOTES_DECLARADOS.size).toBe(3);
+  });
+
+  /*
+    A primeira publicação entrou no registro em 2026-09-23. Ela compõe o
+    acervo — dois dos seus objetos continuam públicos e não são declarados em
+    nenhum outro lugar —, mas não pode ser reexecutada: seis dos oito objetos
+    foram substituídos na migração para os originais, duas fontes não existem
+    mais, e as entradas não trazem os campos que o executor grava.
+
+    Registrar sem distinguir a natureza obrigaria a uma das duas coisas que o
+    projeto não faz: esconder um lote real da proveniência, ou preencher à mão
+    campos que ninguém declarou em 08/09.
+  */
+  test("a primeira publicação está registrada como histórica", () => {
+    const primeira = LOTES_DECLARADOS.get("2026-09-08");
+    expect(primeira?.natureza).toBe("historico");
+    expect(primeira?.entradas).toHaveLength(8);
+    expect(primeira?.codigos).toEqual(["A02", "D01"]);
+  });
+
+  test("só os lotes executáveis são oferecidos a --lote", () => {
+    expect(IDS_EXECUTAVEIS).toEqual(["2026-09-16", "2026-09-18"]);
+  });
+
+  test("lote histórico é recusado nomeando o motivo, não como desconhecido", () => {
+    expect(() => exigirLote("2026-09-08")).toThrow(/histórico/);
+    expect(() => exigirLote("2026-09-08")).not.toThrow(/desconhecido/);
   });
 
   test("--lote é lido do argv, e sem ele a publicação recusa", () => {
