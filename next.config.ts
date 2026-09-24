@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 
+import { redirecionamentosDeDownload } from "./src/dados/publicado/downloads";
 import {
   ambienteIndexavel,
   CABECALHO_ROBOTS,
@@ -72,6 +73,30 @@ const nextConfig: NextConfig = {
         destination: "/acervo",
         permanent: true,
       },
+      /*
+        Os downloads do acervo: um redirect por arquivo público, derivado do
+        snapshot versionado em tempo de build.
+
+        Eles entram aqui, e não numa rota, porque uma rota é uma função: em
+        Production, cada download acordaria um servidor para dizer uma frase
+        que já é conhecida desde o build. Declarados como redirect, viram
+        entrada do `routes-manifest.json` e são respondidos pela camada de
+        roteamento antes de qualquer execução — sem rede, sem credencial e
+        sem nada que possa estar fora do ar.
+
+        `permanent: true` emite 308: o método é preservado e o endereço é
+        transferido, que é o que se quer de um link documental.
+
+        Um `arquivoId` que não esteja no acervo não casa com nenhum redirect
+        e cai no 404 do site. Não existe rota curinga sob `/baixar`, e é isso
+        que impede um redirecionamento aberto: o destino só pode vir do
+        catálogo versionado.
+      */
+      ...redirecionamentosDeDownload().map(({ origem, destino }) => ({
+        source: origem,
+        destination: destino,
+        permanent: true,
+      })),
     ];
   },
 
