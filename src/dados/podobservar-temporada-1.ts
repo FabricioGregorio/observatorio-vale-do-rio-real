@@ -9,7 +9,7 @@
  * qualquer master cujo SHA-256 no disco divirja do que está aqui.
  *
  * Nada neste arquivo autoriza publicação. Os episódios nascem em `rascunho`, e
- * o gate de `vw_episodio_publico` continua sendo a única porta pública.
+ * o gate do snapshot publicado continua sendo a única porta pública.
  */
 
 /**

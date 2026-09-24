@@ -1,10 +1,8 @@
-import { Pool } from "pg";
 import { describe, expect, test } from "vitest";
 import {
   CLASSIFICACAO,
   DISTRIBUICAO_ESPERADA,
 } from "../src/dados/classificacao-documental";
-import { LOTE_PRIVADO_INICIAL } from "../src/dados/lote-privado-inicial";
 import {
   evidenciaManifestoSchema,
   manifestoPublico,
@@ -18,11 +16,13 @@ import {
  * `PUBLICAVEL` significa que pode ser exposto publicamente. Confundir os dois
  * publicaria áudio de entrevista e relatório com nome de trabalhador.
  *
- * A parte de integração exige `DATABASE_URL_MANUTENCAO` e roda tudo em
- * transação desfeita, no padrão do projeto. O skip aparece na saída do Vitest.
+ * Havia aqui uma segunda camada, de integração: ela inseria arquivo privado
+ * numa transação desfeita e provava, contra o banco, que a restrição de URL
+ * pública e a projeção pública se comportavam. Saiu com o banco. O que
+ * permanece é a regra documental em si — classificação, gate e manifesto —,
+ * que é pura e roda em qualquer máquina.
  */
 
-const URL_MANUTENCAO = process.env.DATABASE_URL_MANUTENCAO;
 const HASH = "a".repeat(64);
 
 function evidencia(over: Record<string, unknown> = {}) {
@@ -156,190 +156,3 @@ describe("RESTRITO fora do Manifesto público", () => {
     }
   });
 });
-
-describe.skipIf(!URL_MANUTENCAO)(
-  "integração: storage privado no banco (requer DATABASE_URL_MANUTENCAO)",
-  () => {
-    async function comRollback<T>(
-      fn: (c: import("pg").PoolClient) => Promise<T>,
-    ): Promise<T> {
-      const pool = new Pool({ connectionString: URL_MANUTENCAO });
-      const c = await pool.connect();
-      try {
-        await c.query("begin");
-        return await fn(c);
-      } finally {
-        await c.query("rollback");
-        c.release();
-        await pool.end();
-      }
-    }
-
-    const inserirArquivo = (
-      c: import("pg").PoolClient,
-      visibilidade: "privado" | "publico",
-      url: string | null,
-      chave = "zz/teste.pdf",
-    ) =>
-      c.query(
-        `insert into arquivo (chave_storage, bucket, visibilidade, url_publica,
-                              tipo_midia, mime_type, bytes, sha256, espelhado_em)
-         values ($1, $2, $3, $4, 'pdf', 'application/pdf', 10, $5, now())
-         returning id`,
-        [
-          chave,
-          visibilidade === "privado"
-            ? "observatorio-privado"
-            : "observatorio-publico",
-          visibilidade,
-          url,
-          HASH,
-        ],
-      );
-
-    test("privado sem URL é aceito", async () => {
-      const id = await comRollback(async (c) => {
-        const r = await inserirArquivo(c, "privado", null);
-        return r.rows[0]?.id as string;
-      });
-      expect(id).toBeTruthy();
-    });
-
-    test("privado com URL pública é recusado pelo CHECK", async () => {
-      await expect(
-        comRollback((c) =>
-          inserirArquivo(c, "privado", "https://exemplo.invalid/a.pdf"),
-        ),
-      ).rejects.toThrow(/arquivo_visibilidade_coerente/);
-    });
-
-    test("público sem URL pública é recusado pelo CHECK", async () => {
-      await expect(
-        comRollback((c) => inserirArquivo(c, "publico", null)),
-      ).rejects.toThrow(/arquivo_visibilidade_coerente/);
-    });
-
-    test("arquivo privado não aparece em vw_anexo_publico, no caso mais adverso", async () => {
-      const linhas = await comRollback(async (c) => {
-        const d = await c.query(
-          `insert into documento (slug, titulo, tipo, exigido_pelo_edital, natureza,
-                                  estado_documental, revisao_privacidade, status, publicado_em)
-           values ('zz-adverso', 'ZZ', 'relatorio_tecnico', true, 'item_exigido',
-                   'PUBLICAVEL', 'concluida', 'publicado', now())
-           returning id`,
-        );
-        const a = await inserirArquivo(c, "privado", null, "zz/adverso.pdf");
-        await c.query(
-          `insert into documento_arquivo (documento_id, arquivo_id, principal)
-           values ($1, $2, true)`,
-          [d.rows[0]?.id, a.rows[0]?.id],
-        );
-        const v = await c.query(
-          "select count(*)::int as n from vw_anexo_publico where slug = 'zz-adverso'",
-        );
-        return v.rows[0]?.n as number;
-      });
-      expect(linhas).toBe(0);
-    });
-
-    test("o mesmo caso com arquivo público aparece — prova que a view não está quebrada", async () => {
-      const linhas = await comRollback(async (c) => {
-        const d = await c.query(
-          `insert into documento (slug, titulo, tipo, exigido_pelo_edital, natureza,
-                                  estado_documental, revisao_privacidade, status, publicado_em)
-           values ('zz-publico', 'ZZ', 'relatorio_tecnico', true, 'item_exigido',
-                   'PUBLICAVEL', 'concluida', 'publicado', now())
-           returning id`,
-        );
-        const a = await inserirArquivo(
-          c,
-          "publico",
-          "https://exemplo.invalid/zz.pdf",
-          "zz/publico.pdf",
-        );
-        await c.query(
-          `insert into documento_arquivo (documento_id, arquivo_id, principal)
-           values ($1, $2, true)`,
-          [d.rows[0]?.id, a.rows[0]?.id],
-        );
-        const v = await c.query(
-          "select count(*)::int as n from vw_anexo_publico where slug = 'zz-publico'",
-        );
-        return v.rows[0]?.n as number;
-      });
-      expect(linhas).toBe(1);
-    });
-
-    test("a primeira publicação preserva intactos os dez arquivos privados", async () => {
-      const pool = new Pool({ connectionString: URL_MANUTENCAO });
-      try {
-        const r = await pool.query(
-          `select (select count(*)::int from documento) as d,
-                  (select count(*)::int from arquivo) as a,
-                  (select count(*)::int from arquivo a
-                    where exists (select 1 from documento_arquivo da where da.arquivo_id = a.id)) as a_acervo,
-                  (select count(*)::int from documento_arquivo) as da,
-                  (select count(*)::int from vw_anexo_publico) as v,
-                  (select count(*)::int from documento
-                    where estado_documental = 'PUBLICAVEL') as pub`,
-        );
-        // A view inclui 57 WebPs técnicos e seus originais, mas a coleção
-        // documental filtrada mantém uma só entrada por fotografia.
-        expect(r.rows[0]).toMatchObject({
-          d: 33,
-          v: 164,
-          pub: 16,
-        });
-        /**
-         * A igualdade é do **acervo documental**, não de `arquivo` inteiro.
-         *
-         * Até a P0.2B2 todo `arquivo` pertencia a um `documento`, e a asserção
-         * podia comparar os totais. Os masters do PodObservar quebram isso de
-         * propósito: eles existem sem `documento_arquivo`, porque vincular um
-         * master a documento o faria entrar no Acervo público por
-         * `vw_anexo_publico` — outro gate, com outras regras. Ver o
-         * ramo correspondente de `vw_pendencia_publicacao` na migração 0012.
-         */
-        expect(r.rows[0].a_acervo).toBe(r.rows[0].da);
-        expect(r.rows[0].a_acervo).toBeGreaterThanOrEqual(119);
-        const semVinculo = await pool.query(
-          `select count(*)::int as n from arquivo a
-           where a.chave_storage like 'arquivos/podobservar/%'
-             and exists (select 1 from documento_arquivo da where da.arquivo_id = a.id)`,
-        );
-        expect(semVinculo.rows[0].n).toBe(0);
-        const artesSemVinculo = await pool.query(
-          `select count(*)::int as n from arquivo a
-           where (a.chave_storage like 'originais/podobservar/%'
-                  or a.chave_storage like 'arquivos/podobservar-artes/%')
-             and exists (select 1 from documento_arquivo da where da.arquivo_id = a.id)`,
-        );
-        expect(artesSemVinculo.rows[0].n).toBe(0);
-        const arquivos = await pool.query(
-          `select a.chave_storage, a.sha256, a.bucket, a.visibilidade,
-                  a.url_publica, da.principal, da.versao
-           from arquivo a join documento_arquivo da on da.arquivo_id=a.id
-          where a.visibilidade = 'privado'`,
-        );
-        expect(arquivos.rows.length).toBeGreaterThanOrEqual(10);
-        for (const [, , chave, sha256, principal] of LOTE_PRIVADO_INICIAL) {
-          expect(arquivos.rows).toContainEqual({
-            chave_storage: chave,
-            sha256,
-            principal:
-              chave ===
-              "arquivos/analise-de-dados/relatorio-tecnico-recanto-da-serra-v1.pdf"
-                ? false
-                : principal,
-            versao: 1,
-            bucket: "observatorio-privado",
-            visibilidade: "privado",
-            url_publica: null,
-          });
-        }
-      } finally {
-        await pool.end();
-      }
-    });
-  },
-);

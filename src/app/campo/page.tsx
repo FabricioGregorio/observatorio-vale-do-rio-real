@@ -60,8 +60,8 @@ export const metadata = metadadosDaRota({
  * ## O critério de publicação
  *
  * O conjunto só é apresentado quando ele **está** no acervo público, resolvido
- * em build contra `vw_anexo_publico`. Sem isso a página mostra o estado vazio
- * e não constrói link nenhum por convenção de nome.
+ * em build contra `acervo.json`. Sem isso a página mostra o estado vazio e não
+ * constrói link nenhum por convenção de nome.
  */
 export default async function PaginaCampo() {
   const anexos = await listarAnexosPublicos();

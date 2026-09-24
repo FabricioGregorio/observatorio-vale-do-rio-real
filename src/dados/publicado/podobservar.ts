@@ -1,10 +1,9 @@
 /**
  * Episódios públicos lidos do snapshot — a fonte de `/podobservar`.
  *
- * Substitui `consultas/podobservar.ts` no grafo do site. Os seletores puros
- * moram aqui e a camada de consulta os reexporta, pela mesma razão que já
- * valia para `AnexoPublico`: a definição é uma só, e quem precisa dela não
- * arrasta o banco junto para obtê-la.
+ * Substituiu a consulta ao banco no grafo do site. Os seletores puros moram
+ * aqui, junto do snapshot que os alimenta: a definição é uma só, e quem
+ * precisa dela não arrasta mais nada junto para obtê-la.
  */
 import type { EpisodioPublico } from "../podobservar-publico";
 import { lerEpisodiosPublicados } from "./leitura";

@@ -1,12 +1,14 @@
-/** Auditoria read-only do binário servido no domínio público. Sem relatório no repo. */
+/**
+ * Auditoria read-only do binário servido no domínio público.
+ *
+ * Lê o catálogo canônico do snapshot versionado — nada de banco, nada de
+ * credencial — e confere cada objeto contra o que o R2 serve: status, bytes,
+ * MIME e SHA-256. Sem relatório no repositório: a saída é o resultado.
+ */
 import { createHash } from "node:crypto";
-import { existsSync } from "node:fs";
-import { loadEnvFile } from "node:process";
 
-import { listarAnexosPublicos } from "../src/dados/consultas/anexos";
 import { FOTO_DA_PLACA } from "../src/dados/pesquisa/excecao-placa";
-
-if (existsSync(".env.local")) loadEnvFile(".env.local");
+import { listarAnexosPublicos } from "../src/dados/publicado/anexos";
 
 async function principal() {
   const anexos = await listarAnexosPublicos();

@@ -78,9 +78,9 @@ export const metadata = metadadosDaRota({
  * ## Dados
  *
  * Server Component. O estado de cada material e de cada entrevista vem de
- * `vw_anexo_publico`, buscado em build pela mesma consulta que abastece a
- * Home, o Território e o Acervo. Sem `DATABASE_URL`, os materiais caem para o
- * estado declarado e nenhum link aparece — nunca um link inventado.
+ * `acervo.json`, lido em build pela mesma função que abastece a Home, o
+ * Território e o Acervo. Material que não estiver no acervo publicado cai
+ * para o estado declarado e nenhum link aparece — nunca um link inventado.
  */
 
 const LUGARES_COM_MATERIAL = REFERENCIAS_TERRITORIAIS.map(
@@ -451,8 +451,8 @@ export default async function PaginaPesquisa() {
           <div className="pq-leitura">
             <p>
               {/*
-                Contagem e frase de estado vêm da resolução contra
-                `vw_anexo_publico`, nunca de texto fixo: publicar "restrito"
+                Contagem e frase de estado vêm da resolução contra o acervo
+                publicado, nunca de texto fixo: publicar "restrito"
                 sobre documento já público, ou o contrário, é afirmação falsa
                 num site que existe para comprovar execução.
               */}

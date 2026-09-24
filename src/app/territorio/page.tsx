@@ -10,9 +10,9 @@ export const metadata = metadadosDaRota({
 });
 
 /**
- * O estado de cada material das fichas vem de `vw_anexo_publico`, buscado
- * aqui em build. Nenhuma exceção local: o Território e a Home leem a mesma
- * fonte pela mesma consulta.
+ * O estado de cada material das fichas vem de `acervo.json`, lido aqui em
+ * build. Nenhuma exceção local: o Território e a Home leem a mesma fonte pela
+ * mesma função.
  */
 export default async function PaginaTerritorio() {
   return (

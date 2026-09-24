@@ -541,10 +541,8 @@ describe("H4.5.2: nenhuma dependência e nenhuma ilha nova", () => {
        * `testes/analytics-privacidade.test.ts`.
        */
       "@vercel/analytics",
-      "drizzle-orm",
       "fflate",
       "next",
-      "pg",
       "react",
       "react-dom",
       "tailwindcss",
@@ -555,10 +553,8 @@ describe("H4.5.2: nenhuma dependência e nenhuma ilha nova", () => {
       "@biomejs/biome",
       "@playwright/test",
       "@types/node",
-      "@types/pg",
       "@types/react",
       "@types/react-dom",
-      "drizzle-kit",
       "tsx",
       "typescript",
       "vitest",

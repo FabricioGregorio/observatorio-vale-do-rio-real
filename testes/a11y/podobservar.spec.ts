@@ -6,14 +6,14 @@ import { expect, test } from "@playwright/test";
  *
  * Cobre a seção II da Home e a página `/podobservar`. A página de um episódio
  * **não** entra aqui ainda: enquanto os três episódios estiverem em rascunho,
- * `vw_episodio_publico` tem zero linhas, `generateStaticParams` devolve lista
+ * `episodios.json` tem zero linhas, `generateStaticParams` devolve lista
  * vazia e a rota não existe para ser visitada. Um teste que a visitasse agora
  * receberia 404 e passaria por engano. A varredura axe do episódio acontece
  * no checkpoint de homologação, depois da publicação autorizada.
  *
  * Os contratos estruturais dessa página — hierarquia de títulos, ausência de
  * player, transcrição legível — estão cobertos por renderização em
- * `testes/podobservar-publico.test.ts`, que não depende do banco.
+ * `testes/podobservar-publico.test.ts`, que lê o snapshot versionado.
  */
 
 const WCAG = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];

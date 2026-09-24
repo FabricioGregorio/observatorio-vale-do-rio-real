@@ -1,6 +1,5 @@
 import { describe, expect, test, vi } from "vitest";
 import sitemap, { ROTAS_PUBLICAS } from "../src/app/sitemap";
-import { databaseUrlDisponivel } from "../src/dados/consultas/anexos";
 import { listarDocumentosPublicos } from "../src/dados/publicado/acervo";
 import { listarEpisodiosPublicos } from "../src/dados/publicado/podobservar";
 import { regrasDeRobots } from "../src/lib/indexacao";
@@ -121,24 +120,14 @@ vi.mock("../src/dados/publicado/podobservar", () => ({
 }));
 
 describe("configuração de produção", () => {
-  test.each(["development", "test"])(
-    "%s permite o estado local controlado sem DATABASE_URL",
-    (ambiente) => {
-      expect(databaseUrlDisponivel(ambiente, undefined)).toBe(false);
-    },
-  );
-
-  test("produção falha explicitamente sem DATABASE_URL", () => {
-    expect(() => databaseUrlDisponivel("production", undefined)).toThrow(
-      /DATABASE_URL ausente/,
-    );
-  });
-
-  test("produção permite a credencial read-only configurada", () => {
-    expect(
-      databaseUrlDisponivel("production", "postgres://somente-leitura"),
-    ).toBe(true);
-  });
+  /*
+    Três casos deste bloco afirmavam o que a credencial read-only do
+    PostgreSQL fazia em cada ambiente: ausente fora de produção devolvia lista
+    vazia, ausente em produção era erro explícito, presente habilitava a
+    consulta. Saíram com a credencial. A configuração que ainda decide se um
+    build é publicável é a origem canônica do site, logo abaixo — e o acervo,
+    que não depende de configuração alguma, é validado sempre.
+  */
 
   test("SITE_URL é obrigatória em produção e validada como origem HTTPS", () => {
     expect(() => obterSiteUrl("", "production")).toThrow(/SITE_URL ausente/);

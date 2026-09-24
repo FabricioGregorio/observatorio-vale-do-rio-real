@@ -83,7 +83,7 @@ export type Equipamento = {
  * transcrições do PodObservar localizam o equipamento no povoado — a mesma
  * localidade que `territorio/referencias.ts` já publicava em `/territorio`.
  * O que a pesquisa reuniu sobre cada um **não** está aqui: é resolvido contra
- * `vw_anexo_publico` por `resolverMateriaisDoLugar`, e o `id` é a chave dessa
+ * `acervo.json` por `resolverMateriaisDoLugar`, e o `id` é a chave dessa
  * resolução.
  */
 export const EQUIPAMENTOS: readonly Equipamento[] = [
@@ -124,7 +124,7 @@ export type Entrevista = {
    * `documento.slug` do acervo que guarda esta entrevista.
    *
    * Existe para que o estado de cada uma seja **resolvido**, e não afirmado:
-   * quem tem arquivo em `vw_anexo_publico` está público, quem não tem,
+   * quem tem arquivo em `acervo.json` está público, quem não tem,
    * não está. Até 2026-09-19 a Home afirmava em texto fixo que os áudios e as
    * transcrições seguiam restritos; as oito já estavam públicas havia dias, e
    * a frase só não era desmentida por não haver nada ligando a ficha ao
@@ -200,7 +200,7 @@ export const ENTREVISTAS: readonly Entrevista[] = [
 /**
  * As entrevistas que têm arquivo público hoje.
  *
- * Estado resolvido contra `vw_anexo_publico`, nunca afirmado — o mesmo
+ * Estado resolvido contra `acervo.json`, nunca afirmado — o mesmo
  * princípio das fichas dos lugares, onde "público" só existe quando há URL
  * por trás. A Home e `/pesquisa` leem daqui, e por isso não têm como divergir
  * sobre a mesma entrevista.

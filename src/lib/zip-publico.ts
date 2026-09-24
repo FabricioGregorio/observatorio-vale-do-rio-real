@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { zipSync } from "fflate";
 
-import type { EvidenciaDeAnexo } from "../dados/consultas/anexos";
+import type { EvidenciaDeAnexo } from "../dados/evidencia-de-anexo";
 import { podePublicar } from "./manifesto-evidencias";
 import { nomeNoPacote } from "./zip-anexos";
 

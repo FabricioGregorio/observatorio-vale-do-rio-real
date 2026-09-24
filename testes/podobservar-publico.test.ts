@@ -17,7 +17,7 @@ import {
   NOTA_DA_TRANSCRICAO,
   Transcricao,
 } from "../src/componentes/podobservar/Transcricao";
-import type { EpisodioPublico } from "../src/dados/consultas/podobservar";
+import type { EpisodioPublico } from "../src/dados/podobservar-publico";
 
 /**
  * Experiência pública do PodObservar — P0.3.

@@ -2,7 +2,6 @@ import { createHash, randomUUID } from "node:crypto";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { Pool, type PoolClient } from "pg";
 import { describe, expect, test } from "vitest";
 
 import {
@@ -34,11 +33,13 @@ import {
  * fala ao limpar transcrição, nunca deixar marcação interna passar. Todas
  * elas são funções puras, testadas sem storage e sem banco.
  *
- * A camada de integração verifica o que só o banco pode afirmar: que os
- * masters não têm vínculo documental e que rascunho não vaza pela view.
+ * Havia aqui uma camada de integração que afirmava, contra o banco, que os
+ * masters não tinham vínculo documental e que rascunho não vazava pela view.
+ * Saiu com o banco, junto do script de ingestão que ela acompanhava. O que os
+ * masters são e onde estão continua registrado em
+ * `src/dados/podobservar-temporada-1.ts`, que é proveniência local e não
+ * fonte de runtime: o site lê `src/dados/publicado/episodios.json`.
  */
-
-const URL_MANUTENCAO = process.env.DATABASE_URL_MANUTENCAO;
 
 const PLANO: MasterPlanejado = {
   origem: "podcast/ep-01/ep-01.wav",
@@ -411,203 +412,3 @@ describe("plano aprovado da temporada 1", () => {
     }
   });
 });
-
-describe.skipIf(!URL_MANUTENCAO)(
-  "integração: masters ingeridos permanecem privados (requer DATABASE_URL_MANUTENCAO)",
-  () => {
-    async function comPool<T>(fn: (c: PoolClient) => Promise<T>): Promise<T> {
-      const pool = new Pool({ connectionString: URL_MANUTENCAO });
-      const c = await pool.connect();
-      try {
-        return await fn(c);
-      } finally {
-        c.release();
-        await pool.end();
-      }
-    }
-
-    test("nenhum master do PodObservar tem vínculo documental", async () => {
-      await comPool(async (c) => {
-        const { rows } = await c.query<{ chave_storage: string }>(
-          `select a.chave_storage from arquivo a
-           join documento_arquivo da on da.arquivo_id = a.id
-           where a.chave_storage like 'arquivos/podobservar/%'`,
-        );
-        expect(rows).toEqual([]);
-      });
-    });
-
-    test("nenhum master do PodObservar é público", async () => {
-      await comPool(async (c) => {
-        const { rows } = await c.query(
-          `select chave_storage from arquivo
-           where chave_storage like 'arquivos/podobservar/%'
-             and (visibilidade <> 'privado' or url_publica is not null)`,
-        );
-        expect(rows).toEqual([]);
-      });
-    });
-
-    test("nenhuma chave do PodObservar aparece na projeção pública do acervo", async () => {
-      await comPool(async (c) => {
-        const { rows } = await c.query(
-          `select 1 from vw_anexo_publico
-           where link_permanente like '%podobservar%'
-              or coalesce(rotulo_arquivo, '') like '%podobservar%'`,
-        );
-        expect(rows).toEqual([]);
-      });
-    });
-
-    test("episódio em rascunho não aparece na view pública", async () => {
-      await comPool(async (c) => {
-        const { rows } = await c.query<{ n: string }>(
-          `select count(*) n from episodio e
-           where e.status = 'rascunho'
-             and exists (select 1 from vw_episodio_publico v where v.slug = e.slug)`,
-        );
-        expect(rows[0]?.n).toBe("0");
-      });
-    });
-  },
-);
-
-describe.skipIf(!URL_MANUTENCAO)(
-  "integração: tripwire da migração 0012 (requer DATABASE_URL_MANUTENCAO)",
-  () => {
-    /**
-     * Toda alteração aqui é desfeita. O tripwire só pode ser provado mexendo
-     * em estado real — então o estado real volta exatamente como estava.
-     */
-    async function comRollback<T>(
-      fn: (c: PoolClient) => Promise<T>,
-    ): Promise<T> {
-      const pool = new Pool({ connectionString: URL_MANUTENCAO });
-      const c = await pool.connect();
-      try {
-        await c.query("begin");
-        return await fn(c);
-      } finally {
-        await c.query("rollback");
-        c.release();
-        await pool.end();
-      }
-    }
-
-    async function pendencias(c: PoolClient): Promise<string[]> {
-      const { rows } = await c.query<{ slug: string; pendencia: string }>(
-        `select slug, pendencia from vw_pendencia_publicacao order by 1, 2`,
-      );
-      return rows.map((r) => `${r.slug} | ${r.pendencia}`);
-    }
-
-    test("o gate está limpo no estado atual", async () => {
-      await comRollback(async (c) => {
-        expect(await pendencias(c)).toEqual([]);
-      });
-    });
-
-    /**
-     * O tripwire não pode gritar por episódio correto: um alarme que dispara
-     * no caso bom é desligado por quem o lê, e aí não protege mais nada.
-     */
-    test("episódio publicado corretamente não gera pendência", async () => {
-      await comRollback(async (c) => {
-        await c.query(
-          `update episodio set status = 'publicado' where numero = 1`,
-        );
-        expect(await pendencias(c)).toEqual([]);
-      });
-    });
-
-    const defeitos: ReadonlyArray<readonly [string, string, string]> = [
-      [
-        "sem Spotify",
-        `update episodio set status='publicado', url_spotify=null where numero=2`,
-        "episódio publicado sem url_spotify",
-      ],
-      [
-        "sem publicado_em",
-        `update episodio set status='publicado', publicado_em=null where numero=2`,
-        "episódio publicado sem publicado_em",
-      ],
-      [
-        "data no futuro",
-        `update episodio set status='publicado', publicado_em='2099-01-01' where numero=2`,
-        "episódio publicado com data no futuro",
-      ],
-      [
-        "transcrição em branco",
-        `update episodio set status='publicado', transcricao='   ' where numero=2`,
-        "episódio publicado com transcrição em branco",
-      ],
-    ];
-
-    for (const [nome, sql, diagnostico] of defeitos) {
-      test(`episódio publicado ${nome} gera o ramo geral e o específico`, async () => {
-        await comRollback(async (c) => {
-          await c.query(sql);
-          const linhas = await pendencias(c);
-          expect(linhas).toContain(
-            "02-conheca-o-recanto-da-serra | episódio publicado ausente do gate público",
-          );
-          expect(linhas).toContain(
-            `02-conheca-o-recanto-da-serra | ${diagnostico}`,
-          );
-        });
-      });
-    }
-
-    /**
-     * A porta lateral da P0.2B1: `vw_episodio_publico` não alcança o master,
-     * mas vincular o `arquivo` a um `documento` o faria entrar pelo Acervo,
-     * que é outro gate. Ninguém impede o vínculo — então o tripwire denuncia.
-     */
-    test("master vinculado a documento é denunciado", async () => {
-      await comRollback(async (c) => {
-        const doc = await c.query<{ id: string }>(
-          `select id from documento limit 1`,
-        );
-        const arq = await c.query<{ id: string }>(
-          `select id from arquivo where chave_storage like 'arquivos/podobservar/%' limit 1`,
-        );
-        const documentoId = doc.rows[0]?.id;
-        const arquivoId = arq.rows[0]?.id;
-        if (!documentoId || !arquivoId) return; // nada ingerido neste ambiente
-        await c.query(
-          `insert into documento_arquivo (documento_id, arquivo_id, versao, principal)
-           values ($1, $2, 1, false)`,
-          [documentoId, arquivoId],
-        );
-        expect(
-          (await pendencias(c)).some((l) =>
-            l.includes("master de podcast vinculado a documento"),
-          ),
-        ).toBe(true);
-      });
-    });
-
-    test("master tornado público é denunciado", async () => {
-      await comRollback(async (c) => {
-        // Uma linha só: `arquivo.url_publica` é UNIQUE, e tornar os três
-        // públicos com a mesma URL falharia pela unicidade, não pelo tripwire.
-        const r = await c.query(
-          `update arquivo
-              set visibilidade = 'publico',
-                  url_publica = 'https://acervo.exemplo/master-indevido.wav'
-            where id = (
-              select id from arquivo
-               where chave_storage like 'arquivos/podobservar/%'
-               order by chave_storage limit 1
-            )`,
-        );
-        if (!r.rowCount) return; // nada ingerido neste ambiente
-        expect(
-          (await pendencias(c)).some((l) =>
-            l.includes("master de podcast com visibilidade pública"),
-          ),
-        ).toBe(true);
-      });
-    });
-  },
-);

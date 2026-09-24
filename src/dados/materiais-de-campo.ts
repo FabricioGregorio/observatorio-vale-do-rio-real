@@ -10,7 +10,7 @@
  * afirmar que algo é público onde não é — ou o contrário.
  *
  * Aqui só se **declara** qual documento do inventário sustenta cada material.
- * Se aquele documento tem arquivo público em `vw_anexo_publico`, o material é
+ * Se aquele documento tem arquivo público em `acervo.json`, o material é
  * público e ganha o link real; se não tem, ele conserva o estado declarado
  * como fallback. Nenhum estado `publico` pode existir sem URL correspondente,
  * porque o estado é calculado a partir da URL, não ao lado dela.

@@ -1,12 +1,12 @@
 /**
  * Funções puras do espelhamento de anexos (Tarefa 06).
  *
- * Ficam separadas do script para poderem ser testadas sem rede, sem banco e
- * sem storage. Nenhuma delas faz I/O.
+ * Ficam separadas de quem executa para poderem ser testadas sem rede e sem
+ * storage. Nenhuma delas faz I/O.
  *
  * O padrão de URL pública e a regra de slug que estas funções aplicam estão
- * implementados aqui mesmo; os enums e a tabela `arquivo` que elas alimentam
- * estão em `db/schema.ts`.
+ * implementados aqui mesmo. O vocabulário documental que elas usam vive em
+ * `dados/tipo-documento.ts` e `dados/catalogo-documental.ts`.
  */
 
 /** Colunas da aba Inventário, exportada em CSV (artefato intermediário). */

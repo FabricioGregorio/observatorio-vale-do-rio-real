@@ -15,9 +15,9 @@ export const metadata = metadadosDaRota({
 /**
  * `/podobservar` — a página editorial do podcast.
  *
- * Lê `listarEpisodiosPublicos()`, que lê `vw_episodio_publico`. Rascunho,
- * em revisão, arquivado e episódio datado no futuro não chegam aqui porque
- * não passam do banco — não há filtro nesta página, e não poderia haver: o
+ * Lê `listarEpisodiosPublicos()`, que lê `episodios.json`. Rascunho, em
+ * revisão, arquivado e episódio datado no futuro não chegam aqui porque não
+ * entram no snapshot — não há filtro nesta página, e não poderia haver: o
  * gate mora na view.
  *
  * A ordem é a da consulta, `publicado_em DESC`. Nada nesta página conhece a

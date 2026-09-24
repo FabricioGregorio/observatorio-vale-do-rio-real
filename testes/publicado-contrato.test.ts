@@ -84,7 +84,6 @@ function release(ajustes: Record<string, unknown> = {}) {
     id: "2026-09-23-abcdef01",
     gerado_em: "2026-09-23",
     lotes_declarados: ["2026-09-16"],
-    migracao: "0012",
     totais: { documentos: 1, anexos: 1, episodios: 1 },
     sha256: { acervo: HASH_QUALQUER, episodios: "c".repeat(64) },
     zip: null,

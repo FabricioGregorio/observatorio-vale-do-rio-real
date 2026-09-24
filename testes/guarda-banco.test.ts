@@ -1,56 +1,61 @@
 /**
- * Guardas de acoplamento com PostgreSQL.
+ * Guardas contra a reintrodução do PostgreSQL.
  *
- * Três perguntas, um varredor:
+ * Até 2026-09-24 estas guardas perguntavam se o **site** alcançava um cliente
+ * de banco. Faziam sentido enquanto o banco existia e o objetivo era mantê-lo
+ * fora das páginas. Com o Lote B.1 o banco saiu do repositório inteiro, e a
+ * pergunta mudou: não é mais "o site chega lá?", é "isso voltou?".
  *
- * 1. o código de renderização pública chega a um cliente de banco?
- * 2. o contrato público do episódio chega a `db/schema`, ao Drizzle ou às
- *    consultas?
- * 3. a camada publicada inteira — `src/dados/publicado/**`, que o site vai
- *    ler — chega a qualquer uma dessas coisas?
+ * Quatro perguntas, dois métodos:
  *
- * O varredor segue os **especificadores de módulo** com expressão regular,
- * incluindo `import(...)` dinâmico e `require(...)`, e resolve cada um contra
- * o disco. É mais forte que procurar uma palavra no texto: um acoplamento só
- * é registrado quando o caminho resolve para um arquivo que existe e que está
- * na lista de proibidos.
+ * 1. **grafo** — o código de renderização pública alcança um cliente, um
+ *    schema ou uma consulta de banco?
+ * 2. **grafo** — a camada publicada, que o site lê, alcança qualquer uma
+ *    dessas coisas, inclusive por `import type`?
+ * 3. **texto** — algum arquivo do código ativo versionado carrega vocabulário
+ *    de banco: `DATABASE_URL`, `new Pool(`, import de `pg` ou de Drizzle,
+ *    caminho para `db/schema`, nome de view?
+ * 4. **ausência física** — os arquivos, comandos e dependências que
+ *    sustentavam o banco continuam fora do repositório?
  *
- * Não é análise de AST. A versão de TypeScript deste repositório (7.x, o
- * compilador nativo) não expõe mais `ts.preProcessFile` nem a API clássica do
- * compilador — só superfícies marcadas como `unstable`, que quebrariam na
- * próxima atualização. Montar um analisador de AST próprio seria
- * infraestrutura desproporcional para o que se quer detectar.
+ * ## O que conta como "código ativo"
  *
- * Os limites concretos, declarados em vez de escondidos:
+ * O que o Git versiona sob `src/`, `scripts/` e `testes/`. A lista sai de
+ * `git ls-files`, e não de uma varredura do disco, por duas razões: rascunho
+ * não rastreado não é código do projeto, e artefato ignorado — `.next/`,
+ * `tmp/`, `node_modules/` — não é fonte. Se o Git não puder responder, o
+ * teste falha em vez de passar por omissão.
+ *
+ * `db/migrations/` fica **fora** da varredura de texto, e é a única exclusão
+ * por diretório: aquilo é histórico morto, SQL que registra como o banco foi
+ * construído e que nenhum comando deste repositório executa. A guarda 4
+ * confirma que continua morto.
+ *
+ * ## Os limites do varredor de grafo, declarados em vez de escondidos
+ *
+ * Ele segue especificadores de módulo com expressão regular, incluindo
+ * `import(...)` dinâmico e `require(...)`, e resolve cada um contra o disco.
+ * Não é análise de AST: a versão de TypeScript deste repositório não expõe
+ * mais a API clássica do compilador, e montar um analisador próprio seria
+ * infraestrutura desproporcional.
  *
  * - um especificador **computado** (`import(variavel)`) não pode ser
  *   resolvido. Em vez de ignorá-lo, a varredura o conta e o teste falha: uma
  *   parte do grafo que não dá para analisar não é o mesmo que uma parte
  *   limpa;
  * - um `from "..."` dentro de comentário ou string contaria como import. Isso
- *   produz falso **positivo**, que é barulhento e fácil de diagnosticar, e
- *   nunca falso negativo — que seria silencioso. O modo de falha foi
- *   escolhido nessa direção de propósito;
+ *   produz falso **positivo**, barulhento e fácil de diagnosticar, e nunca
+ *   falso negativo, que seria silencioso;
  * - `import type` é registrado à parte e **encerra** a travessia, porque é
- *   apagado na compilação: o módulo não é carregado, e nada além dele passa a
- *   ser alcançável por causa daquela aresta. Tratá-lo como import de valor
- *   atribuiria à origem dependências que ela não tem em tempo de execução —
- *   que era justamente o que fazia a camada publicada parecer acoplada ao
- *   cliente de banco através de um tipo. As arestas de tipo continuam
- *   visíveis e travadas por lista exata, não ignoradas.
+ *   apagado na compilação: o módulo não é carregado. As arestas de tipo
+ *   continuam visíveis e travadas por lista exata.
  */
+import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
 const RAIZ = process.cwd();
-
-/** Módulos que abrem `Pool` de PostgreSQL. */
-const CLIENTES_DE_BANCO = [
-  "src/dados/cliente.ts",
-  "src/dados/clienteManutencao.ts",
-  "db/cliente.ts",
-];
 
 /** Captura a cláusula antes do `from`, para distinguir `import type`. */
 const ESTATICO =
@@ -62,6 +67,30 @@ const COMPUTADO = /\bimport\s*\(\s*(?!["'])/g;
 
 /** `import type { X } from` e `export type { X } from`; nada mais. */
 const SOMENTE_TIPO = /^(?:import|export)\s+type\s/;
+
+/** Pacotes de banco. Nenhum deles está instalado — e é para continuar assim. */
+const PACOTES_DE_BANCO = (especificador: string): boolean =>
+  especificador === "pg" ||
+  especificador === "postgres" ||
+  especificador === "pg-connection-string" ||
+  especificador.startsWith("drizzle-orm") ||
+  especificador.startsWith("drizzle-kit") ||
+  especificador.startsWith("@neondatabase/");
+
+/**
+ * Caminhos que não podem voltar a existir nem ser alcançados.
+ *
+ * A regra é por **forma**, não por lista de arquivos conhecidos: qualquer
+ * coisa sob `db/` que não seja migração, qualquer coisa sob
+ * `src/dados/consultas/`, e os dois clientes de banco pelos seus nomes. Uma
+ * lista de nomes exatos envelheceria no dia em que alguém recriasse o cliente
+ * com outro nome.
+ */
+const CAMINHOS_DE_BANCO = (caminho: string): boolean =>
+  (caminho.startsWith("db/") && !caminho.startsWith("db/migrations/")) ||
+  caminho.startsWith("src/dados/consultas/") ||
+  /(?:^|\/)cliente(?:Manutencao)?\.ts$/.test(caminho) ||
+  /(?:^|\/)drizzle\.config\.ts$/.test(caminho);
 
 function arquivosDe(diretorio: string): string[] {
   const encontrados: string[] = [];
@@ -90,12 +119,8 @@ type Referencia = {
  *
  * `import type { X } from "y"` é apagado na compilação: não cria dependência
  * em tempo de execução, e nada além de `y` passa a ser carregado por causa
- * dele. Por isso a distinção existe, e por isso um import de tipo **encerra**
- * a travessia em `varrer` em vez de continuar por dentro do módulo.
- *
- * `import { type X, Y }` não conta como import de tipo: `Y` é valor, e o
- * módulo é carregado. Só a forma com `type` logo após a palavra-chave é
- * inteiramente apagada.
+ * dele. `import { type X, Y }` não conta como import de tipo: `Y` é valor, e
+ * o módulo é carregado.
  */
 function referenciasDe(texto: string): {
   referencias: Referencia[];
@@ -142,13 +167,6 @@ function resolverRelativo(
   return null;
 }
 
-type Proibicao = {
-  /** Caminhos de repositório que não podem ser alcançados. */
-  readonly arquivos: (caminho: string) => boolean;
-  /** Pacotes externos que não podem ser importados. */
-  readonly pacotes: (especificador: string) => boolean;
-};
-
 type Varredura = {
   /** Arestas que existem em tempo de execução. */
   readonly arestas: string[];
@@ -161,7 +179,7 @@ type Varredura = {
   readonly alcancados: readonly string[];
 };
 
-function varrer(entradas: readonly string[], proibicao: Proibicao): Varredura {
+function varrer(entradas: readonly string[]): Varredura {
   const visitados = new Set<string>();
   const arestas = new Set<string>();
   const arestasDeTipo = new Set<string>();
@@ -193,7 +211,7 @@ function varrer(entradas: readonly string[], proibicao: Proibicao): Varredura {
 
     for (const { especificador, somenteTipo } of referencias) {
       if (!especificador.startsWith(".")) {
-        if (proibicao.pacotes(especificador))
+        if (PACOTES_DE_BANCO(especificador))
           registrar(especificador, somenteTipo);
         continue;
       }
@@ -202,7 +220,7 @@ function varrer(entradas: readonly string[], proibicao: Proibicao): Varredura {
       if (!alvo) continue;
 
       const destino = comoRepositorio(alvo);
-      if (proibicao.arquivos(destino)) {
+      if (CAMINHOS_DE_BANCO(destino)) {
         registrar(destino, somenteTipo);
         continue;
       }
@@ -210,10 +228,7 @@ function varrer(entradas: readonly string[], proibicao: Proibicao): Varredura {
       /*
         Import de tipo encerra a travessia. O módulo não é carregado em tempo
         de execução, então nada que ele importe passa a ser alcançável por
-        causa desta aresta. Continuar por dentro dele atribuiria à origem
-        dependências que ela não tem — e era exatamente esse o erro que faria
-        a camada publicada parecer acoplada ao cliente de banco através de um
-        `import type`.
+        causa desta aresta.
       */
       if (somenteTipo) continue;
 
@@ -237,36 +252,10 @@ function relatar(varredura: Varredura, arestas = varredura.arestas): string {
     .join("\n");
 }
 
-/* ───────────────── 1. o app não chega a um cliente de banco ──────────── */
-
-/**
- * Acoplamentos que a arquitetura de hoje tem e o Lote B remove.
- *
- * Cada entrada é a aresta que introduz a dependência: quem importa → o que é
- * importado. Ao migrar os consumidores para o snapshot, esta lista vai a `[]`.
- *
- * A igualdade é exata, e não "está contido", para que remover um acoplamento
- * também exija atualizar esta lista — é o que torna o progresso do Lote B
- * visível no diff em vez de silencioso.
- */
-/**
- * Vazia, e é para continuar vazia.
- *
- * Até o Lote B esta lista tinha duas entradas: o grafo de `src/app` alcançava
- * `cliente.ts` por `consultas/anexos.ts` e `consultas/podobservar.ts`. Com o
- * site lendo o snapshot versionado, nenhuma página chega ao banco — e a forma
- * honesta de travar isso não é manter uma permissão que cresce, é exigir
- * conjunto vazio. Acrescentar um item aqui é reintroduzir o banco no site, e
- * deve custar uma conversa, não uma linha.
- */
-const ACOPLAMENTOS_CONHECIDOS: readonly string[] = [];
+/* ───────────── 1. o site não alcança cliente, schema nem consulta ────────── */
 
 describe("guarda de banco no código de renderização", () => {
-  const varredura = varrer(arquivosDe(join(RAIZ, "src", "app")), {
-    arquivos: (caminho) => CLIENTES_DE_BANCO.includes(caminho),
-    pacotes: (especificador) =>
-      especificador === "pg" || especificador === "drizzle-orm/node-postgres",
-  });
+  const varredura = varrer(arquivosDe(join(RAIZ, "src", "app")));
 
   test("a varredura alcança o grafo de src/app", () => {
     expect(varredura.visitados).toBeGreaterThan(50);
@@ -276,116 +265,36 @@ describe("guarda de banco no código de renderização", () => {
     expect(varredura.computados).toBe(0);
   });
 
-  test("o acoplamento com o banco é exatamente o conhecido", () => {
+  /*
+    Conjunto vazio, e a igualdade é exata. Não existe lista de acoplamentos
+    tolerados: acrescentar um item aqui seria reintroduzir o banco no site, e
+    isso deve custar uma conversa, não uma linha.
+  */
+  test("nenhum acoplamento com banco, de nenhum tipo", () => {
     expect(
       varredura.arestas,
       `Acoplamentos encontrados:\n${relatar(varredura)}`,
-    ).toEqual([...ACOPLAMENTOS_CONHECIDOS].sort());
-  });
-
-  test("a lista de proibidos cobre os clientes existentes", () => {
-    for (const cliente of CLIENTES_DE_BANCO) {
-      expect(existsSync(join(RAIZ, cliente))).toBe(true);
-    }
-  });
-});
-
-/* ──────── 2. o contrato público do episódio é livre de banco ─────────── */
-
-/**
- * `dados/podobservar-publico.ts` existe para que a camada de snapshot possa
- * validar um episódio sem arrastar `db/schema` junto. Se ele voltar a
- * depender do banco — direta ou transitivamente —, o motivo da extração
- * desaparece em silêncio. Este teste é o que impede isso.
- *
- * O grafo desejado:
- *
- *     podobservar-publico.ts
- *        ↑                ↑
- *     consultas/      publicado/
- */
-describe("contrato público do episódio sem dependência de banco", () => {
-  const varredura = varrer(
-    [join(RAIZ, "src", "dados", "podobservar-publico.ts")],
-    {
-      arquivos: (caminho) =>
-        CLIENTES_DE_BANCO.includes(caminho) ||
-        caminho === "db/schema.ts" ||
-        caminho.startsWith("src/dados/consultas/"),
-      pacotes: (especificador) =>
-        especificador === "pg" || especificador.startsWith("drizzle-orm"),
-    },
-  );
-
-  test("não alcança schema, Drizzle, consultas nem cliente", () => {
+    ).toEqual([]);
     expect(
-      varredura.arestas,
-      `Dependências proibidas:\n${relatar(varredura)}`,
+      varredura.arestasDeTipo,
+      `Arestas de tipo:\n${relatar(varredura, varredura.arestasDeTipo)}`,
     ).toEqual([]);
   });
-
-  /*
-    A asserção é sobre `process.env`, não sobre a palavra `DATABASE_URL`: o
-    cabeçalho do módulo cita a variável justamente para declarar que não a lê,
-    e um teste que procurasse o nome acusaria a própria documentação. Ler
-    ambiente nenhum é a garantia mais forte e a que não tem falso positivo.
-  */
-  test("não lê variável de ambiente alguma", () => {
-    const fonte = readFileSync(
-      join(RAIZ, "src", "dados", "podobservar-publico.ts"),
-      "utf8",
-    );
-    expect(fonte).not.toMatch(/process\.env/);
-  });
-
-  test("a definição é uma só: a consulta reexporta, não redefine", () => {
-    const consulta = readFileSync(
-      join(RAIZ, "src", "dados", "consultas", "podobservar.ts"),
-      "utf8",
-    );
-    expect(consulta).toMatch(/from "\.\.\/podobservar-publico"/);
-    expect(consulta).not.toMatch(/episodioPublicoSchema\s*=\s*z\.object/);
-  });
 });
 
-/* ──────────── 3. a camada publicada é um grafo puro ──────────────────── */
+/* ──────────── 2. a camada publicada é um grafo puro ──────────────────── */
 
 /**
- * `src/dados/publicado/**` é o que o site vai ler no Lote B. Ele não pode
- * alcançar `db/schema`, Drizzle, cliente de banco nem consultas — não por
- * higiene, mas porque cada uma dessas arestas arrasta código de banco para o
- * grafo de uma página estática.
+ * `src/dados/publicado/**` é o que o site lê. Ele não pode alcançar cliente,
+ * schema nem consulta — não por higiene, mas porque cada uma dessas arestas
+ * arrastaria código de banco para o grafo de uma página estática.
  *
- * ## Zero nas duas categorias
- *
- * Até 2026-09-23 restava uma aresta: `publicado/tipos.ts` importava
- * `AnexoPublico` de `consultas/anexos.ts` com `import type`. Era apagada na
- * compilação e não trazia `drizzle-orm/pg-core` para lugar nenhum — mas era
- * uma seta de `publicado/` para `consultas/` no diagrama, e uma seta dessas
- * convida, com o tempo, a uma segunda que não seja de tipo.
- *
- * O tipo foi para `dados/anexo-publico.ts`, puro, do qual os dois lados
- * dependem. As duas asserções no fim de `publicado/tipos.ts` continuam
- * comparando o schema do arquivo com o mesmo `AnexoPublico` — a definição
- * não foi duplicada, foi movida.
- *
- * A lista está vazia e a igualdade é exata. Uma aresta de tipo nova precisa
- * ser escrita aqui para passar, e não entra em silêncio.
+ * As duas listas são vazias e as igualdades são exatas. Uma aresta de tipo
+ * nova precisa ser escrita aqui para passar, e não entra em silêncio.
  */
-const ARESTAS_DE_TIPO_CONHECIDAS: readonly string[] = [];
-
 describe("camada publicada sem dependência de banco", () => {
-  const varredura = varrer(
-    arquivosDe(join(RAIZ, "src", "dados", "publicado")),
-    {
-      arquivos: (caminho) =>
-        CLIENTES_DE_BANCO.includes(caminho) ||
-        caminho === "db/schema.ts" ||
-        caminho.startsWith("src/dados/consultas/"),
-      pacotes: (especificador) =>
-        especificador === "pg" || especificador.startsWith("drizzle-orm"),
-    },
-  );
+  const publicado = join(RAIZ, "src", "dados", "publicado");
+  const varredura = varrer(arquivosDe(publicado));
 
   test("nenhuma dependência em tempo de execução", () => {
     expect(
@@ -398,19 +307,18 @@ describe("camada publicada sem dependência de banco", () => {
     expect(
       varredura.arestasDeTipo,
       `Arestas de tipo:\n${relatar(varredura, varredura.arestasDeTipo)}`,
-    ).toEqual([...ARESTAS_DE_TIPO_CONHECIDAS].sort());
+    ).toEqual([]);
   });
 
   /*
-    A varredura precisa mesmo alcançar o contrato do anexo, e não passar
-    ao largo dele. Sem esta conferência, mover `AnexoPublico` para um lugar
-    que a varredura não visita faria os dois testes acima passarem sem
-    provar nada.
+    A varredura precisa mesmo alcançar o contrato do anexo, e não passar ao
+    largo dele. Sem esta conferência, mover `AnexoPublico` para um lugar que a
+    varredura não visita faria os testes acima passarem sem provar nada.
   */
   test("a varredura alcança o módulo puro do contrato do anexo", () => {
-    expect(
-      readFileSync(join(RAIZ, "src", "dados", "publicado", "tipos.ts"), "utf8"),
-    ).toMatch(/from "\.\.\/anexo-publico"/);
+    expect(readFileSync(join(publicado, "tipos.ts"), "utf8")).toMatch(
+      /from "\.\.\/anexo-publico"/,
+    );
     expect(varredura.visitados).toBeGreaterThanOrEqual(3);
   });
 
@@ -419,21 +327,12 @@ describe("camada publicada sem dependência de banco", () => {
   });
 
   test("a camada não lê variável de ambiente alguma", () => {
-    for (const arquivo of arquivosDe(join(RAIZ, "src", "dados", "publicado"))) {
+    for (const arquivo of arquivosDe(publicado)) {
       expect(
         readFileSync(arquivo, "utf8"),
         comoRepositorio(arquivo),
       ).not.toMatch(/process\.env/);
     }
-  });
-
-  test("a definição do anexo é uma só: a consulta reexporta, não redefine", () => {
-    const consulta = readFileSync(
-      join(RAIZ, "src", "dados", "consultas", "anexos.ts"),
-      "utf8",
-    );
-    expect(consulta).toMatch(/from "\.\.\/anexo-publico"/);
-    expect(consulta).not.toMatch(/type AnexoPublico = \{/);
   });
 
   test("o módulo puro do anexo não importa nada", () => {
@@ -442,44 +341,53 @@ describe("camada publicada sem dependência de banco", () => {
     );
     expect(referencias).toEqual([]);
   });
+
+  test("o contrato público do episódio também não lê ambiente", () => {
+    const fonte = readFileSync(
+      join(RAIZ, "src", "dados", "podobservar-publico.ts"),
+      "utf8",
+    );
+    expect(fonte).not.toMatch(/process\.env/);
+  });
 });
 
-/* ──────── 4. o vocabulário do banco não reaparece no grafo público ─────── */
+/* ──────── 3. o vocabulário de banco não aparece no código ativo ────────── */
 
 /**
- * As três guardas acima seguem **arestas de módulo**: elas acusam quando o
- * site alcança um cliente de banco. Esta quarta olha o **texto** de cada
- * arquivo que o site alcança, e existe para o caso que as outras não pegam —
- * alguém escrever `new Pool(...)`, ler `DATABASE_URL` ou montar SQL contra
- * `vw_anexo_publico` dentro de um arquivo que já está no grafo, sem importar
- * nada novo de lugar nenhum.
+ * As guardas acima seguem arestas de módulo. Esta olha o **texto** de cada
+ * arquivo versionado e existe para o caso que as outras não pegam: alguém
+ * escrever `new Pool(...)`, ler uma credencial ou montar SQL contra uma view
+ * dentro de um arquivo que já está no grafo, sem importar nada novo.
  *
  * Duas decisões tornam o teste utilizável em vez de barulhento.
  *
  * **Comentários são removidos antes da comparação.** Este repositório
- * documenta o que fez: dezenas de arquivos explicam, em prosa, que já não
- * consultam `vw_anexo_publico` ou que não leem `DATABASE_URL`. Procurar as
- * palavras no texto bruto acusaria justamente a documentação de ter virado o
- * problema que ela descreve. O que se quer proibir é código.
+ * documenta o que fez: vários arquivos explicam, em prosa, que já não
+ * consultam view nenhuma e que não leem credencial. Procurar as palavras no
+ * texto bruto acusaria justamente a documentação de ter virado o problema que
+ * ela descreve. O que se quer proibir é código.
  *
  * **Os padrões são estreitos.** `pg` casa só como especificador de módulo,
  * nunca como as duas letras no meio de uma palavra; `vw_` casa só como
  * prefixo de identificador. As cadeias de texto continuam valendo, porque é
  * dentro de uma que um `import("pg")` se esconderia.
  *
- * Não há lista de exceções, e é essa a intenção: o conjunto esperado é
- * **vazio**. Um acoplamento novo não se resolve acrescentando o arquivo a uma
- * permissão; resolve-se tirando o banco do arquivo.
+ * Este arquivo é a única exceção, e não é permissão: é onde os padrões estão
+ * escritos. Um teste que se acusasse a si mesmo por definir a proibição não
+ * mediria nada.
  */
-describe("vocabulário de banco no texto do grafo público", () => {
+describe("vocabulário de banco no código ativo", () => {
   const PROIBIDOS: readonly [string, RegExp][] = [
     ["DATABASE_URL", /\bDATABASE_URL\b/],
     ["import de pg", /(?:from|import|require)\s*\(?\s*["']pg["']/],
-    ["drizzle", /["']drizzle-orm(?:\/[^"']*)?["']/],
+    ["drizzle", /["']drizzle-(?:orm|kit)(?:\/[^"']*)?["']/],
+    ["@neondatabase", /["']@neondatabase\//],
     ["db/", /["'][^"']*\bdb\/(?:schema|cliente)\b/],
+    ["consultas/", /["'][^"']*\bdados\/consultas\//],
     ["new Pool", /\bnew\s+Pool\s*\(/],
     ["view vw_", /\bvw_[a-z]/],
     ["view do schema", /\bvw(?:Anexo|Episodio)Publico\b/],
+    ["URL de PostgreSQL", /\bpostgres(?:ql)?:\/\//],
   ];
 
   /**
@@ -490,19 +398,40 @@ describe("vocabulário de banco no texto do grafo público", () => {
   const semComentarios = (texto: string): string =>
     texto.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/(?<!:)\/\/.*$/gm, " ");
 
-  const varredura = varrer(arquivosDe(join(RAIZ, "src", "app")), {
-    arquivos: () => false,
-    pacotes: () => false,
+  const ESTE_ARQUIVO = "testes/guarda-banco.test.ts";
+
+  /**
+   * O código ativo, segundo o Git.
+   *
+   * Rascunho não rastreado não é código do projeto — e o arquivo de trabalho
+   * do proprietário, que o repositório não versiona, não é assunto de uma
+   * guarda de arquitetura.
+   */
+  const versionados = execFileSync(
+    "git",
+    ["ls-files", "src", "scripts", "testes"],
+    { cwd: RAIZ, encoding: "utf8" },
+  )
+    .split("\n")
+    .map((linha) => linha.trim())
+    .filter((linha) => /\.(?:ts|tsx|mjs|cjs|js)$/.test(linha))
+    .filter((linha) => linha !== ESTE_ARQUIVO)
+    /*
+      O índice do Git ainda lista o que foi removido do disco e não foi
+      registrado. A varredura é sobre a árvore de trabalho: arquivo que não
+      existe não carrega vocabulário nenhum.
+    */
+    .filter((linha) => existsSync(join(RAIZ, linha)));
+
+  test("a lista de arquivos ativos é plausível", () => {
+    expect(versionados.length).toBeGreaterThan(100);
+    expect(versionados).toContain("src/dados/publicado/leitura.ts");
+    expect(versionados).toContain("testes/publicado-contrato.test.ts");
   });
 
-  test("a varredura alcança o grafo inteiro de src/app", () => {
-    expect(varredura.alcancados.length).toBeGreaterThan(50);
-    expect(varredura.computados).toBe(0);
-  });
-
-  test("nenhum arquivo alcançado pelo site carrega vocabulário de banco", () => {
+  test("nenhum arquivo ativo carrega vocabulário de banco", () => {
     const achados: string[] = [];
-    for (const arquivo of varredura.alcancados) {
+    for (const arquivo of versionados) {
       const texto = semComentarios(readFileSync(join(RAIZ, arquivo), "utf8"));
       for (const [nome, padrao] of PROIBIDOS) {
         if (padrao.test(texto)) achados.push(`${arquivo}: ${nome}`);
@@ -512,5 +441,72 @@ describe("vocabulário de banco no texto do grafo público", () => {
       achados,
       `Vocabulário de banco encontrado:\n${achados.join("\n")}`,
     ).toEqual([]);
+  });
+});
+
+/* ──────────── 4. o que foi removido continua fora ────────────────────── */
+
+/**
+ * A ausência também é contrato.
+ *
+ * As guardas de grafo e de texto pegam o banco **voltando pela porta da
+ * frente**: um import, uma credencial, um `new Pool`. Esta pega o caminho
+ * mais provável de reintrodução — alguém restaurar um arquivo do histórico,
+ * ou reinstalar a dependência "só para uma consulta rápida".
+ */
+describe("o banco continua fora do repositório", () => {
+  const AUSENTES = [
+    "db/schema.ts",
+    "db/cliente.ts",
+    "drizzle.config.ts",
+    "src/dados/cliente.ts",
+    "src/dados/clienteManutencao.ts",
+    "src/dados/consultas",
+  ];
+
+  test.each(AUSENTES)("%s não existe", (caminho) => {
+    expect(existsSync(join(RAIZ, caminho))).toBe(false);
+  });
+
+  const pacote = JSON.parse(
+    readFileSync(join(RAIZ, "package.json"), "utf8"),
+  ) as {
+    scripts: Record<string, string>;
+    dependencies: Record<string, string>;
+    devDependencies: Record<string, string>;
+  };
+
+  test("nenhuma dependência de PostgreSQL está declarada", () => {
+    const declaradas = [
+      ...Object.keys(pacote.dependencies),
+      ...Object.keys(pacote.devDependencies),
+    ];
+    for (const nome of declaradas) {
+      expect(PACOTES_DE_BANCO(nome), nome).toBe(false);
+      expect(nome, nome).not.toBe("@types/pg");
+    }
+  });
+
+  /*
+    Um comando que só quebra é pior do que comando nenhum: ele parece uma
+    operação disponível. `migrar`, `gerar-migracao`, `pendencias`,
+    `gerar-snapshot` e `seed` saíram com o banco que executavam.
+  */
+  test("nenhum comando do pacote invoca banco ou migração", () => {
+    for (const [nome, comando] of Object.entries(pacote.scripts)) {
+      expect(nome, nome).not.toMatch(/migra|seed|pendencias/i);
+      expect(comando, nome).not.toMatch(/drizzle|psql|postgres|migrate/i);
+    }
+  });
+
+  /**
+   * As migrações continuam em `db/migrations/` como histórico: elas registram
+   * como o banco foi construído, e apagar isso apagaria a história da
+   * publicação. O que não pode existir é qualquer forma de executá-las.
+   */
+  test("db/ guarda apenas o histórico de migrações", () => {
+    const conteudo = readdirSync(join(RAIZ, "db"));
+    expect(conteudo.filter((nome) => nome.endsWith(".ts"))).toEqual([]);
+    expect(conteudo).toContain("migrations");
   });
 });

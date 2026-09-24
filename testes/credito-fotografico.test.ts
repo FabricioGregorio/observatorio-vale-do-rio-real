@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test } from "vitest";
 import { serializarAnexos } from "../src/app/anexos.json/route";
 import { ListaMateriaisPublicos } from "../src/componentes/acervo/ListaMateriaisPublicos";
-import type { AnexoPublico } from "../src/dados/consultas/anexos";
+import type { AnexoPublico } from "../src/dados/anexo-publico";
 import { LOTE_PUBLICACAO } from "../src/dados/lote-publicacao";
 import {
   montarRotulo,

@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { unzipSync } from "fflate";
 import { describe, expect, test } from "vitest";
 
-import type { EvidenciaDeAnexo } from "../src/dados/consultas/anexos";
+import type { EvidenciaDeAnexo } from "../src/dados/evidencia-de-anexo";
 import { evidenciaManifestoSchema } from "../src/lib/manifesto-evidencias";
 import { gerarZipPublico } from "../src/lib/zip-publico";
 

@@ -1,44 +1,27 @@
 /**
  * Contrato público de um arquivo do acervo.
  *
- * Módulo sem dependência alguma: nem `db/schema`, nem Drizzle, nem cliente
- * PostgreSQL, nem consultas, nem `process.env`. Só tipos.
+ * Módulo sem dependência alguma: nem I/O, nem `process.env`. Só tipos.
  *
  * ## Por que existe separado
  *
- * O tipo nasceu dentro de `consultas/anexos.ts`, ao lado da consulta que o
- * produz. Fazia sentido enquanto quem o consumia estava do lado do banco. Com
- * o snapshot versionado passam a existir dois lados — a consulta, que
- * **produz** este contrato a partir de `vw_anexo_publico`, e
- * `dados/publicado/tipos.ts`, que **valida** o mesmo contrato a partir do
- * arquivo em disco — e o segundo não deve depender, nem conceitualmente, da
- * camada de consultas.
- *
- * O grafo desejado, o mesmo de `podobservar-publico.ts`:
- *
- *     anexo-publico.ts
- *        ↑          ↑
- *    consultas   publicado
- *
- * A dependência era só `import type`, apagada na compilação e sem efeito em
- * tempo de execução. Ainda assim foi removida: uma seta de `publicado/` para
- * `consultas/` no diagrama convida, com o tempo, a uma segunda seta que não
- * seja de tipo.
+ * O tipo nasceu ao lado da consulta que o produzia a partir da projeção
+ * pública do PostgreSQL. A consulta saiu com o banco; o contrato ficou, e
+ * `dados/publicado/tipos.ts` o **valida** a partir do arquivo em disco.
+ * Manter a forma do resultado num módulo próprio é o que permite ao schema
+ * e ao consumidor concordarem sem que nenhum dos dois importe o outro.
  *
  * ## A definição é uma só
  *
- * `consultas/anexos.ts` reexporta o que está aqui, então nenhum consumidor
- * precisou mudar de import. Não existe uma segunda versão "de snapshot" deste
- * tipo, e as duas asserções no fim de `publicado/tipos.ts` continuam
- * comparando o schema do arquivo com **este** tipo — é o que torna erro de
- * compilação um campo existir de um lado e não do outro.
+ * Não existe uma segunda versão "de snapshot" deste tipo: as asserções no
+ * fim de `publicado/tipos.ts` comparam o schema do arquivo com **este**
+ * tipo — é o que torna erro de compilação um campo existir de um lado e não
+ * do outro.
  *
  * ## O que este módulo não faz
  *
- * Não consulta, não adapta linha de view, não filtra e não conhece a
- * fotografia com a placa. `adaptarLinhasDaView`, `selecionarAnexosPublicos`,
- * `databaseUrlDisponivel` e o resto continuam em `consultas/anexos.ts`, onde
- * o acesso ao banco está. Aqui só se declara a forma do resultado.
+ * Não lê, não filtra e não conhece a fotografia com a placa. A leitura e a
+ * validação estão em `publicado/`. Aqui só se declara a forma do resultado.
  */
 
 export type AnexoPublico = {

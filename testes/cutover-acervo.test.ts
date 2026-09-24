@@ -1,12 +1,4 @@
-import { readFileSync } from "node:fs";
 import { describe, expect, test } from "vitest";
-import {
-  conferir,
-  FalhaDespublicacao,
-  type LinhaDoBanco,
-  opcoes as opcoesDaDespublicacao,
-} from "../scripts/despublicar-acervo";
-import { opcoes as opcoesDaPublicacao } from "../scripts/publicar-acervo";
 import loteAntigoBruto from "../src/dados/lote-publicacao-2026-09-16.json";
 import {
   exigirLote,
@@ -22,9 +14,21 @@ import {
   PLANOS_DECLARADOS,
 } from "../src/dados/plano-de-despublicacao";
 
-const PUBLICADOR = "scripts/publicar-acervo.ts";
-const DESPUBLICADOR = "scripts/despublicar-acervo.ts";
 const PREFIXO = "arquivos/comprovacao-de-campo/";
+
+/*
+  Este arquivo já teve três blocos a mais, todos sobre os executores de
+  publicação e despublicação: o padrão `--lote`/`--plano` da linha de comando,
+  a recusa do publicador em sobrescrever chave ocupada e a conferência
+  fail-closed que comparava a linha do banco com o item do plano antes de
+  tornar um objeto privado. Os dois executores escreviam no PostgreSQL e foram
+  removidos com ele; o fluxo editorial que os substitui é do Lote C.
+
+  O que sobrou não depende de executor nenhum: são os artefatos versionados do
+  corte — os lotes declarados e o plano de despublicação — e as invariantes
+  que eles precisam satisfazer para que a história da publicação continue
+  legível. Elas valem independentemente de quem as executa.
+*/
 
 /**
  * O executor não adivinha o que publicar.
@@ -92,25 +96,9 @@ describe("seleção de lote é explícita", () => {
     expect(() => exigirLote("2026-09-08")).not.toThrow(/desconhecido/);
   });
 
-  test("--lote é lido do argv, e sem ele a publicação recusa", () => {
+  test("--lote é lido do argv, e a ausência é distinguível", () => {
     expect(idDoLoteEmArgv(["--lote", "2026-09-18"])).toBe("2026-09-18");
     expect(idDoLoteEmArgv(["--executar"])).toBeUndefined();
-    expect(() => opcoesDaPublicacao(["--executar"])).toThrow(
-      /Lote não informado/,
-    );
-  });
-
-  test("dry-run é o padrão da publicação", () => {
-    expect(opcoesDaPublicacao(["--lote", "2026-09-18"]).executar).toBe(false);
-    expect(
-      opcoesDaPublicacao(["--lote", "2026-09-18", "--executar"]).executar,
-    ).toBe(true);
-  });
-
-  test("argumento desconhecido não passa", () => {
-    expect(() =>
-      opcoesDaPublicacao(["--lote", "2026-09-18", "--forcar"]),
-    ).toThrow();
   });
 });
 
@@ -157,124 +145,6 @@ describe("as seis substituições recebem chave própria", () => {
   });
 });
 
-/**
- * O publicador falha fechado nas frentes que não dão para testar sem rede:
- * a comparação existe no código e aborta, em vez de seguir.
- */
-describe("o publicador aborta em divergência", () => {
-  const script = readFileSync(PUBLICADOR, "utf8");
-
-  test("fonte com hash ou bytes diferentes do lote interrompe", () => {
-    expect(script).toContain("Fonte divergente do lote aprovado");
-    expect(script).toMatch(/sha256 !== entrada\.sha256/);
-    expect(script).toMatch(/corpo\.byteLength !== entrada\.bytes/);
-  });
-
-  test("chave ocupada por conteúdo diferente interrompe", () => {
-    expect(script).toContain("Chave pública já ocupada por conteúdo diferente");
-    expect(script).toMatch(/situacao === "divergente"/);
-  });
-
-  test("chave com o mesmo conteúdo é reaproveitada, nunca sobrescrita", () => {
-    expect(script).toMatch(/situacao === "identico"/);
-    expect(script).toContain("reaproveitados");
-  });
-
-  test("upload e INSERT só acontecem com --executar", () => {
-    expect(script).toMatch(/situacao === "ausente" && executar/);
-    const dryRun = script.indexOf("if (!executar)");
-    const persistencia = script.indexOf("poolManutencao.connect");
-    expect(dryRun).toBeGreaterThan(-1);
-    expect(dryRun).toBeLessThan(persistencia);
-  });
-
-  test("a promoção de documento usa os códigos do lote, não uma lista global", () => {
-    expect(script).toContain("lote.codigos.map");
-    expect(script).not.toContain("CODIGOS_DO_LOTE");
-  });
-});
-
-/**
- * A regra que decide se a despublicação pode seguir é pura, e por isso é
- * testável sem banco. Qualquer divergência aborta tudo — não há execução
- * parcial por padrão.
- */
-describe("conferência fail-closed da despublicação", () => {
-  const item = exigirPlano("2026-09-18").itens[0];
-  if (!item) throw new Error("plano vazio");
-
-  const linhaBoa: LinhaDoBanco = {
-    id: item.arquivoId,
-    chave_storage: item.chave,
-    sha256: item.sha256,
-    bytes: item.bytes,
-    mime_type: item.mimeType,
-    visibilidade: "publico",
-    url_publica: item.urlPublica,
-    documentos: [item.documento],
-    dependentes: 0,
-  };
-
-  test("linha íntegra e pública está pronta para sair", () => {
-    expect(conferir(item, linhaBoa)).toBe("publicado");
-  });
-
-  test("linha ausente no banco aborta", () => {
-    expect(() => conferir(item, undefined)).toThrow(FalhaDespublicacao);
-  });
-
-  const divergencias: readonly [string, Partial<LinhaDoBanco>][] = [
-    ["id", { id: "00000000-0000-4000-8000-000000000000" }],
-    ["chave_storage", { chave_storage: `${PREFIXO}outro-objeto-v1.webp` }],
-    ["sha256", { sha256: "0".repeat(64) }],
-    ["bytes", { bytes: 1 }],
-    ["mime_type", { mime_type: "image/png" }],
-    ["documento", { documentos: ["outro-documento"] }],
-    ["dependentes", { dependentes: 2 }],
-  ];
-
-  test.each(divergencias)("divergência em %s aborta", (_campo, mudanca) => {
-    expect(() => conferir(item, { ...linhaBoa, ...mudanca })).toThrow(
-      FalhaDespublicacao,
-    );
-  });
-
-  test("url_publica divergente aborta", () => {
-    expect(() =>
-      conferir(item, {
-        ...linhaBoa,
-        url_publica: "https://acervo.observatoriotobiassoueu.com.br/outro",
-      }),
-    ).toThrow(/url_publica divergente/);
-  });
-
-  test("visibilidade inesperada aborta", () => {
-    expect(() =>
-      conferir(item, { ...linhaBoa, visibilidade: "restrito" }),
-    ).toThrow(/visibilidade inesperada/);
-  });
-
-  /*
-    Idempotência: reexecutar depois de uma remoção parcial precisa reconhecer
-    o que já saiu, sem tratar isso como erro e sem mirar outro objeto.
-  */
-  test("objeto já privado é reconhecido, não reprocessado", () => {
-    expect(
-      conferir(item, {
-        ...linhaBoa,
-        visibilidade: "privado",
-        url_publica: null,
-      }),
-    ).toBe("ja_privado");
-  });
-
-  test("privado com url preenchida é estado impossível e aborta", () => {
-    expect(() =>
-      conferir(item, { ...linhaBoa, visibilidade: "privado" }),
-    ).toThrow(/privado com url_publica preenchida/);
-  });
-});
-
 describe("plano de despublicação é declarado e fechado", () => {
   const plano = exigirPlano("2026-09-18");
 
@@ -297,63 +167,13 @@ describe("plano de despublicação é declarado e fechado", () => {
     }
   });
 
-  test("dry-run é o padrão da despublicação", () => {
+  test("--plano é lido do argv, e a ausência é distinguível", () => {
     expect(idDoPlanoEmArgv(["--plano", "2026-09-18"])).toBe("2026-09-18");
-    expect(opcoesDaDespublicacao(["--plano", "2026-09-18"]).executar).toBe(
-      false,
-    );
-    expect(
-      opcoesDaDespublicacao(["--plano", "2026-09-18", "--executar"]).executar,
-    ).toBe(true);
+    expect(idDoPlanoEmArgv(["--executar"])).toBeUndefined();
   });
 
   test("os dois artefatos do corte são contrapartidas: 19 entram, 19 saem", () => {
     expect(exigirLote("2026-09-18").entradas).toHaveLength(19);
     expect(PLANOS_DECLARADOS.get("2026-09-18")?.itens).toHaveLength(19);
-  });
-});
-
-/**
- * Banco e storage não compartilham transação. O código admite isso em vez de
- * simular atomicidade, e a remoção nunca vira operação de prefixo.
- */
-describe("fases separadas e remoção nominal", () => {
-  const script = readFileSync(DESPUBLICADOR, "utf8");
-
-  test("não existe remoção por prefixo nem em lote", () => {
-    expect(script).not.toMatch(/ListObjects|DeleteObjects|Prefix:/);
-    expect(script).toContain("DeleteObjectCommand");
-    // Uma chamada de remoção, com uma chave por vez.
-    expect([...script.matchAll(/new DeleteObjectCommand/g)]).toHaveLength(1);
-  });
-
-  test("só as chaves do plano podem ser alvo", () => {
-    expect(script).toMatch(/for \(const item of aApagarDoStorage\)/);
-    expect(script).toMatch(/Key: chave/);
-  });
-
-  test("UPDATE e DELETE só depois do retorno do dry-run", () => {
-    const dryRun = script.indexOf("if (!executar)");
-    const update = script.indexOf("update arquivo");
-    const del = script.indexOf("apagarChave(item.chave)");
-    expect(dryRun).toBeGreaterThan(-1);
-    expect(dryRun).toBeLessThan(update);
-    expect(update).toBeLessThan(del);
-  });
-
-  test("o banco sai da publicação sem apagar a linha", () => {
-    expect(script).toContain("visibilidade = 'privado'");
-    expect(script).toContain("url_publica = null");
-    expect(script).not.toMatch(/delete from arquivo|delete from documento/i);
-  });
-
-  test("falha no storage depois do banco não é revertida em silêncio", () => {
-    expect(script).toContain("storage parcial");
-    expect(script).toContain("não reverter o banco");
-  });
-
-  test("as quatro fases estão nomeadas no código", () => {
-    for (const fase of ["FASE A", "FASE B", "FASE C", "FASE D"])
-      expect(script, fase).toContain(fase);
   });
 });

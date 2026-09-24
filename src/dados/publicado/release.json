@@ -2,7 +2,6 @@
   "gerado_em": "2026-09-24",
   "id": "2026-09-24-1c55b5d6",
   "lotes_declarados": ["2026-09-08", "2026-09-16", "2026-09-18"],
-  "migracao": "0012",
   "sha256": {
     "acervo": "e122f499e5bbdbf0653ae474cb08bd59e5153ef4c90af384d948f606ff36fd2c",
     "episodios": "2fc063b9511c80f01d7eaed5e07bc2a5560c53315e33666896d5a870d7c33988"

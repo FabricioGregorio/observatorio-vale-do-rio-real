@@ -10,13 +10,9 @@
  * publicação em vez de ruído. Sem banco, sem rede, sem disco.
  */
 import { describe, expect, test } from "vitest";
-import {
-  migracaoDoJournal,
-  montarSnapshot,
-  opcoes,
-} from "../scripts/gerar-snapshot-publicado";
-import type { AnexoPublico } from "../src/dados/consultas/anexos";
-import type { EpisodioPublico } from "../src/dados/consultas/podobservar";
+import type { AnexoPublico } from "../src/dados/anexo-publico";
+import type { EpisodioPublico } from "../src/dados/podobservar-publico";
+import { montarSnapshot, opcoes } from "../src/dados/publicado/montagem";
 import {
   calcularIdDoRelease,
   conferirRelease,
@@ -80,7 +76,6 @@ function montar(ajustes: Partial<Parameters<typeof montarSnapshot>[0]> = {}) {
     episodios: [EPISODIO],
     dataEditorial: DATA,
     lotesDeclarados: ["2026-09-16"],
-    migracao: "0012",
     zip: null,
     ...ajustes,
   });
@@ -313,33 +308,5 @@ describe("linha de comando do gerador", () => {
   test("recusa argumento desconhecido", () => {
     expect(() => opcoes(["--data", DATA, "--forca"])).toThrow();
     expect(() => opcoes(["--data", DATA, "--escrever", "--dry-run"])).toThrow();
-  });
-});
-
-describe("migração declarada no manifesto", () => {
-  test("é lida do journal, não digitada", () => {
-    expect(
-      migracaoDoJournal({
-        entries: [
-          { idx: 1, tag: "0001_fundacao" },
-          { idx: 12, tag: "0012_tripwire_podobservar" },
-        ],
-      }),
-    ).toBe("0012");
-  });
-
-  test("usa a maior entrada, não a última do array", () => {
-    expect(
-      migracaoDoJournal({
-        entries: [
-          { idx: 12, tag: "0012_tripwire_podobservar" },
-          { idx: 2, tag: "0002_nucleo_prestacao_contas" },
-        ],
-      }),
-    ).toBe("0012");
-  });
-
-  test("recusa journal sem entradas", () => {
-    expect(() => migracaoDoJournal({ entries: [] })).toThrow();
   });
 });

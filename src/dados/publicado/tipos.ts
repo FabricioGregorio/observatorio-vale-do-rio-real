@@ -1,25 +1,24 @@
 /**
  * Contrato do snapshot público — os três arquivos de `src/dados/publicado/`.
  *
- * Este módulo descreve **a forma dos arquivos em disco**, e nada mais. Ele não
- * lê banco, não lê arquivo e não gera nada: é a fronteira que o gerador
- * escreve e que o site, a partir do Lote B, vai ler.
+ * Este módulo descreve **a forma dos arquivos em disco**, e nada mais. Ele
+ * não lê arquivo e não gera nada: é a fronteira que a publicação escreve e
+ * que o site lê.
  *
  * ## Por que schema fechado
  *
  * Os três schemas usam `z.strictObject`, como `editorial/mapa-b01.ts` já faz.
- * Propriedade desconhecida é **erro**, não campo ignorado. Num snapshot que
- * nasce de uma projeção do banco, aceitar chave extra em silêncio é o caminho
- * mais curto para um campo privado atravessar a fronteira sem ninguém ver: a
- * view muda, o gerador copia a coluna nova, e o arquivo público ganha um dado
- * que ninguém autorizou. Com `strictObject`, esse dia produz erro de validação
- * em vez de vazamento.
+ * Propriedade desconhecida é **erro**, não campo ignorado. Aceitar chave
+ * extra em silêncio é o caminho mais curto para um campo privado atravessar
+ * a fronteira sem ninguém ver: quem publica acrescenta um dado novo, e o
+ * arquivo público ganha uma informação que ninguém autorizou. Com
+ * `strictObject`, esse dia produz erro de validação em vez de vazamento.
  *
- * É a segunda barreira, não a primeira. A primeira é o gerador ler apenas as
- * projeções públicas (`vw_anexo_publico`, `vw_episodio_publico`), que não
- * expõem `pessoa`, `consentimento`, arquivo privado, chave de bucket privado
- * nem `audio_id`. Duas barreiras independentes, porque a primeira depende de
- * quem escreve a consulta e a segunda não.
+ * É a segunda barreira, não a primeira. A primeira é a publicação declarar
+ * item a item o que é público — nada de `pessoa`, `consentimento`, arquivo
+ * privado, chave de bucket privado ou identificador de master. Duas
+ * barreiras independentes, porque a primeira depende de quem publica e a
+ * segunda não.
  *
  * ## Por que não há interface nova
  *
@@ -86,7 +85,7 @@ export const dataSimples = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 export const anexoPublicadoSchema = z
   .strictObject({
     arquivoId: uuid,
-    /** `ordemAnexo` quando há; o slug quando não há. Ver `adaptarLinhasDaView`. */
+    /** `ordemAnexo` quando há; o slug quando não há. */
     codigo: texto,
     /** Literais: só chega aqui o que passou por `selecionarAnexosPublicos`. */
     estado: z.literal("PUBLICAVEL"),
@@ -101,7 +100,7 @@ export const anexoPublicadoSchema = z
     rotuloArquivo: texto.nullable(),
     principal: z.boolean(),
     titulo: texto,
-    /** Vocabulário canônico, do módulo puro que o `pgEnum` também consome. */
+    /** Vocabulário canônico, do módulo puro que o catálogo também consome. */
     tipo: z.enum(TIPOS_DOCUMENTO),
     resumo: texto.nullable(),
     dataReferencia: dataSimples.nullable(),
@@ -123,11 +122,9 @@ export const anexoPublicadoSchema = z
       Guarda da fotografia com a placa de veículo.
 
       O original é privado e não tem representação pública: a única forma
-      autorizada é a versão tarjada. A mesma proibição existe em
-      `adaptarLinhasDaView`, sobre linhas da view; aqui ela existe sobre o
-      arquivo publicado, que é o que o site vai ler. São dois pontos porque
-      são duas superfícies diferentes — e porque esta aqui não precisa de
-      banco para ser verificada.
+      autorizada é a versão tarjada. A proibição já existia do lado de quem
+      publicava; aqui ela existe sobre o arquivo publicado, que é o que o
+      site lê — e esta não depende de mais nada para ser verificada.
     */
     if (anexo.sha256 === FOTO_DA_PLACA.sha256Original) {
       contexto.addIssue({
@@ -159,9 +156,9 @@ export const anexoPublicadoSchema = z
 export type AnexoPublicado = z.infer<typeof anexoPublicadoSchema>;
 
 /**
- * O acervo inteiro, na ordem em que a view o devolveu.
+ * O acervo inteiro, na ordem em que foi publicado.
  *
- * A ordem do array **é o dado**: `vw_anexo_publico` ordena por
+ * A ordem do array **é o dado**: o acervo publicado é ordenado por
  * `ordem_anexo NULLS LAST, titulo, principal DESC, versao DESC,
  * chave_storage`, e o snapshot preserva essa decisão em vez de reordenar.
  * Quem lê nunca precisa reordenar, e por isso nunca reordena diferente.
@@ -270,9 +267,9 @@ export const releaseSchema = z.strictObject({
    *
    * Não afirma que todo objeto do release veio de um destes lotes. No corpus
    * de setembro de 2026 isso seria falso: a maior parte dos objetos públicos
-   * foi produzida pela migração para os originais
-   * (`scripts/publicar-originais-acervo.ts`), que publica a partir do banco e
-   * não gera lote declarado. A proveniência objeto a objeto nunca foi
+   * foi produzida pela migração para os originais, executada por um script
+   * que publicava a partir do banco — removido com ele — e que não gerava
+   * lote declarado. A proveniência objeto a objeto nunca foi
    * registrada dessa forma, e inventá-la agora — atribuindo objetos a lotes
    * por inferência, ou fabricando lotes retroativos — transformaria uma
    * lacuna real do histórico numa afirmação falsa com aparência de registro.
@@ -283,8 +280,6 @@ export const releaseSchema = z.strictObject({
    * hash, e o Git preserva os scripts e commits que os publicaram.
    */
   lotes_declarados: z.array(texto).min(1),
-  /** Prefixo numérico da última migração aplicada, p. ex. `0012`. */
-  migracao: z.string().regex(/^\d{4}$/),
   totais: z.strictObject({
     documentos: inteiroNaoNegativo,
     anexos: inteiroNaoNegativo,

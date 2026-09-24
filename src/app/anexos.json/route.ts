@@ -39,10 +39,9 @@ export function serializarAnexos(
       slug: a.slug,
       /**
        * UUID público do arquivo, o mesmo já usado na rota contextual
-       * `/acervo/[documento]/arquivo/[arquivoId]`. Vem da projeção pública
-       * `vw_anexo_publico`, nunca de tabela privada: é o identificador que
-       * permite relacionar deterministicamente cada item desta lista à sua
-       * página HTML.
+       * `/acervo/[documento]/arquivo/[arquivoId]`. Vem do acervo publicado,
+       * nunca de registro privado: é o identificador que permite relacionar
+       * deterministicamente cada item desta lista à sua página HTML.
        */
       arquivo_id: a.arquivoId,
       titulo: a.titulo,

@@ -2,8 +2,7 @@ import { createHash } from "node:crypto";
 import { describe, expect, test } from "vitest";
 import { resolverEstadoDosProdutos } from "../src/componentes/home/Secoes";
 import { lugaresDeCampo } from "../src/componentes/territorio/cartografia/lugares";
-import type { AnexoPublico } from "../src/dados/consultas/anexos";
-import { indexarPorDocumento } from "../src/dados/consultas/anexos";
+import type { AnexoPublico } from "../src/dados/anexo-publico";
 import {
   CODIGOS_DO_LOTE,
   LOTE_PUBLICACAO,
@@ -16,6 +15,7 @@ import {
   resolverMateriaisDoLugar,
   resolverMaterial,
 } from "../src/dados/materiais-de-campo";
+import { indexarPorDocumento } from "../src/dados/publicado/anexos";
 
 /**
  * O contrato que esta suíte protege é um só: **nenhum material aparece como

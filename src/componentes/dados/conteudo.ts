@@ -150,7 +150,7 @@ export const LIMITES: readonly Limite[] = [
  * Arquivos públicos que a página destaca, pelo rótulo exato com que o acervo
  * os publica.
  *
- * Declarado, e resolvido contra `vw_anexo_publico` em build: rótulo que não
+ * Declarado, e resolvido contra `acervo.json` em build: rótulo que não
  * existir no acervo simplesmente não vira linha. Nenhum link é construído a
  * partir de convenção de nome — a URL, a licença, o tamanho e o hash vêm do
  * registro, como no Acervo.

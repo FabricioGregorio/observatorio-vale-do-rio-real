@@ -2,8 +2,8 @@
  * Anexos públicos lidos do snapshot — a fonte do Acervo, do `/anexos.json` e
  * das fichas de material.
  *
- * Substitui `consultas/anexos.ts` no grafo do site. A diferença é de fonte, e
- * só: os mesmos objetos, os mesmos UUID, a mesma ordem. O que sai é a
+ * Substituiu a consulta ao banco no grafo do site. A diferença é de fonte,
+ * e só: os mesmos objetos, os mesmos UUID, a mesma ordem. O que saiu é a
  * dependência de rede — nenhuma página do site abre conexão para montar uma
  * lista que o repositório já carrega.
  *

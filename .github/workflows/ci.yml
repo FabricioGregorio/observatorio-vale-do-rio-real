@@ -14,22 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: observatorio_teste
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports: ["5432:5432"]
-
-    env:
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432/observatorio_teste
-      DATABASE_URL_MIGRACAO: postgres://postgres:postgres@localhost:5432/observatorio_teste
+    # Sem serviço de banco e sem credencial: em 24/09/2026 o PostgreSQL saiu
+    # do projeto, e o pipeline não tem mais o que provisionar. Os dados
+    # públicos são versionados em src/dados/publicado/ e o build não abre
+    # conexão nenhuma.
 
     steps:
       - uses: actions/checkout@v4
@@ -43,12 +31,6 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Aplicar migrações
-        run: pnpm migrar
-
-      - name: Popular dados de referência
-        run: pnpm seed
-
       - name: Tipos
         run: pnpm tipos
 
@@ -58,19 +40,14 @@ jobs:
       - name: Testes de unidade
         run: pnpm teste
 
-      # Gate de integridade: anexo obrigatório sem espelho local quebra o
-      # build. Traduz em pipeline o risco de maior impacto do projeto.
+      # O gate de pendências de publicação rodava aqui, contra uma view do
+      # banco: anexo obrigatório sem espelho local quebrava o pipeline. A view
+      # saiu com o banco, e o que ela conferia passou a ser propriedade do
+      # snapshot versionado — `validarAcervoPublico` exige os dezesseis
+      # documentos e a reconciliação de B01 em toda leitura, inclusive nos
+      # testes acima e no build abaixo.
       #
-      # Roda ANTES do build de propósito: o build produz o artefato do site.
-      # Desde o Prompt 4.2, `pnpm build` não publica o pacote ZIP nem executa
-      # qualquer escrita no R2; essa operação exige `pnpm publicar-zip` e não
-      # faz parte deste workflow.
-      #
-      # O ramo do áudio público sem consentimento válido ainda não está na
-      # view: depende da tabela `entrevista`, que é de Fase 3.
-      - name: Pendências de publicação
-        run: pnpm pendencias
-
+      # `pnpm build` não escreve no R2 e não publica pacote nenhum.
       - name: Build
         run: pnpm build
 

@@ -16,7 +16,7 @@ import { expect, test } from "@playwright/test";
  * verifica percorrendo o Acervo, que é o percurso que uma pessoa faz.
  *
  * O total não é constante de teste: ele vem de `/anexos.json`, que deriva de
- * `vw_anexo_publico` no mesmo build. Fixar um número aqui foi o que fez a
+ * `acervo.json` no mesmo build. Fixar um número aqui foi o que fez a
  * suíte continuar exigindo oito depois da publicação de 2026-09-16 — um
  * contrato histórico disfarçado de invariante.
  */

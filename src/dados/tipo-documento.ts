@@ -1,29 +1,26 @@
 /**
  * Vocabulário canônico de `tipo_documento`.
  *
- * Um módulo sem dependência alguma: nem `db/schema`, nem Drizzle, nem cliente
- * de banco, nem consultas, nem `process.env`. Só uma lista de literais.
+ * Um módulo sem dependência alguma: nem `process.env`, nem I/O, nem nada
+ * além de uma lista de literais.
  *
  * ## Por que existe
  *
- * Os mesmos doze valores estavam escritos duas vezes — no `pgEnum` de
- * `db/schema.ts` e em `scripts/catalogar-documentos.ts` — e a camada do
- * snapshot precisava de uma terceira. Duas listas iguais em arquivos
- * diferentes divergem por acidente: alguém acrescenta um tipo ao enum do
- * banco, a migração passa, e o catalogador continua recusando o valor novo
- * com "esperado um de:" listando onze.
+ * Os mesmos doze valores já estiveram escritos três vezes — no enum do
+ * schema PostgreSQL, no catalogador e na camada do snapshot. Listas iguais
+ * em arquivos diferentes divergem por acidente: alguém acrescenta um tipo
+ * num lugar e o outro continua recusando o valor novo com
+ * "esperado um de:" listando onze.
  *
- * A partir daqui a lista é uma só, e os três consumidores a leem:
+ * A partir daqui a lista é uma só, e os consumidores a leem:
  *
- *     tipo-documento.ts
- *       ↑        ↑        ↑
- *  db/schema  catalogar  publicado/tipos
+ *      tipo-documento.ts
+ *          ↑        ↑
+ *  catalogo-       publicado/tipos
+ *  documental
  *
- * Note a direção. `db/schema.ts` passa a **consumir** este módulo em vez de
- * declarar a lista, e é isso que permite a `dados/publicado/` validar o campo
- * `tipo` contra o vocabulário canônico sem importar nada da camada de banco —
- * que era o ponto: um módulo de contrato público não deve arrastar
- * `drizzle-orm/pg-core` junto só para saber quais são os doze valores.
+ * É isso que permite a `dados/publicado/` validar o campo `tipo` contra o
+ * vocabulário canônico sem importar nada de fora da camada pura.
  *
  * ## O que este módulo não é
  *
@@ -31,13 +28,13 @@
  * técnico", "Entrevista" — vive em `editorial/tipos-publicos.ts`, que mapeia
  * estes identificadores para português. Aqui só existe o identificador.
  *
- * ## Alterar esta lista é alterar o banco
+ * ## Alterar esta lista é alterar o acervo
  *
- * Os valores são exatamente os do tipo `tipo_documento` criado pela migração
- * 0001. Acrescentar, remover ou reordenar aqui **não** muda o PostgreSQL:
- * muda apenas o que o código aceita, e passa a divergir do banco em silêncio.
- * Qualquer mudança real de vocabulário é migração versionada primeiro, e esta
- * lista depois.
+ * Os valores são exatamente os que o modelo documental fixou e que
+ * `acervo.json` já usa. Acrescentar, remover ou reordenar aqui muda o que o
+ * contrato público aceita — e um tipo fora do vocabulário derruba a leitura
+ * do snapshot inteiro, que é o comportamento desejado: vocabulário novo é
+ * decisão editorial declarada, não efeito colateral de um erro de digitação.
  */
 
 /** Ordem idêntica à do tipo `tipo_documento` no PostgreSQL. */

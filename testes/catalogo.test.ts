@@ -1,6 +1,9 @@
 /**
  * Testes das funções puras do catálogo documental (Tarefa 07).
- * Sem banco: o cliente é importado sob demanda pelo script, não no topo.
+ *
+ * Elas moravam em `scripts/catalogar-documentos.ts`, que escrevia no banco;
+ * o script saiu com o PostgreSQL e a derivação ficou, em
+ * `src/dados/catalogo-documental.ts`. Nada aqui toca banco, disco ou rede.
  */
 import { describe, expect, test } from "vitest";
 import {
@@ -11,7 +14,7 @@ import {
   TIPOS_DOCUMENTO,
   tipoDocumentoDoItem,
   VERSAO,
-} from "../scripts/catalogar-documentos";
+} from "../src/dados/catalogo-documental";
 import type { ItemInventario } from "../src/lib/espelhamento";
 
 const item = (parcial: Partial<ItemInventario> = {}): ItemInventario => ({
@@ -69,9 +72,9 @@ describe("tipo_documento", () => {
     }
   });
 
-  test("recusa valor fora do enum em vez de cair em 'outro'", () => {
+  test("recusa valor fora do vocabulário em vez de cair em 'outro'", () => {
     expect(() => tipoDocumentoDoItem(item({ tipo: "relatorio" }))).toThrow(
-      /não existe no enum/,
+      /não existe em tipo_documento/,
     );
     expect(() => tipoDocumentoDoItem(item({ tipo: "" }))).toThrow();
   });

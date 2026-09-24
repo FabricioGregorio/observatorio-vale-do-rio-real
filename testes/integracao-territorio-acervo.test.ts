@@ -7,7 +7,7 @@ import {
 } from "../src/app/territorio/camada-local/[lugar]/route";
 import { metadata as metadataTerritorio } from "../src/app/territorio/page";
 import { agruparMateriaisPublicos } from "../src/componentes/acervo/ListaMateriaisPublicos";
-import type { AnexoPublico } from "../src/dados/consultas/anexos";
+import type { AnexoPublico } from "../src/dados/anexo-publico";
 
 function anexo(slug: string, indice: number): AnexoPublico {
   return {

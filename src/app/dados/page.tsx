@@ -70,9 +70,9 @@ export const metadata = metadadosDaRota({
  * ## Dados
  *
  * Server Component. Os números vêm do dataset versionado; a lista de fontes
- * públicas é resolvida contra `vw_anexo_publico` em build, pela mesma consulta
- * do Acervo. Sem `DATABASE_URL` a seção de fontes fica vazia e
- * declara isso — nenhum link é construído por convenção de nome.
+ * públicas é resolvida contra `acervo.json` em build, pela mesma leitura do
+ * Acervo. Documento fora do acervo publicado não vira link: a seção declara a
+ * ausência em vez de construir endereço por convenção de nome.
  */
 
 function tamanho(bytes: number): string {

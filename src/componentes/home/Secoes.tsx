@@ -373,7 +373,7 @@ export function Territorio() {
 /* -------------------------------------------------------------------------- */
 
 /**
- * O estado de cada material vem resolvido contra `vw_anexo_publico`. Material
+ * O estado de cada material vem resolvido contra `acervo.json`. Material
  * público vira link para o arquivo real; sem URL não existe estado público.
  */
 function MateriaisReunidos({

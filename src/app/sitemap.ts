@@ -35,7 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     /*
       Somente episódios que passaram pelo gate: a mesma fonte que gera as
       páginas. Rascunho, em revisão, arquivado e datado no futuro não estão
-      em `vw_episodio_publico`, então não há o que filtrar aqui — anunciar no
+      em `episodios.json`, então não há o que filtrar aqui — anunciar no
       sitemap uma URL que responde 404 seria pior do que não anunciar.
     */
     ...episodios.map((episodio) => ({

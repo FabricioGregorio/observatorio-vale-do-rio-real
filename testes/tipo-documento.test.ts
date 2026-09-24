@@ -1,20 +1,17 @@
 /**
- * Identidade do vocabulário `tipo_documento`.
+ * Identidade do vocabulário de tipo de documento.
  *
- * Os doze valores existiam em duas cópias — o `pgEnum` de `db/schema.ts` e a
- * constante de `scripts/catalogar-documentos.ts` — e a camada do snapshot
- * precisava de uma terceira. Agora há uma definição e três consumidores.
+ * Os doze valores já existiram em três cópias — o enum do schema PostgreSQL,
+ * a constante do catalogador e a camada do snapshot. O schema saiu com o
+ * banco; restam uma definição, em `src/dados/tipo-documento.ts`, e dois
+ * consumidores.
  *
- * Estes testes travam três coisas ao mesmo tempo: que a lista é exatamente a
- * que a migração 0001 criou, que os três consumidores enxergam a **mesma**
- * lista, e que o schema público aceita e recusa exatamente esses valores.
- *
- * Importar `db/schema` aqui não abre conexão: o módulo só declara tabelas e
- * tipos. O cliente vive em `db/cliente.ts`, que ninguém importa daqui.
+ * Estes testes travam duas coisas: que a lista é exatamente a que o modelo
+ * documental fixou, e que o schema público aceita e recusa exatamente esses
+ * valores.
  */
 import { describe, expect, test } from "vitest";
-import { tipoDocumento } from "../db/schema";
-import { TIPOS_DOCUMENTO as TIPOS_NO_CATALOGADOR } from "../scripts/catalogar-documentos";
+import { TIPOS_DOCUMENTO as TIPOS_NO_CATALOGO } from "../src/dados/catalogo-documental";
 import { anexoPublicadoSchema } from "../src/dados/publicado/tipos";
 import { TIPOS_DOCUMENTO } from "../src/dados/tipo-documento";
 
@@ -22,9 +19,9 @@ import { TIPOS_DOCUMENTO } from "../src/dados/tipo-documento";
  * A lista esperada, escrita à mão aqui de propósito.
  *
  * É o único lugar do repositório onde os doze valores aparecem duplicados, e
- * a duplicação é o teste: se alguém alterar `tipo-documento.ts` sem alterar o
- * banco, esta lista acusa. Um teste que comparasse a definição consigo mesma
- * não travaria nada.
+ * a duplicação é o teste: alterar `tipo-documento.ts` passa a exigir alterar
+ * também esta lista. Um teste que comparasse a definição consigo mesma não
+ * travaria nada.
  */
 const ESPERADOS = [
   "relatorio_tecnico",
@@ -74,20 +71,12 @@ function anexoCom(tipo: string) {
 }
 
 describe("vocabulário de tipo de documento", () => {
-  test("a definição pura contém exatamente os doze valores da migração 0001", () => {
+  test("a definição pura contém exatamente os doze valores canônicos", () => {
     expect(TIPOS_DOCUMENTO).toEqual(ESPERADOS);
   });
 
-  test("o pgEnum consome a mesma lista, na mesma ordem", () => {
-    expect(tipoDocumento.enumValues).toEqual([...ESPERADOS]);
-  });
-
-  test("o nome do tipo no PostgreSQL não mudou", () => {
-    expect(tipoDocumento.enumName).toBe("tipo_documento");
-  });
-
-  test("o catalogador consome a mesma lista", () => {
-    expect(TIPOS_NO_CATALOGADOR).toBe(TIPOS_DOCUMENTO);
+  test("o catálogo documental consome a mesma lista", () => {
+    expect(TIPOS_NO_CATALOGO).toBe(TIPOS_DOCUMENTO);
   });
 
   test("nenhum valor aparece repetido", () => {

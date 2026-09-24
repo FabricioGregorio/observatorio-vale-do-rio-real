@@ -37,7 +37,6 @@ const RAIZES_ATIVAS = [
   "src",
   "scripts",
   "testes",
-  "db/schema.ts",
   "package.json",
   ".env.example",
 ];

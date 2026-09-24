@@ -51,7 +51,7 @@ export {
   ROTULO_DO_ESTADO,
 } from "../../../dados/materiais-de-campo";
 
-/** Material já resolvido contra `vw_anexo_publico`. Ver `materiais-de-campo`. */
+/** Material já resolvido contra `acervo.json`. Ver `materiais-de-campo`. */
 export type Material = MaterialResolvido;
 
 export type ComFonte = {
@@ -134,7 +134,7 @@ export type LugarDeCampo = {
 
 /**
  * Título do A02 para citação de fonte. A URL do relatório **não** mora aqui:
- * ela vem de `vw_anexo_publico`, como a de qualquer outro material.
+ * ela vem de `acervo.json`, como a de qualquer outro material.
  */
 const A02_TITULO = "Relatório Técnico — Recanto da Serra (A02)";
 
@@ -215,9 +215,9 @@ const REFERENCIA_DA_SERRA =
  * As quatro fichas, resolvidas contra o que está efetivamente publicado.
  *
  * `publicados` vem de `listarArquivosPorDocumento()`, em build. Nenhum estado
- * `publico` é escrito aqui: ele é consequência de existir URL na view. Com o
- * mapa vazio — máquina sem `DATABASE_URL` — as fichas caem para o estado
- * declarado em `materiais-de-campo.ts`, e nenhum link falso aparece.
+ * `publico` é escrito aqui: ele é consequência de existir URL no acervo
+ * publicado. Com o mapa vazio, as fichas caem para o estado declarado em
+ * `materiais-de-campo.ts`, e nenhum link falso aparece.
  */
 export function lugaresDeCampo(
   publicados: ArquivosPublicados,

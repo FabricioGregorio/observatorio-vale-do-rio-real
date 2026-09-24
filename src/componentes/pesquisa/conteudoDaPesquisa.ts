@@ -15,7 +15,7 @@
  *   recorte e os quatro lugares de campo.
  * - **`componentes/home/conteudo.ts`** — as oito entrevistas, identificadas
  *   por instituição ou lugar.
- * - **`dados/materiais-de-campo.ts`**, resolvido contra `vw_anexo_publico` em
+ * - **`dados/materiais-de-campo.ts`**, resolvido contra `acervo.json` em
  *   build — o estado real de cada material.
  *
  * ## O que esta página não faz
@@ -334,7 +334,7 @@ export const PERCURSO: readonly Etapa[] = [
 
 /**
  * O estado das entrevistas **não** é afirmado aqui: a página o resolve contra
- * `vw_anexo_publico`, entrevista por entrevista, e escreve a frase de acordo.
+ * `acervo.json`, entrevista por entrevista, e escreve a frase de acordo.
  * Estes parágrafos dizem só o que independe do estado.
  */
 export const ESCUTA: readonly string[] = [

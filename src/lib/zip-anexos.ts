@@ -16,7 +16,7 @@ export const CHAVE_ZIP_ANEXOS = "prestacao-de-contas/anexos.zip";
 /**
  * Declaração explícita de que o objeto do ZIP existe no bucket público.
  *
- * Só quem executou `pnpm publicar-zip` sabe disso; a chave sozinha não prova
+ * Só quem executou a publicação do pacote sabe disso; a chave sozinha não prova
  * nada, e derivar a URL a partir de `STORAGE_PUBLIC_URL` provava apenas que o
  * domínio do acervo está configurado. Foi exatamente esse o defeito do primeiro
  * deployment: os oito anexos existiam, o domínio existia, o pacote não — e a
@@ -41,6 +41,24 @@ export function urlDoZipDeAnexos(): string | null {
   if (!zipDeAnexosPublicado()) return null;
   const base = process.env.STORAGE_PUBLIC_URL?.replace(/\/+$/, "");
   return base ? `${base}/${CHAVE_ZIP_ANEXOS}` : null;
+}
+
+/**
+ * Autorização explícita para publicar o pacote.
+ *
+ * Morava em `scripts/gerar-zip-anexos.ts`, que montava o pacote a partir das
+ * evidências do banco e foi removido com ele. A regra não tem nada de banco e
+ * continua valendo para o empacotador do Lote C: publicar exige a flag
+ * literal, e nem compilação, nem CI, nem invocação acidental causa `PutObject`.
+ */
+export function exigirAutorizacaoPublicacaoZip(
+  argumentos: readonly string[],
+): void {
+  if (argumentos.length !== 1 || argumentos[0] !== "--publicar") {
+    throw new Error(
+      "publicação do ZIP não autorizada: o comando que publica fornece a flag explícita --publicar.",
+    );
+  }
 }
 
 /**
