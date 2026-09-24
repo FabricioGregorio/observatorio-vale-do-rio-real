@@ -52,13 +52,23 @@ const ROTULO_DO_LUGAR = new Map(
 );
 
 /**
- * Semântica explícita dos dois recortes rotulados dentro do SVG.
+ * Semântica explícita dos recortes e dos lugares rotulados dentro do SVG.
  *
- * O atributo agrupado evita que o analisador JSX trate `<g>` como um controle
- * HTML convertido, sem mudar o markup entregue: o DOM continua recebendo
- * exatamente `role="group"`, como o axe exige para aceitar `aria-label`.
+ * O valor vem de uma constante, e não de um literal escrito no atributo, para
+ * que o analisador JSX não trate `<g>` como um controle HTML convertido. O
+ * markup entregue é o mesmo: o DOM continua recebendo exatamente
+ * `role="group"`, como o axe exige para aceitar `aria-label`.
+ *
+ * Até 2026-09-24 a constante era um objeto espalhado com `{...}` no elemento.
+ * Isso tinha um efeito que não estava à vista: com um spread nas props, o
+ * compilador JSX não consegue emitir a forma otimizada e chama o runtime sem
+ * declarar que os filhos são estáticos. React passa a tratar os quatro filhos
+ * fixos de cada `<g>` como uma lista dinâmica e cobra `key` de todos —
+ * "Each child in a list should have a unique key prop", apontando `<circle>`
+ * no servidor e `<g>` no cliente. Um atributo com valor de constante não tem
+ * esse efeito, e o desenho não muda em nada.
  */
-const SEMANTICA_DO_RECORTE = { role: "group" } as const;
+const PAPEL_DE_GRUPO = "group";
 
 /**
  * Mapa do recorte — Server Component, sem ilha cliente própria.
@@ -168,11 +178,11 @@ export function MapaDoRecorte({
 
           {grupos.map(({ definicao, membros }) => (
             <g
-              {...SEMANTICA_DO_RECORTE}
               aria-label={definicao.rotulo}
               className="territorio-cartografico__recorte"
               data-recorte={definicao.chave}
               key={definicao.chave}
+              role={PAPEL_DE_GRUPO}
             >
               {membros.map((municipio) => (
                 <path
@@ -222,12 +232,12 @@ export function MapaDoRecorte({
 
             return (
               <g
-                {...SEMANTICA_DO_RECORTE}
                 aria-label={ROTULO_DO_LUGAR.get(lugar.id) ?? lugar.nome}
                 className="territorio-cartografico__lugar"
                 data-lugar-do-recorte={recorte}
                 data-recorte={lugar.id}
                 key={lugar.id}
+                role={PAPEL_DE_GRUPO}
                 transform={`translate(${x} ${y})`}
               >
                 <circle className="alvo" cy={-RAIO_DO_LUGAR} r={RAIO_DO_ALVO} />
