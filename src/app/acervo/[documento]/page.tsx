@@ -4,11 +4,6 @@ import { notFound } from "next/navigation";
 import { tamanhoLegivel } from "../../../componentes/acervo/formato";
 import { ActionLink } from "../../../componentes/ui/ActionLink";
 import {
-  listarDocumentosPublicos,
-  selecionarDocumentoPublico,
-  tituloDoArquivoPublico,
-} from "../../../dados/consultas/acervo";
-import {
   gruposB01NaOrdemTerritorial,
   mapaB01,
 } from "../../../dados/editorial/mapa-b01";
@@ -16,6 +11,11 @@ import {
   formatoPublico,
   tipoPublico,
 } from "../../../dados/editorial/tipos-publicos";
+import {
+  listarDocumentosPublicos,
+  selecionarDocumentoPublico,
+  tituloDoArquivoPublico,
+} from "../../../dados/publicado/acervo";
 import { metadadosDaRota } from "../../../lib/site-url";
 import "../acervo.css";
 

@@ -56,7 +56,6 @@ function anexo(slug: string, over: Partial<AnexoPublico> = {}): AnexoPublico {
     estado: "PUBLICAVEL",
     revisaoPrivacidade: "concluida",
     derivadoDe: [],
-    derivadoDeDocumento: null,
     arquivoOrigemId: null,
     arquivoRelacao: null,
     arquivoDerivacaoMetodo: null,

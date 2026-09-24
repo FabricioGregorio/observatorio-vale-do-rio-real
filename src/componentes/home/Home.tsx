@@ -1,5 +1,5 @@
-import type { EpisodioPublico } from "../../dados/consultas/podobservar";
 import type { ArquivosPublicados } from "../../dados/materiais-de-campo";
+import type { EpisodioPublico } from "../../dados/podobservar-publico";
 import { AberturaB2, FaixaDaPesquisa } from "./Aberturas";
 import { CSS_DA_HOME } from "./estilos";
 import { CSS_DAS_ABERTURAS } from "./estilosAberturas";

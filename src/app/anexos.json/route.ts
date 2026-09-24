@@ -1,6 +1,7 @@
-import type { AnexoPublico } from "../../dados/consultas/anexos";
-import { listarAnexosPublicos } from "../../dados/consultas/anexos";
 import { separarCredito } from "../../dados/pesquisa/credito-fotografico";
+import type { AnexoPublico } from "../../dados/publicado/anexos";
+import { listarAnexosPublicos } from "../../dados/publicado/anexos";
+import { lerRelease } from "../../dados/publicado/leitura";
 import { urlDoSite } from "../../lib/site-url";
 
 /**
@@ -11,16 +12,27 @@ import { urlDoSite } from "../../lib/site-url";
  * ponto no nome do segmento, e a documentação do Next é explícita — um
  * `app/data.json/route.ts` vira arquivo estático no `next build`.
  *
- * `force-static` é indispensável: nesta versão do Next, Route Handler não é
- * cacheado por padrão, e sem isso a rota consultaria o banco em tempo de
- * requisição.
+ * `force-static` continua declarado: nesta versão do Next, Route Handler não
+ * é cacheado por padrão, e a rota é conteúdo de build, não de requisição.
+ * Desde o Lote B ela não tem o que consultar — lê `acervo.json` e
+ * `release.json`, ambos versionados.
  */
 export const dynamic = "force-static";
 
-/** Serialização pura: uma entrada por objeto público, inclusive multiarquivo. */
-export function serializarAnexos(anexos: readonly AnexoPublico[]) {
+/**
+ * Serialização pura: uma entrada por objeto público, inclusive multiarquivo.
+ *
+ * `geradoEm` é a **data editorial do release**, nunca o relógio da máquina.
+ * Com `new Date()` duas compilações do mesmo conteúdo produziam arquivos
+ * diferentes, e o consumidor não tinha como saber se algo mudou. Agora
+ * `/anexos.json` só muda quando o release muda.
+ */
+export function serializarAnexos(
+  anexos: readonly AnexoPublico[],
+  geradoEm: string,
+) {
   return {
-    gerado_em: new Date().toISOString(),
+    gerado_em: geradoEm,
     total: anexos.length,
     anexos: anexos.map((a) => ({
       ordem: a.ordemAnexo,
@@ -70,7 +82,7 @@ export function serializarAnexos(anexos: readonly AnexoPublico[]) {
 export async function GET() {
   const anexos = await listarAnexosPublicos();
 
-  return Response.json(serializarAnexos(anexos), {
+  return Response.json(serializarAnexos(anexos, lerRelease().gerado_em), {
     headers: { "content-type": "application/json; charset=utf-8" },
   });
 }

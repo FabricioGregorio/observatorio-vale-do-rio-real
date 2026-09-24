@@ -23,7 +23,7 @@ import {
   interpretarSegmentoDeTemporada,
   listarEpisodiosPublicos,
   selecionarPorTemporadaESlug,
-} from "../../../../dados/consultas/podobservar";
+} from "../../../../dados/publicado/podobservar";
 import { metadadosDaRota } from "../../../../lib/site-url";
 import "../../podobservar.css";
 

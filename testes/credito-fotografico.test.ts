@@ -41,7 +41,6 @@ function anexo(over: Partial<AnexoPublico> = {}): AnexoPublico {
     estado: "PUBLICAVEL",
     revisaoPrivacidade: "concluida",
     derivadoDe: [],
-    derivadoDeDocumento: null,
     arquivoOrigemId: null,
     arquivoRelacao: null,
     arquivoDerivacaoMetodo: null,
@@ -138,14 +137,17 @@ describe("o crédito chega a cada superfície pública", () => {
   });
 
   test("/anexos.json: crédito é campo próprio, não texto colado no rótulo", () => {
-    const json = serializarAnexos([
-      anexo({
-        rotuloArquivo: montarRotulo(
-          "B01 · paola-rodrigues.jpeg",
-          "Iago de Andrade Santos",
-        ),
-      }),
-    ]);
+    const json = serializarAnexos(
+      [
+        anexo({
+          rotuloArquivo: montarRotulo(
+            "B01 · paola-rodrigues.jpeg",
+            "Iago de Andrade Santos",
+          ),
+        }),
+      ],
+      "2026-09-24",
+    );
     expect(json.anexos[0]?.credito).toBe("Foto: Iago de Andrade Santos");
     expect(json.anexos[0]?.rotulo_arquivo).toBe("B01 · paola-rodrigues.jpeg");
   });

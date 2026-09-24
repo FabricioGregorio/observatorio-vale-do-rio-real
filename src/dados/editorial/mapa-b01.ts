@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { AnexoPublico } from "../consultas/anexos";
+import type { AnexoPublico } from "../anexo-publico";
 import { separarCredito } from "../pesquisa/credito-fotografico";
 import { IDS_DOS_LUGARES } from "../territorio/referencias";
 import dados from "./b01.json";

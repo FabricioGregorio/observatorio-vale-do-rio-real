@@ -93,7 +93,6 @@ export const anexoPublicadoSchema = z
     revisaoPrivacidade: z.literal("concluida"),
     /** Proveniência declarada; publicar sem ela não é aceitável. */
     derivadoDe: z.array(texto).min(1),
-    derivadoDeDocumento: texto.nullable(),
     arquivoOrigemId: uuid.nullable(),
     arquivoRelacao: z.enum(["derivado", "replica"]).nullable(),
     arquivoDerivacaoMetodo: metodoDerivacaoSchema.nullable(),

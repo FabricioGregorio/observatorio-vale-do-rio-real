@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
-import { listarDocumentosPublicos } from "../dados/consultas/acervo";
-import { listarEpisodiosPublicos } from "../dados/consultas/podobservar";
+import { listarDocumentosPublicos } from "../dados/publicado/acervo";
+import { listarEpisodiosPublicos } from "../dados/publicado/podobservar";
 import { urlDoSite } from "../lib/site-url";
 
 /**

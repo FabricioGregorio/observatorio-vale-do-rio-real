@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { TerritorioVivo } from "../../../componentes/territorio/cartografia/TerritorioVivo";
-import { listarArquivosPorDocumento } from "../../../dados/consultas/anexos";
+import { listarArquivosPorDocumento } from "../../../dados/publicado/anexos";
 
 /**
  * Laboratório — Cartografia Viva como experiência territorial. **Rota DEV.**

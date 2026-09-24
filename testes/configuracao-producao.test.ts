@@ -1,8 +1,8 @@
 import { describe, expect, test, vi } from "vitest";
 import sitemap, { ROTAS_PUBLICAS } from "../src/app/sitemap";
-import { listarDocumentosPublicos } from "../src/dados/consultas/acervo";
 import { databaseUrlDisponivel } from "../src/dados/consultas/anexos";
-import { listarEpisodiosPublicos } from "../src/dados/consultas/podobservar";
+import { listarDocumentosPublicos } from "../src/dados/publicado/acervo";
+import { listarEpisodiosPublicos } from "../src/dados/publicado/podobservar";
 import { regrasDeRobots } from "../src/lib/indexacao";
 import { metadadosDaRota, obterSiteUrl, urlDoSite } from "../src/lib/site-url";
 
@@ -31,7 +31,6 @@ const { DOCUMENTOS, EPISODIOS } = vi.hoisted(() => {
     estado: "PUBLICAVEL" as const,
     revisaoPrivacidade: "concluida" as const,
     derivadoDe: ["documento:fixture"],
-    derivadoDeDocumento: null,
     arquivoOrigemId: null,
     arquivoRelacao: null,
     arquivoDerivacaoMetodo: null,
@@ -113,11 +112,11 @@ const { DOCUMENTOS, EPISODIOS } = vi.hoisted(() => {
   };
 });
 
-vi.mock("../src/dados/consultas/acervo", () => ({
+vi.mock("../src/dados/publicado/acervo", () => ({
   listarDocumentosPublicos: async () => DOCUMENTOS,
 }));
 
-vi.mock("../src/dados/consultas/podobservar", () => ({
+vi.mock("../src/dados/publicado/podobservar", () => ({
   listarEpisodiosPublicos: async () => EPISODIOS,
 }));
 

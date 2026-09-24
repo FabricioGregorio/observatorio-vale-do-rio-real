@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { EpisodioPublico } from "../../dados/consultas/podobservar";
+import type { EpisodioPublico } from "../../dados/podobservar-publico";
 import {
   dataCurta,
   dataMaquina,
@@ -121,7 +121,7 @@ export function PodObservarNaHome({
            *
            * A última linha é afirmação verificável, não promessa editorial: o
            * gate público exige `transcricao` não vazia, e a página de cada
-           * episódio publica o texto inteiro. Ver `consultas/podobservar.ts`.
+           * episódio publica o texto inteiro. Ver `publicado/podobservar.ts`.
            */}
           <p>
             O PodObservar é o podcast do Observatório — uma realização do mesmo

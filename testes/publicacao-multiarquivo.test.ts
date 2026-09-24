@@ -44,7 +44,7 @@ describe.skipIf(!process.env.DATABASE_URL_MANUTENCAO)(
         expect(
           anexos.filter((x) => x.slug === "relatorio-tecnico-recanto-da-serra"),
         ).toHaveLength(1);
-        expect(serializarAnexos(anexos).total).toBe(9);
+        expect(serializarAnexos(anexos, "2026-09-24").total).toBe(9);
 
         const base = process.env.STORAGE_PUBLIC_URL?.replace(/\/+$/, "");
         if (!base) throw new Error("STORAGE_PUBLIC_URL ausente");

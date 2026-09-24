@@ -1,6 +1,6 @@
 import { CadernoDeEscuta } from "../../componentes/podobservar/CadernoDeEscuta";
-import { listarEpisodiosPublicos } from "../../dados/consultas/podobservar";
 import { LOGO_PODOBSERVAR } from "../../dados/podobservar-artes";
+import { listarEpisodiosPublicos } from "../../dados/publicado/podobservar";
 import { metadadosDaRota } from "../../lib/site-url";
 import "./podobservar.css";
 

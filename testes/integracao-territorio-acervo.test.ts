@@ -16,7 +16,6 @@ function anexo(slug: string, indice: number): AnexoPublico {
     estado: "PUBLICAVEL",
     revisaoPrivacidade: "concluida",
     derivadoDe: [`documento:${slug}`],
-    derivadoDeDocumento: null,
     arquivoOrigemId: null,
     arquivoRelacao: null,
     arquivoDerivacaoMetodo: null,

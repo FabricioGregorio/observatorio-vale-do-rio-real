@@ -174,7 +174,6 @@ function emFormaDeDisco(anexo: AnexoPublico) {
     estado: anexo.estado,
     revisaoPrivacidade: anexo.revisaoPrivacidade,
     derivadoDe: [...anexo.derivadoDe],
-    derivadoDeDocumento: anexo.derivadoDeDocumento,
     arquivoOrigemId: anexo.arquivoOrigemId,
     arquivoRelacao: anexo.arquivoRelacao,
     arquivoDerivacaoMetodo: anexo.arquivoDerivacaoMetodo,
@@ -322,7 +321,7 @@ async function principal(): Promise<ResultadoDoConjunto> {
     corrigido sem o site ficar no ar errado.
   */
   const { validarAcervoPublico } = await import(
-    "../src/dados/consultas/acervo"
+    "../src/dados/publicado/acervo"
   );
   const documentos = validarAcervoPublico(anexos);
 

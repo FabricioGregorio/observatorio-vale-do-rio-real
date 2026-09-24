@@ -24,13 +24,13 @@ import { FichaDoIndicador } from "../../componentes/dados/Indicadores";
 import { SerieMensal } from "../../componentes/dados/SerieMensal";
 import { ActionLink } from "../../componentes/ui/ActionLink";
 import {
-  type AnexoPublico,
-  listarAnexosPublicos,
-} from "../../dados/consultas/anexos";
-import {
   formatarPercentual,
   formatarReais,
 } from "../../dados/indicadores/formato";
+import {
+  type AnexoPublico,
+  listarAnexosPublicos,
+} from "../../dados/publicado/anexos";
 import { metadadosDaRota } from "../../lib/site-url";
 import "./dados.css";
 

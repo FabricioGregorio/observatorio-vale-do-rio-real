@@ -8,18 +8,18 @@ import {
   dataMaquina,
 } from "../../../../../componentes/podobservar/formato";
 import { ActionLink } from "../../../../../componentes/ui/ActionLink";
-import {
-  listarDocumentosPublicos,
-  selecionarArquivoPublico,
-  selecionarDocumentoPublico,
-  tituloDoArquivoPublico,
-} from "../../../../../dados/consultas/acervo";
 import { mapaB01 } from "../../../../../dados/editorial/mapa-b01";
 import {
   formatoPublico,
   tipoPublico,
 } from "../../../../../dados/editorial/tipos-publicos";
 import { FOTO_DA_PLACA } from "../../../../../dados/pesquisa/excecao-placa";
+import {
+  listarDocumentosPublicos,
+  selecionarArquivoPublico,
+  selecionarDocumentoPublico,
+  tituloDoArquivoPublico,
+} from "../../../../../dados/publicado/acervo";
 import { metadadosDaRota } from "../../../../../lib/site-url";
 import "../../../acervo.css";
 

@@ -26,7 +26,6 @@ import {
 } from "../../componentes/pesquisa/conteudoDaPesquisa";
 import { MarcaDeEvidencia } from "../../componentes/pesquisa/MarcaDeEvidencia";
 import { ActionLink } from "../../componentes/ui/ActionLink";
-import { listarArquivosPorDocumento } from "../../dados/consultas/anexos";
 import { exibirIndicador } from "../../dados/indicadores/formato";
 import { REGISTROS_RESERVADOS } from "../../dados/indicadores/selecaoEditorial";
 import {
@@ -38,6 +37,7 @@ import {
   DERIVADOS_DOS_LUGARES,
   PASTA_PUBLICA_DA_PESQUISA,
 } from "../../dados/pesquisa/derivados";
+import { listarArquivosPorDocumento } from "../../dados/publicado/anexos";
 import { REFERENCIAS_TERRITORIAIS } from "../../dados/territorio/referencias";
 import { metadadosDaRota } from "../../lib/site-url";
 import "./pesquisa.css";

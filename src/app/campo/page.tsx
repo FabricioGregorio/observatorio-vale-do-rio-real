@@ -18,9 +18,9 @@ import {
   Documento,
   SecaoDocumental,
 } from "../../componentes/institucional/Documento";
-import { listarAnexosPublicos } from "../../dados/consultas/anexos";
 import { MESES_DE_COLETA } from "../../dados/indicadores/derivados";
 import { exibirDataDaFotografia } from "../../dados/pesquisa/derivados";
+import { listarAnexosPublicos } from "../../dados/publicado/anexos";
 import { metadadosDaRota } from "../../lib/site-url";
 
 export const metadata = metadadosDaRota({

@@ -6,7 +6,7 @@ import {
   type DocumentoDoIndice,
   ListaDocumentosPublicos,
 } from "../../componentes/acervo/ListaDocumentosPublicos";
-import { listarDocumentosPublicos } from "../../dados/consultas/acervo";
+import { listarDocumentosPublicos } from "../../dados/publicado/acervo";
 import { metadadosDaRota } from "../../lib/site-url";
 import "./acervo.css";
 

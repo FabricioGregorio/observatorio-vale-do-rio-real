@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import {
   type AnexoPublico,
   listarAnexosPublicos,
-} from "../../../dados/consultas/anexos";
+} from "../../../dados/publicado/anexos";
 
 export const dynamic = "force-dynamic";
 

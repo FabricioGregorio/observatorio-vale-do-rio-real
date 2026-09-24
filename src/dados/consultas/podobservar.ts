@@ -5,6 +5,7 @@ import {
   type EpisodioPublico,
   episodioPublicoSchema,
 } from "../podobservar-publico";
+import { selecionarMaisRecente } from "../publicado/podobservar";
 import { databaseUrlDisponivel } from "./anexos";
 
 /**
@@ -70,66 +71,17 @@ export function adaptarLinhasDaView(
   });
 }
 
-/**
- * Ordem canônica do PodObservar: data de publicação decrescente.
- *
- * O desempate é `numero` decrescente, e existe só para tornar a ordem
- * determinística quando dois episódios compartilham o instante de publicação.
- * Nunca se ordena por número, nome de arquivo, posição no array, mtime ou data
- * de upload: nenhum deles é a data pública do episódio.
- */
-export function ordenarPorPublicacao(
-  episodios: readonly EpisodioPublico[],
-): EpisodioPublico[] {
-  return [...episodios].sort((a, b) => {
-    const diferenca = b.publicadoEm.getTime() - a.publicadoEm.getTime();
-    return diferenca !== 0 ? diferenca : b.numero - a.numero;
-  });
-}
-
-/** O episódio mais recente entre os já públicos, ou `null` se não houver. */
-export function selecionarMaisRecente(
-  episodios: readonly EpisodioPublico[],
-): EpisodioPublico | null {
-  return ordenarPorPublicacao(episodios)[0] ?? null;
-}
-
-/**
- * Resolução conjunta de temporada e slug.
- *
- * Slug válido em temporada errada devolve `null` — o mesmo `null` de slug
- * inexistente. A camada pública não distingue os dois casos, e por isso a rota
- * `/podobservar/t2/slug-real-da-t1` termina no mesmo 404 de
- * `/podobservar/t1/slug-inexistente`. Não revelar "existe, mas em outra
- * temporada" é parte do contrato.
- */
-export function selecionarPorTemporadaESlug(
-  episodios: readonly EpisodioPublico[],
-  temporadaNumero: number,
-  slug: string,
-): EpisodioPublico | null {
-  return (
-    episodios.find(
-      (episodio) =>
-        episodio.temporadaNumero === temporadaNumero && episodio.slug === slug,
-    ) ?? null
-  );
-}
-
-/**
- * Lê o segmento `t1` da rota `/podobservar/t1/[episodio]`.
- *
- * Aceita exatamente `t` seguido de inteiro positivo sem zero à esquerda —
- * `t01`, `T1`, `t0` e `t-1` não são a mesma rota e devolvem `null`, que a
- * página traduz em 404. Manter a forma canônica única evita duas URLs para o
- * mesmo episódio.
- */
-export function interpretarSegmentoDeTemporada(
-  segmento: string,
-): number | null {
-  const correspondencia = /^t([1-9]\d*)$/.exec(segmento);
-  return correspondencia ? Number(correspondencia[1]) : null;
-}
+/*
+  Os seletores puros moram em `publicado/podobservar.ts`, junto do snapshot
+  que os alimenta. A reexportação mantém a definição única e preserva quem já
+  importava daqui — a mesma postura de `AnexoPublico`.
+*/
+export {
+  interpretarSegmentoDeTemporada,
+  ordenarPorPublicacao,
+  selecionarMaisRecente,
+  selecionarPorTemporadaESlug,
+} from "../publicado/podobservar";
 
 /** Episódios já públicos, do mais recente ao mais antigo. */
 export async function listarEpisodiosPublicos(): Promise<EpisodioPublico[]> {

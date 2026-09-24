@@ -46,11 +46,21 @@ export function validarAcervoPublico(anexos: readonly AnexoPublico[]) {
   return documentos;
 }
 
+/**
+ * Os documentos públicos, sempre validados.
+ *
+ * Enquanto a fonte era o banco, a validação integral rodava só em produção:
+ * uma máquina de desenvolvimento sem credencial recebia lista vazia, e exigir
+ * 16 documentos dela seria exigir que ninguém programasse sem banco.
+ *
+ * Com o snapshot versionado essa assimetria perdeu sentido — e virou risco. O
+ * acervo agora é o mesmo arquivo em toda máquina, então um `acervo.json`
+ * editado errado precisa falhar no primeiro `pnpm teste`, e não só no build de
+ * produção. Validar sempre também é o que permite a esta camada não ler
+ * variável de ambiente alguma.
+ */
 export async function listarDocumentosPublicos(): Promise<DocumentoDoAcervo[]> {
-  const anexos = await listarAnexosPublicos();
-  return process.env.NODE_ENV === "production"
-    ? validarAcervoPublico(anexos)
-    : organizarDocumentosPublicos(anexos);
+  return validarAcervoPublico(await listarAnexosPublicos());
 }
 
 export function selecionarDocumentoPublico(

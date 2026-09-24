@@ -7,10 +7,6 @@ import {
   podePublicar,
 } from "../../lib/manifesto-evidencias";
 import type { AnexoPublico } from "../anexo-publico";
-import type {
-  ArquivoPublicado,
-  ArquivosPublicados,
-} from "../materiais-de-campo";
 import { FOTO_DA_PLACA } from "../pesquisa/excecao-placa";
 
 /**
@@ -50,11 +46,7 @@ export type EvidenciaDeAnexo = {
   manifesto: EvidenciaManifesto;
   anexo: Omit<
     AnexoPublico,
-    | "codigo"
-    | "estado"
-    | "revisaoPrivacidade"
-    | "derivadoDe"
-    | "derivadoDeDocumento"
+    "codigo" | "estado" | "revisaoPrivacidade" | "derivadoDe"
   >;
   /** Compatibilidade histórica; nunca concede autorização pública. */
   publicadoLegado: boolean;
@@ -268,7 +260,6 @@ export function selecionarAnexosPublicos(
             estado: "PUBLICAVEL",
             revisaoPrivacidade: "concluida",
             derivadoDe: manifesto.derivado_de,
-            derivadoDeDocumento: manifesto.derivado_de_documento,
           },
         ]
       : [],
@@ -289,32 +280,13 @@ export async function listarAnexosPublicos(): Promise<AnexoPublico[]> {
   return selecionarAnexosPublicos(evidencias);
 }
 
-/**
- * Arquivos públicos indexados pelo slug do documento.
- *
- * Alimenta as fichas da Home e do Território sem que nenhuma delas consulte o
- * banco: a página busca em build, esta função agrupa, e a resolução do estado
- * de cada material é pura (`dados/materiais-de-campo.ts`).
- */
-export function indexarPorDocumento(
-  anexos: readonly AnexoPublico[],
-): ArquivosPublicados {
-  const mapa = new Map<string, ArquivoPublicado[]>();
-  for (const anexo of anexos) {
-    const lista = mapa.get(anexo.slug) ?? [];
-    lista.push({
-      url: anexo.linkPermanente,
-      rotulo: anexo.rotuloArquivo,
-      principal: anexo.principal,
-      mimeType: anexo.mimeType,
-      bytes: anexo.bytes,
-    });
-    mapa.set(anexo.slug, lista);
-  }
-  return mapa;
-}
-
-/** Atalho de build: consulta, filtra pelo gate canônico e indexa. */
-export async function listarArquivosPorDocumento(): Promise<ArquivosPublicados> {
-  return indexarPorDocumento(await listarAnexosPublicos());
-}
+/*
+  `indexarPorDocumento` e `listarArquivosPorDocumento` moraram aqui enquanto o
+  banco era a fonte. Agora vivem em `publicado/anexos.ts`, junto do snapshot
+  que os alimenta; a reexportação existe para que a definição continue sendo
+  uma só e para não quebrar quem já importava daqui.
+*/
+export {
+  indexarPorDocumento,
+  listarArquivosPorDocumento,
+} from "../publicado/anexos";

@@ -47,7 +47,6 @@ export type AnexoPublico = {
   estado: "PUBLICAVEL";
   revisaoPrivacidade: "concluida";
   derivadoDe: string[];
-  derivadoDeDocumento: string | null;
   arquivoOrigemId: string | null;
   arquivoRelacao: "derivado" | "replica" | null;
   arquivoDerivacaoMetodo:

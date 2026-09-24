@@ -157,6 +157,8 @@ type Varredura = {
   readonly exemplos: ReadonlyMap<string, string>;
   readonly computados: number;
   readonly visitados: number;
+  /** Cada arquivo alcançado, em caminho de repositório. */
+  readonly alcancados: readonly string[];
 };
 
 function varrer(entradas: readonly string[], proibicao: Proibicao): Varredura {
@@ -225,6 +227,7 @@ function varrer(entradas: readonly string[], proibicao: Proibicao): Varredura {
     exemplos,
     computados,
     visitados: visitados.size,
+    alcancados: [...visitados].map(comoRepositorio).sort(),
   };
 }
 
@@ -246,10 +249,17 @@ function relatar(varredura: Varredura, arestas = varredura.arestas): string {
  * também exija atualizar esta lista — é o que torna o progresso do Lote B
  * visível no diff em vez de silencioso.
  */
-const ACOPLAMENTOS_CONHECIDOS: readonly string[] = [
-  "src/dados/consultas/anexos.ts -> src/dados/cliente.ts",
-  "src/dados/consultas/podobservar.ts -> src/dados/cliente.ts",
-];
+/**
+ * Vazia, e é para continuar vazia.
+ *
+ * Até o Lote B esta lista tinha duas entradas: o grafo de `src/app` alcançava
+ * `cliente.ts` por `consultas/anexos.ts` e `consultas/podobservar.ts`. Com o
+ * site lendo o snapshot versionado, nenhuma página chega ao banco — e a forma
+ * honesta de travar isso não é manter uma permissão que cresce, é exigir
+ * conjunto vazio. Acrescentar um item aqui é reintroduzir o banco no site, e
+ * deve custar uma conversa, não uma linha.
+ */
+const ACOPLAMENTOS_CONHECIDOS: readonly string[] = [];
 
 describe("guarda de banco no código de renderização", () => {
   const varredura = varrer(arquivosDe(join(RAIZ, "src", "app")), {
@@ -431,5 +441,76 @@ describe("camada publicada sem dependência de banco", () => {
       readFileSync(join(RAIZ, "src", "dados", "anexo-publico.ts"), "utf8"),
     );
     expect(referencias).toEqual([]);
+  });
+});
+
+/* ──────── 4. o vocabulário do banco não reaparece no grafo público ─────── */
+
+/**
+ * As três guardas acima seguem **arestas de módulo**: elas acusam quando o
+ * site alcança um cliente de banco. Esta quarta olha o **texto** de cada
+ * arquivo que o site alcança, e existe para o caso que as outras não pegam —
+ * alguém escrever `new Pool(...)`, ler `DATABASE_URL` ou montar SQL contra
+ * `vw_anexo_publico` dentro de um arquivo que já está no grafo, sem importar
+ * nada novo de lugar nenhum.
+ *
+ * Duas decisões tornam o teste utilizável em vez de barulhento.
+ *
+ * **Comentários são removidos antes da comparação.** Este repositório
+ * documenta o que fez: dezenas de arquivos explicam, em prosa, que já não
+ * consultam `vw_anexo_publico` ou que não leem `DATABASE_URL`. Procurar as
+ * palavras no texto bruto acusaria justamente a documentação de ter virado o
+ * problema que ela descreve. O que se quer proibir é código.
+ *
+ * **Os padrões são estreitos.** `pg` casa só como especificador de módulo,
+ * nunca como as duas letras no meio de uma palavra; `vw_` casa só como
+ * prefixo de identificador. As cadeias de texto continuam valendo, porque é
+ * dentro de uma que um `import("pg")` se esconderia.
+ *
+ * Não há lista de exceções, e é essa a intenção: o conjunto esperado é
+ * **vazio**. Um acoplamento novo não se resolve acrescentando o arquivo a uma
+ * permissão; resolve-se tirando o banco do arquivo.
+ */
+describe("vocabulário de banco no texto do grafo público", () => {
+  const PROIBIDOS: readonly [string, RegExp][] = [
+    ["DATABASE_URL", /\bDATABASE_URL\b/],
+    ["import de pg", /(?:from|import|require)\s*\(?\s*["']pg["']/],
+    ["drizzle", /["']drizzle-orm(?:\/[^"']*)?["']/],
+    ["db/", /["'][^"']*\bdb\/(?:schema|cliente)\b/],
+    ["new Pool", /\bnew\s+Pool\s*\(/],
+    ["view vw_", /\bvw_[a-z]/],
+    ["view do schema", /\bvw(?:Anexo|Episodio)Publico\b/],
+  ];
+
+  /**
+   * Remove comentário de bloco e de linha. O `(?<!:)` poupa o `//` de uma URL
+   * dentro de uma cadeia de texto, que não é comentário e cortaria o resto da
+   * linha junto.
+   */
+  const semComentarios = (texto: string): string =>
+    texto.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/(?<!:)\/\/.*$/gm, " ");
+
+  const varredura = varrer(arquivosDe(join(RAIZ, "src", "app")), {
+    arquivos: () => false,
+    pacotes: () => false,
+  });
+
+  test("a varredura alcança o grafo inteiro de src/app", () => {
+    expect(varredura.alcancados.length).toBeGreaterThan(50);
+    expect(varredura.computados).toBe(0);
+  });
+
+  test("nenhum arquivo alcançado pelo site carrega vocabulário de banco", () => {
+    const achados: string[] = [];
+    for (const arquivo of varredura.alcancados) {
+      const texto = semComentarios(readFileSync(join(RAIZ, arquivo), "utf8"));
+      for (const [nome, padrao] of PROIBIDOS) {
+        if (padrao.test(texto)) achados.push(`${arquivo}: ${nome}`);
+      }
+    }
+    expect(
+      achados,
+      `Vocabulário de banco encontrado:\n${achados.join("\n")}`,
+    ).toEqual([]);
   });
 });

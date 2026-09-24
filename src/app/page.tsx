@@ -1,6 +1,6 @@
 import { Home as ComposicaoDaHome } from "../componentes/home/Home";
-import { listarArquivosPorDocumento } from "../dados/consultas/anexos";
-import { obterEpisodioMaisRecente } from "../dados/consultas/podobservar";
+import { listarArquivosPorDocumento } from "../dados/publicado/anexos";
+import { obterEpisodioMaisRecente } from "../dados/publicado/podobservar";
 import { metadadosDaRota } from "../lib/site-url";
 
 export const metadata = metadadosDaRota({

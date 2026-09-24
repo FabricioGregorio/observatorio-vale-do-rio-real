@@ -6,11 +6,6 @@ import PaginaArquivo from "../src/app/acervo/[documento]/arquivo/[arquivoId]/pag
 import { serializarAnexos } from "../src/app/anexos.json/route";
 import sitemap from "../src/app/sitemap";
 import {
-  organizarDocumentosPublicos,
-  selecionarArquivoPublico,
-  validarAcervoPublico,
-} from "../src/dados/consultas/acervo";
-import {
   type AnexoPublico,
   listarAnexosPublicos,
 } from "../src/dados/consultas/anexos";
@@ -20,6 +15,11 @@ import {
   reconciliarMapaB01,
 } from "../src/dados/editorial/mapa-b01";
 import { formatoPublico } from "../src/dados/editorial/tipos-publicos";
+import {
+  organizarDocumentosPublicos,
+  selecionarArquivoPublico,
+  validarAcervoPublico,
+} from "../src/dados/publicado/acervo";
 import { IDS_DOS_LUGARES } from "../src/dados/territorio/referencias";
 
 /** Anexo sintético: só para exercitar a serialização sem tocar o banco. */
@@ -30,7 +30,6 @@ function exemploDeAnexo(over: Partial<AnexoPublico> = {}): AnexoPublico {
     estado: "PUBLICAVEL",
     revisaoPrivacidade: "concluida",
     derivadoDe: [],
-    derivadoDeDocumento: null,
     arquivoOrigemId: null,
     arquivoRelacao: null,
     arquivoDerivacaoMetodo: null,
@@ -211,14 +210,17 @@ describe("contrato machine-readable do inventário público", () => {
   ];
 
   test("pagina_url e link_permanente são coisas diferentes, e nenhuma é escrita à mão", () => {
-    const [item] = serializarAnexos([
-      exemploDeAnexo({
-        slug: "relatorio-tecnico-recanto-da-serra",
-        arquivoId: "b3962918-8248-45b9-92f2-5fab3ff53751",
-        linkPermanente:
-          "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a02.pdf",
-      }),
-    ]).anexos;
+    const [item] = serializarAnexos(
+      [
+        exemploDeAnexo({
+          slug: "relatorio-tecnico-recanto-da-serra",
+          arquivoId: "b3962918-8248-45b9-92f2-5fab3ff53751",
+          linkPermanente:
+            "https://acervo.observatoriotobiassoueu.com.br/arquivos/analise-de-dados/a02.pdf",
+        }),
+      ],
+      "2026-09-24",
+    ).anexos;
     if (!item) throw new Error("Serialização vazia");
 
     // A ficha HTML para humanos…
@@ -236,7 +238,10 @@ describe("contrato machine-readable do inventário público", () => {
   test.skipIf(!process.env.DATABASE_URL)(
     "os anexos canônicos trazem arquivo_id e pagina_url, sem campo privado",
     async () => {
-      const inventario = serializarAnexos(await listarAnexosPublicos());
+      const inventario = serializarAnexos(
+        await listarAnexosPublicos(),
+        "2026-09-24",
+      );
       expect(inventario.total).toBe(107);
       expect(inventario.anexos).toHaveLength(107);
 

@@ -32,7 +32,6 @@ function anexo(ajustes: Record<string, unknown> = {}) {
     estado: "PUBLICAVEL",
     revisaoPrivacidade: "concluida",
     derivadoDe: ["documento:exemplo"],
-    derivadoDeDocumento: null,
     arquivoOrigemId: null,
     arquivoRelacao: null,
     arquivoDerivacaoMetodo: null,
