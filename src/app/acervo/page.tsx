@@ -1,12 +1,10 @@
 import Link from "next/link";
 import { Suspense } from "react";
-
 import { BuscaAcervo } from "../../componentes/acervo/BuscaAcervo";
+import { compactarIndice } from "../../componentes/acervo/busca";
 import { tamanhoLegivel } from "../../componentes/acervo/formato";
-import {
-  type DocumentoDoIndice,
-  ListaDocumentosPublicos,
-} from "../../componentes/acervo/ListaDocumentosPublicos";
+import { montarIndiceDoAcervo } from "../../componentes/acervo/indiceDeBusca";
+import { ListaDocumentosPublicos } from "../../componentes/acervo/ListaDocumentosPublicos";
 import { ActionLink } from "../../componentes/ui/ActionLink";
 import { listarDocumentosPublicos } from "../../dados/publicado/acervo";
 import { pacoteDoAcervo } from "../../dados/publicado/downloads";
@@ -22,13 +20,7 @@ export const metadata = metadadosDaRota({
 export default async function PaginaAcervo() {
   const documentos = await listarDocumentosPublicos();
   const pacote = pacoteDoAcervo();
-  const indice: DocumentoDoIndice[] = documentos.map((documento) => ({
-    slug: documento.slug,
-    titulo: documento.titulo,
-    tipo: documento.tipo,
-    resumo: documento.resumo,
-    quantidade: documento.arquivos.length,
-  }));
+  const indice = montarIndiceDoAcervo(documentos);
   const arquivos = indice.reduce(
     (soma, documento) => soma + documento.quantidade,
     0,
@@ -72,7 +64,7 @@ export default async function PaginaAcervo() {
             </div>
           }
         >
-          <BuscaAcervo documentos={indice} />
+          <BuscaAcervo indice={compactarIndice(indice)} />
         </Suspense>
 
         {/*

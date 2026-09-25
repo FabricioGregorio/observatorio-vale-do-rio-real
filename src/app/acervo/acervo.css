@@ -61,6 +61,13 @@
 .acervo-inventario {
   border-color: var(--acervo-linha);
 }
+/* Arquivo apontado pela busca, dentro do documento pai: o mesmo filete da
+   ficha, sem cartão novo. */
+.acervo-correspondencia {
+  border-color: var(--acervo-linha);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
 .acervo-vazio {
   border-color: var(--acervo-linha);
   background: var(--acervo-papel);

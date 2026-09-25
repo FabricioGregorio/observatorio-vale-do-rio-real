@@ -113,7 +113,9 @@ test("busca, filtro, URL e histórico mantêm o índice navegável", async ({
     page.getByRole("searchbox", { name: "Buscar documentos" }),
   ).toHaveValue("serra");
   await page.goto("/acervo?q=algo-que-nao-existe");
-  await expect(page.getByText("Nenhum documento encontrado.")).toBeVisible();
+  await expect(
+    page.getByText("Nenhum documento ou arquivo corresponde a esta busca."),
+  ).toBeVisible();
   await page.getByRole("button", { name: "Limpar busca e filtros" }).click();
   await expect(page).toHaveURL(/\/acervo$/);
   await expect(page.locator(".acervo-card")).toHaveCount(16);
@@ -124,6 +126,68 @@ test("busca, filtro, URL e histórico mantêm o índice navegável", async ({
     "https://observatoriotobiassoueu.com.br/acervo",
   );
 });
+
+test("a busca acha o arquivo dentro do documento pai, sem acento e por teclado", async ({
+  page,
+}) => {
+  await page.goto("/acervo");
+  const busca = page.getByRole("searchbox", { name: "Buscar documentos" });
+  await busca.focus();
+  await page.keyboard.type("serie mensal");
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\?q=serie\+mensal$/);
+  await expect(page.getByRole("status").first()).toHaveText(
+    "1 documento encontrado, com 1 arquivo correspondente",
+  );
+  const cartao = page.locator(".acervo-card");
+  await expect(cartao).toHaveCount(1);
+  await expect(cartao.getByRole("heading", { level: 3 })).toHaveText(
+    "Anexo Técnico de Indicadores — Etapa 1 de Levantamento",
+  );
+  const arquivo = cartao.locator(".acervo-correspondencia a");
+  await expect(arquivo).toHaveCount(1);
+  await expect(arquivo).toHaveAttribute(
+    "href",
+    /^\/acervo\/anexo-indicadores-etapa-1\/arquivo\/[0-9a-f-]{36}$/,
+  );
+  // As duas saídas estão no card: o arquivo e o documento.
+  await expect(
+    cartao.locator('a[href="/acervo/anexo-indicadores-etapa-1"]'),
+  ).toBeVisible();
+  // O link do arquivo é alcançável por teclado, com foco visível.
+  let alcancou = false;
+  for (let i = 0; i < 12 && !alcancou; i++) {
+    await page.keyboard.press("Tab");
+    alcancou = await arquivo.evaluate((a) => a === document.activeElement);
+  }
+  expect(alcancou).toBe(true);
+  expect(
+    await arquivo.evaluate((a) => getComputedStyle(a).outlineStyle),
+  ).not.toBe("none");
+
+  await page.goto("/acervo?q=oviedo");
+  await expect(page.locator(".acervo-card h3")).toContainText([
+    "Entrevista — Oviêdo e Neide Abreu (28/03/2026)",
+  ]);
+  await page.goto("/acervo?q=Secretaria&tipo=relatorio_tecnico");
+  await expect(page.locator(".acervo-card")).toHaveCount(0);
+});
+
+for (const largura of [320, 375, 390, 430]) {
+  test(`resultados da busca não excedem ${largura}px`, async ({ page }) => {
+    await page.setViewportSize({ width: largura, height: 900 });
+    for (const q of ["serie mensal", "Recanto", "Secretaria", "transcricao"]) {
+      await page.goto(`/acervo?q=${encodeURIComponent(q)}`);
+      await expect(page.locator(".acervo-card").first()).toBeVisible();
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+        q,
+      ).toBe(true);
+    }
+  });
+}
 
 for (const largura of [375, 768, 1440]) {
   test(`páginas documentais não excedem ${largura}px`, async ({ page }) => {

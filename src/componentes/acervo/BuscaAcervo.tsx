@@ -1,38 +1,25 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { type FormEvent, useEffect, useState } from "react";
+import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { tipoPublico } from "../../dados/editorial/tipos-publicos";
 import { Button } from "../ui/Button";
-import {
-  type DocumentoDoIndice,
-  ListaDocumentosPublicos,
-} from "./ListaDocumentosPublicos";
+import { buscarNoAcervo, expandirIndice, type IndiceCompacto } from "./busca";
+import { ListaDocumentosPublicos } from "./ListaDocumentosPublicos";
 
-export function filtrarDocumentos(
-  documentos: readonly DocumentoDoIndice[],
-  busca: string,
-  tipo: string,
-) {
-  const termo = busca.trim().toLocaleLowerCase("pt-BR");
-  return documentos.filter((documento) => {
-    if (tipo && documento.tipo !== tipo) return false;
-    const conteudo = [
-      documento.titulo,
-      documento.resumo ?? "",
-      tipoPublico(documento.tipo, documento.slug),
-    ]
-      .join(" ")
-      .toLocaleLowerCase("pt-BR");
-    return !termo || conteudo.includes(termo);
-  });
+/** Frase de estado: documentos, e quantos arquivos o acerto apontou dentro deles. */
+export function fraseDoResultado(documentos: number, arquivos: number): string {
+  const base = `${documentos} ${
+    documentos === 1 ? "documento encontrado" : "documentos encontrados"
+  }`;
+  if (arquivos === 0) return base;
+  return `${base}, com ${arquivos} ${
+    arquivos === 1 ? "arquivo correspondente" : "arquivos correspondentes"
+  }`;
 }
 
-export function BuscaAcervo({
-  documentos,
-}: {
-  documentos: readonly DocumentoDoIndice[];
-}) {
+export function BuscaAcervo({ indice }: { indice: IndiceCompacto }) {
+  const documentos = useMemo(() => expandirIndice(indice), [indice]);
   const router = useRouter();
   const parametros = useSearchParams();
   const tipos = [...new Set(documentos.map((documento) => documento.tipo))];
@@ -57,7 +44,17 @@ export function BuscaAcervo({
     navegar(entrada, tipo);
   }
 
-  const encontrados = filtrarDocumentos(documentos, q, tipo);
+  const resultados = buscarNoAcervo(documentos, q, tipo);
+  const encontrados = resultados.map((resultado) => resultado.documento);
+  const correspondencias = new Map(
+    resultados.flatMap(({ documento, correspondencia }) =>
+      correspondencia ? [[documento.slug, correspondencia] as const] : [],
+    ),
+  );
+  const arquivosCorrespondentes = [...correspondencias.values()].reduce(
+    (soma, c) => soma + c.arquivos.length + c.alemDosExibidos,
+    0,
+  );
 
   return (
     <section aria-label="Consulta ao acervo" className="flex flex-col gap-6">
@@ -74,7 +71,7 @@ export function BuscaAcervo({
               type="search"
               value={entrada}
               onChange={(evento) => definirEntrada(evento.target.value)}
-              placeholder="Título ou assunto"
+              placeholder="Título, arquivo, lugar ou instituição"
               maxLength={120}
               className="min-w-0 flex-1 border px-3 py-2"
             />
@@ -111,10 +108,7 @@ export function BuscaAcervo({
           aria-atomic="true"
           className="meta-ficha"
         >
-          {encontrados.length}{" "}
-          {encontrados.length === 1
-            ? "documento encontrado"
-            : "documentos encontrados"}
+          {fraseDoResultado(encontrados.length, arquivosCorrespondentes)}
         </p>
         {q || tipo ? (
           <Button
@@ -130,9 +124,15 @@ export function BuscaAcervo({
         ) : null}
       </div>
       {encontrados.length ? (
-        <ListaDocumentosPublicos documentos={encontrados} />
+        <ListaDocumentosPublicos
+          documentos={encontrados}
+          correspondencias={correspondencias}
+        />
       ) : (
-        <p className="acervo-vazio border p-6">Nenhum documento encontrado.</p>
+        <p className="acervo-vazio border p-6">
+          Nenhum documento ou arquivo corresponde a esta busca. Tente outra
+          palavra, ou limpe a busca e os filtros para ver o acervo inteiro.
+        </p>
       )}
     </section>
   );
