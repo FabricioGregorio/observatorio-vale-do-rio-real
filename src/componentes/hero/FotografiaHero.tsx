@@ -1,8 +1,11 @@
 import {
   ALT_DO_HERO,
   CAMINHO_PUBLICO,
-  DERIVADOS_DO_HERO,
+  DERIVADO_MOBILE_DO_HERO,
+  DERIVADOS_DESKTOP_DO_HERO,
   LARGURA_DA_COMPOSICAO_HORIZONTAL,
+  SIZES_DESKTOP_DO_HERO,
+  SRCSET_DESKTOP_DO_HERO,
 } from "../../dados/hero/derivados";
 
 /**
@@ -40,20 +43,18 @@ import {
  * deslocamento de layout enquanto a imagem chega.
  */
 
-const DESKTOP = DERIVADOS_DO_HERO.find((d) =>
-  d.arquivo.includes("desktop"),
-) as (typeof DERIVADOS_DO_HERO)[number];
+const DESKTOP =
+  DERIVADOS_DESKTOP_DO_HERO[0] as (typeof DERIVADOS_DESKTOP_DO_HERO)[number];
 
-const MOBILE = DERIVADOS_DO_HERO.find((d) =>
-  d.arquivo.includes("mobile"),
-) as (typeof DERIVADOS_DO_HERO)[number];
+const MOBILE = DERIVADO_MOBILE_DO_HERO;
 
 export function FotografiaHero() {
   return (
     <picture>
       <source
         media={`(min-width: ${LARGURA_DA_COMPOSICAO_HORIZONTAL}px)`}
-        srcSet={`${CAMINHO_PUBLICO}/${DESKTOP.arquivo}`}
+        srcSet={SRCSET_DESKTOP_DO_HERO}
+        sizes={SIZES_DESKTOP_DO_HERO}
         width={DESKTOP.largura}
         height={DESKTOP.altura}
       />

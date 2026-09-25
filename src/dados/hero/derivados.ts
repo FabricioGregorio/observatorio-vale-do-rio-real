@@ -23,6 +23,10 @@
  * agaves à esquerda, cactos e bromélias à direita, parte do céu — não existem
  * no retrato de origem. Ela é, portanto, imagem editada, e está registrada
  * assim: o que ela não é, é fotografia bruta de campo.
+ *
+ * É **composição editorial da Hero**, e só isso. Não é documento de campo,
+ * não é evidência, não entra no Acervo e não substitui `home.jpg`, que
+ * continua sendo o registro documental — intacto no corpus.
  */
 
 /** Pasta dos derivados, relativa à raiz do projeto. */
@@ -85,11 +89,18 @@ export const ORIGINAL_DO_HERO = {
 /**
  * Os derivados publicados.
  *
- * Conjunto de produção: uma largura por composição, servida por `<picture>`
- * conforme o viewport. Nenhum pixel ampliado: o desktop é o quadro inteiro
- * reduzido a 1600x900, que é 1:1 na caixa de 1440x900; o mobile é recorte na
- * largura nativa. Mesmas qualidades AVIF da versão anterior, calibradas junto
- * ao orçamento de 500 kB da Home.
+ * Servidos por `<picture>`: o recorte mobile abaixo de
+ * `LARGURA_DA_COMPOSICAO_HORIZONTAL`, e o quadro inteiro acima dela, em duas
+ * larguras por `srcset`. Nenhum pixel ampliado: 1600 é 1:1 na caixa de
+ * 1440x900, e 1672 é toda a resolução que o original tem — não existe 1920
+ * nem 2048, porque seriam só ampliação.
+ *
+ * Qualidade AVIF 55 nos três. A 32/35 anterior foi calibrada para o `home.jpg`
+ * de 3000 px, em que a redução escondia a perda do codificador; sobre este
+ * original, ela retinha 56% do detalhe fino das placas e da folhagem, contra
+ * 82% da 55. Os tetos são os da política da Home em
+ * `testes/a11y/home-orcamento.spec.ts`: 300 kB por variante desktop, 120 kB
+ * no mobile.
  */
 export const DERIVADOS_DO_HERO: readonly DerivadoDoHero[] = [
   {
@@ -97,20 +108,50 @@ export const DERIVADOS_DO_HERO: readonly DerivadoDoHero[] = [
     largura: 1600,
     altura: 900,
     recorte: { x: 0, y: 0, largura: 1672, altura: 941 },
-    qualidade: 32,
-    sha256: "dd128fba44cc123d85f0ec5b661077674da7cd82b7c6150ebdc4771528be254c",
-    tetoBytes: 125_000,
+    qualidade: 55,
+    sha256: "53a413d288d5bff54d99363dd0f29b71ae94eb53e0bb2488d4c47ff62a80226c",
+    tetoBytes: 300_000,
+  },
+  {
+    arquivo: "hero-home-melhorada-desktop-1672.avif",
+    largura: 1672,
+    altura: 941,
+    recorte: { x: 0, y: 0, largura: 1672, altura: 941 },
+    qualidade: 55,
+    sha256: "fa8cee77031e2027630620c08bc3889f2d2733fdf9e66cd131d919b03e8c4176",
+    tetoBytes: 300_000,
   },
   {
     arquivo: "hero-home-melhorada-mobile-515.avif",
     largura: 515,
     altura: 941,
     recorte: { x: 700, y: 0, largura: 515, altura: 941 },
-    qualidade: 35,
-    sha256: "e7f826b327dd45f07452788a6bf191063f884143bcc6c8770c44d28559ff14f8",
-    tetoBytes: 55_000,
+    qualidade: 55,
+    sha256: "2effe41227e3d0a49dd57686c5389d3af40da1fc344784988f4ca4d2467bd9fc",
+    tetoBytes: 120_000,
   },
 ];
+
+/** Larguras do quadro inteiro, da menor para a maior. */
+export const DERIVADOS_DESKTOP_DO_HERO = DERIVADOS_DO_HERO.filter((d) =>
+  d.arquivo.includes("desktop"),
+);
+
+/** O recorte vertical, servido abaixo da composição horizontal. */
+export const DERIVADO_MOBILE_DO_HERO = DERIVADOS_DO_HERO.find((d) =>
+  d.arquivo.includes("mobile"),
+) as DerivadoDoHero;
+
+/**
+ * `srcset` do quadro inteiro. Com `sizes="100vw"`, o navegador escolhe o menor
+ * arquivo que cobre a largura física: 1600 em 1440 a DPR 1, 1672 de 1600
+ * físicos em diante. Acima de 1672 ele amplia — é o limite real do original.
+ */
+export const SRCSET_DESKTOP_DO_HERO = DERIVADOS_DESKTOP_DO_HERO.map(
+  (d) => `${CAMINHO_PUBLICO}/${d.arquivo} ${d.largura}w`,
+).join(", ");
+
+export const SIZES_DESKTOP_DO_HERO = "100vw";
 
 /** Largura a partir da qual a composição horizontal é servida. */
 export const LARGURA_DA_COMPOSICAO_HORIZONTAL = 1024;

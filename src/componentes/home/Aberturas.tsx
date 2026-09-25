@@ -1,8 +1,11 @@
 import {
   ALT_DO_HERO,
   CAMINHO_PUBLICO,
-  DERIVADOS_DO_HERO,
+  DERIVADO_MOBILE_DO_HERO,
+  DERIVADOS_DESKTOP_DO_HERO,
   LARGURA_DA_COMPOSICAO_HORIZONTAL,
+  SIZES_DESKTOP_DO_HERO,
+  SRCSET_DESKTOP_DO_HERO,
 } from "../../dados/hero/derivados";
 import { MESES_DE_COLETA } from "../../dados/indicadores/derivados";
 import { ActionLink } from "../ui/ActionLink";
@@ -25,12 +28,10 @@ import { ENTREVISTAS, EQUIPAMENTOS } from "./conteudo";
  * o seletor `?hero=` e as demais variantes saíram junto com o laboratório.
  */
 
-const DESKTOP = DERIVADOS_DO_HERO.find((d) =>
-  d.arquivo.includes("desktop"),
-) as (typeof DERIVADOS_DO_HERO)[number];
-const VERTICAL = DERIVADOS_DO_HERO.find((d) =>
-  d.arquivo.includes("mobile"),
-) as (typeof DERIVADOS_DO_HERO)[number];
+/** As larguras desktop têm a mesma proporção; a primeira reserva a caixa. */
+const DESKTOP =
+  DERIVADOS_DESKTOP_DO_HERO[0] as (typeof DERIVADOS_DESKTOP_DO_HERO)[number];
+const VERTICAL = DERIVADO_MOBILE_DO_HERO;
 
 function CtaDaPesquisa() {
   return (
@@ -101,7 +102,8 @@ export function AberturaB2() {
           <source
             height={DESKTOP.altura}
             media={`(min-width: ${LARGURA_DA_COMPOSICAO_HORIZONTAL}px)`}
-            srcSet={`${CAMINHO_PUBLICO}/${DESKTOP.arquivo}`}
+            sizes={SIZES_DESKTOP_DO_HERO}
+            srcSet={SRCSET_DESKTOP_DO_HERO}
             width={DESKTOP.largura}
           />
           <img

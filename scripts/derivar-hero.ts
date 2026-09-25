@@ -84,9 +84,9 @@ const RECORTES: readonly Recorte[] = [
     y: 0,
     largura: 1672,
     altura: 941,
-    saidas: [1600],
-    qualidade: 32,
-    nota: "Quadro inteiro, sem recorte. A caixa da Hero em 1440x900 pede 1599x900: um derivado de 1440 teria de ser ampliado, e 1600x900 é 1:1 nesse perfil. A largura nativa (1672) custava 9 kB a mais e estourava o orçamento desktop DPR1 da Home.",
+    saidas: [1600, 1672],
+    qualidade: 55,
+    nota: "Quadro inteiro, sem recorte, servido por `srcset`. A caixa da Hero em 1440x900 pede 1599x900, e o 1600 é 1:1 nesse perfil; telas maiores recebem 1672, toda a resolução que a fonte tem. Não há 1920 nem 2048: acima de 1672 seria só ampliação. A q32 anterior retinha 56% do detalhe fino das placas e da folhagem; a q55 retém 82%.",
   },
   {
     nome: "hero-home-melhorada-mobile",
@@ -95,7 +95,7 @@ const RECORTES: readonly Recorte[] = [
     largura: 515,
     altura: 941,
     saidas: [515],
-    qualidade: 35,
+    qualidade: 55,
     nota: "Mesma composição da versão anterior, com o mesmo `object-position: 0 28%`: a caixa do celular (~0,46:1) mostra os 433 px da esquerda desta janela — caminho e figura de azul sob o texto, placas à direita, cortadas na borda. Ancorar à direita deixava as placas inteiras, mas punha a placa azul sob o sobretítulo e prejudicava a leitura. Largura nativa: nenhum pixel ampliado.",
   },
 ];
