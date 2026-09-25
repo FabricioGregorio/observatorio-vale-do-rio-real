@@ -13,6 +13,8 @@
     "lint": "biome check .",
     "teste": "vitest run",
     "a11y": "tsx scripts/verificar-ambiente-e2e.ts && playwright test testes/a11y",
+    "auditar-publicacao": "tsx scripts/auditar-publicacao.ts",
+    "empacotar-acervo": "tsx scripts/gerar-zip-acervo.ts",
     "estabilidade:territorio": "playwright test testes/a11y/mapa.spec.ts --grep \"a ponte navega de fato\" --repeat-each=100",
     "derivar-hero": "tsx scripts/derivar-hero.ts",
     "derivar-fotos": "uv run --with pillow --with pillow-heif python scripts/derivar-fotos-campo.py",

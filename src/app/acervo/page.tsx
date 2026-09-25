@@ -2,11 +2,14 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import { BuscaAcervo } from "../../componentes/acervo/BuscaAcervo";
+import { tamanhoLegivel } from "../../componentes/acervo/formato";
 import {
   type DocumentoDoIndice,
   ListaDocumentosPublicos,
 } from "../../componentes/acervo/ListaDocumentosPublicos";
+import { ActionLink } from "../../componentes/ui/ActionLink";
 import { listarDocumentosPublicos } from "../../dados/publicado/acervo";
+import { pacoteDoAcervo } from "../../dados/publicado/downloads";
 import { metadadosDaRota } from "../../lib/site-url";
 import "./acervo.css";
 
@@ -18,6 +21,7 @@ export const metadata = metadadosDaRota({
 
 export default async function PaginaAcervo() {
   const documentos = await listarDocumentosPublicos();
+  const pacote = pacoteDoAcervo();
   const indice: DocumentoDoIndice[] = documentos.map((documento) => ({
     slug: documento.slug,
     titulo: documento.titulo,
@@ -70,6 +74,21 @@ export default async function PaginaAcervo() {
         >
           <BuscaAcervo documentos={indice} />
         </Suspense>
+
+        {/*
+          O que ainda não existe é dito, e não insinuado.
+
+          O Caderno de Estudos está em preparação. Enquanto não houver
+          arquivo, ele não tem ficha, endereço, botão nem entrada no
+          inventário: anunciar um documento que não existe é a única coisa
+          que um acervo documental não pode fazer. A linha é curta de
+          propósito — é estado editorial, não vitrine.
+        */}
+        <p className="acervo-elaboracao max-w-prose text-sm">
+          <span className="meta-ficha">Em elaboração</span> Caderno de Estudos,
+          em preparação editorial. Quando for publicado, entra no acervo como os
+          demais: endereço próprio, licença declarada e arquivo para baixar.
+        </p>
       </div>
 
       <aside className="acervo-nota border-l-2 pl-5">
@@ -93,6 +112,32 @@ export default async function PaginaAcervo() {
           .
         </p>
       </aside>
+
+      {pacote ? (
+        <section
+          className="acervo-inventario flex flex-wrap items-end justify-between gap-5 border-t pt-8"
+          aria-labelledby="acervo-pacote"
+        >
+          <div>
+            <h2 id="acervo-pacote" className="text-xl">
+              Acervo completo
+            </h2>
+            <p className="mt-2 max-w-prose">
+              Os {arquivos} arquivos públicos em um pacote único, organizados
+              por documento — os mesmos originais que cada ficha oferece, sem
+              versão reduzida.
+            </p>
+          </div>
+          {/*
+            O tamanho vai no próprio rótulo: quem está num plano de dados
+            limitado decide antes de tocar, e não depois. Hash, chave e
+            endereço do objeto não aparecem — a interface fala com pessoas.
+          */}
+          <ActionLink variant="document" href={pacote.url}>
+            Baixar tudo em ZIP · {tamanhoLegivel(pacote.bytes)}
+          </ActionLink>
+        </section>
+      ) : null}
 
       <section
         className="acervo-inventario flex flex-wrap items-end justify-between gap-5 border-t pt-8"

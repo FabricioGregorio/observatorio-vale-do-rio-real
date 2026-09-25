@@ -39,7 +39,9 @@
     "bytes": 2424406,
     "codigo": "3",
     "dataReferencia": null,
-    "derivadoDe": ["documento:relatorio-tecnico-borda-da-mata"],
+    "derivadoDe": [
+      "documento:relatorio-tecnico-borda-da-mata"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -100,7 +102,9 @@
     "bytes": 25726,
     "codigo": "9",
     "dataReferencia": null,
-    "derivadoDe": ["documento:formulario-rotina-de-funcionamento"],
+    "derivadoDe": [
+      "documento:formulario-rotina-de-funcionamento"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -129,7 +133,9 @@
     "bytes": 17609,
     "codigo": "10",
     "dataReferencia": null,
-    "derivadoDe": ["documento:formulario-publico-consumidor"],
+    "derivadoDe": [
+      "documento:formulario-publico-consumidor"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -158,7 +164,9 @@
     "bytes": 9417,
     "codigo": "10",
     "dataReferencia": null,
-    "derivadoDe": ["documento:formulario-publico-consumidor"],
+    "derivadoDe": [
+      "documento:formulario-publico-consumidor"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -187,7 +195,9 @@
     "bytes": 530387,
     "codigo": "11",
     "dataReferencia": null,
-    "derivadoDe": ["documento:anexo-indicadores-etapa-1"],
+    "derivadoDe": [
+      "documento:anexo-indicadores-etapa-1"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -216,7 +226,9 @@
     "bytes": 114854,
     "codigo": "11",
     "dataReferencia": null,
-    "derivadoDe": ["documento:anexo-indicadores-etapa-1"],
+    "derivadoDe": [
+      "documento:anexo-indicadores-etapa-1"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -245,7 +257,9 @@
     "bytes": 104911,
     "codigo": "11",
     "dataReferencia": null,
-    "derivadoDe": ["documento:anexo-indicadores-etapa-1"],
+    "derivadoDe": [
+      "documento:anexo-indicadores-etapa-1"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -274,7 +288,9 @@
     "bytes": 111426,
     "codigo": "11",
     "dataReferencia": null,
-    "derivadoDe": ["documento:anexo-indicadores-etapa-1"],
+    "derivadoDe": [
+      "documento:anexo-indicadores-etapa-1"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -303,7 +319,9 @@
     "bytes": 117571,
     "codigo": "11",
     "dataReferencia": null,
-    "derivadoDe": ["documento:anexo-indicadores-etapa-1"],
+    "derivadoDe": [
+      "documento:anexo-indicadores-etapa-1"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -332,7 +350,9 @@
     "bytes": 117400,
     "codigo": "11",
     "dataReferencia": null,
-    "derivadoDe": ["documento:anexo-indicadores-etapa-1"],
+    "derivadoDe": [
+      "documento:anexo-indicadores-etapa-1"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -361,7 +381,9 @@
     "bytes": 93901,
     "codigo": "11",
     "dataReferencia": null,
-    "derivadoDe": ["documento:anexo-indicadores-etapa-1"],
+    "derivadoDe": [
+      "documento:anexo-indicadores-etapa-1"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -390,7 +412,9 @@
     "bytes": 203310,
     "codigo": "11",
     "dataReferencia": null,
-    "derivadoDe": ["documento:anexo-indicadores-etapa-1"],
+    "derivadoDe": [
+      "documento:anexo-indicadores-etapa-1"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -419,7 +443,9 @@
     "bytes": 104978,
     "codigo": "11",
     "dataReferencia": null,
-    "derivadoDe": ["documento:anexo-indicadores-etapa-1"],
+    "derivadoDe": [
+      "documento:anexo-indicadores-etapa-1"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -448,7 +474,9 @@
     "bytes": 113992,
     "codigo": "11",
     "dataReferencia": null,
-    "derivadoDe": ["documento:anexo-indicadores-etapa-1"],
+    "derivadoDe": [
+      "documento:anexo-indicadores-etapa-1"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -477,7 +505,9 @@
     "bytes": 99244,
     "codigo": "11",
     "dataReferencia": null,
-    "derivadoDe": ["documento:anexo-indicadores-etapa-1"],
+    "derivadoDe": [
+      "documento:anexo-indicadores-etapa-1"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -506,7 +536,9 @@
     "bytes": 110181,
     "codigo": "11",
     "dataReferencia": null,
-    "derivadoDe": ["documento:anexo-indicadores-etapa-1"],
+    "derivadoDe": [
+      "documento:anexo-indicadores-etapa-1"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -535,7 +567,9 @@
     "bytes": 122618,
     "codigo": "11",
     "dataReferencia": null,
-    "derivadoDe": ["documento:anexo-indicadores-etapa-1"],
+    "derivadoDe": [
+      "documento:anexo-indicadores-etapa-1"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -564,7 +598,9 @@
     "bytes": 129159,
     "codigo": "11",
     "dataReferencia": null,
-    "derivadoDe": ["documento:anexo-indicadores-etapa-1"],
+    "derivadoDe": [
+      "documento:anexo-indicadores-etapa-1"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -593,7 +629,9 @@
     "bytes": 125018,
     "codigo": "11",
     "dataReferencia": null,
-    "derivadoDe": ["documento:anexo-indicadores-etapa-1"],
+    "derivadoDe": [
+      "documento:anexo-indicadores-etapa-1"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -622,7 +660,9 @@
     "bytes": 121366,
     "codigo": "11",
     "dataReferencia": null,
-    "derivadoDe": ["documento:anexo-indicadores-etapa-1"],
+    "derivadoDe": [
+      "documento:anexo-indicadores-etapa-1"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -651,7 +691,9 @@
     "bytes": 115818,
     "codigo": "11",
     "dataReferencia": null,
-    "derivadoDe": ["documento:anexo-indicadores-etapa-1"],
+    "derivadoDe": [
+      "documento:anexo-indicadores-etapa-1"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -680,7 +722,9 @@
     "bytes": 134633,
     "codigo": "11",
     "dataReferencia": null,
-    "derivadoDe": ["documento:anexo-indicadores-etapa-1"],
+    "derivadoDe": [
+      "documento:anexo-indicadores-etapa-1"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -709,7 +753,9 @@
     "bytes": 680838,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -738,7 +784,9 @@
     "bytes": 190650,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -767,7 +815,9 @@
     "bytes": 3014743,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -796,7 +846,9 @@
     "bytes": 1743664,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -825,7 +877,9 @@
     "bytes": 2714204,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -854,7 +908,9 @@
     "bytes": 2749619,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -883,7 +939,9 @@
     "bytes": 3852535,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -912,7 +970,9 @@
     "bytes": 1849400,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -941,7 +1001,9 @@
     "bytes": 2107964,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -970,7 +1032,9 @@
     "bytes": 1581947,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -999,7 +1063,9 @@
     "bytes": 3089579,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1028,7 +1094,9 @@
     "bytes": 4059598,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1057,7 +1125,9 @@
     "bytes": 4053101,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1086,7 +1156,9 @@
     "bytes": 4047919,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1115,7 +1187,9 @@
     "bytes": 4301151,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1144,7 +1218,9 @@
     "bytes": 3046360,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1173,7 +1249,9 @@
     "bytes": 2327805,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1202,7 +1280,9 @@
     "bytes": 1627216,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1231,7 +1311,9 @@
     "bytes": 897081,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1260,7 +1342,9 @@
     "bytes": 3131716,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1289,7 +1373,9 @@
     "bytes": 3692367,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1318,7 +1404,9 @@
     "bytes": 2400779,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1347,7 +1435,9 @@
     "bytes": 3245317,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1376,7 +1466,9 @@
     "bytes": 2914575,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1405,7 +1497,9 @@
     "bytes": 2945269,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1434,7 +1528,9 @@
     "bytes": 2720812,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1463,7 +1559,9 @@
     "bytes": 3976747,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1492,7 +1590,9 @@
     "bytes": 4300460,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1521,7 +1621,9 @@
     "bytes": 3912894,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1550,7 +1652,9 @@
     "bytes": 4009193,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1579,7 +1683,9 @@
     "bytes": 3187008,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1608,7 +1714,9 @@
     "bytes": 4537967,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1637,7 +1745,9 @@
     "bytes": 3434019,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1666,7 +1776,9 @@
     "bytes": 3906509,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1695,7 +1807,9 @@
     "bytes": 1572359,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1724,7 +1838,9 @@
     "bytes": 1449961,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1753,7 +1869,9 @@
     "bytes": 3657310,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1782,7 +1900,9 @@
     "bytes": 1650501,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1811,7 +1931,9 @@
     "bytes": 1624283,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1840,7 +1962,9 @@
     "bytes": 7190837,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1869,7 +1993,9 @@
     "bytes": 5447855,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1898,7 +2024,9 @@
     "bytes": 4701613,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1927,7 +2055,9 @@
     "bytes": 3695756,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1956,7 +2086,9 @@
     "bytes": 2732410,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -1985,7 +2117,9 @@
     "bytes": 4450660,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2014,7 +2148,9 @@
     "bytes": 6391931,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2043,7 +2179,9 @@
     "bytes": 5693855,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2072,7 +2210,9 @@
     "bytes": 5896960,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2101,7 +2241,9 @@
     "bytes": 3949426,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2130,7 +2272,9 @@
     "bytes": 3325939,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2159,7 +2303,9 @@
     "bytes": 3637192,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2188,7 +2334,9 @@
     "bytes": 4367097,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2217,7 +2365,9 @@
     "bytes": 3241129,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2246,7 +2396,9 @@
     "bytes": 4363129,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2275,7 +2427,9 @@
     "bytes": 3745163,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2304,7 +2458,9 @@
     "bytes": 2948986,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2333,7 +2489,9 @@
     "bytes": 5696518,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2362,7 +2520,9 @@
     "bytes": 3968585,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2391,7 +2551,9 @@
     "bytes": 4227294,
     "codigo": "12",
     "dataReferencia": null,
-    "derivadoDe": ["documento:fotografias-visitas-i-vii"],
+    "derivadoDe": [
+      "documento:fotografias-visitas-i-vii"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2420,7 +2582,9 @@
     "bytes": 184212,
     "codigo": "13",
     "dataReferencia": null,
-    "derivadoDe": ["documento:entrevista-josenilson-bispo"],
+    "derivadoDe": [
+      "documento:entrevista-josenilson-bispo"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2449,7 +2613,9 @@
     "bytes": 25807110,
     "codigo": "13",
     "dataReferencia": null,
-    "derivadoDe": ["documento:entrevista-josenilson-bispo"],
+    "derivadoDe": [
+      "documento:entrevista-josenilson-bispo"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2478,7 +2644,9 @@
     "bytes": 165322,
     "codigo": "14",
     "dataReferencia": null,
-    "derivadoDe": ["documento:entrevista-oviedo-e-neide-abreu"],
+    "derivadoDe": [
+      "documento:entrevista-oviedo-e-neide-abreu"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2507,7 +2675,9 @@
     "bytes": 67404241,
     "codigo": "14",
     "dataReferencia": null,
-    "derivadoDe": ["documento:entrevista-oviedo-e-neide-abreu"],
+    "derivadoDe": [
+      "documento:entrevista-oviedo-e-neide-abreu"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2536,7 +2706,9 @@
     "bytes": 42058,
     "codigo": "15",
     "dataReferencia": null,
-    "derivadoDe": ["documento:entrevista-pedro-menezes"],
+    "derivadoDe": [
+      "documento:entrevista-pedro-menezes"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2565,7 +2737,9 @@
     "bytes": 13527879,
     "codigo": "15",
     "dataReferencia": null,
-    "derivadoDe": ["documento:entrevista-pedro-menezes"],
+    "derivadoDe": [
+      "documento:entrevista-pedro-menezes"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2594,7 +2768,9 @@
     "bytes": 196060,
     "codigo": "16",
     "dataReferencia": null,
-    "derivadoDe": ["documento:entrevista-paola-santana"],
+    "derivadoDe": [
+      "documento:entrevista-paola-santana"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2623,7 +2799,9 @@
     "bytes": 30529930,
     "codigo": "16",
     "dataReferencia": null,
-    "derivadoDe": ["documento:entrevista-paola-santana"],
+    "derivadoDe": [
+      "documento:entrevista-paola-santana"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2652,7 +2830,9 @@
     "bytes": 49574,
     "codigo": "17",
     "dataReferencia": null,
-    "derivadoDe": ["documento:entrevista-lideranca-ilha-grande"],
+    "derivadoDe": [
+      "documento:entrevista-lideranca-ilha-grande"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2681,7 +2861,9 @@
     "bytes": 108037440,
     "codigo": "17",
     "dataReferencia": null,
-    "derivadoDe": ["documento:entrevista-lideranca-ilha-grande"],
+    "derivadoDe": [
+      "documento:entrevista-lideranca-ilha-grande"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2710,7 +2892,9 @@
     "bytes": 161064,
     "codigo": "19",
     "dataReferencia": null,
-    "derivadoDe": ["documento:entrevista-prefeito-tobias-barreto"],
+    "derivadoDe": [
+      "documento:entrevista-prefeito-tobias-barreto"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2739,7 +2923,9 @@
     "bytes": 19221297,
     "codigo": "19",
     "dataReferencia": null,
-    "derivadoDe": ["documento:entrevista-prefeito-tobias-barreto"],
+    "derivadoDe": [
+      "documento:entrevista-prefeito-tobias-barreto"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2768,7 +2954,9 @@
     "bytes": 291096,
     "codigo": "24",
     "dataReferencia": null,
-    "derivadoDe": ["documento:entrevista-laerte-aguiar"],
+    "derivadoDe": [
+      "documento:entrevista-laerte-aguiar"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2797,7 +2985,9 @@
     "bytes": 37324362,
     "codigo": "24",
     "dataReferencia": null,
-    "derivadoDe": ["documento:entrevista-laerte-aguiar"],
+    "derivadoDe": [
+      "documento:entrevista-laerte-aguiar"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2826,7 +3016,9 @@
     "bytes": 158236,
     "codigo": "25",
     "dataReferencia": null,
-    "derivadoDe": ["documento:entrevista-marcio-andre"],
+    "derivadoDe": [
+      "documento:entrevista-marcio-andre"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,
@@ -2855,7 +3047,9 @@
     "bytes": 57624686,
     "codigo": "25",
     "dataReferencia": null,
-    "derivadoDe": ["documento:entrevista-marcio-andre"],
+    "derivadoDe": [
+      "documento:entrevista-marcio-andre"
+    ],
     "estado": "PUBLICAVEL",
     "licenca": "CC BY-SA 4.0",
     "linkOrigem": null,

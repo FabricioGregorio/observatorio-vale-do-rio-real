@@ -35,7 +35,7 @@
  * não muda o objeto, não muda os bytes e não cria uma segunda URL para o
  * mesmo arquivo: é a mesma, com uma intenção declarada.
  */
-import { lerAcervoPublicado } from "./leitura";
+import { lerAcervoPublicado, lerRelease } from "./leitura";
 
 /**
  * Origem pública do acervo, versionada aqui e em lugar nenhum mais.
@@ -81,7 +81,9 @@ export function urlDeDownload(linkPermanente: string): string {
   try {
     url = new URL(linkPermanente);
   } catch {
-    throw new Error(`Link permanente não é uma URL absoluta: ${linkPermanente}`);
+    throw new Error(
+      `Link permanente não é uma URL absoluta: ${linkPermanente}`,
+    );
   }
 
   if (url.origin !== ORIGEM_DO_ACERVO) {
@@ -129,4 +131,32 @@ export function redirecionamentosDeDownload(): RedirecionamentoDeDownload[] {
       destino: urlDeDownload(anexo.linkPermanente),
     };
   });
+}
+
+/** O pacote completo do acervo, quando o release declara um. */
+export type PacoteDoAcervo = {
+  /** URL de download do pacote, já com o marcador. */
+  readonly url: string;
+  readonly bytes: number;
+};
+
+/**
+ * O pacote "Baixar tudo em ZIP", ou `null` quando não há pacote publicado.
+ *
+ * A URL é montada a partir de duas coisas versionadas: a origem do acervo e
+ * a chave que o `release.json` declara. Nada de variável de ambiente e nada
+ * de descobrir endereço em tempo de build — se o release não declara pacote,
+ * a resposta é `null` e o Acervo simplesmente não oferece o download.
+ *
+ * Fail-closed, como todo gate do projeto: é melhor não oferecer o pacote do
+ * que oferecer um link que responde 404. Foi exatamente esse o defeito do
+ * primeiro deployment, quando o botão existia e o objeto não.
+ */
+export function pacoteDoAcervo(): PacoteDoAcervo | null {
+  const { zip } = lerRelease();
+  if (!zip) return null;
+  return {
+    url: `${ORIGEM_DO_ACERVO}/${zip.chave}?${MARCADOR_DE_DOWNLOAD}`,
+    bytes: zip.bytes,
+  };
 }

@@ -118,3 +118,11 @@
     transition: none;
   }
 }
+/* Documento anunciado como ausente: discreto, e com a mesma régua de leitura
+   do resto da consulta. A linha existe para dizer o que ainda não existe. */
+.acervo-elaboracao {
+  color: var(--color-texto-suave);
+}
+.acervo-elaboracao .meta-ficha {
+  margin-inline-end: 0.5ch;
+}

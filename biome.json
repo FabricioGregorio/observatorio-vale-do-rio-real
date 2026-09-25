@@ -10,7 +10,8 @@
       "!**/tmp",
       "!**/db/migrations",
       "!next-env.d.ts",
-      "!public"
+      "!public",
+      "!src/dados/publicado/*.json"
     ]
   },
   "formatter": {

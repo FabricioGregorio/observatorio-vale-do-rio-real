@@ -6,12 +6,15 @@
  * Credenciais vêm sempre do ambiente, nunca do código.
  *
  */
+import { createReadStream } from "node:fs";
+
 import {
   GetObjectCommand,
   HeadObjectCommand,
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
+import { Upload } from "@aws-sdk/lib-storage";
 
 import { exigirConfiguracao as exigir } from "./storage-configuracao";
 
@@ -87,9 +90,47 @@ export async function enviarObjeto(
 }
 
 /**
- * Baixa um objeto inteiro para memória. Usado pelo empacotamento do
- * "Baixar tudo (.zip)", que roda em build sobre um acervo de projeto de
- * pesquisa — volume pequeno o bastante para não justificar streaming.
+ * Envia um arquivo do disco por streaming multipart.
+ *
+ * O pacote do acervo tem centenas de MB: carregá-lo em `Buffer` para enviar
+ * seria pedir ao Node para segurar o arquivo inteiro na memória enquanto a
+ * rede o consome aos pedaços. `Upload` do `@aws-sdk/lib-storage` faz
+ * multipart por streaming, com memória limitada, e aborta a parte pendente
+ * quando algo falha — é o mesmo mecanismo que a ingestão privada já usa.
+ *
+ * O SHA-256 vai como metadado, como no envio comum: é o que permite a uma
+ * execução futura detectar conflito de conteúdo sem baixar o objeto de volta.
+ */
+export async function enviarArquivoGrande(
+  chave: string,
+  caminhoLocal: string,
+  mimeType: string,
+  sha256: string,
+  aoProgredir?: (bytes: number) => void,
+): Promise<void> {
+  const envio = new Upload({
+    client: cliente(),
+    params: {
+      Bucket: exigir("STORAGE_PUBLIC_BUCKET"),
+      Key: chave,
+      Body: createReadStream(caminhoLocal),
+      ContentType: mimeType,
+      CacheControl: CACHE_CONTROL_PUBLICO,
+      Metadata: { sha256 },
+    },
+    queueSize: 4,
+    partSize: 16 * 1024 * 1024,
+    leavePartsOnError: false,
+  });
+  if (aoProgredir) {
+    envio.on("httpUploadProgress", (p) => aoProgredir(p.loaded ?? 0));
+  }
+  await envio.done();
+}
+
+/**
+ * Baixa um objeto inteiro para memória. Usado por conferências pontuais sobre
+ * objetos pequenos; o que é grande se confere por streaming.
  */
 export async function baixarObjeto(chave: string): Promise<Buffer> {
   const r = await cliente().send(
