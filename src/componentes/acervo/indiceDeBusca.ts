@@ -33,8 +33,8 @@ import { mapaB01 } from "../../dados/editorial/mapa-b01";
 import { tipoPublico } from "../../dados/editorial/tipos-publicos";
 import { MATERIAIS_POR_LUGAR } from "../../dados/materiais-de-campo";
 import {
+  apresentarArquivoPublico,
   type DocumentoDoAcervo,
-  tituloDoArquivoPublico,
 } from "../../dados/publicado/acervo";
 import { REFERENCIAS_TERRITORIAIS } from "../../dados/territorio/referencias";
 import { ENTREVISTAS, EQUIPAMENTOS } from "../home/conteudo";
@@ -75,7 +75,10 @@ function contextoPorDocumento(): ReadonlyMap<string, readonly string[]> {
 
 function arquivosDoIndice(documento: DocumentoDoAcervo): ArquivoDoIndice[] {
   return documento.arquivos.map((arquivo) => {
-    let contexto: string | null = null;
+    const { titulo, identificador } = apresentarArquivoPublico(arquivo);
+    // O identificador documental ("A11-05") sai do título exibido, mas
+    // continua servindo de termo de busca.
+    let contexto: string | null = identificador;
     if (documento.slug === CONJUNTO_FOTOGRAFICO) {
       const entrada = mapaB01.arquivos.find(
         (item) =>
@@ -94,7 +97,7 @@ function arquivosDoIndice(documento: DocumentoDoAcervo): ArquivoDoIndice[] {
     }
     return {
       id: arquivo.arquivoId,
-      titulo: tituloDoArquivoPublico(arquivo),
+      titulo,
       contexto,
     };
   });

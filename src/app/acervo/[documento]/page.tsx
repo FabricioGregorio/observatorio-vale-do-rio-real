@@ -12,9 +12,9 @@ import {
   tipoPublico,
 } from "../../../dados/editorial/tipos-publicos";
 import {
+  apresentarArquivoPublico,
   listarDocumentosPublicos,
   selecionarDocumentoPublico,
-  tituloDoArquivoPublico,
 } from "../../../dados/publicado/acervo";
 import { metadadosDaRota } from "../../../lib/site-url";
 import "../acervo.css";
@@ -174,32 +174,39 @@ export default async function PaginaDocumento({ params }: Props) {
               : "Todos os arquivos públicos deste documento estão disponíveis para consulta."}
           </p>
           <ul className="mt-6 grid list-none gap-4 p-0">
-            {documento.arquivos.map((arquivo) => (
-              <li
-                key={arquivo.arquivoId}
-                className="acervo-ficha min-w-0 border p-5"
-              >
-                <h3
-                  id={`acervo-arquivo-${arquivo.arquivoId}`}
-                  className="text-lg"
+            {documento.arquivos.map((arquivo) => {
+              const { titulo, identificador } =
+                apresentarArquivoPublico(arquivo);
+              return (
+                <li
+                  key={arquivo.arquivoId}
+                  className="acervo-ficha min-w-0 border p-5"
                 >
-                  {tituloDoArquivoPublico(arquivo)}
-                </h3>
-                <p className="meta-ficha mt-2">
-                  {formatoPublico(arquivo.mimeType)} ·{" "}
-                  {tamanhoLegivel(arquivo.bytes)}
-                </p>
-                <ActionLink
-                  variant="document"
-                  className="mt-4"
-                  href={`/acervo/${slug}/arquivo/${arquivo.arquivoId}` as Route}
-                  id={`acervo-link-${arquivo.arquivoId}`}
-                  aria-labelledby={`acervo-link-${arquivo.arquivoId} acervo-arquivo-${arquivo.arquivoId}`}
-                >
-                  Abrir arquivo e informações
-                </ActionLink>
-              </li>
-            ))}
+                  <h3
+                    id={`acervo-arquivo-${arquivo.arquivoId}`}
+                    className="text-lg"
+                  >
+                    {titulo}
+                  </h3>
+                  <p className="meta-ficha mt-2">
+                    {identificador ? `${identificador} · ` : ""}
+                    {formatoPublico(arquivo.mimeType)} ·{" "}
+                    {tamanhoLegivel(arquivo.bytes)}
+                  </p>
+                  <ActionLink
+                    variant="document"
+                    className="mt-4"
+                    href={
+                      `/acervo/${slug}/arquivo/${arquivo.arquivoId}` as Route
+                    }
+                    id={`acervo-link-${arquivo.arquivoId}`}
+                    aria-labelledby={`acervo-link-${arquivo.arquivoId} acervo-arquivo-${arquivo.arquivoId}`}
+                  >
+                    Abrir arquivo e informações
+                  </ActionLink>
+                </li>
+              );
+            })}
           </ul>
         </section>
       )}

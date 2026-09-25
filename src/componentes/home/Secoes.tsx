@@ -784,9 +784,7 @@ export function Escuta({
               {publicas.length === ENTREVISTAS.length
                 ? "As oito estão públicas no acervo, com áudio e transcrição."
                 : `${publicas.length} de ${ENTREVISTAS.length} já estão públicas no acervo, com áudio e transcrição.`}{" "}
-              Nenhuma foi publicada por semelhança de nome: como todo arquivo
-              deste site, cada documento só passa a ter endereço público depois
-              de concluída a revisão de privacidade.
+              Os materiais publicados passaram por revisão de privacidade.
             </p>
           )}
           <p className="hl-metodo">

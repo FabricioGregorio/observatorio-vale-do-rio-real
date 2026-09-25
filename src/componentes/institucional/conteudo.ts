@@ -63,7 +63,7 @@ export const PRIVACIDADE_NAVEGACAO: readonly ItemDeclarado[] = [
     titulo: "Uma medição de audiência, agregada e sem cookie",
     texto:
       "O site usa o Vercel Web Analytics, do mesmo serviço que hospeda estas páginas, para saber quantas pessoas leem o material publicado e quais páginas elas procuram. A cada acesso são registrados o horário, a página visitada, o endereço que trouxe você até aqui, uma localização aproximada derivada da rede — o painel do projeto trabalha sobretudo no nível de país —, o tipo de aparelho, o navegador e o sistema operacional. São esses os dados que o serviço disponibiliza, e eles são lidos em conjunto, como contagem.",
-    prova: "Componente Analytics, no layout raiz do site",
+    prova: "Ativa em todas as páginas do site",
   },
   {
     titulo: "O que essa medição não recebe",

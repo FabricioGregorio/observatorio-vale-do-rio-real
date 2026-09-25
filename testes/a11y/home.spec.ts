@@ -385,6 +385,7 @@ test.describe("Home — o que não pode ser publicado", () => {
     expect(conteudo).not.toContain("comparativo");
     expect(conteudo).not.toContain("ranking");
     expect(conteudo).not.toContain("valor movimentado por dia");
+    expect(conteudo).not.toContain("despesa média por registro");
     expect(conteudo).not.toContain("registros de operação");
   });
 

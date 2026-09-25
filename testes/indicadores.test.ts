@@ -131,7 +131,13 @@ describe("conferência dos valores derivados", () => {
     );
   });
 
-  test("valor movimentado por dia é a despesa total sobre os registros", () => {
+  test("despesa média por registro é a despesa total sobre os registros", () => {
+    expect(porId("H4-002").titulo).toBe(
+      "Despesa média por registro de funcionamento",
+    );
+    expect(porId("H4-002").regra).toBe(
+      "Despesa total do período dividida pelo número de registros de funcionamento.",
+    );
     const razao =
       porId("H4-003").valorBruto / CONTEXTO_DOS_DADOS.registrosDeFuncionamento;
     expect(arredondar(razao, 3)).toBe(

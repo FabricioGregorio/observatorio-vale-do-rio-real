@@ -27,6 +27,7 @@ import {
   formatarPercentual,
   formatarReais,
 } from "../../dados/indicadores/formato";
+import { apresentarArquivoPublico } from "../../dados/publicado/acervo";
 import {
   type AnexoPublico,
   listarAnexosPublicos,
@@ -271,12 +272,18 @@ export default async function PaginaDados() {
                       `/acervo/${anexo.slug}/arquivo/${anexo.arquivoId}` as Route
                     }
                   >
-                    {anexo.rotuloArquivo ?? anexo.titulo}
+                    {apresentarArquivoPublico(anexo).titulo}
                   </ActionLink>
                   <p>{descricao}</p>
                   <p className="meta-ficha">
-                    {formatoDe(anexo)} · {tamanho(anexo.bytes)} ·{" "}
-                    {anexo.licenca}
+                    {[
+                      apresentarArquivoPublico(anexo).identificador,
+                      formatoDe(anexo),
+                      tamanho(anexo.bytes),
+                      anexo.licenca,
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
                   </p>
                 </li>
               ))}

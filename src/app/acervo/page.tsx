@@ -86,8 +86,8 @@ export default async function PaginaAcervo() {
       <aside className="acervo-nota border-l-2 pl-5">
         <h2 className="text-lg">O que este acervo reúne</h2>
         <p className="mt-2 max-w-prose">
-          O Acervo reúne somente os materiais que integram o corpus público do
-          Observatório. Nem tudo o que a pesquisa produziu faz parte desse
+          O Acervo reúne somente os materiais que integram o conjunto publicado
+          do Observatório. Nem tudo o que a pesquisa produziu faz parte desse
           conjunto: entram aqui os materiais autorizados para publicação e
           preservação pública, e é sobre eles que valem o endereço permanente e
           a licença declarada.

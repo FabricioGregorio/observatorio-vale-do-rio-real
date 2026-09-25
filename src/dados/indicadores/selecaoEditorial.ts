@@ -59,7 +59,7 @@ export const APOIO_DA_HOME = [
 /**
  * Os três que saem da leitura resumida da Home.
  *
- * Valor movimentado por dia, registros de funcionamento e contratações
+ * Despesa média por registro, registros de funcionamento e contratações
  * registradas são leitura de operação: eles respondem "como o equipamento
  * funcionou", e não "para onde o recurso foi". São os primeiros que a página
  * de dados vai querer, e os últimos de que a Home precisa.

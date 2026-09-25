@@ -186,7 +186,11 @@ export const INDICADORES = [
   },
   {
     id: "H4-002",
-    titulo: "Valor movimentado por dia de funcionamento",
+    // Até 2026-09-25: "Valor movimentado por dia de funcionamento". O cálculo
+    // é despesa total ÷ registros de funcionamento; "movimentado" sugeria
+    // receita e despesa somadas, e "dia", data única de calendário. O título
+    // passou a dizer o que a regra calcula. Valor, base e regra não mudaram.
+    titulo: "Despesa média por registro de funcionamento",
     valorBruto: 469.063,
     unidade: "reais",
     casasDecimais: 2,

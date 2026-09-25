@@ -125,7 +125,7 @@ export const PAPEIS: readonly {
   {
     papel: "Análise de dados",
     texto:
-      "Organizou as respostas, manteve o fluxo da coleta em dia e fez a decupagem que transformou registro diário em série e em indicador.",
+      "Organizou as respostas e os registros, manteve o fluxo da coleta em dia e transformou o registro diário em série e em indicador.",
   },
   {
     papel: "Ator-chave",
@@ -135,7 +135,7 @@ export const PAPEIS: readonly {
 ];
 
 export const ATOR_CHAVE: readonly string[] = [
-  "O ator-chave é a peça central do método. A pesquisa entendeu, desde o desenho, que compreender o funcionamento desses lugares exigiria alguém em contato simultâneo com o Observatório e com o equipamento — alguém que fornecesse as informações que sustentam a decupagem dos dados, a leitura do sistema organizacional do espaço e a análise da economia solidária ao redor dele.",
+  "O ator-chave é a peça central do método. A pesquisa entendeu, desde o desenho, que compreender o funcionamento desses lugares exigiria alguém em contato simultâneo com o Observatório e com o equipamento — alguém que fornecesse as informações que sustentam a organização dos dados, a leitura do sistema organizacional do espaço e a análise da economia solidária ao redor dele.",
   "Foram dois atores-chave, um em cada equipamento acompanhado. O do Recanto da Serra, agente cultural com atuação na cidade, fez também as pontes que levaram a pesquisa à comunidade da Serra dos Macacos e ao outro equipamento.",
   "A escolha tem uma consequência metodológica que a pesquisa assume: o registro diário é declarado por quem mantém o lugar. Foi para não depender só dele que os agentes de campo mantiveram visitação rotineira — para enxergar, com os próprios olhos, transformações que o formulário não capta.",
 ];

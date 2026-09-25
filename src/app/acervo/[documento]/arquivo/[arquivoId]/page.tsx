@@ -15,6 +15,7 @@ import {
 } from "../../../../../dados/editorial/tipos-publicos";
 import { FOTO_DA_PLACA } from "../../../../../dados/pesquisa/excecao-placa";
 import {
+  apresentarArquivoPublico,
   listarDocumentosPublicos,
   selecionarArquivoPublico,
   selecionarDocumentoPublico,
@@ -78,7 +79,7 @@ export default async function PaginaArquivo({ params }: Props) {
         )
       : null;
   if (slug === "fotografias-visitas-i-vii" && !editorial) notFound();
-  const titulo = tituloDoArquivoPublico(arquivo);
+  const { titulo, identificador } = apresentarArquivoPublico(arquivo);
   const imagemB01 =
     editorial &&
     (Boolean(arquivo.previewUrl) ||
@@ -111,6 +112,7 @@ export default async function PaginaArquivo({ params }: Props) {
               ? "Elemento gráfico"
               : "Fotografia"
             : tipoPublico(documento.tipo, slug)}
+          {identificador ? ` · ${identificador}` : ""}
         </p>
         <h1 className="relative mt-4 text-3xl md:text-4xl">{titulo}</h1>
         <p className="relative mt-5 text-sm">
