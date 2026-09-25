@@ -8,15 +8,22 @@ export type { DocumentoDoIndice } from "./busca";
 export function ListaDocumentosPublicos({
   documentos,
   correspondencias,
+  motivos,
+  consulta = "",
 }: {
   documentos: readonly DocumentoDoIndice[];
   /** Arquivos que a busca apontou, por slug do documento pai. */
   correspondencias?: ReadonlyMap<string, Correspondencia>;
+  /** Contexto que explica o resultado, quando o título não explica. */
+  motivos?: ReadonlyMap<string, readonly string[]>;
+  /** `q` e `tipo` em forma de query, para o documento saber voltar. */
+  consulta?: string;
 }) {
   return (
     <div className="grid gap-5 md:grid-cols-2">
       {documentos.map((documento, indice) => {
         const correspondencia = correspondencias?.get(documento.slug);
+        const motivo = motivos?.get(documento.slug);
         const rotulo = `acervo-correspondencia-${documento.slug}`;
         return (
           <article
@@ -36,6 +43,17 @@ export function ListaDocumentosPublicos({
             </h3>
             {documento.resumo ? (
               <p className="max-w-prose">{documento.resumo}</p>
+            ) : null}
+            {/*
+              Por que este documento apareceu, quando o título não diz: a
+              instituição, o lugar ou o município que o site já publica para
+              ele. Em palavras de quem lê — nada de campo, índice ou termo.
+            */}
+            {motivo ? (
+              <p className="acervo-motivo text-sm">
+                <span className="meta-ficha">Encontrado por</span>{" "}
+                {motivo.join(" · ")}
+              </p>
             ) : null}
             {/*
               O acerto que veio de um arquivo aparece dentro do documento pai,
@@ -81,7 +99,9 @@ export function ListaDocumentosPublicos({
               </p>
               <ActionLink
                 variant="document"
-                href={`/acervo/${documento.slug}` as Route}
+                href={
+                  `/acervo/${documento.slug}${consulta ? `?${consulta}` : ""}` as Route
+                }
                 id={`acervo-link-${documento.slug}`}
                 aria-labelledby={`acervo-link-${documento.slug} acervo-documento-${documento.slug}`}
               >

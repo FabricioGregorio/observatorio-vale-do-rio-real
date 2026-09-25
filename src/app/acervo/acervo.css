@@ -129,6 +129,9 @@
     align-items: baseline;
   }
 }
+.acervo-motivo .meta-ficha {
+  margin-inline-end: 0.5ch;
+}
 .acervo-relacionados {
   border-color: var(--acervo-linha);
 }

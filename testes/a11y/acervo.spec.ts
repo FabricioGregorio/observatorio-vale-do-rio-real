@@ -152,7 +152,10 @@ test("a busca acha o arquivo dentro do documento pai, sem acento e por teclado",
   );
   // As duas saídas estão no card: o arquivo e o documento.
   await expect(
-    cartao.locator('a[href="/acervo/anexo-indicadores-etapa-1"]'),
+    // O documento leva a consulta junto, para o retorno devolvê-la.
+    cartao.locator(
+      'a[href="/acervo/anexo-indicadores-etapa-1?q=serie+mensal"]',
+    ),
   ).toBeVisible();
   // O link do arquivo é alcançável por teclado, com foco visível.
   let alcancou = false;

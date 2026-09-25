@@ -224,3 +224,30 @@ export function buscarNoAcervo(
   }
   return resultados;
 }
+
+/**
+ * Por que um documento apareceu, quando o título e o resumo não dizem.
+ *
+ * "Secretaria" acha a entrevista de Josenilson Bispo pela instituição que o
+ * site publica para ela; sem dizer isso, o resultado parece engano. Aqui
+ * voltam os termos de contexto que contêm alguma palavra da consulta que o
+ * título e o resumo não têm — no máximo dois, na forma em que o site os
+ * escreve. Se o próprio título já explica, volta vazio: não se repete o
+ * óbvio. A busca em si não muda; isto só explica o resultado dela.
+ */
+export function motivoDoResultado(
+  documento: DocumentoDoIndice,
+  busca: string,
+): string[] {
+  const doTexto = normalizarBusca(
+    `${documento.titulo} ${documento.resumo ?? ""}`,
+  );
+  const faltando = palavras(busca).filter((termo) => !doTexto.includes(termo));
+  if (faltando.length === 0) return [];
+  return documento.contexto
+    .filter((valor) => {
+      const texto = normalizarBusca(valor);
+      return faltando.some((termo) => texto.includes(termo));
+    })
+    .slice(0, 2);
+}

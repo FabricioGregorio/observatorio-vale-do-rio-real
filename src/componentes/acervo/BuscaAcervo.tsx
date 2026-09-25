@@ -4,7 +4,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { tipoPublico } from "../../dados/editorial/tipos-publicos";
 import { Button } from "../ui/Button";
-import { buscarNoAcervo, expandirIndice, type IndiceCompacto } from "./busca";
+import {
+  buscarNoAcervo,
+  expandirIndice,
+  type IndiceCompacto,
+  motivoDoResultado,
+} from "./busca";
 import { ListaDocumentosPublicos } from "./ListaDocumentosPublicos";
 
 /** Frase de estado: documentos, e quantos arquivos o acerto apontou dentro deles. */
@@ -51,6 +56,18 @@ export function BuscaAcervo({ indice }: { indice: IndiceCompacto }) {
       correspondencia ? [[documento.slug, correspondencia] as const] : [],
     ),
   );
+  // O motivo só aparece quando nenhum arquivo explica o resultado.
+  const motivos = new Map(
+    resultados.flatMap(({ documento, correspondencia }) => {
+      if (correspondencia) return [];
+      const motivo = motivoDoResultado(documento, q);
+      return motivo.length > 0 ? [[documento.slug, motivo] as const] : [];
+    }),
+  );
+  // A consulta viaja com o link do documento, para o retorno devolvê-la.
+  const consulta = new URLSearchParams();
+  if (q.trim()) consulta.set("q", q.trim());
+  if (tipo) consulta.set("tipo", tipo);
   const arquivosCorrespondentes = [...correspondencias.values()].reduce(
     (soma, c) => soma + c.arquivos.length + c.alemDosExibidos,
     0,
@@ -127,6 +144,8 @@ export function BuscaAcervo({ indice }: { indice: IndiceCompacto }) {
         <ListaDocumentosPublicos
           documentos={encontrados}
           correspondencias={correspondencias}
+          motivos={motivos}
+          consulta={consulta.toString()}
         />
       ) : (
         <p className="acervo-vazio border p-6">

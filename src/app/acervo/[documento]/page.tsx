@@ -1,11 +1,16 @@
 import type { Metadata, Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import {
   DadosDaPeca,
   Relacionados,
 } from "../../../componentes/acervo/ContextoDocumental";
 import { tamanhoLegivel } from "../../../componentes/acervo/formato";
+import {
+  RetornoAoAcervo,
+  RetornoSemContexto,
+} from "../../../componentes/acervo/RetornoAoAcervo";
 import { ActionLink } from "../../../componentes/ui/ActionLink";
 import {
   gruposB01NaOrdemTerritorial,
@@ -50,11 +55,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PaginaDocumento({ params }: Props) {
   const { documento: slug } = await params;
-  const documento = selecionarDocumentoPublico(
-    await listarDocumentosPublicos(),
-    slug,
-  );
+  const todos = await listarDocumentosPublicos();
+  const documento = selecionarDocumentoPublico(todos, slug);
   if (!documento) notFound();
+  const tipos = [...new Set(todos.map((d) => d.tipo))];
   const b01 = slug === "fotografias-visitas-i-vii";
   /*
     Fotografia é o que não é o elemento gráfico. Contar por `image/webp` era
@@ -229,10 +233,16 @@ export default async function PaginaDocumento({ params }: Props) {
         </section>
       )}
       <Relacionados id="acervo-relacionados" itens={contexto.relacionados} />
+      {/*
+        O retorno devolve a busca de onde a pessoa veio, se veio de uma: o
+        card do resultado leva `q` e `tipo` na URL da ficha. Sem query —
+        entrada direta, nova aba, Google —, o destino é `/acervo`. O
+        fallback é o mesmo link sem contexto, e é ele que existe sem JS.
+      */}
       <p>
-        <ActionLink variant="text" href="/acervo" voltar>
-          Voltar ao índice do Acervo
-        </ActionLink>
+        <Suspense fallback={<RetornoSemContexto />}>
+          <RetornoAoAcervo tipos={tipos} />
+        </Suspense>
       </p>
     </div>
   );
