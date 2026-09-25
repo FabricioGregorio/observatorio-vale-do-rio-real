@@ -310,8 +310,21 @@ test("checkpoint visual: desktop, 320px, temas e central", async ({ page }) => {
       animations: "disabled",
     });
     await page.goto("/podobservar");
+    /*
+      A entrada de um episódio no índice do PodObservar.
+
+      Era `.pod-episodio`, o `<li>` de cada episódio na lista antiga. O
+      redesenho de 2026-09-23 reescreveu a página como caderno editorial e a
+      entrada virou `<article class="pod-entrada">` — mesma anatomia (capa,
+      número, título, resumo e ações), outro nome. O seletor antigo deixou de
+      casar com qualquer elemento e este passo esperava até estourar o tempo.
+
+      Não é `.pod-episodio-pagina`: aquele é o invólucro da **rota do
+      episódio**, que esta captura não visita. Aqui se quer a primeira entrada
+      do índice, que é o episódio mais recente — o mesmo alvo de antes.
+    */
     await page
-      .locator(".pod-episodio")
+      .locator(".pod-entrada")
       .first()
       .screenshot({
         path: join(pasta, `episodio-${largura}.png`),
