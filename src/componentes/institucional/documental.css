@@ -91,6 +91,18 @@
   margin: 0;
 }
 
+/* Atalhos de leitura das páginas documentais longas: o mesmo desenho do
+   índice de `/dados`. Quebra em linhas, nunca rola na horizontal. */
+.doc-indice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 2rem;
+  border-top: 1px solid var(--color-marca);
+  padding-block: 1rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
 /* Título de seção é alvo de âncora (`/campo#campo-<lugar>-titulo`): a
    reserva do cabeçalho fixo é a mesma das demais páginas com salto. */
 .doc-secao__corpo > h2[id] {

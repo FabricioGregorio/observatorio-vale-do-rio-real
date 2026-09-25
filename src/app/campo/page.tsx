@@ -110,6 +110,18 @@ export default async function PaginaCampo() {
         </dl>
       </AberturaDocumental>
 
+      {/*
+        Atalho para os quatro lugares, com o nome que cada seção já tem. É só
+        âncora: nada é escondido, e a ordem da página não muda.
+      */}
+      <nav aria-label="Lugares nesta página" className="doc-indice">
+        {lugares.map((lugar) => (
+          <a href={`#${secaoDoLugarNoCampo(lugar.id)}-titulo`} key={lugar.id}>
+            {lugar.nome}
+          </a>
+        ))}
+      </nav>
+
       {lugares.map((lugar) => (
         <SecaoDocumental
           id={secaoDoLugarNoCampo(lugar.id)}

@@ -12,6 +12,7 @@ import {
   type Evidencia,
   FECHO,
   INDICADORES,
+  INDICE_DA_PESQUISA,
   INSTRUMENTOS,
   LEITURA,
   LIMITES,
@@ -238,6 +239,14 @@ export default async function PaginaPesquisa() {
 
         <p className="pq-abertura__nota">{NOTA_DOS_MESES}</p>
       </header>
+
+      <nav aria-label="Partes da pesquisa" className="pq-indice">
+        {INDICE_DA_PESQUISA.map((item) => (
+          <a href={`#${item.alvo}`} key={item.alvo}>
+            {item.rotulo}
+          </a>
+        ))}
+      </nav>
 
       <section aria-labelledby="pq-objetivo-titulo" className="pq-secao">
         <h2 id="pq-objetivo-titulo">O que a pesquisa foi buscar</h2>

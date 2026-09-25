@@ -267,6 +267,17 @@
 
 /* --- Seções --------------------------------------------------------------- */
 
+/* Atalhos de leitura: o mesmo desenho do índice de `/dados`. Quebra em
+   linhas quando falta largura — nunca rola na horizontal. */
+.pq-indice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pq-espaco) var(--pq-espaco-amplo);
+  border-top: 1px solid var(--color-marca);
+  padding-block: var(--pq-espaco);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
 .pq-secao {
   display: flex;
   flex-direction: column;

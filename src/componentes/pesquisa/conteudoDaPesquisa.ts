@@ -480,3 +480,21 @@ export const LIMITES: readonly Limite[] = [
 export const FECHO: readonly string[] = [
   "O que a pesquisa reuniu não fica guardado. Relatórios técnicos, fotografias de campo, formulários e entrevistas compõem um acervo com endereço permanente, e cada peça aparece aqui com o estado real que tem hoje — pública, restrita ou em revisão.",
 ];
+
+/**
+ * Atalhos de leitura: rótulo curto e a âncora do título real da seção.
+ *
+ * Mesmo padrão do índice de `/dados` — âncoras nativas, sem JavaScript de
+ * rolagem; o `scroll-margin-top` de `.pq h2` mantém o título fora do
+ * cabeçalho fixo. O rótulo é curto porque o título da seção é frase
+ * ("Como se observa um equipamento cultural por dentro"), e o índice só
+ * precisa dizer qual parte é.
+ */
+export const INDICE_DA_PESQUISA = [
+  { rotulo: "Método", alvo: "pq-metodo-titulo" },
+  { rotulo: "Instrumentos", alvo: "pq-instrumentos-titulo" },
+  { rotulo: "Percurso", alvo: "pq-percurso-titulo" },
+  { rotulo: "Entrevistas", alvo: "pq-escuta-titulo" },
+  { rotulo: "Limites", alvo: "pq-limites-titulo" },
+  { rotulo: "O que foi reunido", alvo: "pq-materiais-titulo" },
+] as const;
