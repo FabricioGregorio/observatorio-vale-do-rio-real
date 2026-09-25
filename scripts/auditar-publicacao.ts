@@ -123,11 +123,18 @@ async function conferirPorStream(alvo: Alvo): Promise<Resultado> {
  * Serve para objeto já comprovado integralmente — acusa sumiço, truncamento
  * e troca de tipo. Não acusa troca de conteúdo do mesmo tamanho, e o
  * relatório diz isso em vez de deixar a impressão de que hash foi conferido.
+ *
+ * `Accept-Encoding: identity` não é detalhe. O CDN comprime o que é
+ * comprimível — SVG, aqui — e, quando comprime, responde sem
+ * `Content-Length` e com `ETag` fraco. Sem pedir a forma original, os três
+ * SVG do acervo apareciam como divergência de tamanho num objeto que está
+ * íntegro: um alarme falso que ensina a ignorar o alarme.
  */
 async function conferirPorHead(alvo: Alvo): Promise<Resultado> {
   const resposta = await fetch(alvo.url, {
     method: "HEAD",
     redirect: "error",
+    headers: { "accept-encoding": "identity" },
   });
   if (resposta.status !== 200) {
     return {
@@ -138,11 +145,18 @@ async function conferirPorHead(alvo: Alvo): Promise<Resultado> {
     };
   }
 
-  const tamanho = Number(resposta.headers.get("content-length"));
+  const cabecalhoTamanho = resposta.headers.get("content-length");
   const tipo = resposta.headers.get("content-type")?.split(";")[0]?.trim();
   const divergencias: string[] = [];
-  if (tamanho !== alvo.bytes) {
-    divergencias.push(`content-length ${tamanho} ≠ ${alvo.bytes}`);
+  /*
+    Sem `Content-Length` não há o que comparar — e afirmar divergência seria
+    inventar uma. O caso é declarado, não escondido: o objeto existe e o tipo
+    confere, mas o tamanho não foi conferível neste modo.
+  */
+  if (cabecalhoTamanho === null) {
+    divergencias.push("sem content-length: tamanho não conferível por HEAD");
+  } else if (Number(cabecalhoTamanho) !== alvo.bytes) {
+    divergencias.push(`content-length ${cabecalhoTamanho} ≠ ${alvo.bytes}`);
   }
   if (tipo !== alvo.mimeType) {
     divergencias.push(`mime ${tipo} ≠ ${alvo.mimeType}`);
