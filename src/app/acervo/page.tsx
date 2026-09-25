@@ -86,7 +86,7 @@ export default async function PaginaAcervo() {
         */}
         <p className="acervo-elaboracao max-w-prose text-sm">
           <span className="meta-ficha">Em elaboração</span> Caderno de Estudos,
-          em preparação editorial. Quando for publicado, entra no acervo como os
+          ainda sendo escrito. Quando for publicado, entra no acervo como os
           demais: endereço próprio, licença declarada e arquivo para baixar.
         </p>
       </div>
