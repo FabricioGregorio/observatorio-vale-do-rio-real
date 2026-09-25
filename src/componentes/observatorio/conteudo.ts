@@ -251,7 +251,7 @@ export const PRODUTOS: readonly Produto[] = [
     nome: "Dados",
     href: "/dados",
     texto:
-      "Os indicadores auditados do levantamento, cada um com a sua regra de cálculo, a base sobre a qual foi apurado, o período, o recorte — e o que eles deliberadamente não dizem.",
+      "Os indicadores do levantamento, cada um com a sua regra de cálculo, a base sobre a qual foi apurado, o período, o recorte — e o que eles deliberadamente não dizem.",
     acao: "Ver Dados",
   },
   {

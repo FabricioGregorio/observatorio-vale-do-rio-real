@@ -399,7 +399,7 @@ test("sem JavaScript, o percurso e a escuta continuam completos", async ({
  * dá endereço público a um documento e a explicação da forma da interface.
  *
  * O alvo não é palavra, é função da frase: o que ela explica a quem lê. Por
- * isso "indicadores auditados", "a decisão foi publicar o que o período
+ * isso "os indicadores do levantamento", "a decisão foi publicar o que o período
  * mostrasse" e "a pessoa responsável pelo espaço" continuam passando — as
  * três falam da pesquisa, e não de como o site foi feito.
  */

@@ -199,7 +199,7 @@ export default async function PaginaPesquisa() {
     ...(contratacoes === null
       ? []
       : [{ termo: "Contratações registradas", valor: contratacoes.valor }]),
-    { termo: "Indicadores auditados", valor: `${INDICADORES.length}` },
+    { termo: "Indicadores", valor: `${INDICADORES.length}` },
   ];
 
   return (

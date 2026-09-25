@@ -39,9 +39,9 @@ export const metadata = metadadosDaRota({
   pathname: "/dados",
   titulo: "Dados — Observatório do Vale do Rio Real",
   descricao:
-    "Os dados consolidados do Observatório do Vale do Rio Real: indicadores " +
-    "auditados, série mensal, atividades registradas, limites declarados e " +
-    "acesso às fontes públicas.",
+    "Os dados consolidados do Observatório do Vale do Rio Real: indicadores, " +
+    "série mensal, atividades registradas, limites declarados e acesso às " +
+    "fontes públicas.",
 });
 
 /**
@@ -111,7 +111,7 @@ export default async function PaginaDados() {
   const ficha = [
     { termo: "Período de coleta", valor: PERIODO },
     { termo: "Recorte", valor: RECORTE },
-    { termo: "Indicadores auditados", valor: `${INDICADORES.length}` },
+    { termo: "Indicadores", valor: `${INDICADORES.length}` },
     { termo: "Fonte", valor: FONTE_PUBLICA },
     ...(licenca === null ? [] : [{ termo: "Licença", valor: licenca }]),
   ];
@@ -159,9 +159,7 @@ export default async function PaginaDados() {
       </section>
 
       <section aria-labelledby="dd-indicadores-titulo" className="dd-secao">
-        <h2 id="dd-indicadores-titulo">
-          Os {INDICADORES.length} indicadores auditados
-        </h2>
+        <h2 id="dd-indicadores-titulo">Os {INDICADORES.length} indicadores</h2>
         <p className="dd-leitura">
           Cada um traz, no mesmo bloco, a regra de cálculo, a base sobre a qual
           foi apurado, o período e o recorte. Nenhum valor é apresentado sem o
