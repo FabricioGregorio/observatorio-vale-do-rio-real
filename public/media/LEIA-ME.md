@@ -19,7 +19,7 @@ media/
 
 | Pasta | Finalidade | Estado |
 |---|---|---|
-| `campo/` | fotografia do Hero, nas duas composições servidas por art direction | `hero-observatorio-desktop-1440.webp`, `hero-observatorio-mobile-540.webp` |
+| `campo/` | fotografia do Hero, nas duas composições servidas por art direction | `hero-home-melhorada-desktop-1600.avif`, `hero-home-melhorada-mobile-515.avif` |
 | `logos/` | marcas institucionais, de fomento e de parceiros | marca e símbolo do Observatório, marca do Coletivo |
 | `mapa/` | recursos do mapa territorial | vazia; a malha é GeoJSON e vive em `src/dados/territorio/` |
 | `podobservar/` | identidade geral do podcast | logo oficial em WebP 1200 px; capas chegam pelo gate público do banco |

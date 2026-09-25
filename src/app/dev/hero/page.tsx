@@ -127,14 +127,10 @@ export default function PrototipoDoHero() {
           <div>
             <dt className="meta-ficha">Original</dt>
             <dd>
-              {ORIGINAL_DO_HERO.arquivo} — {ORIGINAL_DO_HERO.larguraOrientada}
-              &times;{ORIGINAL_DO_HERO.alturaOrientada} depois de aplicada a
-              orientação do EXIF. Não versionado.
+              {ORIGINAL_DO_HERO.arquivo} — {ORIGINAL_DO_HERO.largura}
+              &times;{ORIGINAL_DO_HERO.altura}, {ORIGINAL_DO_HERO.edicao}. Não
+              versionado.
             </dd>
-          </div>
-          <div>
-            <dt className="meta-ficha">Metadados removidos</dt>
-            <dd>{ORIGINAL_DO_HERO.metadadosRemovidos.join(" · ")}</dd>
           </div>
           <div>
             <dt className="meta-ficha">Derivados</dt>

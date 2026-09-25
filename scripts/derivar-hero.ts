@@ -1,9 +1,12 @@
 /**
- * Derivados web da fotografia do Hero — Fase H1.
+ * Derivados web da fotografia do Hero.
  *
- * O original é `home.jpg`, decisão humana registrada na Direção Visual §7.2.
- * Ele tem 6,86 MB e **não é versionado**: o que entra no repositório são os
- * derivados que este script produz.
+ * O original é `home_melhorada.png`: a versão horizontal que a equipe
+ * preparou em 2026-09-25 a partir de `home.jpg` (decisão da Direção Visual
+ * §7.2). `home.jpg` é retrato 3000x4000; a versão horizontal tem 1672x941, e
+ * as faixas laterais dela — agaves à esquerda, cactos e bromélias à direita —
+ * não existem no original. Ela tem 3,7 MB e **não é versionada**: o que entra
+ * no repositório são os derivados que este script produz.
  *
  * ## Por que o navegador faz a codificação
  *
@@ -12,33 +15,20 @@
  * para a marca WebP, reutiliza o Chromium do Playwright. Nada depende de
  * binário global, serviço externo ou ferramenta baixada à parte.
  *
- * O Sharp aplica orientação, recorte e redimensionamento antes de codificar o
- * AVIF. O Chromium faz redimensionamento e WebP da marca por `canvas`. Tudo é
- * local e parte das dependências já travadas do projeto.
+ * O Sharp aplica recorte e redimensionamento antes de codificar o AVIF. O
+ * Chromium confere as dimensões do original e faz redimensionamento e WebP da
+ * marca por `canvas`. Tudo é local e parte das dependências já travadas do
+ * projeto.
  *
  * O codificador do `System.Drawing` foi medido antes desta escolha e
  * descartado: 4:4:4 sem controle de subamostragem, produzindo 283 kB para
  * 1440x936 em qualidade 45 — mais que o dobro do orçamento, com perda visível.
  *
- * ## Orientação — o detalhe que muda tudo
- *
- * O arquivo está gravado como 4000x3000, mas traz `Orientation = 6` no EXIF:
- * para exibir corretamente é preciso girar 90 graus no sentido horário. A
- * fotografia é, de fato, **retrato 3000x4000**. Ler as dimensões do arquivo
- * sem aplicar a orientação leva à conclusão errada de que ela é paisagem — foi
- * o que aconteceu no `PLANO_HOME_PILOTO_1_0.md` §7.2, corrigido na H1.
- *
- * O Chromium aplica a orientação sozinho ao carregar a imagem (`image-
- * orientation: from-image` é o padrão), então o `canvas` já recebe 3000x4000.
- * O script confere isso e falha se vier diferente.
- *
  * ## Metadados
  *
- * O original carrega EXIF com **GPS**, marca e modelo do aparelho, versão de
- * firmware, data e hora, miniatura embutida e um bloco XMP.
- *
- * Nada disso sobrevive: `canvas.toBlob` grava apenas os pixels. Os derivados
- * saem sem EXIF, sem XMP e sem ICC. `testes/hero-derivados.test.ts` confirma.
+ * O PNG não traz EXIF, XMP nem ICC. O `home.jpg` do qual ele saiu traz GPS,
+ * aparelho e data — e é por isso que a regra continua valendo: os derivados
+ * saem só com pixels. `testes/hero-derivados.test.ts` confirma.
  *
  * ## O que é permitido, e o que não é
  *
@@ -47,14 +37,16 @@
  *
  * Proibido, e o script não faz: acrescentar ou remover pessoas, alterar
  * cenário, reconstruir céu, mexer em placas, aplicar filtro ou gerar pixel por
- * IA. A fidelidade documental da fotografia é preservada.
+ * IA. O que o original já traz é responsabilidade de quem o preparou; este
+ * script não acrescenta nada a ele.
  *
  * ## Uso
  *
- *     pnpm derivar-hero -- "<caminho absoluto do home.jpg>"
- *     pnpm derivar-hero -- --medir-avif "<caminho absoluto do home.jpg>"
+ *     pnpm derivar-hero -- "<caminho absoluto do home_melhorada.png>"
+ *     pnpm derivar-hero -- --medir-avif "<caminho absoluto do home_melhorada.png>"
  *
- * Sem argumento, usa `OBSERVATORIO_FONTES_DIR` do ambiente.
+ * Sem argumento, usa `OBSERVATORIO_FONTES_DIR` do ambiente — e, nesse caso,
+ * também regrava as marcas institucionais.
  */
 
 import { createHash } from "node:crypto";
@@ -63,19 +55,16 @@ import { createRequire } from "node:module";
 import { join, resolve } from "node:path";
 import { chromium } from "@playwright/test";
 
-/** Dimensões da fotografia depois de aplicada a orientação do EXIF. */
-const LARGURA_ORIENTADA = 3000;
-const ALTURA_ORIENTADA = 4000;
+/** Dimensões do original. PNG não tem orientação de EXIF a aplicar. */
+const LARGURA_ORIENTADA = 1672;
+const ALTURA_ORIENTADA = 941;
 
 /**
- * Recortes escolhidos sobre a imagem já orientada. As coordenadas vieram de
- * inspeção visual com grade, não de estimativa:
+ * Recortes sobre o original. Coordenadas lidas sobre a imagem inteira:
  *
- *     pessoas ....... x  330-1050   y 1500-2850   (três, todas de costas)
- *     placas ........ x 1650-3000   y 1550-2500
- *     caminho ....... x  950-1500   y 1900-2400
- *     copa e céu .... y 0-1700
- *     grama ......... y 2400-4000
+ *     pessoas ....... x  545-750    y 380-710   (três, todas de costas)
+ *     placas ........ x  853-1208   y 385-615
+ *     caminho ....... x  700-1000   y 460-660
  */
 type Recorte = {
   readonly nome: string;
@@ -90,24 +79,24 @@ type Recorte = {
 
 const RECORTES: readonly Recorte[] = [
   {
-    nome: "hero-observatorio-desktop",
+    nome: "hero-home-melhorada-desktop",
     x: 0,
-    y: 750,
-    largura: 3000,
-    altura: 1950,
-    saidas: [1440],
+    y: 0,
+    largura: 1672,
+    altura: 941,
+    saidas: [1600],
     qualidade: 32,
-    nota: "Deslocado para cima na Tarefa 23 para preservar as cabeças das pessoas, mantendo pessoas e placas juntas e faixa de grama para o texto.",
+    nota: "Quadro inteiro, sem recorte. A caixa da Hero em 1440x900 pede 1599x900: um derivado de 1440 teria de ser ampliado, e 1600x900 é 1:1 nesse perfil. A largura nativa (1672) custava 9 kB a mais e estourava o orçamento desktop DPR1 da Home.",
   },
   {
-    nome: "hero-observatorio-mobile",
-    x: 895,
+    nome: "hero-home-melhorada-mobile",
+    x: 700,
     y: 0,
-    largura: 2105,
-    altura: 3990,
-    saidas: [540],
+    largura: 515,
+    altura: 941,
+    saidas: [515],
     qualidade: 35,
-    nota: "Em retrato não cabem as duas coisas: o conteúdo útil ocupa 2670 px de largura, e uma janela 1:1.9 tirada de 4000 px de altura tem no máximo 2105 px. A escolha preserva as placas inteiras, que carregam a linguagem local e são o elemento insubstituível da cena; as figuras entram pela borda esquerda. Cortar as placas no meio das palavras seria pior.",
+    nota: "Mesma composição da versão anterior, com o mesmo `object-position: 0 28%`: a caixa do celular (~0,46:1) mostra os 433 px da esquerda desta janela — caminho e figura de azul sob o texto, placas à direita, cortadas na borda. Ancorar à direita deixava as placas inteiras, mas punha a placa azul sob o sobretítulo e prejudicava a leitura. Largura nativa: nenhum pixel ampliado.",
   },
 ];
 
@@ -209,12 +198,12 @@ async function principal(): Promise<void> {
           corpus,
           "identidade-visual",
           "elementos visuais e graficos",
-          "home.jpg",
+          "home_melhorada.png",
         ));
 
   if (origem === undefined) {
     throw new Error(
-      "Informe o caminho de home.jpg ou defina OBSERVATORIO_FONTES_DIR.",
+      "Informe o caminho de home_melhorada.png ou defina OBSERVATORIO_FONTES_DIR.",
     );
   }
 
@@ -261,7 +250,8 @@ async function principal(): Promise<void> {
 
   // A imagem entra como data URL: o navegador não precisa de servidor, e nada
   // sai da máquina.
-  const dataUrl = `data:image/jpeg;base64,${bruto.toString("base64")}`;
+  const mimeDoOriginal = origem.endsWith(".png") ? "image/png" : "image/jpeg";
+  const dataUrl = `data:${mimeDoOriginal};base64,${bruto.toString("base64")}`;
 
   const dimensoes = await pagina.evaluate(async (url) => {
     const img = new Image();
@@ -270,9 +260,7 @@ async function principal(): Promise<void> {
     return { largura: img.naturalWidth, altura: img.naturalHeight };
   }, dataUrl);
 
-  console.log(
-    `orientada  ${dimensoes.largura}x${dimensoes.altura} (o Chromium aplica o Orientation do EXIF)`,
-  );
+  console.log(`original  ${dimensoes.largura}x${dimensoes.altura}`);
 
   if (
     dimensoes.largura !== LARGURA_ORIENTADA ||

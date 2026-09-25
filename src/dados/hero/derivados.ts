@@ -6,17 +6,23 @@
  * site de prestação de contas, imagem publicada sem procedência registrada é
  * tão indefensável quanto anexo sem espelho.
  *
- * O original **não é versionado**. Ele tem 6,86 MB e vive no corpus, fora do
+ * O original **não é versionado**. Ele tem 3,7 MB e vive no corpus, fora do
  * repositório. Os derivados são produzidos por `pnpm derivar-hero`, que lê o
- * original, aplica a orientação do EXIF, recorta, redimensiona e codifica em
- * AVIF — descartando todo metadado no caminho.
+ * original, recorta, redimensiona e codifica em AVIF — descartando todo
+ * metadado no caminho.
  *
- * ## A orientação
+ * ## Qual original
  *
- * O arquivo está gravado como 4000x3000, mas traz `Orientation = 6`: a
- * fotografia é **retrato 3000x4000**. O `PLANO_HOME_PILOTO_1_0.md` §7.2 a
- * descreve como paisagem 4:3, o que veio de ler as dimensões sem aplicar a
- * orientação. A correção está registrada na H1.
+ * Até 2026-09-25 a Hero saía de `home.jpg`, fotografia **retrato 3000x4000**
+ * (gravada 4000x3000 com `Orientation = 6`). Na caixa horizontal do desktop,
+ * isso obrigava a recortar uma faixa de 3000x1950 do meio do retrato — o zoom
+ * que a troca veio corrigir.
+ *
+ * O original agora é `home_melhorada.png`, **versão horizontal 1672x941
+ * preparada pela equipe** a partir de `home.jpg`. As faixas laterais dela —
+ * agaves à esquerda, cactos e bromélias à direita, parte do céu — não existem
+ * no retrato de origem. Ela é, portanto, imagem editada, e está registrada
+ * assim: o que ela não é, é fotografia bruta de campo.
  */
 
 /** Pasta dos derivados, relativa à raiz do projeto. */
@@ -47,62 +53,62 @@ export type DerivadoDoHero = {
 };
 
 /**
- * Procedência do original. Conferida em 2026-09-09.
+ * Procedência do original. Conferida em 2026-09-25.
  *
- * O EXIF do original traz **GPS**, marca e modelo do aparelho, versão de
- * firmware e data/hora. Nada disso sobrevive nos derivados, e
- * `testes/hero-derivados.test.ts` confirma arquivo por arquivo.
+ * O PNG não traz EXIF, XMP nem perfil ICC — só pixels sRGB. A fotografia da
+ * qual ele foi preparado (`home.jpg`, 7.190.837 B, SHA-256 `37cf8d2e…`) traz
+ * **GPS**, aparelho e data; nada disso chegou ao PNG, e
+ * `testes/hero-derivados.test.ts` continua confirmando, arquivo por arquivo,
+ * que também não chega aos derivados.
  *
- * A existência de GPS no original é registrada aqui como **achado**, não como
- * fonte: se aquelas coordenadas constituem ou não documentação do ponto de
- * pesquisa é decisão humana, e `src/dados/territorio/pontos.ts` continua com
- * `coordenadas: null` até que essa decisão exista.
+ * A existência de GPS no `home.jpg` segue registrada como **achado**, não como
+ * fonte: `src/dados/territorio/pontos.ts` continua com `coordenadas: null`
+ * até que exista decisão humana sobre aquelas coordenadas.
  */
 export const ORIGINAL_DO_HERO = {
-  arquivo: "identidade-visual/elementos visuais e graficos/home.jpg",
+  arquivo: "identidade-visual/elementos visuais e graficos/home_melhorada.png",
   origem: "OBSERVATORIO_FONTES_DIR (corpus local, fora do repositório)",
-  bytes: 7_190_837,
-  sha256: "37cf8d2ee72d41756b41f1b027ca241c4cbc17d9a654addc2d9f5412fd7ca866",
-  larguraGravada: 4000,
-  alturaGravada: 3000,
-  orientacaoExif: 6,
-  larguraOrientada: 3000,
-  alturaOrientada: 4000,
-  metadadosRemovidos: [
-    "GPS (latitude, longitude, altitude)",
-    "marca e modelo do aparelho",
-    "versão de firmware",
-    "data e hora de captura",
-    "miniatura embutida",
-    "bloco XMP",
-  ],
+  bytes: 3_714_313,
+  sha256: "2727f6111f8c0ffcfdc192407bf5305f2029466b96a9dc5ef6a00195dddcab9a",
+  largura: 1672,
+  altura: 941,
+  preparadoDe: {
+    arquivo: "identidade-visual/elementos visuais e graficos/home.jpg",
+    sha256: "37cf8d2ee72d41756b41f1b027ca241c4cbc17d9a654addc2d9f5412fd7ca866",
+    larguraOrientada: 3000,
+    alturaOrientada: 4000,
+  },
+  edicao:
+    "versão horizontal preparada pela equipe; as faixas laterais não existem no retrato de origem",
 } as const;
 
 /**
  * Os derivados publicados.
  *
  * Conjunto de produção: uma largura por composição, servida por `<picture>`
- * conforme o viewport. Os arquivos AVIF foram derivados diretamente do JPEG
- * original e calibrados junto ao orçamento inicial de 500 kB da Home.
+ * conforme o viewport. Nenhum pixel ampliado: o desktop é o quadro inteiro
+ * reduzido a 1600x900, que é 1:1 na caixa de 1440x900; o mobile é recorte na
+ * largura nativa. Mesmas qualidades AVIF da versão anterior, calibradas junto
+ * ao orçamento de 500 kB da Home.
  */
 export const DERIVADOS_DO_HERO: readonly DerivadoDoHero[] = [
   {
-    arquivo: "hero-observatorio-desktop-1440.avif",
-    largura: 1440,
-    altura: 936,
-    recorte: { x: 0, y: 750, largura: 3000, altura: 1950 },
+    arquivo: "hero-home-melhorada-desktop-1600.avif",
+    largura: 1600,
+    altura: 900,
+    recorte: { x: 0, y: 0, largura: 1672, altura: 941 },
     qualidade: 32,
-    sha256: "e78062f6eb31dbe41825bf30633cd9f6f6a9a5ab4f15c3c293a1224832996dbf",
+    sha256: "dd128fba44cc123d85f0ec5b661077674da7cd82b7c6150ebdc4771528be254c",
     tetoBytes: 125_000,
   },
   {
-    arquivo: "hero-observatorio-mobile-540.avif",
-    largura: 540,
-    altura: 1024,
-    recorte: { x: 895, y: 0, largura: 2105, altura: 3990 },
+    arquivo: "hero-home-melhorada-mobile-515.avif",
+    largura: 515,
+    altura: 941,
+    recorte: { x: 700, y: 0, largura: 515, altura: 941 },
     qualidade: 35,
-    sha256: "cdb8ef715a185b418767de39df52ebfb98131478f654fd0879e1a4432787d445",
-    tetoBytes: 70_000,
+    sha256: "e7f826b327dd45f07452788a6bf191063f884143bcc6c8770c44d28559ff14f8",
+    tetoBytes: 55_000,
   },
 ];
 
