@@ -19,6 +19,7 @@ import {
   SecaoDocumental,
 } from "../../componentes/institucional/Documento";
 import { MESES_DE_COLETA } from "../../dados/indicadores/derivados";
+import { secaoDoLugarNoCampo } from "../../dados/materiais-de-campo";
 import { exibirDataDaFotografia } from "../../dados/pesquisa/derivados";
 import { listarAnexosPublicos } from "../../dados/publicado/anexos";
 import { metadadosDaRota } from "../../lib/site-url";
@@ -111,7 +112,7 @@ export default async function PaginaCampo() {
 
       {lugares.map((lugar) => (
         <SecaoDocumental
-          id={`campo-${lugar.id}`}
+          id={secaoDoLugarNoCampo(lugar.id)}
           key={lugar.id}
           rotulo={`${lugar.localidade} · ${lugar.municipio}`}
           titulo={lugar.nome}

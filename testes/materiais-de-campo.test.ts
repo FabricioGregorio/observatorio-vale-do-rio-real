@@ -92,16 +92,14 @@ describe("resolução de materiais contra o que está publicado", () => {
     }
   });
 
-  test("um documento publicado torna o material público e traz a URL real", () => {
+  test("um documento publicado torna o material público e leva à ficha", () => {
     const publicados = indexarPorDocumento([
       anexo("relatorio-tecnico-borda-da-mata"),
     ]);
     const materiais = resolverMateriaisDoLugar("borda-da-mata", publicados);
     const relatorio = materiais.find((m) => m.material === "Relatório técnico");
     expect(relatorio?.estado).toBe("publico");
-    expect(relatorio?.href).toBe(
-      "https://acervo.exemplo/relatorio-tecnico-borda-da-mata.pdf",
-    );
+    expect(relatorio?.href).toBe("/acervo/relatorio-tecnico-borda-da-mata");
     // Os demais materiais do mesmo lugar não são arrastados junto.
     for (const outro of materiais.filter((m) => m !== relatorio)) {
       expect(outro.estado, outro.material).not.toBe("publico");
@@ -123,7 +121,7 @@ describe("resolução de materiais contra o que está publicado", () => {
     ).toBe("https://acervo.exemplo/transcricao.pdf");
   });
 
-  test("conjunto sem principal aponta para o grupo no Acervo, não para um arquivo", () => {
+  test("fotografias levam à seção do lugar no Diário de Campo, não a um arquivo", () => {
     const publicados = indexarPorDocumento([
       anexo("fotografias-visitas-i-vii", {
         linkPermanente: "https://acervo.exemplo/foto-do-borda.webp",
@@ -132,20 +130,24 @@ describe("resolução de materiais contra o que está publicado", () => {
         linkPermanente: "https://acervo.exemplo/foto-do-recanto.webp",
       }),
     ]);
-    const fotos = resolverMaterial(
-      {
-        material: "Fotografias de campo",
-        documentos: ["fotografias-visitas-i-vii"],
-        estadoSemPublicacao: "pendente",
-      },
-      publicados,
-    );
+    const declarado = {
+      material: "Fotografias de campo",
+      documento: "fotografias-visitas-i-vii",
+      estadoSemPublicacao: "pendente",
+      destino: "campo",
+    } as const;
+    const fotos = resolverMaterial(declarado, publicados, "recanto-da-serra");
     expect(fotos.estado).toBe("publico");
-    expect(fotos.href).toBe("/acervo#acervo-fotografias-visitas-i-vii");
+    expect(fotos.href).toBe("/campo#campo-recanto-da-serra-titulo");
     expect(fotos.arquivosPublicos).toBe(2);
+    // Sem lugar conhecido, a seção de um lugar seria escolha arbitrária: o
+    // destino é a ficha do conjunto.
+    expect(resolverMaterial(declarado, publicados).href).toBe(
+      "/acervo/fotografias-visitas-i-vii",
+    );
   });
 
-  test("material com vários documentos soma os arquivos de todos", () => {
+  test("os dois formulários são dois materiais, cada um com o seu documento", () => {
     const publicados = indexarPorDocumento([
       anexo("formulario-rotina-de-funcionamento"),
       anexo("formulario-publico-consumidor"),
@@ -153,24 +155,23 @@ describe("resolução de materiais contra o que está publicado", () => {
         linkPermanente: "https://acervo.exemplo/outro.xlsx",
       }),
     ]);
-    const formularios = resolverMaterial(
-      {
-        material: "Formulários",
-        documentos: [
-          "formulario-rotina-de-funcionamento",
-          "formulario-publico-consumidor",
-        ],
-        estadoSemPublicacao: "restrito",
-      },
-      publicados,
+    const materiais = resolverMateriaisDoLugar("recanto-da-serra", publicados);
+    const funcionamento = materiais.find(
+      (m) => m.material === "Respostas de funcionamento",
     );
-    expect(formularios.estado).toBe("publico");
-    expect(formularios.arquivosPublicos).toBe(3);
-    // Sem principal entre os três, o destino é o conjunto do primeiro
-    // documento que tem arquivo público.
-    expect(formularios.href).toBe(
-      "/acervo#acervo-formulario-rotina-de-funcionamento",
+    const visitantes = materiais.find(
+      (m) => m.material === "Respostas de visitantes",
     );
+    expect(funcionamento).toMatchObject({
+      estado: "publico",
+      href: "/acervo/formulario-rotina-de-funcionamento",
+      arquivosPublicos: 1,
+    });
+    expect(visitantes).toMatchObject({
+      estado: "publico",
+      href: "/acervo/formulario-publico-consumidor",
+      arquivosPublicos: 2,
+    });
   });
 
   test("as fichas do Território usam a mesma resolução, sem exceção local", () => {

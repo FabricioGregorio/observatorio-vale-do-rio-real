@@ -48,20 +48,38 @@ export type ArquivosPublicados = ReadonlyMap<
 >;
 
 /**
- * Declaração de um material: o rótulo editorial, os documentos que o
- * sustentam e o estado que ele mantém enquanto nenhum deles estiver público.
+ * Declaração de um material: o rótulo editorial, o documento que o sustenta e
+ * o estado que ele mantém enquanto o documento não estiver público.
+ *
+ * Um material, um documento. Até 2026-09-25 "Formulários de funcionamento e
+ * de visitantes" declarava dois documentos e entregava um só destino — o
+ * primeiro —, e o rótulo prometia o que o clique não dava. Dois documentos são
+ * dois materiais, cada um com o seu destino.
+ *
+ * `destino` diz onde o material é consultado no site:
+ *
+ * - `ficha` (padrão): a ficha do documento no Acervo, que oferece os arquivos
+ *   reais — abrir, baixar, ouvir, ler a transcrição.
+ * - `campo`: a seção do lugar no Diário de Campo. Serve às fotografias, cujo
+ *   conjunto reúne os quatro lugares: a ficha do conjunto não é "as
+ *   fotografias deste lugar", e a seção do lugar em `/campo` é.
  */
 export type MaterialDeclarado = {
   readonly material: string;
-  readonly documentos: readonly string[];
+  readonly documento: string;
   readonly estadoSemPublicacao: Exclude<EstadoDoMaterial, "publico">;
+  readonly destino?: "ficha" | "campo";
 };
 
 /** Material já resolvido contra o que está publicado. */
 export type MaterialResolvido = {
   readonly material: string;
   readonly estado: EstadoDoMaterial;
-  /** Só existe para material público. */
+  /**
+   * Só existe para material público. É sempre uma página do site — a ficha
+   * do documento ou a seção do lugar —, nunca o binário: quem clica no nome
+   * de um material escolhe ali o que abrir.
+   */
   readonly href: string | null;
   /** Quantos objetos físicos públicos sustentam este material. */
   readonly arquivosPublicos: number;
@@ -79,51 +97,57 @@ export const MATERIAIS_POR_LUGAR: Readonly<
   "recanto-da-serra": [
     {
       material: "Relatório técnico",
-      documentos: ["relatorio-tecnico-recanto-da-serra"],
+      documento: "relatorio-tecnico-recanto-da-serra",
       estadoSemPublicacao: "restrito",
     },
     {
       material: "Entrevista gravada",
-      documentos: ["entrevista-pedro-menezes"],
+      documento: "entrevista-pedro-menezes",
       estadoSemPublicacao: "restrito",
     },
     {
-      material: "Formulários de funcionamento e de visitantes",
-      documentos: [
-        "formulario-rotina-de-funcionamento",
-        "formulario-publico-consumidor",
-      ],
+      material: "Respostas de funcionamento",
+      documento: "formulario-rotina-de-funcionamento",
+      estadoSemPublicacao: "restrito",
+    },
+    {
+      material: "Respostas de visitantes",
+      documento: "formulario-publico-consumidor",
       estadoSemPublicacao: "restrito",
     },
     {
       material: "Fotografias de campo",
-      documentos: ["fotografias-visitas-i-vii"],
+      documento: "fotografias-visitas-i-vii",
       estadoSemPublicacao: "pendente",
+      destino: "campo",
     },
   ],
   "borda-da-mata": [
     {
       material: "Relatório técnico",
-      documentos: ["relatorio-tecnico-borda-da-mata"],
+      documento: "relatorio-tecnico-borda-da-mata",
       estadoSemPublicacao: "restrito",
     },
     {
       material: "Entrevista gravada",
-      documentos: ["entrevista-oviedo-e-neide-abreu"],
+      documento: "entrevista-oviedo-e-neide-abreu",
       estadoSemPublicacao: "restrito",
     },
     {
-      material: "Formulários de funcionamento e de visitantes",
-      documentos: [
-        "formulario-rotina-de-funcionamento",
-        "formulario-publico-consumidor",
-      ],
+      material: "Respostas de funcionamento",
+      documento: "formulario-rotina-de-funcionamento",
+      estadoSemPublicacao: "restrito",
+    },
+    {
+      material: "Respostas de visitantes",
+      documento: "formulario-publico-consumidor",
       estadoSemPublicacao: "restrito",
     },
     {
       material: "Fotografias de campo",
-      documentos: ["fotografias-visitas-i-vii"],
+      documento: "fotografias-visitas-i-vii",
       estadoSemPublicacao: "pendente",
+      destino: "campo",
     },
   ],
   // A Serra dos Macacos foi visitada, mas não é equipamento acompanhado: o
@@ -132,25 +156,27 @@ export const MATERIAIS_POR_LUGAR: Readonly<
   "serra-dos-macacos": [
     {
       material: "Relato técnico (A04)",
-      documentos: ["relatorio-tecnico-serra-dos-macacos"],
+      documento: "relatorio-tecnico-serra-dos-macacos",
       estadoSemPublicacao: "restrito",
     },
     {
       material: "Fotografias de campo",
-      documentos: ["fotografias-visitas-i-vii"],
+      documento: "fotografias-visitas-i-vii",
       estadoSemPublicacao: "pendente",
+      destino: "campo",
     },
   ],
   "ilha-grande": [
     {
       material: "Entrevista gravada",
-      documentos: ["entrevista-lideranca-ilha-grande"],
+      documento: "entrevista-lideranca-ilha-grande",
       estadoSemPublicacao: "restrito",
     },
     {
       material: "Fotografias de campo",
-      documentos: ["fotografias-visitas-i-vii"],
+      documento: "fotografias-visitas-i-vii",
       estadoSemPublicacao: "pendente",
+      destino: "campo",
     },
   ],
 };
@@ -165,36 +191,51 @@ export function linkPreferido(
   return (arquivos.find((a) => a.principal) ?? arquivos[0])?.url ?? null;
 }
 
-/** Âncora do documento no Acervo, na forma que `ListaMateriaisPublicos` gera. */
-export function ancoraNoAcervo(slug: string): string {
-  return `/acervo#acervo-${slug}`;
+/** Ficha pública do documento no Acervo — a rota que `/acervo/[documento]` gera. */
+export function fichaNoAcervo(slug: string): string {
+  return `/acervo/${slug}`;
+}
+
+/**
+ * Seção do lugar no Diário de Campo.
+ *
+ * `/campo` monta a seção com este id e o título com o sufixo `-titulo`; a
+ * âncora aponta para o título, que é o que existe com `id` na página. As duas
+ * pontas leem daqui, e por isso não têm como divergir — como divergiram a
+ * âncora do Acervo e a lista que a gerava, removida sem que o link soubesse.
+ */
+export function secaoDoLugarNoCampo(id: IdDoLugarDeCampo): string {
+  return `campo-${id}`;
+}
+
+export function ancoraDoLugarNoCampo(id: IdDoLugarDeCampo): string {
+  return `/campo#${secaoDoLugarNoCampo(id)}-titulo`;
 }
 
 /**
  * Resolve a declaração contra o que está efetivamente publicado.
  *
- * Um material com vários arquivos e nenhum `principal` — as 59 fotografias de
- * campo são o caso — **não** aponta para um arquivo qualquer. Apontaria para o
- * primeiro da ordenação, que é uma foto do Borda da Mata mesmo na ficha do
- * Recanto: um link tecnicamente válido e editorialmente falso. Nesse caso o
- * destino é o conjunto no Acervo, onde os 59 aparecem agrupados.
+ * O destino é sempre uma página do site, nunca o binário. Um rótulo como
+ * "Entrevista gravada" levava direto ao PDF da transcrição — o arquivo
+ * `principal` do documento —, e quem queria ouvir caía num texto. A ficha
+ * oferece o áudio e a transcrição lado a lado, com abrir e baixar.
+ *
+ * As fotografias levam à seção do lugar em `/campo`, e não ao conjunto: as 59
+ * reúnem os quatro lugares, e "Fotografias de campo" na ficha do Recanto é
+ * uma promessa sobre o Recanto.
  */
 export function resolverMaterial(
   declarado: MaterialDeclarado,
   publicados: ArquivosPublicados,
+  lugar: IdDoLugarDeCampo | null = null,
 ): MaterialResolvido {
-  const comArquivos = declarado.documentos.filter(
-    (slug) => (publicados.get(slug) ?? []).length > 0,
-  );
-  const arquivos = comArquivos.flatMap((slug) => publicados.get(slug) ?? []);
-  const primeiro = comArquivos[0];
+  const arquivos = publicados.get(declarado.documento) ?? [];
   let href: string | null = null;
-  if (primeiro !== undefined) {
-    const temPrincipal = arquivos.some((a) => a.principal);
+  if (arquivos.length > 0) {
     href =
-      arquivos.length === 1 || temPrincipal
-        ? linkPreferido(arquivos)
-        : ancoraNoAcervo(primeiro);
+      declarado.destino === "campo" && lugar !== null
+        ? ancoraDoLugarNoCampo(lugar)
+        : fichaNoAcervo(declarado.documento);
   }
   return {
     material: declarado.material,
@@ -208,5 +249,7 @@ export function resolverMateriaisDoLugar(
   id: IdDoLugarDeCampo,
   publicados: ArquivosPublicados,
 ): readonly MaterialResolvido[] {
-  return MATERIAIS_POR_LUGAR[id].map((d) => resolverMaterial(d, publicados));
+  return MATERIAIS_POR_LUGAR[id].map((d) =>
+    resolverMaterial(d, publicados, id),
+  );
 }

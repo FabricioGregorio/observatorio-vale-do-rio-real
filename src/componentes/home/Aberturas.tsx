@@ -33,9 +33,15 @@ const DESKTOP =
   DERIVADOS_DESKTOP_DO_HERO[0] as (typeof DERIVADOS_DESKTOP_DO_HERO)[number];
 const VERTICAL = DERIVADO_MOBILE_DO_HERO;
 
+/**
+ * O rótulo promete a área Pesquisa, e o destino é ela. Até 2026-09-25 o botão
+ * descia para `#hl-lugares`, uma seção da própria Home: quem esperava o
+ * percurso da investigação encontrava dois cards de lugar. O sinal de rota
+ * sai do sistema de ações, que o deduz do `href`.
+ */
 function CtaDaPesquisa() {
   return (
-    <ActionLink variant="primary" className="ab-botao" href="#hl-lugares">
+    <ActionLink variant="primary" className="ab-botao" href="/pesquisa">
       {CTA_DA_PESQUISA}
     </ActionLink>
   );

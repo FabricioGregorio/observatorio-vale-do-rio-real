@@ -558,7 +558,12 @@ test.describe("Home — apresentação", () => {
         (elemento) => getComputedStyle(elemento).backgroundColor,
       );
       expect(fundo).toMatch(/^rgba\(.+, 0\.82\)$/);
-      await page.getByRole("link", { name: "Conhecer a pesquisa" }).click();
+      // O CTA leva à área Pesquisa; a descida por âncora continua coberta
+      // pelo salto direto ao capítulo dos lugares.
+      await expect(
+        page.getByRole("link", { name: "Conhecer a pesquisa" }),
+      ).toHaveAttribute("href", "/pesquisa");
+      await page.goto("/#hl-lugares");
       await expect(topo).toBeInViewport();
       expect((await topo.boundingBox())?.y).toBe(0);
       const destino = await page.locator("#hl-lugares").boundingBox();

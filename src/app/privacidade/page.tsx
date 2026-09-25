@@ -80,6 +80,7 @@ export default function PaginaPrivacidade() {
         <ul className="doc-itens">
           {PRIVACIDADE_NAVEGACAO.map((item) => (
             <ItemVerificavel
+              destino={item.destino}
               key={item.titulo}
               prova={item.prova}
               texto={item.texto}
@@ -97,6 +98,7 @@ export default function PaginaPrivacidade() {
         <ul className="doc-itens">
           {PRIVACIDADE_FRONTEIRAS.map((item) => (
             <ItemVerificavel
+              destino={item.destino}
               key={item.titulo}
               prova={item.prova}
               texto={item.texto}
@@ -119,6 +121,7 @@ export default function PaginaPrivacidade() {
         <ul className="doc-itens">
           {PRIVACIDADE_PESQUISA.map((item) => (
             <ItemVerificavel
+              destino={item.destino}
               key={item.titulo}
               prova={item.prova}
               texto={item.texto}

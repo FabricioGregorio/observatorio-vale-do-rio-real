@@ -258,9 +258,19 @@ export default async function PaginaDados() {
               permanente, sem login e sem pedido de acesso.
             </p>
             <ul className="dd-fontes">
+              {/*
+                Cada fonte leva à ficha do arquivo no Acervo, e não ao PDF ou
+                à planilha crus: a ficha oferece abrir e baixar o original, e
+                diz de que documento a peça faz parte.
+              */}
               {fontes.map(({ rotulo, descricao, anexo }) => (
                 <li key={rotulo}>
-                  <ActionLink variant="document" href={anexo.linkPermanente}>
+                  <ActionLink
+                    variant="document"
+                    href={
+                      `/acervo/${anexo.slug}/arquivo/${anexo.arquivoId}` as Route
+                    }
+                  >
                     {anexo.rotuloArquivo ?? anexo.titulo}
                   </ActionLink>
                   <p>{descricao}</p>

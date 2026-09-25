@@ -1,3 +1,5 @@
+import type { Route } from "next";
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 import "./documental.css";
@@ -67,6 +69,27 @@ export function SecaoDocumental({
   );
 }
 
+/** O texto com o trecho indicado transformado em link interno. */
+function comDestino(
+  texto: string,
+  destino: { readonly trecho: string; readonly href: string },
+): ReactNode {
+  const inicio = texto.indexOf(destino.trecho);
+  if (inicio < 0) {
+    throw new Error(`Trecho de destino ausente do texto: ${destino.trecho}.`);
+  }
+  const fim = inicio + destino.trecho.length;
+  return (
+    <>
+      {texto.slice(0, inicio)}
+      <Link href={destino.href as Route} prefetch={false}>
+        {destino.trecho}
+      </Link>
+      {texto.slice(fim)}
+    </>
+  );
+}
+
 /**
  * Item de afirmação: o que o site faz, e como isso é verificável.
  *
@@ -78,15 +101,17 @@ export function ItemVerificavel({
   titulo,
   texto,
   prova,
+  destino,
 }: {
   readonly titulo: string;
   readonly texto: string;
   readonly prova: string | null;
+  readonly destino?: { readonly trecho: string; readonly href: string };
 }) {
   return (
     <li className="doc-item">
       <h3>{titulo}</h3>
-      <p>{texto}</p>
+      <p>{destino === undefined ? texto : comDestino(texto, destino)}</p>
       {prova === null ? null : (
         <p className="doc-item__prova meta-ficha">{prova}</p>
       )}

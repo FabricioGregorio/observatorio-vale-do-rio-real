@@ -28,7 +28,7 @@ export default function NaoEncontrado() {
           </li>
           <li>
             <ActionLink variant="text" href="/dados">
-              Portal de dados abertos
+              Dados
             </ActionLink>
           </li>
           <li>

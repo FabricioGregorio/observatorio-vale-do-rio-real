@@ -737,8 +737,10 @@ test.describe("Território — cartografia como informação", () => {
       for (let i = 0; i < quantidade; i += 1) {
         const link = evidencias.nth(i).getByRole("link");
         await expect(link).toHaveCount(1);
+        // Nome de material leva a página do site — a ficha do documento ou
+        // a seção do lugar no Diário de Campo —, nunca direto ao binário.
         expect(await link.getAttribute("href")).toMatch(
-          /^(https:\/\/acervo\.observatoriotobiassoueu\.com\.br\/arquivos\/|\/acervo#acervo-)/,
+          /^\/(acervo\/[a-z0-9-]+|campo#campo-[a-z-]+-titulo)$/,
         );
       }
     }

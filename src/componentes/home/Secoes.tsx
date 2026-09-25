@@ -1,3 +1,4 @@
+import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -8,6 +9,8 @@ import { exibirIndicador } from "../../dados/indicadores/formato";
 import { REGISTROS_DE_APOIO } from "../../dados/indicadores/selecaoEditorial";
 import {
   type ArquivosPublicados,
+  fichaNoAcervo,
+  linkPreferido,
   type MaterialResolvido,
   resolverMateriaisDoLugar,
 } from "../../dados/materiais-de-campo";
@@ -377,7 +380,8 @@ export function Territorio() {
 
 /**
  * O estado de cada material vem resolvido contra `acervo.json`. Material
- * público vira link para o arquivo real; sem URL não existe estado público.
+ * público vira link para a ficha do documento — ou, nas fotografias, para a
+ * seção do lugar no Diário de Campo; sem URL não existe estado público.
  */
 function MateriaisReunidos({
   equipamento,
@@ -531,8 +535,14 @@ export function Lugares({
     recanto: resolverMateriaisDoLugar("recanto-da-serra", publicados),
     borda: resolverMateriaisDoLugar("borda-da-mata", publicados),
   };
-  const relatorioDoBorda = materiais.borda.find(
-    (m) => m.material === "Relatório técnico",
+  /*
+    O botão "Abrir relatório técnico" abre o PDF, como o do Recanto ao lado:
+    é ação nomeada sobre o arquivo. O material "Relatório técnico" da lista,
+    acima dele, leva à ficha — as duas portas existem, cada uma com o rótulo
+    do que entrega.
+  */
+  const pdfDoBorda = linkPreferido(
+    publicados.get("relatorio-tecnico-borda-da-mata") ?? [],
   );
 
   return (
@@ -618,8 +628,7 @@ export function Lugares({
                 equipamento={borda}
                 materiais={materiais.borda}
               />
-              {relatorioDoBorda?.href === undefined ||
-              relatorioDoBorda.href === null ? (
+              {pdfDoBorda === null ? (
                 <p className="hl-nota">
                   Nenhum documento do Borda da Mata está público ainda. Quando
                   estiver, o endereço aparece nesta ficha.
@@ -630,7 +639,7 @@ export function Lugares({
                     PDF digitalizado · {FOTOGRAFIAS_DO_BORDA_NO_ACERVO}{" "}
                     fotografias de campo no acervo
                   </p>
-                  <ActionLink variant="document" href={relatorioDoBorda.href}>
+                  <ActionLink variant="document" href={pdfDoBorda}>
                     Abrir relatório técnico
                   </ActionLink>
                 </div>
@@ -786,11 +795,28 @@ export function Escuta({
           </p>
         </div>
 
+        {/*
+          Cada entrevista leva à sua ficha no Acervo, pela mesma relação que
+          `/pesquisa` usa — `entrevista.documento`, declarado em `conteudo.ts`
+          — e só quando o documento está publicado. Sem arquivo público, o
+          nome fica como texto.
+        */}
         <ol className="hl-entrevistas" aria-label="Entrevistas gravadas">
           {ENTREVISTAS.map((entrevista) => (
             <li key={entrevista.numero}>
               <span className="hl-entrevistas__n">{entrevista.numero}</span>
-              <span className="hl-entrevistas__onde">{entrevista.onde}</span>
+              <span className="hl-entrevistas__onde">
+                {publicas.includes(entrevista) ? (
+                  <Link
+                    href={fichaNoAcervo(entrevista.documento) as Route}
+                    prefetch={false}
+                  >
+                    {entrevista.onde}
+                  </Link>
+                ) : (
+                  entrevista.onde
+                )}
+              </span>
               {entrevista.municipio === null ? null : (
                 <span className="meta-ficha">{entrevista.municipio}</span>
               )}
@@ -851,7 +877,7 @@ export function resolverEstadoDosProdutos(publicados: ArquivosPublicados) {
     .filter((item) => /relat[oó]rio|relato técnico/i.test(item.material))
     .every((item) => item.estado === "publico");
   const entrevistasEFormulariosPublicos = materiais
-    .filter((item) => /entrevista|formulários/i.test(item.material))
+    .filter((item) => /entrevista|respostas/i.test(item.material))
     .every((item) => item.estado === "publico");
   return { relatoriosPublicos, entrevistasEFormulariosPublicos };
 }
@@ -923,11 +949,14 @@ export function Produtos({
           <h3>Identidade visual</h3>
           <p>Marca, símbolo e peças do projeto no acervo público.</p>
           {/*
-            Apontava para /prestacao-de-contas enquanto /acervo não existia. A
-            rota passou a existir na integração de 2026-09-16 e o destino
-            passou a ser o que o rótulo sempre disse. A copy não mudou.
+            Apontava para /prestacao-de-contas enquanto /acervo não existia, e
+            depois para a raiz do Acervo. O item é um documento só, com ficha
+            própria: o destino passou a ser ela. A copy não mudou.
           */}
-          <ActionLink variant="text" href="/acervo">
+          <ActionLink
+            variant="text"
+            href={fichaNoAcervo("identidade-visual") as Route}
+          >
             Ver no acervo
           </ActionLink>
         </li>

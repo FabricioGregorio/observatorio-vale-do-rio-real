@@ -31,6 +31,13 @@ export type ItemDeclarado = {
   readonly texto: string;
   /** Onde a afirmação pode ser conferida. `null` quando é fato de navegação. */
   readonly prova: string | null;
+  /**
+   * Trecho do texto que é, ele mesmo, o caminho: quando o texto manda a
+   * pessoa a outra página, o nome da página vira link ali, no contexto. O
+   * trecho precisa existir literalmente em `texto`; se não existir, a página
+   * falha em build em vez de perder o link em silêncio.
+   */
+  readonly destino?: { readonly trecho: string; readonly href: string };
 };
 
 /* ──────────────────────────────── privacidade ─────────────────────────── */
@@ -148,5 +155,6 @@ export const PRIVACIDADE_PESQUISA: readonly ItemDeclarado[] = [
     texto:
       "Se você identificar no acervo um material que lhe diga respeito e queira tratar disso, o caminho é o contato institucional do projeto, na página de Contato.",
     prova: null,
+    destino: { trecho: "página de Contato", href: "/contato" },
   },
 ];

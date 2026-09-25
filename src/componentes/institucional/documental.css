@@ -91,6 +91,11 @@
   margin: 0;
 }
 
+/* Título de seção é alvo de âncora (`/campo#campo-<lugar>-titulo`): a
+   reserva do cabeçalho fixo é a mesma das demais páginas com salto. */
+.doc-secao__corpo > h2[id] {
+  scroll-margin-top: var(--topo-reserva-salto);
+}
 .doc-secao__corpo {
   display: flex;
   flex-direction: column;

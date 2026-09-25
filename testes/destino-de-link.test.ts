@@ -17,7 +17,7 @@ describe("classificação de destino", () => {
     "/territorio",
     "/dados",
     "/acervo",
-    "/acervo#acervo-fotografias-visitas-i-vii",
+    "/campo#campo-recanto-da-serra-titulo",
     "/acervo/fotografias-visitas-i-vii",
     // A ficha do arquivo é página HTML; o arquivo é o link dentro dela.
     "/acervo/entrevista-josenilson-bispo/arquivo/b66b98a6-fdec-481b-9d9f-fd323a751364",
