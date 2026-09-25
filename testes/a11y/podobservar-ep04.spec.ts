@@ -131,7 +131,9 @@ test("/podobservar lista quatro episódios, com o EP04 primeiro", async ({
   page,
 }) => {
   await page.goto("/podobservar");
-  const links = page.locator('main a[href^="/podobservar/t1/"]');
+  // As entradas do caderno, na ordem da página. A porta "Começar pelo
+  // episódio 1", no masthead, não é entrada da lista.
+  const links = page.locator('main .pod-entrada a[href^="/podobservar/t1/"]');
   const destinos = [
     ...new Set(
       await links.evaluateAll((todos) =>

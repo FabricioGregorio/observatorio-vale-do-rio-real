@@ -329,6 +329,53 @@
 .pod-episodio-pagina {
   max-width: 44rem;
 }
+/* Os títulos da página são alvo de salto ("Ir para a transcrição"): a
+   mesma reserva do cabeçalho fixo que o índice do caderno usa. */
+.pod-episodio-pagina h2 {
+  scroll-margin-top: var(--topo-reserva-salto);
+}
+/* O que o episódio apresenta: lista curta, categoria antes do link. */
+.pod-relacoes {
+  border-top: 1px solid var(--pod-linha);
+  padding-top: 1.5rem;
+}
+.pod-relacoes ul {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.pod-relacoes li,
+.pod-sequencia li {
+  overflow-wrap: anywhere;
+}
+.pod-relacoes .pod-rubrica {
+  margin-inline-end: 0.5ch;
+}
+/* Anterior e próximo: duas colunas quando cabe, uma quando não cabe. */
+.pod-sequencia ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 1.25rem 2rem;
+  margin: 0;
+  padding: 1.5rem 0 0;
+  list-style: none;
+  border-top: 1px solid var(--pod-linha);
+}
+.pod-sequencia li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+@media (min-width: 40rem) {
+  .pod-sequencia__proximo {
+    grid-column: -2;
+    align-items: flex-end;
+    text-align: end;
+  }
+}
 .pod-migalha {
   font-size: var(--text-sm);
   color: var(--color-texto-suave);

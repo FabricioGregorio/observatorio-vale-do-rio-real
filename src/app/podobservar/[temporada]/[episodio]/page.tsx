@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -18,6 +18,12 @@ import {
   Transcricao,
 } from "../../../../componentes/podobservar/Transcricao";
 import { ActionLink } from "../../../../componentes/ui/ActionLink";
+import {
+  hrefDoEpisodio,
+  relacionadosDoEpisodio,
+  vizinhosNaTemporada,
+} from "../../../../dados/editorial/relacoes";
+import { listarDocumentosPublicos } from "../../../../dados/publicado/acervo";
 import {
   type EpisodioPublico,
   interpretarSegmentoDeTemporada,
@@ -91,6 +97,14 @@ export default async function PaginaEpisodio({ params }: Props) {
   const { temporada, episodio: slug } = await params;
   const episodio = await resolver(temporada, slug);
   if (!episodio) notFound();
+  const { anterior, proximo } = vizinhosNaTemporada(
+    await listarEpisodiosPublicos(),
+    episodio,
+  );
+  const relacionados = relacionadosDoEpisodio(
+    episodio.slug,
+    new Map((await listarDocumentosPublicos()).map((d) => [d.slug, d.titulo])),
+  );
 
   return (
     <article className="pod pod-episodio-pagina mx-auto flex flex-col gap-8 px-4 py-10 md:py-16">
@@ -137,6 +151,12 @@ export default async function PaginaEpisodio({ params }: Props) {
             id="pod-youtube-episodio"
           />
         </p>
+        {/* A transcrição começa depois da nota sobre ela; o salto vai direto. */}
+        <p>
+          <ActionLink variant="text" href="#pod-transcricao-titulo">
+            Ir para a transcrição
+          </ActionLink>
+        </p>
       </header>
 
       <SobreEstaTranscricao />
@@ -147,6 +167,62 @@ export default async function PaginaEpisodio({ params }: Props) {
         </h2>
         <Transcricao texto={episodio.transcricao} />
       </section>
+
+      {/*
+        O que o episódio apresenta, pelo resumo publicado dele — lugar,
+        entrevista, página. A relação é declarada em `relacoes.ts`, com o
+        trecho do resumo que a sustenta; palavra que só aparece na
+        transcrição não vira link.
+      */}
+      {relacionados.length > 0 ? (
+        <section aria-labelledby="pod-relacoes-titulo" className="pod-relacoes">
+          <h2 className="text-xl" id="pod-relacoes-titulo">
+            Neste episódio
+          </h2>
+          <ul>
+            {relacionados.map((item) => (
+              <li key={item.href}>
+                <span className="pod-rubrica">{item.categoria}</span>{" "}
+                <Link href={item.href as Route} prefetch={false}>
+                  {item.rotulo}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {anterior || proximo ? (
+        <nav aria-label="Episódios da temporada" className="pod-sequencia">
+          <ul>
+            {anterior ? (
+              <li>
+                <p className="pod-rubrica">Episódio anterior</p>
+                <ActionLink
+                  variant="text"
+                  href={hrefDoEpisodio(anterior) as Route}
+                  voltar
+                >
+                  <span className="sr-only">Episódio anterior: </span>
+                  {anterior.titulo}
+                </ActionLink>
+              </li>
+            ) : null}
+            {proximo ? (
+              <li className="pod-sequencia__proximo">
+                <p className="pod-rubrica">Próximo episódio</p>
+                <ActionLink
+                  variant="text"
+                  href={hrefDoEpisodio(proximo) as Route}
+                >
+                  <span className="sr-only">Próximo episódio: </span>
+                  {proximo.titulo}
+                </ActionLink>
+              </li>
+            ) : null}
+          </ul>
+        </nav>
+      ) : null}
 
       <p>
         <ActionLink variant="text" href="/podobservar" voltar>

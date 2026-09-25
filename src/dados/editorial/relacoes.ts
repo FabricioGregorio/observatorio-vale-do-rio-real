@@ -69,6 +69,27 @@ export function hrefDoEpisodio(episodio: EpisodioDeReferencia): string {
   return `/podobservar/t${episodio.temporadaNumero}/${episodio.slug}`;
 }
 
+/**
+ * Anterior e próximo na ordem canônica da temporada: número crescente, só
+ * entre episódios publicados. Rascunho nunca está na lista, então nunca vira
+ * destino; no primeiro não há anterior, no último publicado não há próximo.
+ */
+export function vizinhosNaTemporada<
+  T extends { temporadaNumero: number; numero: number; slug: string },
+>(
+  episodios: readonly T[],
+  atual: T,
+): { anterior: T | null; proximo: T | null } {
+  const temporada = episodios
+    .filter((e) => e.temporadaNumero === atual.temporadaNumero)
+    .sort((a, b) => a.numero - b.numero);
+  const posicao = temporada.findIndex((e) => e.slug === atual.slug);
+  return {
+    anterior: temporada[posicao - 1] ?? null,
+    proximo: temporada[posicao + 1] ?? null,
+  };
+}
+
 type RelacaoDeEpisodio =
   | {
       readonly tipo: "lugar";

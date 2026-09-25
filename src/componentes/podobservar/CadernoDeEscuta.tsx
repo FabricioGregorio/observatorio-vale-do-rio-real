@@ -100,6 +100,16 @@ export function CadernoDeEscuta({
   episodios: readonly EpisodioPublico[];
 }) {
   const [recente, ...anteriores] = episodios;
+  /*
+    Para quem nunca ouviu: o primeiro episódio da temporada do mais recente,
+    pela ordem canônica. A lista continua do mais recente para o mais antigo;
+    isto é só uma segunda porta, e some quando o mais recente já é o primeiro.
+  */
+  const primeiro = recente
+    ? [...episodios]
+        .filter((e) => e.temporadaNumero === recente.temporadaNumero)
+        .sort((a, b) => a.numero - b.numero)[0]
+    : undefined;
   return (
     <div className="pod pod-caderno">
       <header className="pod-masthead">
@@ -129,6 +139,14 @@ export function CadernoDeEscuta({
           {anteriores.length > 0 ? (
             <ActionLink variant="text" href="#pod-episodios-titulo">
               Percorrer episódios
+            </ActionLink>
+          ) : null}
+          {primeiro && primeiro.slug !== recente?.slug ? (
+            <ActionLink
+              variant="text"
+              href={`/podobservar/t${primeiro.temporadaNumero}/${primeiro.slug}`}
+            >
+              Começar pelo episódio {primeiro.numero}
             </ActionLink>
           ) : null}
         </div>
