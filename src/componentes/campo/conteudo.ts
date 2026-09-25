@@ -60,6 +60,8 @@ export const LUGARES_VISITADOS = REFERENCIAS_TERRITORIAIS.length;
 
 export type FotoDoCampo = {
   readonly arquivo: string;
+  /** Hash dos bytes servidos; é por ele que a foto encontra a sua ficha. */
+  readonly sha256: string;
   readonly largura: number;
   readonly altura: number;
   readonly alt: string;
@@ -98,6 +100,7 @@ export function montarBlocosDeLugar(): readonly BlocoDeLugar[] {
   const locais: readonly (FotoDoCampo & { readonly lugar: IdDoLugar })[] = [
     ...DERIVADOS_DOS_LUGARES.map((foto) => ({
       arquivo: foto.arquivo,
+      sha256: foto.sha256,
       largura: foto.largura,
       altura: foto.altura,
       alt: foto.alt,
@@ -118,8 +121,9 @@ export function montarBlocosDeLugar(): readonly BlocoDeLugar[] {
       municipio: referencia.municipio,
       fotos: locais
         .filter((foto) => foto.lugar === referencia.id)
-        .map(({ arquivo, largura, altura, alt, credito, data }) => ({
+        .map(({ arquivo, sha256, largura, altura, alt, credito, data }) => ({
           arquivo,
+          sha256,
           largura,
           altura,
           alt,

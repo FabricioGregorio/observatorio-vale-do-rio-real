@@ -2,6 +2,11 @@ import type { Metadata, Route } from "next";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { createElement } from "react";
+import {
+  DadosDaPeca,
+  LinhaDaPeca,
+  Relacionados,
+} from "../../../../../componentes/acervo/ContextoDocumental";
 import { tamanhoLegivel } from "../../../../../componentes/acervo/formato";
 import {
   dataCurta,
@@ -9,10 +14,12 @@ import {
 } from "../../../../../componentes/podobservar/formato";
 import { ActionLink } from "../../../../../componentes/ui/ActionLink";
 import { mapaB01 } from "../../../../../dados/editorial/mapa-b01";
+import { contextoDaFotografia } from "../../../../../dados/editorial/relacoes";
 import {
   formatoPublico,
   tipoPublico,
 } from "../../../../../dados/editorial/tipos-publicos";
+import { exibirDataDaFotografia } from "../../../../../dados/pesquisa/derivados";
 import { FOTO_DA_PLACA } from "../../../../../dados/pesquisa/excecao-placa";
 import {
   apresentarArquivoPublico,
@@ -80,6 +87,9 @@ export default async function PaginaArquivo({ params }: Props) {
       : null;
   if (slug === "fotografias-visitas-i-vii" && !editorial) notFound();
   const { titulo, identificador } = apresentarArquivoPublico(arquivo);
+  const fotografia = editorial
+    ? contextoDaFotografia(arquivo)
+    : { linhas: [], registro: null, relacionados: [] };
   const imagemB01 =
     editorial &&
     (Boolean(arquivo.previewUrl) ||
@@ -168,14 +178,6 @@ export default async function PaginaArquivo({ params }: Props) {
           ) : null}
         </div>
       ) : null}
-      {!imagemB01 && !audio ? (
-        <div className="acervo-ficha border p-6">
-          <p className="meta-ficha">Arquivo documental</p>
-          <p className="mt-2">
-            {formatoPublico(arquivo.mimeType)} · {tamanhoLegivel(arquivo.bytes)}
-          </p>
-        </div>
-      ) : null}
       <p className="flex flex-wrap items-center gap-4">
         <ActionLink variant="document" href={arquivo.linkPermanente}>
           {arquivo.arquivoId === FOTO_DA_PLACA.arquivoPublicoId
@@ -188,34 +190,53 @@ export default async function PaginaArquivo({ params }: Props) {
             : "Baixar original"}
         </ActionLink>
       </p>
-      {documento.licenca ? (
-        <p className="text-sm">Licença: {documento.licenca}</p>
-      ) : null}
       {/*
-        Data de publicação.
+        Informações do arquivo, para quem chegou direto nesta ficha.
 
-        O rodapé de toda rota, a abertura do Acervo e a seção de conferência da
-        Home dizem que cada arquivo tem endereço próprio **e data de
-        publicação**. Até 2026-09-23 quem quisesse conferir a data ia à tabela
-        da Prestação de Contas, a única superfície que a exibia. Com a página
-        removida, a promessa ficaria sem lugar onde ser verificada — e uma
-        afirmação pública sem superfície é o defeito que este site combate.
+        Lugar e data do registro só aparecem quando um dado estruturado os
+        sustenta: o grupo da fotografia no mapa B01 e a data do manifesto dos
+        derivados, a mesma que `/campo` exibe. **Registro** é quando a
+        fotografia foi feita; **publicação** é quando o arquivo entrou no
+        acervo. São duas datas, com dois nomes, e uma nunca faz as vezes da
+        outra.
 
-        É data, não detalhe de sistema: hash, MIME cru e identificador interno
-        continuam fora da ficha, como a decisão de 2026-09-22 estabeleceu.
-
-        A formatação vem de `podobservar/formato.ts`, que resolve o fuso de
-        Sergipe explicitamente. `<time dateTime>` carrega a forma legível por
-        máquina do mesmo instante.
+        Data de publicação: o rodapé de toda rota, a abertura do Acervo e a
+        seção de conferência da Home dizem que cada arquivo tem endereço
+        próprio **e data de publicação**, e é aqui que ela se confere. Hash,
+        MIME cru e identificador interno continuam fora da ficha, como a
+        decisão de 2026-09-22 estabeleceu. A formatação vem de
+        `podobservar/formato.ts`, que resolve o fuso de Sergipe
+        explicitamente.
       */}
-      {arquivo.publicadoEm ? (
-        <p className="text-sm">
-          Publicado em{" "}
-          <time dateTime={dataMaquina(arquivo.publicadoEm)}>
-            {dataCurta(arquivo.publicadoEm)}
-          </time>
-        </p>
-      ) : null}
+      <DadosDaPeca linhas={fotografia.linhas} rotulo="Informações do arquivo">
+        {fotografia.registro ? (
+          <LinhaDaPeca termo="Data do registro">
+            <time dateTime={fotografia.registro}>
+              {exibirDataDaFotografia(fotografia.registro)}
+            </time>
+          </LinhaDaPeca>
+        ) : null}
+        <LinhaDaPeca termo="Formato">
+          {formatoPublico(arquivo.mimeType)}
+        </LinhaDaPeca>
+        <LinhaDaPeca termo="Tamanho">
+          {tamanhoLegivel(arquivo.bytes)}
+        </LinhaDaPeca>
+        {documento.licenca ? (
+          <LinhaDaPeca termo="Licença">{documento.licenca}</LinhaDaPeca>
+        ) : null}
+        {arquivo.publicadoEm ? (
+          <LinhaDaPeca termo="Publicado em">
+            <time dateTime={dataMaquina(arquivo.publicadoEm)}>
+              {dataCurta(arquivo.publicadoEm)}
+            </time>
+          </LinhaDaPeca>
+        ) : null}
+      </DadosDaPeca>
+      <Relacionados
+        id="acervo-arquivo-relacionados"
+        itens={fotografia.relacionados}
+      />
       <p>
         <ActionLink variant="text" href={`/acervo/${slug}` as Route} voltar>
           Voltar ao documento

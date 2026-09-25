@@ -291,7 +291,8 @@
 }
 
 .doc-foto__credito,
-.doc-foto__data {
+.doc-foto__data,
+.doc-foto__ficha {
   display: block;
   margin-top: 0.2rem;
   color: var(--color-texto-suave);

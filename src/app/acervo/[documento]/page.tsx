@@ -1,12 +1,17 @@
 import type { Metadata, Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import {
+  DadosDaPeca,
+  Relacionados,
+} from "../../../componentes/acervo/ContextoDocumental";
 import { tamanhoLegivel } from "../../../componentes/acervo/formato";
 import { ActionLink } from "../../../componentes/ui/ActionLink";
 import {
   gruposB01NaOrdemTerritorial,
   mapaB01,
 } from "../../../dados/editorial/mapa-b01";
+import { contextoDoDocumento } from "../../../dados/editorial/relacoes";
 import {
   formatoPublico,
   tipoPublico,
@@ -16,6 +21,7 @@ import {
   listarDocumentosPublicos,
   selecionarDocumentoPublico,
 } from "../../../dados/publicado/acervo";
+import { listarEpisodiosPublicos } from "../../../dados/publicado/podobservar";
 import { metadadosDaRota } from "../../../lib/site-url";
 import "../acervo.css";
 
@@ -61,6 +67,11 @@ export default async function PaginaDocumento({ params }: Props) {
         .length
     : 0;
   const fotografias = b01 ? documento.arquivos.length - graficos : 0;
+  const contexto = contextoDoDocumento(
+    slug,
+    await listarEpisodiosPublicos(),
+    documento.arquivos,
+  );
 
   return (
     <div className="acervo mx-auto flex max-w-6xl flex-col gap-10 px-4 py-10 md:py-16">
@@ -92,6 +103,13 @@ export default async function PaginaDocumento({ params }: Props) {
           <p className="relative mt-2 text-sm">Licença: {documento.licenca}</p>
         ) : null}
       </header>
+
+      {/*
+        Para quem chegou direto nesta ficha: o que o site já sabe do
+        documento, por dado estruturado — instituição, lugar, município. Sem
+        frase escrita para a ocasião; sem dado, sem bloco.
+      */}
+      <DadosDaPeca linhas={contexto.linhas} rotulo="Sobre este documento" />
 
       {b01 ? (
         <div className="flex flex-col gap-10">
@@ -210,6 +228,7 @@ export default async function PaginaDocumento({ params }: Props) {
           </ul>
         </section>
       )}
+      <Relacionados id="acervo-relacionados" itens={contexto.relacionados} />
       <p>
         <ActionLink variant="text" href="/acervo" voltar>
           Voltar ao índice do Acervo

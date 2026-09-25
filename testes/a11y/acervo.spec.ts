@@ -47,7 +47,7 @@ test("B01 abre dez grupos e 59 páginas contextuais, sem carregar imagens", asyn
   const link = page.locator('main a[href="/acervo/fotografias-visitas-i-vii"]');
   await expect(link).toHaveCount(1);
   await link.click();
-  await expect(page.locator("main section")).toHaveCount(10);
+  await expect(page.locator("main section.acervo-secao")).toHaveCount(10);
   await expect(page.locator('main a[href*="/arquivo/"]')).toHaveCount(59);
   await expect(page.locator("main img")).toHaveCount(0);
   await expect(

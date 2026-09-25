@@ -90,10 +90,53 @@
 .acervo-linha-arquivo {
   border-color: var(--acervo-linha);
 }
+/* A fotografia continua grande para inspeção, mas não ocupa mais que a
+   altura útil da tela: em retrato, ela empurrava abrir, baixar e as
+   informações do arquivo para depois de uma tela inteira de imagem. A
+   proporção se mantém (largura e altura automáticas sob o teto), e nada é
+   cortado; o original integral continua em "Abrir original". */
 .acervo-imagem {
+  width: auto;
   max-width: 100%;
   height: auto;
+  max-height: 70svh;
   object-fit: contain;
+  align-self: flex-start;
+}
+/* O que se sabe da peça, em termo e valor: o mesmo filete do Acervo. */
+.acervo-contexto {
+  display: grid;
+  margin: 0;
+}
+.acervo-contexto > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.15rem 1.5rem;
+  padding-block: 0.6rem;
+  border-top: 1px solid var(--acervo-linha);
+  min-width: 0;
+}
+.acervo-contexto > div:last-child {
+  border-bottom: 1px solid var(--acervo-linha);
+}
+.acervo-contexto dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+@media (min-width: 40rem) {
+  .acervo-contexto > div {
+    grid-template-columns: 11rem minmax(0, 1fr);
+    align-items: baseline;
+  }
+}
+.acervo-relacionados {
+  border-color: var(--acervo-linha);
+}
+.acervo-relacionados li {
+  overflow-wrap: anywhere;
+}
+.acervo-relacionados .meta-ficha {
+  margin-inline-end: 0.5ch;
 }
 .acervo-audio {
   width: 100%;

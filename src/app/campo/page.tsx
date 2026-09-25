@@ -18,6 +18,7 @@ import {
   Documento,
   SecaoDocumental,
 } from "../../componentes/institucional/Documento";
+import { fichaDaFotografiaExibida } from "../../dados/editorial/relacoes";
 import { MESES_DE_COLETA } from "../../dados/indicadores/derivados";
 import { secaoDoLugarNoCampo } from "../../dados/materiais-de-campo";
 import { exibirDataDaFotografia } from "../../dados/pesquisa/derivados";
@@ -143,25 +144,30 @@ export default async function PaginaCampo() {
                   : `${lugar.fotos.length} de ${lugar.noConjunto} fotografias que o conjunto reúne deste lugar.`}
               </p>
               <ul className="doc-galeria">
-                {lugar.fotos.map((foto) => (
-                  <li key={foto.arquivo}>
-                    <figure className="doc-foto">
-                      {/*
+                {lugar.fotos.map((foto) => {
+                  const ficha = fichaDaFotografiaExibida(
+                    { sha256: foto.sha256, lugar: lugar.id },
+                    anexos,
+                  );
+                  return (
+                    <li key={foto.arquivo}>
+                      <figure className="doc-foto">
+                        {/*
                         Sem `next/image`: o derivado já tem largura fixa,
                         dimensão declarada e bytes conferidos por manifesto.
                         Um segundo pipeline de otimização recodificaria a
                         mesma fotografia e quebraria a igualdade byte a byte
                         com o objeto do acervo.
                       */}
-                      <img
-                        alt={foto.alt}
-                        decoding="async"
-                        height={foto.altura}
-                        loading="lazy"
-                        src={`${CAMINHO_DAS_FOTOS}/${foto.arquivo}`}
-                        width={foto.largura}
-                      />
-                      {/*
+                        <img
+                          alt={foto.alt}
+                          decoding="async"
+                          height={foto.altura}
+                          loading="lazy"
+                          src={`${CAMINHO_DAS_FOTOS}/${foto.arquivo}`}
+                          width={foto.largura}
+                        />
+                        {/*
                         A legenda visível repete o texto alternativo, porque a
                         descrição é a mesma para quem vê e para quem não vê — o
                         manifesto guarda uma só, e inventar uma segunda seria
@@ -172,22 +178,41 @@ export default async function PaginaCampo() {
                         `alt` da imagem. O crédito fica fora da marcação
                         oculta, porque atribuição de autoria precisa ser lida.
                       */}
-                      <figcaption>
-                        <span aria-hidden="true">{foto.alt}</span>
-                        {foto.data === null ? null : (
-                          <span className="doc-foto__data">
-                            {exibirDataDaFotografia(foto.data)}
-                          </span>
-                        )}
-                        {foto.credito === null ? null : (
-                          <span className="doc-foto__credito">
-                            {foto.credito}
-                          </span>
-                        )}
-                      </figcaption>
-                    </figure>
-                  </li>
-                ))}
+                        <figcaption>
+                          <span aria-hidden="true">{foto.alt}</span>
+                          {foto.data === null ? null : (
+                            <span className="doc-foto__data">
+                              {exibirDataDaFotografia(foto.data)}
+                            </span>
+                          )}
+                          {foto.credito === null ? null : (
+                            <span className="doc-foto__credito">
+                              {foto.credito}
+                            </span>
+                          )}
+                          {/*
+                          A ficha da mesma fotografia no Acervo — mesmos
+                          bytes, mesmo lugar. Um link de texto, e não a
+                          imagem inteira: o destino fica dito, também no
+                          toque, e o `alt` não vira nome de link. O título
+                          público completa o nome acessível, para que 28
+                          links iguais não se confundam.
+                        */}
+                          {ficha === null ? null : (
+                            <span className="doc-foto__ficha">
+                              <Link href={ficha.href as Route} prefetch={false}>
+                                Ver ficha da fotografia
+                                <span className="sr-only">
+                                  : {ficha.titulo}
+                                </span>
+                              </Link>
+                            </span>
+                          )}
+                        </figcaption>
+                      </figure>
+                    </li>
+                  );
+                })}
               </ul>
             </>
           )}
