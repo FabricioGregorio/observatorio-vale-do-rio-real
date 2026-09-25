@@ -7,10 +7,11 @@
  * tabela) e o que não pode (o texto do rótulo, a chave, o identificador).
  */
 import { describe, expect, test } from "vitest";
-
+import { generateMetadata } from "../src/app/acervo/[documento]/arquivo/[arquivoId]/page";
 import { normalizarBusca } from "../src/componentes/acervo/busca";
 import {
   apresentarArquivoPublico,
+  identificacaoDoDocumento,
   listarDocumentosPublicos,
 } from "../src/dados/publicado/acervo";
 
@@ -87,5 +88,83 @@ describe("invariantes sobre os 107 arquivos", () => {
     expect(JSON.stringify(arquivos)).toBe(antes);
     expect(arquivos).toHaveLength(107);
     expect(documentos).toHaveLength(16);
+  });
+});
+
+describe("título da página das 107 fichas de arquivo", () => {
+  test("todo título é único, e a ficha mantém o canonical", async () => {
+    const titulos: string[] = [];
+    for (const documento of documentos)
+      for (const arquivo of documento.arquivos) {
+        const meta = await generateMetadata({
+          params: Promise.resolve({
+            documento: documento.slug,
+            arquivoId: arquivo.arquivoId,
+          }),
+        });
+        const titulo = String(meta.title);
+        titulos.push(titulo);
+        expect(String(meta.alternates?.canonical)).toBe(
+          `https://observatoriotobiassoueu.com.br/acervo/${documento.slug}/arquivo/${arquivo.arquivoId}`,
+        );
+        // Nada técnico no título: UUID, hash, chave de armazenamento, MIME.
+        expect(titulo).not.toMatch(/[0-9a-f]{8}-[0-9a-f]{4}-|[0-9a-f]{32}/);
+        expect(titulo).not.toMatch(
+          /arquivos\/|\.(pdf|m4a|mp3|xlsx|webp|jpg|svg)\b/i,
+        );
+        expect(titulo).not.toMatch(/application\/|audio\/|image\//);
+      }
+    expect(titulos).toHaveLength(107);
+    expect(new Set(titulos).size).toBe(107);
+  });
+
+  test("a identificação do pai entra sem repetir o tipo", async () => {
+    const titulo = async (slug: string, rotulo: string) => {
+      const documento = documentos.find((d) => d.slug === slug);
+      const arquivo = documento?.arquivos.find((a) =>
+        a.rotuloArquivo?.includes(rotulo),
+      );
+      if (!documento || !arquivo) throw new Error(`${slug} · ${rotulo}`);
+      return String(
+        (
+          await generateMetadata({
+            params: Promise.resolve({
+              documento: slug,
+              arquivoId: arquivo.arquivoId,
+            }),
+          })
+        ).title,
+      );
+    };
+    expect(await titulo("entrevista-pedro-menezes", "transcrição")).toBe(
+      "Transcrição da entrevista — Pedro Menezes (05/04/2026) — Acervo",
+    );
+    expect(await titulo("entrevista-pedro-menezes", "áudio")).toBe(
+      "Áudio da entrevista — Pedro Menezes (05/04/2026) — Acervo",
+    );
+    expect(await titulo("relatorio-tecnico-borda-da-mata", "integral")).toBe(
+      "Relatório técnico integral — Borda da Mata — Acervo",
+    );
+    // Título já único no acervo não ganha sufixo.
+    expect(await titulo("anexo-indicadores-etapa-1", "serie mensal")).toBe(
+      "Série mensal — Acervo",
+    );
+  });
+
+  test("sem o tipo como prefixo, a identificação é o título inteiro", () => {
+    expect(
+      identificacaoDoDocumento({
+        slug: "formulario-publico-consumidor",
+        tipo: "formulario_modelo",
+        titulo: "Respostas do formulário de visitantes",
+      }),
+    ).toBe("Respostas do formulário de visitantes");
+    expect(
+      identificacaoDoDocumento({
+        slug: "anexo-indicadores-etapa-1",
+        tipo: "painel_dados",
+        titulo: "Anexo Técnico de Indicadores — Etapa 1 de Levantamento",
+      }),
+    ).toBe("Anexo Técnico de Indicadores — Etapa 1 de Levantamento");
   });
 });

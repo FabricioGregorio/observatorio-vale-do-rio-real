@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { mapaB01, reconciliarMapaB01 } from "../editorial/mapa-b01";
+import { tipoPublico } from "../editorial/tipos-publicos";
 import { type AnexoPublico, listarAnexosPublicos } from "./anexos";
 
 export type DocumentoDoAcervo = {
@@ -170,4 +171,48 @@ export function apresentarArquivoPublico(
 
 export function tituloDoArquivoPublico(arquivo: AnexoPublico): string {
   return apresentarArquivoPublico(arquivo).titulo;
+}
+
+/**
+ * Como o documento se identifica para quem lê, sem repetir o tipo.
+ *
+ * O título público de um documento costuma abrir pelo próprio tipo —
+ * "Entrevista — Pedro Menezes (05/04/2026)", "Relatório Técnico — Recanto da
+ * Serra". Quando o que vem antes do travessão é exatamente o tipo público do
+ * documento (`tipoPublico`), a identificação é o que vem depois; em qualquer
+ * outro caso, é o título inteiro. Não há interpretação: só se retira um
+ * prefixo que o próprio dado estruturado confirma.
+ */
+export function identificacaoDoDocumento(
+  documento: Pick<DocumentoDoAcervo, "slug" | "tipo" | "titulo">,
+): string {
+  const [prefixo, ...resto] = documento.titulo.split(" — ");
+  const tipo = tipoPublico(documento.tipo, documento.slug);
+  return resto.length > 0 &&
+    prefixo?.toLocaleLowerCase("pt-BR") === tipo.toLocaleLowerCase("pt-BR")
+    ? resto.join(" — ")
+    : documento.titulo;
+}
+
+/**
+ * Título da página (`<title>`) da ficha de um arquivo.
+ *
+ * O título público do arquivo basta quando é único no acervo. Quando se
+ * repete — "Transcrição da entrevista" existe em oito documentos —, a página
+ * ganha a identificação do documento pai: "Transcrição da entrevista — Pedro
+ * Menezes (05/04/2026)". O H1 e a migalha não mudam; eles já mostram o
+ * documento na própria página.
+ */
+export function tituloDaPaginaDoArquivo(
+  arquivo: AnexoPublico,
+  documentos: readonly DocumentoDoAcervo[],
+): string {
+  const titulo = tituloDoArquivoPublico(arquivo);
+  const repeticoes = documentos
+    .flatMap((documento) => documento.arquivos)
+    .filter((outro) => tituloDoArquivoPublico(outro) === titulo).length;
+  const documento = documentos.find((d) => d.slug === arquivo.slug);
+  return repeticoes > 1 && documento !== undefined
+    ? `${titulo} — ${identificacaoDoDocumento(documento)}`
+    : titulo;
 }

@@ -26,7 +26,7 @@ import {
   listarDocumentosPublicos,
   selecionarArquivoPublico,
   selecionarDocumentoPublico,
-  tituloDoArquivoPublico,
+  tituloDaPaginaDoArquivo,
 } from "../../../../../dados/publicado/acervo";
 import { metadadosDaRota } from "../../../../../lib/site-url";
 import "../../../acervo.css";
@@ -66,7 +66,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!arquivo) notFound();
   return metadadosDaRota({
     pathname: `/acervo/${slug}/arquivo/${arquivo.arquivoId}`,
-    titulo: `${tituloDoArquivoPublico(arquivo)} — Acervo`,
+    titulo: `${tituloDaPaginaDoArquivo(arquivo, documentos)} — Acervo`,
   });
 }
 
