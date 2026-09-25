@@ -148,7 +148,7 @@ export function PodObservarNaHome({
           </p>
           <p className="hl-pod-secao__chamada">{CADENCIA}</p>
           <p className="hl-pod-recente__acoes">
-            <ActionLink variant="text" href="/podobservar" setaInterna>
+            <ActionLink variant="text" href="/podobservar">
               Ver PodObservar
             </ActionLink>
           </p>

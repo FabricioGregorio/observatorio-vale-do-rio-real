@@ -108,7 +108,7 @@ export function CentralAcessibilidade() {
     >
       <div className="central__topo">
         <h2 id={idTitulo}>Acessibilidade</h2>
-        <Button variant="text" onClick={() => painel.current?.close()}>
+        <Button variant="utility" onClick={() => painel.current?.close()}>
           Fechar
         </Button>
       </div>
@@ -118,7 +118,7 @@ export function CentralAcessibilidade() {
           {TEMAS.map((opcao) => (
             <Button
               key={opcao}
-              variant="secondary"
+              variant="utility"
               aria-pressed={tema === opcao}
               onClick={() => aplicarTema(opcao)}
             >
@@ -173,7 +173,7 @@ export function CentralAcessibilidade() {
           pode usar o zoom do navegador.
         </p>
       </fieldset>
-      <Button variant="secondary" onClick={restaurar}>
+      <Button variant="utility" onClick={restaurar}>
         Restaurar preferências
       </Button>
       <p role="status" className="central__nota">

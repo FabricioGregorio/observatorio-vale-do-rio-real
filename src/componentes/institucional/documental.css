@@ -30,15 +30,6 @@
   padding-bottom: clamp(3rem, 7vw, 5rem);
 }
 
-.doc a {
-  color: var(--color-link);
-  text-decoration: underline;
-  text-underline-offset: 0.22em;
-}
-.doc a:hover {
-  color: var(--color-link-hover);
-}
-
 .doc h2 {
   margin: 0;
   max-width: 26ch;

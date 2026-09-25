@@ -3,6 +3,23 @@ import { useId } from "react";
 import { classificarDestino } from "../../lib/destino-de-link";
 
 /**
+ * Sinal de percurso de um link que fica na mesma guia. A saída para outra
+ * guia tem sinal próprio (↗), que não é opção: sai da política de destino.
+ *
+ *   seguir  →  continuidade para outra rota do site
+ *   voltar  ←  retorno ao nível de cima; vem antes do rótulo
+ *   descer  ↓  deslocamento para mais abaixo na mesma página
+ */
+export type SinalDePercurso = "seguir" | "voltar" | "descer";
+
+const GLIFO: Record<SinalDePercurso | "externo", string> = {
+  seguir: "→",
+  voltar: "←",
+  descer: "↓",
+  externo: "↗",
+};
+
+/**
  * Link cujo comportamento de guia sai da política de `destino-de-link.ts`.
  *
  * Serve a todo `href` que não se sabe de antemão — o que vem do banco, do
@@ -17,6 +34,11 @@ import { classificarDestino } from "../../lib/destino-de-link";
  * a seta ↗ fora da árvore de acessibilidade — quem usa leitor de tela recebe o
  * aviso, não um caractere lido como "seta nordeste".
  *
+ * O caractere da seta continua no HTML, e `data-sinal` no link diz qual é.
+ * Dentro de uma ação (`.acao`), `acoes.css` desenha a seta com o traço do
+ * sistema e guarda o caractere como reserva — é ele que aparece em modo de
+ * alto contraste, onde fundo desenhado não é pintado.
+ *
  * `meta` é a linha secundária dos botões da Home (formato, tamanho, licença):
  * vem depois da seta, para que a seta acompanhe o rótulo e não a linha técnica.
  */
@@ -27,7 +49,7 @@ export function LinkDeDestino({
   meta,
   style,
   download,
-  setaInterna,
+  sinal,
   ...atributos
 }: {
   href: string;
@@ -35,22 +57,28 @@ export function LinkDeDestino({
   className?: string;
   meta?: React.ReactNode;
   style?: React.CSSProperties;
-  setaInterna?: boolean;
+  sinal?: SinalDePercurso;
 } & Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href">) {
   const aviso = useId();
   const destino = classificarDestino(href);
   const baixar = download !== undefined && download !== false;
   if (destino === "interno" || baixar) {
+    const percurso = baixar ? undefined : sinal;
+    const glifo = percurso ? (
+      <span aria-hidden="true">{GLIFO[percurso]}</span>
+    ) : null;
     return (
       <a
         {...atributos}
         className={className}
+        data-sinal={percurso}
         href={href}
         style={style}
         download={download}
       >
+        {percurso === "voltar" ? glifo : null}
         {children}
-        {setaInterna && !baixar ? <span aria-hidden="true">→</span> : null}
+        {percurso === "voltar" ? null : glifo}
         {meta}
       </a>
     );
@@ -66,6 +94,7 @@ export function LinkDeDestino({
           .filter(Boolean)
           .join(" ")}
         className={className}
+        data-sinal="externo"
         href={href}
         referrerPolicy="no-referrer"
         rel={
@@ -76,7 +105,7 @@ export function LinkDeDestino({
         style={style}
         target="_blank"
       >
-        {children} <span aria-hidden="true">↗</span>
+        {children} <span aria-hidden="true">{GLIFO.externo}</span>
         {meta}
       </a>
     </>

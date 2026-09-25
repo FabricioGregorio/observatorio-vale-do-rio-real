@@ -45,17 +45,6 @@
   border-color: var(--color-borda-forte);
   border-radius: var(--radius-ficha);
 }
-.acervo-link {
-  color: var(--color-link);
-  font-family: var(--font-display);
-  font-weight: var(--peso-titulo);
-  text-decoration: underline;
-  text-underline-offset: 0.22em;
-  cursor: pointer;
-}
-.acervo-link:hover {
-  color: var(--color-link-hover);
-}
 .acervo-card {
   border-color: var(--acervo-linha);
   border-radius: var(--radius-ficha);
@@ -79,10 +68,6 @@
 .acervo-caminho {
   color: var(--color-texto-suave);
   overflow-wrap: anywhere;
-}
-.acervo-caminho a {
-  color: var(--color-link);
-  text-decoration: underline;
 }
 .acervo-ficha {
   border-color: var(--acervo-linha);

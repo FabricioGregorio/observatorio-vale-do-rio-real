@@ -29,12 +29,12 @@ export const CSS_DO_RODAPE = `
 .rd__nome{margin:0;max-width:26ch;font-family:var(--font-display);font-size:clamp(var(--text-lg),2.4vw,var(--text-2xl));line-height:1.18;letter-spacing:var(--tracking-display)}
 .rd__realizacao{margin:0;font-size:var(--text-sm)}
 .rd__permanencia{margin:.35rem 0 0;max-width:46ch;font-size:var(--text-sm);line-height:1.55;color:var(--color-texto-inverso);opacity:.82}
-.rd__secoes ul,.rd__institucional ul{display:flex;flex-direction:column;gap:.45rem;margin:.65rem 0 0;padding:0;list-style:none}
+.rd__secoes ul,.rd__institucional ul{display:flex;flex-direction:column;gap:0;margin:.4rem 0 0;padding:0;list-style:none}
 .rd__institucional ul{font-size:var(--text-sm);opacity:.82}
-.rd a{color:var(--color-texto-inverso);text-decoration:none}
-.rd a:hover{color:var(--color-destaque);text-decoration:underline;text-underline-offset:.22em}
+.rd a{color:var(--color-texto-inverso);text-decoration:underline;text-decoration-color:transparent;text-decoration-thickness:1px;text-underline-offset:.3em;transition:color var(--duracao-hover) var(--easing-padrao),text-decoration-color var(--duracao-hover) var(--easing-padrao)}
+.rd a:hover{color:var(--color-destaque);text-decoration-color:currentColor}
 .rd :focus-visible{outline:3px solid var(--color-destaque);outline-offset:3px}
-.rd__secoes a,.rd__institucional a{display:inline-block;padding-block:.15rem}
+.rd__secoes a,.rd__institucional a{display:inline-flex;align-items:center;min-height:44px}
 .rd__creditos{display:flex;flex-direction:column;gap:.75rem}
 
 /* Aplicação em box branco — manual do Governo Federal, p. 14. O respiro é

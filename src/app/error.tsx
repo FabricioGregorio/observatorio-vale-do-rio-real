@@ -29,12 +29,7 @@ export default function Erro({
       </p>
       <div className="flex flex-wrap items-center gap-4">
         <Button onClick={reset}>Tentar de novo</Button>
-        <ActionLink
-          variant="text"
-          href="/acervo"
-          className="underline"
-          style={{ color: "var(--color-link)" }}
-        >
+        <ActionLink variant="text" href="/acervo">
           Ir para o Acervo
         </ActionLink>
       </div>

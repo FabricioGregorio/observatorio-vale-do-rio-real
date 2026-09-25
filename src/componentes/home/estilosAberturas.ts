@@ -6,7 +6,6 @@
 export const CSS_DAS_ABERTURAS = `
 /* Peças comuns */
 .ab-cta{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem}
-.home-observatorio .ab-botao{align-items:center}
 
 /* ============================== B2 ============================== */
 /* A fotografia é o plano integral; toda a leitura acontece sobre ela. */
@@ -25,8 +24,7 @@ export const CSS_DAS_ABERTURAS = `
 .ab-b2__t1,.ab-b2__t3{font-size:clamp(var(--text-base),1.5vw,var(--text-lg));font-weight:600}
 .ab-b2__t2{font-size:var(--hero-titulo-editorial);line-height:1.02;letter-spacing:-.035em;font-weight:700}
 .ab-b2__proposito{max-width:44ch;font-size:clamp(var(--text-base),1.4vw,var(--text-lg));line-height:1.45}
-.home-observatorio .ab-b2 .ab-botao{border-color:var(--hero-acento-editorial);background:var(--hero-acento-editorial);color:var(--hero-texto-sobre-acento)}
-.home-observatorio .ab-b2 .ab-botao:hover{background:var(--hero-fundo-editorial);color:var(--color-texto-inverso)}
+.ab-b2 .ab-botao{--acao-fundo:var(--hero-acento-editorial);--acao-texto:var(--hero-texto-sobre-acento);--acao-hover:var(--hero-fundo-editorial);--acao-texto-hover:var(--color-texto-inverso)}
 @media (min-width:960px){
   .ab-b2__foto img{object-position:35% 36%}
   .ab-b2__foto picture::after{background:linear-gradient(to bottom,var(--hero-veu-superior),transparent 24%,var(--hero-meio) 66%,var(--hero-base) 100%),linear-gradient(to right,var(--hero-sombra-lateral),transparent 75%)}

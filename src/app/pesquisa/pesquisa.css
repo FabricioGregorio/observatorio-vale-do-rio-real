@@ -54,14 +54,6 @@
   padding-bottom: clamp(3rem, 7vw, 5rem);
 }
 
-.pq a {
-  color: var(--color-link);
-  text-decoration: underline;
-  text-underline-offset: 0.22em;
-}
-.pq a:hover {
-  color: var(--color-link-hover);
-}
 .pq h2 {
   margin: 0;
   max-width: 22ch;

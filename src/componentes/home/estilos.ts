@@ -115,8 +115,6 @@ export const CSS_DA_HOME = `
   background:var(--color-fundo);
   color:var(--color-texto);
 }
-.home-observatorio a{color:var(--color-link);text-underline-offset:.18em}
-.home-observatorio a:hover{color:var(--color-link-hover)}
 :where(.home-observatorio) :where(ul,ol){list-style:none;margin:0;padding:0}
 .hl-quadro{max-width:var(--largura-conteudo);margin-inline:auto;padding-inline:var(--hl-margem)}
 
@@ -210,9 +208,6 @@ export const CSS_DA_HOME = `
 .territorio-cartografico__painel-lista{font-size:var(--text-sm);color:var(--color-texto-suave)}
 .territorio-cartografico__convite{margin:0;color:var(--color-texto-suave)}
 .territorio-cartografico__ponte{margin:0}
-.home-observatorio .territorio-cartografico__ir{display:inline-flex;align-items:center;gap:.5rem;padding:.55rem 1rem;border:1px solid var(--color-texto);border-radius:var(--radius-ficha);color:var(--color-texto);font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;text-decoration:none;transition:background-color var(--duracao-hover) var(--easing-padrao),color var(--duracao-hover) var(--easing-padrao)}
-.home-observatorio .territorio-cartografico__ir::after{content:"→"}
-.home-observatorio .territorio-cartografico__ir:hover{background:var(--color-texto);color:var(--color-fundo)}
 .territorio-cartografico__pontos li{display:grid;gap:.1rem}
 .territorio-cartografico__lugar-nome{font-family:var(--font-display);font-weight:600;color:var(--color-texto)}
 

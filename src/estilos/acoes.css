@@ -1,94 +1,293 @@
-/* Cinco famílias, com a mesma área de toque e os tokens do site. */
+/*
+  Sistema de ações — cinco famílias, fechadas.
+
+    PRIMARY    a ação dominante de uma seção; preenchida, com o filete de
+               ficha (uma régua na base) que entra no hover.
+    SECONDARY  acompanha a PRIMARY sem competir: contorno, e o preenchimento
+               sobe da base só no hover.
+    TEXT       continuidade editorial: sublinhado discreto que se firma no
+               hover, e o sinal de percurso (→ ↓ ←) no fim — ou no começo, se
+               volta.
+    DOCUMENT   consulta a arquivo: ícone de documento antes do rótulo, e o
+               de baixar quando o clique entrega o binário.
+    UTILITY    controle do próprio site (menu, acessibilidade, fechar): o
+               menor dos retângulos, sem percurso.
+
+  `external` e `download` são modificadores (`data-modificador`), não
+  famílias. Quem os decide é o destino do link, em `ActionLink`.
+
+  Todo sinal e todo ícone é o mesmo desenho: traço de 1,75 numa grade de 16,
+  pintado com a cor do texto. O caractere (→ ↗ ↓ ←) continua no HTML como
+  reserva, escondido por recuo; em alto contraste, onde fundo não é pintado,
+  é ele que volta a aparecer.
+*/
 .acao[data-acao] {
+  --acao-passo: 3px;
+  --acao-assento: 1px;
+  --acao-filete: 3px;
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.625em;
   min-height: 44px;
   min-width: 0;
   max-width: 100%;
-  padding: 0.625rem 0.875rem;
+  padding: 0.625rem 1.125rem;
   border: 1px solid transparent;
   border-radius: var(--radius-ficha);
   font-family: var(--font-display);
   font-size: var(--text-base);
   font-weight: var(--peso-titulo);
-  line-height: 1.4;
+  letter-spacing: 0.005em;
+  line-height: 1.3;
   text-align: start;
   text-decoration: none;
   overflow-wrap: anywhere;
   cursor: pointer;
   transition:
     background-color var(--duracao-hover) var(--easing-padrao),
+    background-size var(--duracao-hover) var(--easing-padrao),
     color var(--duracao-hover) var(--easing-padrao),
-    border-color var(--duracao-hover) var(--easing-padrao);
+    border-color var(--duracao-hover) var(--easing-padrao),
+    box-shadow var(--duracao-hover) var(--easing-padrao),
+    text-decoration-color var(--duracao-hover) var(--easing-padrao);
 }
-.acao[data-acao] > svg,
-.acao[data-acao] > [aria-hidden] {
+.acao[data-acao] > svg {
   flex-shrink: 0;
 }
+
+/* Sinais de percurso. */
+.acao[data-sinal="seguir"] {
+  --acao-sinal: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.75 8h10.5M9 3.75 13.25 8 9 12.25'/%3E%3C/svg%3E");
+  --acao-rumo: var(--acao-passo) 0;
+}
+.acao[data-sinal="voltar"] {
+  --acao-sinal: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13.25 8H2.75M7 3.75 2.75 8 7 12.25'/%3E%3C/svg%3E");
+  --acao-rumo: calc(-1 * var(--acao-passo)) 0;
+}
+.acao[data-sinal="descer"] {
+  --acao-sinal: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 2.75v10.5M3.75 9 8 13.25 12.25 9'/%3E%3C/svg%3E");
+  --acao-rumo: 0 var(--acao-passo);
+}
+.acao[data-sinal="externo"] {
+  --acao-sinal: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.25 11.75l7.5-7.5M5.5 4.25h6.25v6.25'/%3E%3C/svg%3E");
+  --acao-rumo: calc(var(--acao-passo) * 0.67) calc(var(--acao-passo) * -0.67);
+}
+.acao[data-sinal] > span[aria-hidden="true"] {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 0.9375em;
+  height: 0.9375em;
+  overflow: hidden;
+  white-space: nowrap;
+  text-indent: 2em;
+  background-color: currentColor;
+  -webkit-mask: var(--acao-sinal) center / contain no-repeat;
+  mask: var(--acao-sinal) center / contain no-repeat;
+  transition: translate var(--duracao-hover) var(--easing-padrao);
+}
+
+/* PRIMARY */
 .acao[data-acao="primary"] {
-  background: var(--acao-fundo, var(--color-fundo-inverso));
+  min-height: 3rem;
+  padding-inline: 1.25rem;
+  background-color: var(--acao-fundo, var(--color-fundo-inverso));
   border-color: var(--acao-fundo, var(--color-fundo-inverso));
   color: var(--acao-texto, var(--color-texto-inverso));
 }
-.acao[data-acao="primary"]:hover {
-  background: var(--acao-hover, var(--color-mata-claro));
-}
-.acao:is([data-acao="secondary"], [data-acao="utility"]) {
-  background: transparent;
+
+/* SECONDARY — o preenchimento é uma camada de fundo que sobe da base. */
+.acao[data-acao="secondary"] {
+  min-height: 3rem;
+  padding-inline: 1.25rem;
+  background:
+    linear-gradient(var(--acao-tinta), var(--acao-tinta)) bottom / 100% 0
+    no-repeat;
   border-color: var(--acao-borda, var(--color-borda-forte));
   color: var(--acao-texto, var(--color-texto));
-}
-.acao:is([data-acao="secondary"], [data-acao="utility"]):hover {
-  background: color-mix(
+  --acao-tinta: color-mix(
     in srgb,
-    var(--acao-texto, var(--color-texto)) 10%,
+    var(--acao-texto, var(--color-texto)) 9%,
     transparent
   );
 }
+
+/* UTILITY */
+.acao[data-acao="utility"] {
+  gap: 0.5em;
+  padding: 0.5rem 0.875rem;
+  background: transparent;
+  border-color: var(--acao-borda, var(--color-borda-forte));
+  color: var(--acao-texto, var(--color-texto));
+  font-size: var(--text-sm);
+  letter-spacing: 0.02em;
+}
+.acao[data-acao="utility"]:is([aria-pressed="true"], [aria-expanded="true"]) {
+  border-color: currentColor;
+  background-color: color-mix(
+    in srgb,
+    var(--acao-texto, var(--color-texto)) 12%,
+    transparent
+  );
+  box-shadow: inset 0 0 0 1px currentColor;
+}
+
+/* TEXT e DOCUMENT — sem caixa; o sublinhado é o contorno. */
+.acao:is([data-acao="text"], [data-acao="document"]) {
+  justify-content: flex-start;
+  padding: 0.5rem 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-link);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+}
+.acao[data-acao="document"] {
+  gap: 0.5em;
+  font-size: var(--text-nav);
+  font-weight: 500;
+}
+.acao[data-acao="document"]::before {
+  content: "";
+  flex-shrink: 0;
+  width: 1.125em;
+  height: 1.125em;
+  background-color: currentColor;
+  -webkit-mask: var(--acao-icone) center / contain no-repeat;
+  mask: var(--acao-icone) center / contain no-repeat;
+  transition: translate var(--duracao-hover) var(--easing-padrao);
+  --acao-icone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.75 1.75h5.5l3 3v9.5h-8.5z'/%3E%3Cpath d='M9.25 1.75v3h3M6 8.25h4M6 10.75h4'/%3E%3C/svg%3E");
+}
+.acao[data-acao="document"][data-modificador="download"]::before {
+  --acao-icone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 1.75v8.5M4.75 7 8 10.25 11.25 7M2.75 11v2.5h10.5V11'/%3E%3C/svg%3E");
+}
+/* Consultado: o sublinhado muda de cor, o rótulo não. */
+.acao[data-acao="document"]:visited {
+  text-decoration-color: var(--color-acento);
+}
+
+/* Hover — só onde há ponteiro que paira, para não grudar no toque. */
+@media (hover: hover) {
+  .acao[data-acao]:hover > span[aria-hidden="true"] {
+    translate: var(--acao-rumo, 0 0);
+  }
+  .acao[data-acao="primary"]:hover {
+    background-color: var(
+      --acao-hover,
+      color-mix(
+        in srgb,
+        var(--acao-fundo, var(--color-fundo-inverso)) 86%,
+        var(--acao-texto, var(--color-texto-inverso))
+      )
+    );
+    color: var(
+      --acao-texto-hover,
+      var(--acao-texto, var(--color-texto-inverso))
+    );
+    box-shadow: inset 0 calc(-1 * var(--acao-filete)) 0 0
+      var(--acao-filete-cor, var(--color-destaque));
+  }
+  .acao[data-acao="secondary"]:hover {
+    border-color: currentColor;
+    background-size: 100% 100%;
+  }
+  .acao[data-acao="utility"]:hover:not(:disabled) {
+    border-color: currentColor;
+    background-color: color-mix(
+      in srgb,
+      var(--acao-texto, var(--color-texto)) 8%,
+      transparent
+    );
+  }
+  .acao:is([data-acao="text"], [data-acao="document"]):hover {
+    color: var(--color-link-hover);
+    text-decoration-color: currentColor;
+    text-decoration-thickness: 2px;
+  }
+  .acao[data-acao="document"]:hover::before {
+    translate: 0 calc(var(--acao-passo) / -3);
+  }
+  .acao[data-acao="document"][data-modificador="download"]:hover::before {
+    translate: 0 calc(var(--acao-passo) * 0.67);
+  }
+}
+
+/* Foco: o anel global de `tokens.css`, um pouco mais afastado nas caixas,
+   para não colar no filete nem na borda. */
 .acao:is(
   [data-acao="primary"],
   [data-acao="secondary"],
   [data-acao="utility"]
-):active {
-  box-shadow: inset 0 0 0 2px currentColor;
+):focus-visible {
+  outline-offset: 3px;
 }
-.acao:is([data-acao="text"], [data-acao="document"]) {
-  justify-content: flex-start;
-  padding: 0.375rem 0;
-  border: 0;
-  background: transparent;
-  color: var(--color-link);
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
+
+/* Pressionado: a caixa assenta 1 px; o texto firma o sublinhado. */
+.acao:is(
+  [data-acao="primary"],
+  [data-acao="secondary"],
+  [data-acao="utility"]
+):active:not(:disabled) {
+  translate: 0 var(--acao-assento);
 }
-.acao[data-acao="document"] {
-  font-size: var(--text-nav);
-  font-weight: 500;
+.acao:is([data-acao="text"], [data-acao="document"]):active {
+  color: var(--color-texto);
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 2px;
 }
-.acao:is([data-acao="text"], [data-acao="document"]):hover {
-  color: var(--color-link-hover);
-}
+
 .acao[disabled] {
   opacity: 0.55;
   cursor: not-allowed;
 }
-.acao[disabled]:active {
-  box-shadow: none;
+
+/* Movimento reduzido — do sistema ou da Central: nada se desloca. As
+   distâncias zeram na fonte, e toda regra de deslocamento acima as lê. */
+@media (prefers-reduced-motion: reduce) {
+  .acao[data-acao] {
+    --acao-passo: 0px;
+    --acao-assento: 0px;
+  }
 }
+:where(html[data-movimento="reduzido"]) .acao[data-acao] {
+  --acao-passo: 0px;
+  --acao-assento: 0px;
+}
+
+/* Alto contraste: fundo desenhado não é pintado, então o caractere volta e o
+   ícone sai — o rótulo já diz "Abrir" ou "Baixar". */
+@media (forced-colors: active) {
+  .acao[data-sinal] > span[aria-hidden="true"] {
+    width: auto;
+    height: auto;
+    overflow: visible;
+    text-indent: 0;
+    background: none;
+    -webkit-mask: none;
+    mask: none;
+  }
+  .acao[data-acao="document"]::before {
+    content: none;
+  }
+}
+
+/* Superfícies escuras: o anel de foco troca para milho, como no cabeçalho e
+   no rodapé — anil sobre mata não chega a 2:1. */
+.hl-pod-secao,
+.ab-b2 {
+  --color-foco: var(--color-destaque);
+}
+
 .hl-topo__nav-estreita {
   --acao-texto: var(--color-cabecalho-texto);
   --acao-borda: var(--color-cabecalho-borda);
 }
 .hl-topo__util {
-  --acao-fundo: var(--color-cabecalho-acento);
   --acao-texto: var(--color-cabecalho-texto);
   --acao-borda: var(--color-cabecalho-borda);
-}
-.hl-topo__util .acao[data-acao="primary"] {
-  --acao-texto: var(--color-cabecalho-fundo);
-  --acao-hover: var(--color-cabecalho-texto);
 }
 .hl-topo .acao[data-acao] {
   font-size: var(--text-sm);
@@ -149,8 +348,17 @@
   justify-content: space-between;
   gap: 0.75rem;
 }
+/* "Fechar" é uma palavra: encolher o botão a quebraria letra a letra. */
+.central__topo > .acao {
+  flex-shrink: 0;
+  padding-inline: 0.625rem;
+  overflow-wrap: normal;
+}
+/* Em 320 px com texto maior, título e Fechar não cabem lado a lado na escala
+   cheia; o título desce um passo antes de o botão sair da borda. */
 .central h2 {
-  font-size: var(--text-xl);
+  min-width: 0;
+  font-size: clamp(var(--text-lg), 7vw, var(--text-xl));
 }
 .central fieldset {
   min-width: 0;
@@ -167,10 +375,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-}
-.central .acao[aria-pressed="true"] {
-  border-color: var(--color-texto);
-  box-shadow: inset 0 0 0 1px currentColor;
 }
 .central__opcao {
   display: flex;
@@ -194,10 +398,6 @@
   padding-top: 0.75rem;
   border-top: 1px solid var(--color-borda);
 }
-.central a {
-  color: var(--color-link);
-  text-decoration: underline;
-}
 /*
   Enquanto a Central morava dentro do cabeçalho, `.hl-topo .acao[data-acao]`
   alcançava estes botões e os deixava em --text-sm. Fora dele, a medida passa
@@ -205,9 +405,6 @@
 */
 .central .acao[data-acao] {
   font-size: var(--text-sm);
-}
-.central .acao[data-acao="text"] {
-  color: var(--color-link);
 }
 @media (max-width: 639px) {
   /*

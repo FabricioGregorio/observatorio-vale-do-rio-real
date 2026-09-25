@@ -218,8 +218,14 @@ test("famílias, consulta documental, download real e foco", async ({
   await expect(externo).toHaveAttribute("target", "_blank");
   await expect(externo).toHaveAttribute("rel", /noopener.*noreferrer/);
   await expect(externo).toHaveAccessibleDescription("Abre em nova guia.");
-  await page.goto("/pesquisa");
-  await expect(page.locator('[data-acao="text"]').first()).toBeAttached();
+  /*
+    Até a revisão de ações de 2026-09-25 esta linha visitava /pesquisa, e o
+    TEXT que ela encontrava era o "Fechar" da Central — presente em toda
+    página, e hoje UTILITY. O TEXT editorial de verdade mora no conteúdo:
+    os caminhos de /observatorio.
+  */
+  await page.goto("/observatorio");
+  await expect(page.locator('main [data-acao="text"]').first()).toBeVisible();
   /*
     O download documental vivia na tabela da Prestação de Contas. Desde
     2026-09-23 ele mora na ficha do arquivo, no Acervo — mesma variante de

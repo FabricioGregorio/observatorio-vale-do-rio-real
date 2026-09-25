@@ -204,8 +204,8 @@ export default async function PaginaDocumento({ params }: Props) {
         </section>
       )}
       <p>
-        <ActionLink variant="text" href="/acervo">
-          ← Voltar ao índice do Acervo
+        <ActionLink variant="text" href="/acervo" voltar>
+          Voltar ao índice do Acervo
         </ActionLink>
       </p>
     </div>

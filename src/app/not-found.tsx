@@ -22,32 +22,17 @@ export default function NaoEncontrado() {
       <nav aria-label="Caminhos a partir do erro">
         <ul className="flex list-none flex-col gap-2 p-0">
           <li>
-            <ActionLink
-              variant="text"
-              href="/acervo"
-              className="underline"
-              style={{ color: "var(--color-link)" }}
-            >
+            <ActionLink variant="text" href="/acervo">
               Acervo — documentos e registros públicos
             </ActionLink>
           </li>
           <li>
-            <ActionLink
-              variant="text"
-              href="/dados"
-              className="underline"
-              style={{ color: "var(--color-link)" }}
-            >
+            <ActionLink variant="text" href="/dados">
               Portal de dados abertos
             </ActionLink>
           </li>
           <li>
-            <ActionLink
-              variant="text"
-              href="/"
-              className="underline"
-              style={{ color: "var(--color-link)" }}
-            >
+            <ActionLink variant="text" href="/">
               Página inicial
             </ActionLink>
           </li>

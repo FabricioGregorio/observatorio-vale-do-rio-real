@@ -241,7 +241,7 @@ export const CSS_DO_TERRITORIO_VIVO = `
 .tv-faixa li + li{border-left:1px solid var(--tv-mesa-fio)}
 .tv-faixa a{
   --tv-faixa-realce:var(--eu,0);
-  display:grid;align-content:center;gap:.1rem;min-height:calc(var(--tv-faixa) - 2px);min-width:44px;
+  display:grid;align-content:center;gap:.1rem;min-height:max(44px,calc(var(--tv-faixa) - 2px));min-width:44px;
   padding:.55rem .9rem .55rem 1rem;text-decoration:none;color:var(--tv-mesa-texto);
   box-shadow:inset 0 3px 0 0 transparent;
   background:color-mix(in srgb,var(--color-pedra) calc(var(--tv-faixa-realce) * 8%),transparent);
@@ -347,9 +347,9 @@ export const CSS_DO_TERRITORIO_VIVO = `
 .tv-evidencias li{border-bottom:1px solid var(--tv-fio)}
 .tv-evidencias :is(a,span){display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:2.75rem;padding:.35rem 0;font-family:var(--font-display);font-weight:500}
 .tv-evidencias a{color:var(--color-link);text-decoration:none}
-.tv-evidencias a::after{content:"→";font-family:var(--font-mono);transition:transform var(--duracao-hover) var(--easing-padrao)}
+.tv-evidencias a:not([target])::after{content:"→";font-family:var(--font-mono);transition:transform var(--duracao-hover) var(--easing-padrao)}
 .tv-evidencias a:hover{text-decoration:underline;text-underline-offset:.2em}
-.tv-evidencias a:hover::after{transform:translateX(.25rem)}
+.tv-evidencias a:not([target]):hover::after{transform:translateX(.25rem)}
 
 /* Prova de contato: altura única, largura da proporção original, sem corte. */
 .tv-contato{grid-area:contato;min-width:0}
@@ -374,8 +374,8 @@ export const CSS_DO_TERRITORIO_VIVO = `
 .tv-ficha dt{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-mono);color:var(--color-texto-suave)}
 .tv-ficha dd{font-size:var(--text-sm);line-height:1.5}
 .tv-ficha__rota ul{display:flex;flex-wrap:wrap;gap:.5rem}
-.tv-ficha__rota a{display:inline-flex;align-items:center;min-height:2.75rem;padding:0 .9rem;border:1px solid var(--color-borda-forte);font-family:var(--font-display);font-size:var(--text-sm);text-decoration:none;color:var(--color-link)}
-.tv-ficha__rota a:hover{background:color-mix(in srgb,var(--color-marca) 10%,transparent)}
+.tv-ficha__rota a{display:inline-flex;align-items:center;gap:.5em;min-height:2.75rem;padding:0 .9rem;border:1px solid var(--color-borda-forte);border-radius:var(--radius-ficha);font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;letter-spacing:.02em;text-decoration:none;color:var(--color-link);transition:border-color var(--duracao-hover) var(--easing-padrao),background-color var(--duracao-hover) var(--easing-padrao)}
+.tv-ficha__rota a:hover{border-color:currentColor;background:color-mix(in srgb,var(--color-marca) 10%,transparent)}
 .tv-ficha__rota .tv-fonte{margin-top:.5rem}
 
 /* --- O mapa da prancha --------------------------------------------------- */

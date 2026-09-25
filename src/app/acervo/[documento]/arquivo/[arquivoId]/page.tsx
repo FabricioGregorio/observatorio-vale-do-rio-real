@@ -115,9 +115,7 @@ export default async function PaginaArquivo({ params }: Props) {
         <h1 className="relative mt-4 text-3xl md:text-4xl">{titulo}</h1>
         <p className="relative mt-5 text-sm">
           Documento:{" "}
-          <ActionLink variant="document" href={`/acervo/${slug}` as Route}>
-            {documento.titulo}
-          </ActionLink>
+          <Link href={`/acervo/${slug}` as Route}>{documento.titulo}</Link>
         </p>
       </header>
       <span id="acervo-arquivo-nova-guia" className="sr-only">
@@ -217,8 +215,8 @@ export default async function PaginaArquivo({ params }: Props) {
         </p>
       ) : null}
       <p>
-        <ActionLink variant="text" href={`/acervo/${slug}` as Route}>
-          ← Voltar ao documento
+        <ActionLink variant="text" href={`/acervo/${slug}` as Route} voltar>
+          Voltar ao documento
         </ActionLink>
       </p>
     </div>

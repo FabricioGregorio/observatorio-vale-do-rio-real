@@ -287,11 +287,14 @@ export function Territorio() {
             */}
             <p className="territorio-cartografico__ponte">
               <Link
-                className="territorio-cartografico__ir"
+                className="acao territorio-cartografico__ir"
+                data-acao="secondary"
+                data-sinal="seguir"
                 href="/territorio"
                 prefetch={false}
               >
                 Ver o mapa interativo completo
+                <span aria-hidden="true">→</span>
               </Link>
             </p>
 
@@ -924,7 +927,7 @@ export function Produtos({
             rota passou a existir na integração de 2026-09-16 e o destino
             passou a ser o que o rótulo sempre disse. A copy não mudou.
           */}
-          <ActionLink variant="document" href="/acervo">
+          <ActionLink variant="text" href="/acervo">
             Ver no acervo
           </ActionLink>
         </li>
@@ -942,7 +945,7 @@ export function Produtos({
               : "No acervo, ainda não públicos."}
           </p>
           {relatoriosPublicos ? (
-            <ActionLink variant="document" href="/acervo">
+            <ActionLink variant="text" href="/acervo">
               Ver no acervo
             </ActionLink>
           ) : null}
@@ -963,7 +966,7 @@ export function Produtos({
               : `${ENTREVISTAS.length} entrevistas e as planilhas de respostas aguardam publicação.`}
           </p>
           {entrevistasEFormulariosPublicos ? (
-            <ActionLink variant="document" href="/acervo">
+            <ActionLink variant="text" href="/acervo">
               Ver no acervo
             </ActionLink>
           ) : null}

@@ -71,12 +71,12 @@ function EntradaDeEscuta({
             </ActionLink>
           ) : null}
           <ActionLink
-            variant="document"
+            variant="text"
             className="pod-entrada__transcricao"
             href={`/podobservar/t${episodio.temporadaNumero}/${episodio.slug}`}
           >
             <span className="sr-only">{episodio.titulo}: </span>
-            Ler transcrição e detalhes →
+            Ler transcrição e detalhes
           </ActionLink>
         </div>
         <p className="pod-entrada__meta">
@@ -128,7 +128,7 @@ export function CadernoDeEscuta({
           </p>
           {anteriores.length > 0 ? (
             <ActionLink variant="text" href="#pod-episodios-titulo">
-              Percorrer episódios <span aria-hidden="true">↓</span>
+              Percorrer episódios
             </ActionLink>
           ) : null}
         </div>

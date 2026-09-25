@@ -36,7 +36,6 @@ function CtaDaPesquisa() {
   return (
     <ActionLink variant="primary" className="ab-botao" href="#hl-lugares">
       {CTA_DA_PESQUISA}
-      <span aria-hidden="true">↓</span>
     </ActionLink>
   );
 }

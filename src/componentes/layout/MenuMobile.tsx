@@ -205,12 +205,6 @@ export function MenuMobile({
         aria-expanded={aberto}
         aria-controls={idPainel}
         onClick={() => setAberto((estava) => !estava)}
-        className="meta-ficha border px-3 py-2 focus-visible:outline-destaque"
-        style={{
-          borderColor: "var(--borda-menu-mobile, var(--color-texto-inverso))",
-          color: "var(--texto-menu-mobile, var(--color-texto-inverso))",
-          borderRadius: "var(--radius-ficha)",
-        }}
       >
         {aberto ? "Fechar menu" : "Menu"}
       </Button>

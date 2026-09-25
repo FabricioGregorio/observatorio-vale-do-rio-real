@@ -149,7 +149,7 @@ export default async function PaginaEpisodio({ params }: Props) {
       </section>
 
       <p>
-        <ActionLink variant="text" href="/podobservar">
+        <ActionLink variant="text" href="/podobservar" voltar>
           Voltar a PodObservar
         </ActionLink>
       </p>

@@ -8,14 +8,6 @@
   padding-bottom: clamp(3rem, 7vw, 5rem);
 }
 
-.dd a {
-  color: var(--color-link);
-  text-decoration: underline;
-  text-underline-offset: 0.22em;
-}
-.dd a:hover {
-  color: var(--color-link-hover);
-}
 .dd h2 {
   margin: 0;
   max-width: 22ch;

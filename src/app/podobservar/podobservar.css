@@ -81,11 +81,11 @@
   text-decoration: none;
 }
 .pod-masthead__rodape .acao[data-acao="text"] > [aria-hidden] {
-  color: var(--color-marca);
-  font-size: var(--text-lg);
+  background-color: var(--color-marca);
 }
 .pod-masthead__rodape .acao[data-acao="text"]:hover {
-  text-decoration: underline;
+  color: var(--color-texto);
+  text-decoration-line: underline;
   text-decoration-color: var(--color-marca);
 }
 .pod-entrada {
@@ -304,19 +304,6 @@
   }
   .pod-masthead__nome > span > span {
     display: block;
-  }
-}
-@media (prefers-reduced-motion: no-preference) {
-  html:not([data-movimento="reduzido"]) .pod-caderno .acao {
-    transition:
-      background-color var(--duracao-hover) var(--easing-padrao),
-      color var(--duracao-hover) var(--easing-padrao),
-      text-underline-offset var(--duracao-hover) var(--easing-padrao);
-  }
-  html:not([data-movimento="reduzido"])
-    .pod-caderno
-    .acao[data-acao="text"]:hover {
-    text-underline-offset: 0.35em;
   }
 }
 

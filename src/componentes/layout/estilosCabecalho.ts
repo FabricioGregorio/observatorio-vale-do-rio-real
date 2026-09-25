@@ -70,7 +70,6 @@ body > .hl-topo{position:sticky;top:0;z-index:var(--z-cabecalho);border-bottom:1
 .hl-topo .hl-topo__nav>ul>li>a:hover,.hl-conteudos__gatilho:hover{color:var(--color-cabecalho-acento)}
 .hl-topo .hl-topo__nav>ul>li>a:hover::after,.hl-topo .hl-topo__nav>ul>li>a:focus-visible::after,.hl-topo .hl-topo__nav>ul>li>a[aria-current="page"]::after,.hl-conteudos__gatilho:hover::after,.hl-conteudos__gatilho:focus-visible::after,.hl-conteudos__gatilho[aria-expanded="true"]::after,.hl-conteudos[data-ativo] .hl-conteudos__gatilho::after{transform:scaleX(1);transform-origin:left}
 body > .hl-topo :focus-visible{outline:3px solid var(--color-destaque);outline-offset:3px}
-.hl-capitulo a:not(.acao,.territorio-cartografico__ir){text-decoration:underline;text-underline-offset:.18em}
 .hl-topo__util{display:flex;align-items:center;gap:.75rem;margin-left:auto}
 .hl-conteudos{position:relative}
 .hl-conteudos__gatilho span{display:inline-block;margin-left:.2rem;font-size:var(--text-sm);transition:transform var(--duracao-hover-cabecalho) var(--easing-padrao)}
@@ -86,11 +85,12 @@ body > .hl-topo :focus-visible{outline:3px solid var(--color-destaque);outline-o
 @media (min-width:1280px){.hl-topo__linha{flex-wrap:nowrap}.hl-topo__nav{order:0;flex-basis:auto;overflow:visible;margin-inline:auto}}
 .hl-topo__nav-estreita{order:3;flex-basis:100%}
 .hl-topo .hl-topo__nav{display:none}
+.hl-topo .hl-topo__nav>ul>li>a[aria-current="page"]::after{height:3px}
 .hl-topo__nav-estreita{--borda-menu-mobile:var(--color-cabecalho-borda);--texto-menu-mobile:var(--color-cabecalho-texto)}
 @media (min-width:1280px){.hl-topo .hl-topo__nav{display:block}.hl-topo .hl-topo__nav-estreita{display:none}}
 .hl-menu-estreito__grupo{margin:1rem .5rem .25rem;padding-top:1rem;border-top:1px solid var(--color-cabecalho-borda)}
 .hl-menu-estreito__lista a{font-family:var(--font-display);font-size:var(--text-nav);font-weight:600;letter-spacing:.015em;text-decoration:none}
-.hl-menu-estreito__lista a[aria-current="page"]{border-left:2px solid var(--color-cabecalho-acento)}
+.hl-menu-estreito__lista a[aria-current="page"]{border-left:3px solid var(--color-cabecalho-acento)}
 .hl-topo .hl-topo__acessibilidade:focus-visible{outline-width:3px;outline-offset:3px}
 /* Utilidade do cabeçalho — ver A UTILIDADE, acima. */
 .hl-topo .hl-topo__acessibilidade{display:inline-flex;flex-shrink:0;align-items:center;justify-content:center;min-height:var(--topo-altura-utilidade);white-space:normal}
